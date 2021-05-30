@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         jkforum helper
 // @namespace    https://www.jkforum.net/
-// @version      0.1
+// @version      0.1.1
 // @description  自动签到，自动完成投票任务
 // @author       Eished
 // @license      AGPL-3.0
@@ -89,19 +89,11 @@ function voted() {
   httpRequest.open('POST', url, false); //第二步：打开连接
   httpRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); //设置请求头 注：post方式必须设置请求头（在建立连接后设置请求头）
   httpRequest.send(pMessage); //发送请求 将情头体写在send中
-  /**
-   * 获取数据后的处理程序
-   */
   httpRequest.onreadystatechange = function () { //请求后的回调接口，可将请求成功后要执行的程序写在其中
     if (httpRequest.readyState == 4 && httpRequest.status == 200) { //验证请求是否发送成功
       var xmlRepo = httpRequest.responseXML; //获取到服务端返回的数据
 
       let data = xmlRepo.getElementsByTagName("root")[0].childNodes[0].nodeValue;
-      // // 数据类型转换成 html
-      // let htmlData = document.createElement('div');
-      // htmlData.innerHTML = data;
-      // // 提取错误信息
-      // let a = htmlData.querySelector('.c').innerHTML;
       console.log(data);
       // 提示信息
       alert(data);
@@ -116,13 +108,8 @@ function task(urlApply) {
   var httpRequest = new XMLHttpRequest(); //第一步：建立所需的对象
   httpRequest.open('GET', urlApply, false); //第二步：打开连接  将请求参数写在url中  ps:"./Ptest.php?name=test&nameone=testone"
   httpRequest.send(); //第三步：发送请求  将请求参数写在URL中
-  /**
-   * 获取数据后的处理程序
-   */
   httpRequest.onreadystatechange = function () {
     if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-      // var json = httpRequest.responseText; //获取到json字符串，还需解析
-      // console.log(json);
       console.log("task ok");
     }
   };
@@ -135,13 +122,8 @@ function taskDone(urlDraw) {
   var httpRequest = new XMLHttpRequest(); //第一步：建立所需的对象
   httpRequest.open('GET', urlDraw, false); //第二步：打开连接  将请求参数写在url中  ps:"./Ptest.php?name=test&nameone=testone"
   httpRequest.send(); //第三步：发送请求  将请求参数写在URL中
-  /**
-   * 获取数据后的处理程序
-   */
   httpRequest.onreadystatechange = function () {
     if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-      // var json = httpRequest.responseText; //获取到json字符串，还需解析
-      // console.log(json);
       console.log("task ok");
     }
   };
