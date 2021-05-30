@@ -2,7 +2,7 @@
 // @name         jkforum helper
 // @namespace    https://www.jkforum.net/
 // @version      0.1
-// @description  自动签到，自动申请任务，自动投票，自动使用道具
+// @description  自动签到，自动申请投票任务，自动投票，自动领取任务奖励
 // @author       Eished
 // @license      AGPL-3.0
 // @match        *://*.jkforum.net/*
@@ -42,16 +42,16 @@ function addBtns() {
 
 function launch() {
   // 申请任务
-  task();
+  task(urlApply);
   // 签到
   sign();
   // 投票
   voted();
   // 领取投票奖励
-  taskDone();
+  taskDone(urlDraw);
 }
 
-// 直接post签到数据
+// 签到 直接post签到数据
 
 // id=dsu_paulsign:sign&operation=qiandao&infloat=1&inajax=1
 // formhash=5971d33c&qdxq=ym&qdmode=1&todaysay=%E5%A5%BD%E6%83%B3%E7%9D%A1%E8%A6%BA&fastreply=1
@@ -62,7 +62,7 @@ function sign() {
   let url = 'https://www.jkforum.net/plugin/?id=dsu_paulsign:sign&operation=qiandao&infloat=1&inajax=1'; //请求链接
 
   var httpRequest = new XMLHttpRequest(); //第一步：创建需要的对象
-  httpRequest.open('POST', url, false); //第二步：打开连接 false同步 true异步
+  httpRequest.open('POST', url, true); //第二步：打开连接 false同步 true异步
   httpRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); //设置请求头 注：post方式必须设置请求头（在建立连接后设置请求头）
   httpRequest.send(pMessage); //发送请求 将情头体写在send中
   /**
@@ -85,41 +85,37 @@ function sign() {
   };
 }
 
+// // get投票页面 无用
+// function getVoted() {
+//   // let wall = document.getElementById('wall');
+//   // let formhash = wall.querySelectorAll('')[1].value; //hash 值
+//   // let pMessage = 'formhash=' + formhash + '&qdxq=ym&qdmode=1&todaysay=%E5%A5%BD%E6%83%B3%E7%9D%A1%E8%A6%BA&fastreply=1'; //post 报文
+//   let aid = 13798;
+//   let url = 'https://www.jkforum.net/plugin/?id=voted&ac=dian&sid=0&aid=' + aid + '&vid=1114&qr=&sttneve=&hsahtneve=&infloat=yes&handlekey=dian&inajax=1&ajaxtarget=fwin_content_dian'; //请求链接页面
 
-// 检查是否已经签到
+//   var httpRequest = new XMLHttpRequest(); //第一步：创建需要的对象
+//   httpRequest.open('GET', url, false); //第二步：打开连接
+//   httpRequest.setRequestHeader("Content-Type", "text/xml; charset=utf-8"); //设置请求头 注：post方式必须设置请求头（在建立连接后设置请求头）
+//   httpRequest.send(); //发送请求 将情头体写在send中
+//   /**
+//    * 获取数据后的处理程序
+//    */
+//   httpRequest.onreadystatechange = function () { //请求后的回调接口，可将请求成功后要执行的程序写在其中
+//     if (httpRequest.readyState == 4 && httpRequest.status == 200) { //验证请求是否发送成功
+//       var xmlRepo = httpRequest.responseXML; //获取到服务端返回的数据
 
-
-// get投票页面 无用
-function getVoted() {
-  // let wall = document.getElementById('wall');
-  // let formhash = wall.querySelectorAll('')[1].value; //hash 值
-  // let pMessage = 'formhash=' + formhash + '&qdxq=ym&qdmode=1&todaysay=%E5%A5%BD%E6%83%B3%E7%9D%A1%E8%A6%BA&fastreply=1'; //post 报文
-  let aid = 13798;
-  let url = 'https://www.jkforum.net/plugin/?id=voted&ac=dian&sid=0&aid=' + aid + '&vid=1114&qr=&sttneve=&hsahtneve=&infloat=yes&handlekey=dian&inajax=1&ajaxtarget=fwin_content_dian'; //请求链接页面
-
-  var httpRequest = new XMLHttpRequest(); //第一步：创建需要的对象
-  httpRequest.open('GET', url, false); //第二步：打开连接
-  httpRequest.setRequestHeader("Content-Type", "text/xml; charset=utf-8"); //设置请求头 注：post方式必须设置请求头（在建立连接后设置请求头）
-  httpRequest.send(); //发送请求 将情头体写在send中
-  /**
-   * 获取数据后的处理程序
-   */
-  httpRequest.onreadystatechange = function () { //请求后的回调接口，可将请求成功后要执行的程序写在其中
-    if (httpRequest.readyState == 4 && httpRequest.status == 200) { //验证请求是否发送成功
-      var xmlRepo = httpRequest.responseXML; //获取到服务端返回的数据
-
-      let data = xmlRepo.getElementsByTagName("root")[0].childNodes[0].nodeValue;
-      // 数据类型转换成 html
-      let htmlData = document.createElement('div');
-      htmlData.innerHTML = data;
-      // 提取错误信息
-      let a = htmlData.querySelector('.alert_right').innerHTML;
-      console.log(a);
-      // 提示信息
-      alert(a);
-    }
-  };
-}
+//       let data = xmlRepo.getElementsByTagName("root")[0].childNodes[0].nodeValue;
+//       // 数据类型转换成 html
+//       let htmlData = document.createElement('div');
+//       htmlData.innerHTML = data;
+//       // 提取错误信息
+//       let a = htmlData.querySelector('.alert_right').innerHTML;
+//       console.log(a);
+//       // 提示信息
+//       alert(a);
+//     }
+//   };
+// }
 
 // 投票
 function voted() {
@@ -173,7 +169,7 @@ function voted() {
 // <?xml version="1.0" encoding="utf-8"?>
 // <root><![CDATA[<script type="text/javascript" reload="1">if(typeof succeedhandle_dian=='function') {succeedhandle_dian('https://www.jkforum.net/plugin.php?id=voted', '投票成功，感謝您的參與！', {});}hideWindow('dian');showDialog('投票成功，感謝您的參與！', 'notice', null, function () { window.location.href ='https://www.jkforum.net/plugin.php?id=voted'; }, 0, null, null, '', '', null, 6);</script>]]></root>
 
-// 签到
+
 
 // 申请投票任务
 let urlApply = 'https://www.jkforum.net/home.php?mod=task&do=apply&id=59';
