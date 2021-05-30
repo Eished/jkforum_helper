@@ -67,9 +67,7 @@ function sign() {
       htmlData.innerHTML = data;
       // 提取错误信息
       let a = htmlData.querySelector('.c').innerHTML;
-      console.log(a);
-      // 提示信息
-      alert(a);
+      console.log(replaceHtml(a));
     }
   };
 }
@@ -108,7 +106,7 @@ function getVid(urlVote) {
       htmlData.innerHTML = data;
       // 找到链接
       let href = htmlData.querySelector('.voted a').href;
-      console.log(href);
+      // console.log(href);
       // 分解链接
       vid = href.split('&')[2];
       console.log(vid);
@@ -132,7 +130,7 @@ function getAid(vidUrl) {
       htmlData.innerHTML = data;
       // 找到链接
       let href = htmlData.querySelector('.hp_s_c a').href;
-      console.log(href);
+      // console.log(href);
       // 分解链接
       aid = href.split('&')[2];
       console.log(aid);
@@ -157,11 +155,10 @@ function voted(aid, vid) {
       var xmlRepo = httpRequest.responseXML; //获取到服务端返回的数据
 
       let data = xmlRepo.getElementsByTagName("root")[0].childNodes[0].nodeValue;
-      console.log(data);
+      console.log(replaceHtml(data));
+
       // 执行领奖励
       taskDone(urlDraw);
-      // 提示信息
-      alert(data);
     }
   };
 }
@@ -177,4 +174,12 @@ function taskDone(urlDraw) {
       console.log("task ok");
     }
   };
+}
+
+// 过滤html标签、前后空格、特殊符号
+function replaceHtml(txt) {
+  const reg3 = /^[\s]+|[\\|\/|\:|\*|\<|\>|\r|\n|\s|\b|\f|\t|\v|\`]|[\s]+$/g;
+  const reg2 = /^(\s+)|(\s+)$/g;
+  const reg = /<.+>/g;
+  return txt.replace(reg, '').replace(reg2, '').replace(reg3, '');
 }
