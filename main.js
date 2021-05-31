@@ -40,11 +40,11 @@ function addBtns() {
   }
 
   // 感谢 按钮
-  let thkBtn = genButton('感谢+回复当前列表', thankauthor); //设置名称和绑定函数
+  let thkBtn = genButton('感谢/回帖', thankauthor); //设置名称和绑定函数
   status_loginned.insertBefore(thkBtn, mnoutbox[1]); //添加按钮到指定位置
 
   // 签到按钮
-  let btn = genButton('一键签到', launch); //设置名称和绑定函数
+  let btn = genButton('签到/投票', launch); //设置名称和绑定函数
   status_loginned.insertBefore(btn, mnoutbox[1]); //添加按钮到指定位置
 
 };
@@ -228,7 +228,7 @@ function messageBox(text, setTime) {
 
 
 // 自动感谢帖子
-let fid = null; //回复帖子用
+let fid = null; //回帖帖子用
 
 function thankauthor() {
   // 获取当前页地址
@@ -279,13 +279,13 @@ function getThreads(currentHref) {
       let touserUids = new Array();
       // 用户名数组
       let tousers = new Array();
-      // 遍历去除回复用户
+      // 遍历去除回帖用户
       for (let i = 0; i < cites.length; i += 2) {
         // 加入数组
         tousers.push(cites[i].innerHTML);
         touserUids.push(cites[i].href.split('&')[1]);
       }
-      // 执行回复函数和感谢函数 必须间隔10秒以上+随机数10-100毫秒
+      // 执行回帖函数和感谢函数 必须间隔10秒以上+随机数10-100毫秒
       let randomTime = 0;
 
       // 遍历所有帖子链接并感谢
@@ -301,24 +301,24 @@ function getThreads(currentHref) {
         thkThread(thkData);
 
         // 参数
-        // 拼接回复url
+        // 拼接回帖url
         const replyUrl = 'https://www.jkforum.net/forum.php?mod=post&action=reply&fid=' + fid + '&tid=' +
           tid + '&extra=page%3D1&replysubmit=yes&infloat=yes&handlekey=fastpost&inajax=1';
         // 生产时间戳
         const date = new Date();
         const posttime = parseInt(date.getTime() / 1000);
-        // 拼接回复报文
+        // 拼接回帖报文
         const replyData = 'message=%E6%84%9F%E8%AC%9D%E6%A8%93%E4%B8%BB%E5%88%86%E4%BA%AB&posttime=' + posttime + '&formhash=' + formhash + '&usesig=1&subject=++';
         // 计时器累加，实现间隔10000+5000*(0.1~1)毫秒以上
         randomTime += Math.ceil(Math.random() * 5000) + 11000;
-        // 执行回复函数 必须间隔10秒以上+随机数1-10
+        // 执行回帖函数 必须间隔10秒以上+随机数1-10
         setTimeout(() => {
           replyThread(replyUrl, replyData);
         }, randomTime);
       };
-      messageBox('请等待' + randomTime / 1000 / 60 + '分钟，即可全部回复完成！如无需回复，请关闭/刷新页面。', 10000);
+      messageBox('正在回帖中... 总共需要' + (randomTime / 1000 / 60).toFixed(1) + '分钟！如无需回帖，请关闭/刷新页面。', randomTime);
       setTimeout(() => {
-        messageBox("全部回复完成！", 'none');
+        messageBox("全部回帖完成！", 'none');
       }, randomTime);
     };
   };
@@ -349,7 +349,7 @@ function thkThread(thkData) {
 };
 
 
-//post回复数据
+//post回帖数据
 function replyThread(replyUrl, replyData) {
   const httpRequest = new XMLHttpRequest();
   httpRequest.open('POST', replyUrl, true);
@@ -365,7 +365,7 @@ function replyThread(replyUrl, replyData) {
       if (replaceHtml(data)) {
         messageBox(replaceHtml(data));
       } else {
-        messageBox('回复成功！');
+        messageBox('回帖成功！');
       }
 
     };
@@ -419,4 +419,4 @@ function postData(replyUrl, replyData, type, text) {
 // reason: 感謝大大分享
 
 
-// 自动回复报道专区 normalthread_13694588 normalthread_13704863
+// 自动回帖报道专区 normalthread_13694588 normalthread_13704863
