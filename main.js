@@ -199,7 +199,7 @@ function messageBox(text, setTime) {
   function genBox(text, id) {
     let b = document.createElement('div'); //创建类型为button的DOM对象
     b.textContent = text; //修改内部文本为text
-    b.style.cssText = 'background-color:#64ce83;float:left;padding:5px 10px;margin-top:5px;border-radius:10px;color:#fff;' //添加样式（margin可以让元素间隔开一定距离）
+    b.style.cssText = 'width:100%;background-color:#64ce83;float:left;padding:5px 10px;margin-top:5px;border-radius:10px;color:#fff;' //添加样式（margin可以让元素间隔开一定距离）
     // b.addEventListener('click', foo); //绑定click的事件的监听器
     if (id) {
       b.id = id;
@@ -215,7 +215,7 @@ function messageBox(text, setTime) {
   // 显示消息
   messageBox.appendChild(textBox);
   // 默认5秒删掉消息，可设置时间，none一直显示
-  if (setTime && isNaN(setTime)) {
+  if (setTime && !isNaN(setTime)) {
     setTimeout(() => {
       messageBox.removeChild(document.getElementById(timeId));
     }, setTime);
