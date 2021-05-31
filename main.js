@@ -161,7 +161,11 @@ function voted(aid, vid) {
 
       let data = xmlRepo.getElementsByTagName("root")[0].childNodes[0].nodeValue;
       // console.log(replaceHtml(data));
-      messageBox(replaceHtml(data));
+      if (replaceHtml(data)) {
+        messageBox(replaceHtml(data));
+      } else {
+        messageBox('投票成功！');
+      }
 
       // 执行领奖励
       taskDone(urlDraw);
@@ -191,7 +195,7 @@ function replaceHtml(txt) {
 }
 
 // 消息通知弹窗
-function messageBox(text) {
+function messageBox(text, setTime) {
   function genBox(text, id) {
     let b = document.createElement('div'); //创建类型为button的DOM对象
     b.textContent = text; //修改内部文本为text
@@ -210,10 +214,16 @@ function messageBox(text) {
   let messageBox = document.querySelector('#messageBox');
   // 显示消息
   messageBox.appendChild(textBox);
-  // 5秒删掉消息
-  setTimeout(() => {
-    messageBox.removeChild(document.getElementById(timeId));
-  }, 5000);
+  // 默认5秒删掉消息，可设置时间，none一直显示
+  if (setTime && isNaN(setTime)) {
+    setTimeout(() => {
+      messageBox.removeChild(document.getElementById(timeId));
+    }, setTime);
+  } else if (setTime == 'none') {} else {
+    setTimeout(() => {
+      messageBox.removeChild(document.getElementById(timeId));
+    }, 5000);
+  }
 }
 
 
@@ -227,8 +237,21 @@ function thankauthor() {
   if (currentHref.split('-')[0] == 'https://www.jkforum.net/forum') {
     // 获取板块fid
     fid = currentHref.split('-')[1];
-    // 获取当前页所有帖子地址
-    getThreads(currentHref);
+
+    // 判断当前页是否处于图片模式
+    if (document.querySelector('.showmenubox').querySelector('[class="chked"]')) {
+      // 图片模式则切换为列表模式
+      getData('https://www.jkforum.net/forum.php?mod=forumdisplay&fid=' + fid + '&forumdefstyle=yes');
+      if (confirm("是否切换到列表模式并刷新页面？")) {
+        location.reload();
+      } else {
+        messageBox('无法在图片模式运行！')
+      }
+    } else {
+      // 获取当前页所有帖子地址
+      getThreads(currentHref);
+    }
+
   } else if (currentHref.split('-')[0] == 'https://www.jkforum.net/thread') {
     // 对单独帖子进行感谢
     messageBox('此页面暂不支持！请到 https://www.jkforum.net/forum-* 版块页面，再尝试运行！');
@@ -287,15 +310,15 @@ function getThreads(currentHref) {
         // 拼接回复报文
         const replyData = 'message=%E6%84%9F%E8%AC%9D%E6%A8%93%E4%B8%BB%E5%88%86%E4%BA%AB&posttime=' + posttime + '&formhash=' + formhash + '&usesig=1&subject=++';
         // 计时器累加，实现间隔10000+5000*(0.1~1)毫秒以上
-        randomTime += Math.ceil(Math.random() * 5000) + 10000;
+        randomTime += Math.ceil(Math.random() * 5000) + 11000;
         // 执行回复函数 必须间隔10秒以上+随机数1-10
         setTimeout(() => {
           replyThread(replyUrl, replyData);
         }, randomTime);
       };
-      messageBox('请等待' + randomTime / 1000 / 60 + '分钟，即可全部回复完成！如无需回复，请关闭/刷新页面。');
+      messageBox('请等待' + randomTime / 1000 / 60 + '分钟，即可全部回复完成！如无需回复，请关闭/刷新页面。', 10000);
       setTimeout(() => {
-        alert("全部回复完成!");
+        messageBox("全部回复完成！", 'none');
       }, randomTime);
     };
   };
@@ -349,6 +372,40 @@ function replyThread(replyUrl, replyData) {
   };
 };
 
+// GET数据通用模块
+function getData(url) {
+  const httpRequest = new XMLHttpRequest();
+  httpRequest.open('GET', url, false);
+  httpRequest.send();
+  if (httpRequest.status === 200) {
+    return httpRequest.responseText;
+  } else {
+    console.log(httpRequest.status);
+  }
+};
+
+// POST数据通用模块
+function postData(replyUrl, replyData, type, text) {
+  const httpRequest = new XMLHttpRequest();
+  httpRequest.open('POST', replyUrl, true);
+  httpRequest.setRequestHeader('content-Type', type);
+  httpRequest.send(replyData); // post数据
+  httpRequest.onreadystatechange = () => {
+    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+      const xmlRepo = httpRequest.responseXML; //获取到服务端返回的数据
+      // 获取数据节点
+      let data = xmlRepo.getElementsByTagName("root")[0].childNodes[0].nodeValue;
+      // 数据类型转换
+      // console.log(replaceHtml(data));
+      if (replaceHtml(data)) {
+        messageBox(replaceHtml(data));
+      } else {
+        messageBox(text);
+      }
+
+    };
+  };
+};
 
 // 自动评分
 // Request URL: https://www.jkforum.net/forum.php?mod=misc&action=rate&ratesubmit=yes&infloat=yes&inajax=1
