@@ -1,15 +1,12 @@
 // ==UserScript==
 // @name         jkforum helper
 // @namespace    https://www.jkforum.net/
-// @version      0.1.3
+// @version      0.1.4
 // @description  自动签到，自动完成投票任务
 // @author       Eished
 // @license      AGPL-3.0
 // @match        *://*.jkforum.net/*
 // @icon         https://www.google.com/s2/favicons?domain=jkforum.net
-// @grant        GM_setValue
-// @grant        GM_getValue
-// @grant        GM_xmlhttpRequest
 // ==/UserScript==
 
 (function () {
@@ -41,6 +38,12 @@ function addBtns() {
     } //如果传入了id，就修改DOM对象的id
     return b; //返回修改好的DOM对象
   }
+
+  // 感谢 按钮
+  let thkBtn = genButton('感谢当前列表', thankauthor); //设置名称和绑定函数
+  status_loginned.insertBefore(thkBtn, mnoutbox[1]); //添加按钮到指定位置
+
+  // 签到按钮
   let btn = genButton('一键签到', launch); //设置名称和绑定函数
   status_loginned.insertBefore(btn, mnoutbox[1]); //添加按钮到指定位置
 
@@ -87,7 +90,7 @@ function sign() {
 let urlApply = 'https://www.jkforum.net/home.php?mod=task&do=apply&id=59';
 
 function task(urlApply) {
-  let httpRequest = new XMLHttpRequest(); //第一步：建立所需的对象
+  const httpRequest = new XMLHttpRequest(); //第一步：建立所需的对象
   httpRequest.open('GET', urlApply, true); //第二步：打开连接  将请求参数写在url中  ps:"./Ptest.php?name=test&nameone=testone"
   httpRequest.send(); //第三步：发送请求  将请求参数写在URL中
   httpRequest.onreadystatechange = function () {
@@ -106,7 +109,7 @@ let vid = null;
 let aid = null;
 
 function getVid(urlVote) {
-  let httpRequest = new XMLHttpRequest(); //第一步：建立所需的对象
+  const httpRequest = new XMLHttpRequest(); //第一步：建立所需的对象
   httpRequest.open('GET', urlVote, true); //第二步：打开连接
   httpRequest.send(); //第三步：发送请求  将请求参数写在URL中
   httpRequest.onreadystatechange = function () {
@@ -130,7 +133,7 @@ function getVid(urlVote) {
 
 // 获取aid
 function getAid(vidUrl) {
-  let httpRequest = new XMLHttpRequest(); //第一步：建立所需的对象
+  const httpRequest = new XMLHttpRequest(); //第一步：建立所需的对象
   httpRequest.open('GET', vidUrl, true); //第二步：打开连接
   httpRequest.send(); //第三步：发送请求  将请求参数写在URL中
   httpRequest.onreadystatechange = function () {
@@ -178,7 +181,7 @@ function voted(aid, vid) {
 let urlDraw = 'https://www.jkforum.net/home.php?mod=task&do=draw&id=59';
 
 function taskDone(urlDraw) {
-  let httpRequest = new XMLHttpRequest(); //第一步：建立所需的对象
+  const httpRequest = new XMLHttpRequest(); //第一步：建立所需的对象
   httpRequest.open('GET', urlDraw, true); //第二步：打开连接  将请求参数写在url中  ps:"./Ptest.php?name=test&nameone=testone"
   httpRequest.send(); //第三步：发送请求  将请求参数写在URL中
   httpRequest.onreadystatechange = function () {
@@ -222,3 +225,116 @@ function messageBox(text) {
     messageBox.removeChild(document.getElementById(timeId));
   }, 5000);
 }
+
+// 自动回复报道专区 normalthread_13694588 normalthread_13704863
+
+// 自动感谢帖子
+// https://www.jkforum.net/forum-640-1.html
+// https://www.jkforum.net/plugin/?id=thankauthor:thank&inajax=1
+// formhash=ff3d16d2&tid=13684758&touser=maestro&touseruid=1698412&handlekey=k_thankauthor&addsubmit=true
+// content-type: application/x-www-form-urlencoded
+// formhash: ff3d16d2 我的哈希编码
+// tid: 13684758 帖子id/时间id 超时会：已超過可感謝時間
+// touser: maestro 作者昵称
+// touseruid: 1698412 作者id
+// handlekey: k_thankauthor 感谢
+// addsubmit: true
+let fid = null; //回复帖子用
+
+function thankauthor() {
+  // 获取当前页地址
+  const currentHref = window.location.href;
+  // 获取板块fid
+  fid = currentHref.split('-')[1];
+  // 获取当前页所有帖子地址
+  getThreads(currentHref);
+};
+// 获取当前页所有帖子地址
+function getThreads(currentHref) {
+  const httpRequest = new XMLHttpRequest();
+  httpRequest.open('GET', currentHref, true);
+  httpRequest.send();
+  console.log(currentHref);
+  httpRequest.onreadystatechange = () => {
+    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+      const data = httpRequest.responseText;
+      // 数据类型转换
+      let htmlData = document.createElement('div');
+      htmlData.innerHTML = data;
+      //帖子类名 40个a标签数组
+      let hrefs = htmlData.querySelectorAll('.s');
+
+      // 获取作者昵称和 UID
+      let cites = htmlData.querySelectorAll('cite a');
+      // uid 数组
+      let touserUids = new Array();
+      // 用户名数组
+      let tousers = new Array();
+      // 遍历去除回复用户
+      for (let i = 0; i < cites.length; i += 2) {
+        // 加入数组
+        // console.log(cites[i], i, cites.length);
+        tousers.push(cites[i].innerHTML);
+        touserUids.push(cites[i].href.split('&')[1]);
+      }
+
+      // 遍历所有帖子链接并感谢
+      for (let i = 0; i < hrefs.length; i++) {
+        const href = hrefs[i].href;
+        // 获取帖子ID
+        const tid = href.split('-')[1];
+        const touser = tousers[i];
+        const touserUid = touserUids[i];
+        // 拼接感谢报文
+        console.log(href, tid, touser, touserUid);
+        // formhash=ff3d16d2&tid=13684758&touser=maestro&touseruid=1698412&handlekey=k_thankauthor&addsubmit=true
+        const thkData = 'formhash=' + formhash + '&tid=' + tid + '&touser=' + touser + '&touser' + touserUid + '&handlekey=k_thankauthor&addsubmit=true';
+        // 执行感谢函数
+        thkThread(thkData);
+      }
+    };
+  };
+};
+//post点赞数据
+function thkThread(thkData) {
+  const thkReqUrl = 'https://www.jkforum.net/plugin/?id=thankauthor:thank&inajax=1'; //请求地址
+  const httpRequest = new XMLHttpRequest();
+  httpRequest.open('POST', thkReqUrl, true);
+  httpRequest.setRequestHeader('content-Type', 'application/x-www-form-urlencoded');
+  httpRequest.send(thkData); // post数据
+  httpRequest.onreadystatechange = () => {
+    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+      const xmlRepo = httpRequest.responseXML; //获取到服务端返回的数据
+      // 获取数据节点
+      let data = xmlRepo.getElementsByTagName("root")[0].childNodes[0].nodeValue;
+      // 数据类型转换
+      // console.log(replaceHtml(data));
+      if (replaceHtml(data)) {
+        messageBox(replaceHtml(data));
+      } else {
+        messageBox('感谢作者成功！');
+      }
+
+    };
+  };
+};
+// 自动评分
+// Request URL: https://www.jkforum.net/forum.php?mod=misc&action=rate&ratesubmit=yes&infloat=yes&inajax=1
+// content-type: application/x-www-form-urlencoded
+// formhash: ff3d16d2
+// tid: 13684758
+// pid: 140618316
+// referer: https://www.jkforum.net/forum.php?mod=viewthread&tid=13684758&page=0#pid140618316
+// handlekey: rate
+// score1: +1
+// reason: 感謝大大分享
+
+// 自动回帖
+// Request URL: https://www.jkforum.net/forum.php?mod=post&action=reply&fid=640&tid=13684758&extra=page%3D1&replysubmit=yes&infloat=yes&handlekey=fastpost&inajax=1
+// content-type: application/x-www-form-urlencoded
+// message: 這麼好的帖 不推對不起自己阿
+// posttime: 1622432440
+// formhash: ff3d16d2
+// usesig: 1
+// subject:   
+// message=%E9%80%99%E9%BA%BC%E5%A5%BD%E7%9A%84%E5%B8%96+%E4%B8%8D%E6%8E%A8%E5%B0%8D%E4%B8%8D%E8%B5%B7%E8%87%AA%E5%B7%B1%E9%98%BF&posttime=1622432440&formhash=ff3d16d2&usesig=1&subject=++
