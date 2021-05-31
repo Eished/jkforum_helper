@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         jkforum helper
 // @namespace    https://www.jkforum.net/
-// @version      0.1.5
-// @description  自动签到，自动投票任务，一键批量感谢，自动回帖
+// @version      0.1.6
+// @description  捷克论坛助手，自动签到，自动投票任务，一键批量感谢，自动回帖
 // @author       Eished
 // @license      AGPL-3.0
 // @match        *://*.jkforum.net/*
@@ -173,7 +173,7 @@ let urlDraw = 'https://www.jkforum.net/home.php?mod=task&do=draw&id=59';
 
 function taskDone(urlDraw) {
   const httpRequest = new XMLHttpRequest(); //第一步：建立所需的对象
-  httpRequest.open('GET', urlDraw, true); //第二步：打开连接  将请求参数写在url中  ps:"./Ptest.php?name=test&nameone=testone"
+  httpRequest.open('GET', urlDraw, true); //第二步：打开连接
   httpRequest.send(); //第三步：发送请求  将请求参数写在URL中
   httpRequest.onreadystatechange = function () {
     if (httpRequest.readyState == 4 && httpRequest.status == 200) {
@@ -195,7 +195,7 @@ function messageBox(text) {
   function genBox(text, id) {
     let b = document.createElement('div'); //创建类型为button的DOM对象
     b.textContent = text; //修改内部文本为text
-    b.style.cssText = 'background-color:#64ce83;float:left;float:left;padding:5px 10px;margin-top:5px;border-radius:10px;color:#fff;' //添加样式（margin可以让元素间隔开一定距离）
+    b.style.cssText = 'background-color:#64ce83;float:left;padding:5px 10px;margin-top:5px;border-radius:10px;color:#fff;' //添加样式（margin可以让元素间隔开一定距离）
     // b.addEventListener('click', foo); //绑定click的事件的监听器
     if (id) {
       b.id = id;
@@ -231,7 +231,7 @@ function thankauthor() {
     getThreads(currentHref);
   } else if (currentHref.split('-')[0] == 'https://www.jkforum.net/thread') {
     // 对单独帖子进行感谢
-    messageBox('此功能暂不支持！请到 https://www.jkforum.net/forum-* 版块页面，再尝试运行！');
+    messageBox('此页面暂不支持！请到 https://www.jkforum.net/forum-* 版块页面，再尝试运行！');
   } else {
     messageBox('此页面不支持！请到 https://www.jkforum.net/forum-* 版块页面，再尝试运行！');
   }
@@ -288,13 +288,15 @@ function getThreads(currentHref) {
         const replyData = 'message=%E6%84%9F%E8%AC%9D%E6%A8%93%E4%B8%BB%E5%88%86%E4%BA%AB&posttime=' + posttime + '&formhash=' + formhash + '&usesig=1&subject=++';
         // 计时器累加，实现间隔10000+5000*(0.1~1)毫秒以上
         randomTime += Math.ceil(Math.random() * 5000) + 10000;
-        console.log(randomTime);
         // 执行回复函数 必须间隔10秒以上+随机数1-10
         setTimeout(() => {
           replyThread(replyUrl, replyData);
         }, randomTime);
       };
-      messageBox('请等待' + randomTime / 1000 + '秒，即可全部回复完成！如无需回复，请关闭/刷新页面。');
+      messageBox('请等待' + randomTime / 1000 / 60 + '分钟，即可全部回复完成！如无需回复，请关闭/刷新页面。');
+      setTimeout(() => {
+        alert("全部回复完成!");
+      }, randomTime);
     };
   };
 };
