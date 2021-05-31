@@ -223,11 +223,16 @@ let fid = null; //回复帖子用
 
 function thankauthor() {
   // 获取当前页地址
+  // https://www.jkforum.net/forum-640-1.html
   const currentHref = window.location.href;
-  // 获取板块fid
-  fid = currentHref.split('-')[1];
-  // 获取当前页所有帖子地址
-  getThreads(currentHref);
+  if (currentHref.split('-')[0] == 'https://www.jkforum.net/forum') {
+    // 获取板块fid
+    fid = currentHref.split('-')[1];
+    // 获取当前页所有帖子地址
+    getThreads(currentHref);
+  } else {
+    messageBox('此页面不支持！请到 https://www.jkforum.net/forum-** 板块页面，再尝试运行！');
+  }
 };
 // 获取当前页所有帖子地址
 function getThreads(currentHref) {
