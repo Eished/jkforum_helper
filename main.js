@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         jkforum helper
 // @namespace    https://www.jkforum.net/
-// @version      0.1.4
-// @description  自动签到，自动完成投票任务，一键批量感谢
+// @version      0.1.5
+// @description  自动签到，自动投票任务，一键批量感谢，自动回帖
 // @author       Eished
 // @license      AGPL-3.0
 // @match        *://*.jkforum.net/*
@@ -40,7 +40,7 @@ function addBtns() {
   }
 
   // 感谢 按钮
-  let thkBtn = genButton('感谢当前列表', thankauthor); //设置名称和绑定函数
+  let thkBtn = genButton('感谢+回复当前列表', thankauthor); //设置名称和绑定函数
   status_loginned.insertBefore(thkBtn, mnoutbox[1]); //添加按钮到指定位置
 
   // 签到按钮
@@ -216,7 +216,6 @@ function messageBox(text) {
   }, 5000);
 }
 
-// 自动回复报道专区 normalthread_13694588 normalthread_13704863
 
 // 自动感谢帖子
 let fid = null; //回复帖子用
@@ -230,8 +229,11 @@ function thankauthor() {
     fid = currentHref.split('-')[1];
     // 获取当前页所有帖子地址
     getThreads(currentHref);
+  } else if (currentHref.split('-')[0] == 'https://www.jkforum.net/thread') {
+    // 对单独帖子进行感谢
+    messageBox('此功能暂不支持！请到 https://www.jkforum.net/forum-* 版块页面，再尝试运行！');
   } else {
-    messageBox('此页面不支持！请到 https://www.jkforum.net/forum-** 板块页面，再尝试运行！');
+    messageBox('此页面不支持！请到 https://www.jkforum.net/forum-* 版块页面，再尝试运行！');
   }
 };
 // 获取当前页所有帖子地址
@@ -260,23 +262,44 @@ function getThreads(currentHref) {
         tousers.push(cites[i].innerHTML);
         touserUids.push(cites[i].href.split('&')[1]);
       }
+      // 执行回复函数和感谢函数 必须间隔10秒以上+随机数10-100毫秒
+      let randomTime = 0;
 
       // 遍历所有帖子链接并感谢
       for (let i = 0; i < hrefs.length; i++) {
         const href = hrefs[i].href;
         // 获取帖子ID
-        const tid = href.split('-')[1];
-        const touser = tousers[i];
-        const touserUid = touserUids[i];
+        const tid = href.split('-')[1]; // 无前缀 数字
+        const touser = tousers[i]; // 无前缀 字符串
+        const touserUid = touserUids[i]; //无前缀 数字
         // 拼接感谢报文
         const thkData = 'formhash=' + formhash + '&tid=' + tid + '&touser=' + touser + '&touser' + touserUid + '&handlekey=k_thankauthor&addsubmit=true';
         // 执行感谢函数
         thkThread(thkData);
-      }
+
+        // 参数
+        // 拼接回复url
+        const replyUrl = 'https://www.jkforum.net/forum.php?mod=post&action=reply&fid=' + fid + '&tid=' +
+          tid + '&extra=page%3D1&replysubmit=yes&infloat=yes&handlekey=fastpost&inajax=1';
+        // 生产时间戳
+        const date = new Date();
+        const posttime = parseInt(date.getTime() / 1000);
+        // 拼接回复报文
+        const replyData = 'message=%E6%84%9F%E8%AC%9D%E6%A8%93%E4%B8%BB%E5%88%86%E4%BA%AB&posttime=' + posttime + '&formhash=' + formhash + '&usesig=1&subject=++';
+        // 计时器累加，实现间隔10000+5000*(0.1~1)毫秒以上
+        randomTime += Math.ceil(Math.random() * 5000) + 10000;
+        console.log(randomTime);
+        // 执行回复函数 必须间隔10秒以上+随机数1-10
+        setTimeout(() => {
+          replyThread(replyUrl, replyData);
+        }, randomTime);
+      };
+      messageBox('请等待' + randomTime / 1000 + '秒，即可全部回复完成！如无需回复，请关闭/刷新页面。');
     };
   };
 };
-//post点赞数据
+
+//post感谢数据
 function thkThread(thkData) {
   const thkReqUrl = 'https://www.jkforum.net/plugin/?id=thankauthor:thank&inajax=1'; //请求地址
   const httpRequest = new XMLHttpRequest();
@@ -299,6 +322,32 @@ function thkThread(thkData) {
     };
   };
 };
+
+
+//post回复数据
+function replyThread(replyUrl, replyData) {
+  const httpRequest = new XMLHttpRequest();
+  httpRequest.open('POST', replyUrl, true);
+  httpRequest.setRequestHeader('content-Type', 'application/x-www-form-urlencoded');
+  httpRequest.send(replyData); // post数据
+  httpRequest.onreadystatechange = () => {
+    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+      const xmlRepo = httpRequest.responseXML; //获取到服务端返回的数据
+      // 获取数据节点
+      let data = xmlRepo.getElementsByTagName("root")[0].childNodes[0].nodeValue;
+      // 数据类型转换
+      // console.log(replaceHtml(data));
+      if (replaceHtml(data)) {
+        messageBox(replaceHtml(data));
+      } else {
+        messageBox('回复成功！');
+      }
+
+    };
+  };
+};
+
+
 // 自动评分
 // Request URL: https://www.jkforum.net/forum.php?mod=misc&action=rate&ratesubmit=yes&infloat=yes&inajax=1
 // content-type: application/x-www-form-urlencoded
@@ -310,12 +359,5 @@ function thkThread(thkData) {
 // score1: +1
 // reason: 感謝大大分享
 
-// 自动回帖
-// Request URL: https://www.jkforum.net/forum.php?mod=post&action=reply&fid=640&tid=13684758&extra=page%3D1&replysubmit=yes&infloat=yes&handlekey=fastpost&inajax=1
-// content-type: application/x-www-form-urlencoded
-// message: 這麼好的帖 不推對不起自己阿
-// posttime: 1622432440
-// formhash: ff3d16d2
-// usesig: 1
-// subject:   
-// message=%E9%80%99%E9%BA%BC%E5%A5%BD%E7%9A%84%E5%B8%96+%E4%B8%8D%E6%8E%A8%E5%B0%8D%E4%B8%8D%E8%B5%B7%E8%87%AA%E5%B7%B1%E9%98%BF&posttime=1622432440&formhash=ff3d16d2&usesig=1&subject=++
+
+// 自动回复报道专区 normalthread_13694588 normalthread_13704863
