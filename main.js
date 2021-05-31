@@ -2,7 +2,7 @@
 // @name         jkforum helper
 // @namespace    https://www.jkforum.net/
 // @version      0.1.4
-// @description  自动签到，自动完成投票任务
+// @description  自动签到，自动完成投票任务，一键批量感谢
 // @author       Eished
 // @license      AGPL-3.0
 // @match        *://*.jkforum.net/*
@@ -66,9 +66,6 @@ function sign() {
   httpRequest.open('POST', url, true); //第二步：打开连接 false同步 true异步
   httpRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); //设置请求头 注：post方式必须设置请求头（在建立连接后设置请求头）
   httpRequest.send(pMessage); //发送请求 将情头体写在send中
-  /**
-   * 获取数据后的处理程序
-   */
   httpRequest.onreadystatechange = function () { //请求后的回调接口，可将请求成功后要执行的程序写在其中
     if (httpRequest.readyState == 4 && httpRequest.status == 200) { //验证请求是否发送成功
       const xmlRespo = httpRequest.responseXML; //获取到服务端返回的数据
@@ -79,8 +76,7 @@ function sign() {
       htmlData.innerHTML = data;
       // 提取错误信息
       const htmlText = htmlData.querySelector('.c').innerHTML;
-      // console.log(replaceHtml(htmlText));
-      messageBox(replaceHtml(htmlText))
+      messageBox(replaceHtml(htmlText));
     }
   };
 }
@@ -91,12 +87,11 @@ let urlApply = 'https://www.jkforum.net/home.php?mod=task&do=apply&id=59';
 
 function task(urlApply) {
   const httpRequest = new XMLHttpRequest(); //第一步：建立所需的对象
-  httpRequest.open('GET', urlApply, true); //第二步：打开连接  将请求参数写在url中  ps:"./Ptest.php?name=test&nameone=testone"
+  httpRequest.open('GET', urlApply, true); //第二步：打开连接
   httpRequest.send(); //第三步：发送请求  将请求参数写在URL中
   httpRequest.onreadystatechange = function () {
     if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-      // console.log("task ok");
-      messageBox("申请投票任务执行成功！")
+      messageBox("申请投票任务执行成功！");
       // 执行获取vid
       getVid(urlVote);
     }
@@ -120,10 +115,8 @@ function getVid(urlVote) {
       htmlData.innerHTML = data;
       // 找到链接
       const href = htmlData.querySelector('.voted a').href;
-      // console.log(href);
       // 分解链接
       vid = href.split('&')[2];
-      console.log(vid);
 
       // 获取投票页 aid
       getAid(href);
@@ -144,17 +137,15 @@ function getAid(vidUrl) {
       htmlData.innerHTML = data;
       // 找到链接
       const href = htmlData.querySelector('.hp_s_c a').href;
-      // console.log(href);
       // 分解链接
       aid = href.split('&')[2];
-      console.log(aid);
       // 调用投票
       voted(aid, vid);
     }
   };
-}
+};
+
 // 投票
-// let formhash = document.querySelectorAll('#scbar_form input')[1].value; //hash 值
 function voted(aid, vid) {
   let pMessage = 'formhash=' + formhash + '&inajax=1&handlekey=dian&sid=0&message=1'; //post 报文
   // let aid = 13798; //投票目标
@@ -186,8 +177,7 @@ function taskDone(urlDraw) {
   httpRequest.send(); //第三步：发送请求  将请求参数写在URL中
   httpRequest.onreadystatechange = function () {
     if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-      // console.log("taskDone ok");
-      messageBox("领取投票奖励执行成功！")
+      messageBox("领取投票奖励执行成功！");
     }
   };
 }
@@ -229,16 +219,6 @@ function messageBox(text) {
 // 自动回复报道专区 normalthread_13694588 normalthread_13704863
 
 // 自动感谢帖子
-// https://www.jkforum.net/forum-640-1.html
-// https://www.jkforum.net/plugin/?id=thankauthor:thank&inajax=1
-// formhash=ff3d16d2&tid=13684758&touser=maestro&touseruid=1698412&handlekey=k_thankauthor&addsubmit=true
-// content-type: application/x-www-form-urlencoded
-// formhash: ff3d16d2 我的哈希编码
-// tid: 13684758 帖子id/时间id 超时会：已超過可感謝時間
-// touser: maestro 作者昵称
-// touseruid: 1698412 作者id
-// handlekey: k_thankauthor 感谢
-// addsubmit: true
 let fid = null; //回复帖子用
 
 function thankauthor() {
@@ -254,7 +234,6 @@ function getThreads(currentHref) {
   const httpRequest = new XMLHttpRequest();
   httpRequest.open('GET', currentHref, true);
   httpRequest.send();
-  console.log(currentHref);
   httpRequest.onreadystatechange = () => {
     if (httpRequest.readyState == 4 && httpRequest.status == 200) {
       const data = httpRequest.responseText;
@@ -273,7 +252,6 @@ function getThreads(currentHref) {
       // 遍历去除回复用户
       for (let i = 0; i < cites.length; i += 2) {
         // 加入数组
-        // console.log(cites[i], i, cites.length);
         tousers.push(cites[i].innerHTML);
         touserUids.push(cites[i].href.split('&')[1]);
       }
@@ -286,8 +264,6 @@ function getThreads(currentHref) {
         const touser = tousers[i];
         const touserUid = touserUids[i];
         // 拼接感谢报文
-        console.log(href, tid, touser, touserUid);
-        // formhash=ff3d16d2&tid=13684758&touser=maestro&touseruid=1698412&handlekey=k_thankauthor&addsubmit=true
         const thkData = 'formhash=' + formhash + '&tid=' + tid + '&touser=' + touser + '&touser' + touserUid + '&handlekey=k_thankauthor&addsubmit=true';
         // 执行感谢函数
         thkThread(thkData);
