@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         jkforum helper
 // @namespace    https://www.jkforum.net/
-// @version      0.1.6
+// @version      0.1.7
 // @description  捷克论坛助手，自动签到，自动投票任务，一键批量感谢，自动回帖
 // @author       Eished
 // @license      AGPL-3.0
@@ -58,8 +58,10 @@ function launch() {
 
 // 签到 直接post签到数据
 const formhash = document.querySelectorAll('#scbar_form input')[1].value; //hash 值
+const todaysay = '好想睡覺~'; //签到输入内容
+
 function sign() {
-  let pMessage = 'formhash=' + formhash + '&qdxq=ym&qdmode=1&todaysay=%E5%A5%BD%E6%83%B3%E7%9D%A1%E8%A6%BA&fastreply=1'; //post 报文
+  let pMessage = 'formhash=' + formhash + '&qdxq=ym&qdmode=1&todaysay=' + turnUrl(todaysay) + '&fastreply=1'; //post 报文
   let url = 'https://www.jkforum.net/plugin/?id=dsu_paulsign:sign&operation=qiandao&infloat=1&inajax=1'; //请求链接
 
   const httpRequest = new XMLHttpRequest(); //第一步：创建需要的对象
@@ -68,15 +70,14 @@ function sign() {
   httpRequest.send(pMessage); //发送请求 将情头体写在send中
   httpRequest.onreadystatechange = function () { //请求后的回调接口，可将请求成功后要执行的程序写在其中
     if (httpRequest.readyState == 4 && httpRequest.status == 200) { //验证请求是否发送成功
-      const xmlRespo = httpRequest.responseXML; //获取到服务端返回的数据
-
-      const data = xmlRespo.getElementsByTagName("root")[0].childNodes[0].nodeValue;
-      // 数据类型转换成 html
-      let htmlData = document.createElement('div');
-      htmlData.innerHTML = data;
-      // 提取错误信息
-      const htmlText = htmlData.querySelector('.c').innerHTML;
-      messageBox(replaceHtml(htmlText));
+      const data = turnCdata(httpRequest.responseXML); //返回HTML数据或字符串
+      // 如果是html则输出html内容
+      if (checkHtml(data)) {
+        const info = data.querySelector('.c').innerHTML; //去除html，返回字符串
+        messageBox(info);
+      } else {
+        messageBox(data);
+      }
     }
   };
 }
@@ -100,8 +101,8 @@ function task(urlApply) {
 
 // 自动获取vid和aid
 let urlVote = 'https://www.jkforum.net/plugin.php?id=voted';
-let vid = null;
-let aid = null;
+let vid = null; // 纯数字
+let aid = null; // 纯数字
 
 function getVid(urlVote) {
   const httpRequest = new XMLHttpRequest(); //第一步：建立所需的对象
@@ -116,7 +117,7 @@ function getVid(urlVote) {
       // 找到链接
       const href = htmlData.querySelector('.voted a').href;
       // 分解链接
-      vid = href.split('&')[2];
+      vid = href.split('&')[2].split('=')[1]; // 纯数字
 
       // 获取投票页 aid
       getAid(href);
@@ -138,7 +139,7 @@ function getAid(vidUrl) {
       // 找到链接
       const href = htmlData.querySelector('.hp_s_c a').href;
       // 分解链接
-      aid = href.split('&')[2];
+      aid = href.split('&')[2].split('=')[1]; // 纯数字
       // 调用投票
       voted(aid, vid);
     }
@@ -149,7 +150,7 @@ function getAid(vidUrl) {
 function voted(aid, vid) {
   let pMessage = 'formhash=' + formhash + '&inajax=1&handlekey=dian&sid=0&message=1'; //post 报文
   // let aid = 13798; //投票目标
-  let url = 'https://www.jkforum.net/plugin/?id=voted&ac=dian&aid=' + aid + '&' + vid + ' & qr = & inajax = 1 '; //拼接投票链接
+  let url = 'https://www.jkforum.net/plugin/?id=voted&ac=dian&aid=' + aid + '&vid=' + vid + ' & qr = & inajax = 1 '; //拼接投票链接
 
   const httpRequest = new XMLHttpRequest(); //第一步：创建需要的对象
   httpRequest.open('POST', url, true); //第二步：打开连接
@@ -157,16 +158,14 @@ function voted(aid, vid) {
   httpRequest.send(pMessage); //发送请求 将情头体写在send中
   httpRequest.onreadystatechange = function () { //请求后的回调接口，可将请求成功后要执行的程序写在其中
     if (httpRequest.readyState == 4 && httpRequest.status == 200) { //验证请求是否发送成功
-      const xmlRepo = httpRequest.responseXML; //获取到服务端返回的数据
-
-      let data = xmlRepo.getElementsByTagName("root")[0].childNodes[0].nodeValue;
-      // console.log(replaceHtml(data));
-      if (replaceHtml(data)) {
-        messageBox(replaceHtml(data));
+      const data = turnCdata(httpRequest.responseXML); //返回HTML数据或字符串
+      // 如果是html则输出html内容
+      if (checkHtml(data)) {
+        const info = turnCdata(data.querySelector('.alert_info').innerHTML); //去除html，返回字符串
+        messageBox(info);
       } else {
-        messageBox('投票成功！');
+        messageBox(data);
       }
-
       // 执行领奖励
       taskDone(urlDraw);
     }
@@ -186,13 +185,7 @@ function taskDone(urlDraw) {
   };
 }
 
-// 过滤html标签、前后空格、特殊符号
-function replaceHtml(txt) {
-  const reg3 = /^[\s]+|[\\|\/|\:|\*|\<|\>|\r|\n|\s|\b|\f|\t|\v|\`]|[\s]+$/g;
-  const reg2 = /^(\s+)|(\s+)$/g;
-  const reg = /<.+>/g;
-  return txt.replace(reg, '').replace(reg2, '').replace(reg3, '');
-}
+
 
 // 消息通知弹窗
 function messageBox(text, setTime) {
@@ -229,6 +222,7 @@ function messageBox(text, setTime) {
 
 // 自动感谢帖子
 let fid = null; //回帖帖子用
+const replyMessage = '感謝大大分享！'; //回复内容
 
 function thankauthor() {
   // 获取当前页地址
@@ -308,12 +302,21 @@ function getThreads(currentHref) {
         const date = new Date();
         const posttime = parseInt(date.getTime() / 1000);
         // 拼接回帖报文
-        const replyData = 'message=%E6%84%9F%E8%AC%9D%E6%A8%93%E4%B8%BB%E5%88%86%E4%BA%AB&posttime=' + posttime + '&formhash=' + formhash + '&usesig=1&subject=++';
+        const replyData = 'message=' + turnUrl(replyMessage) + '&posttime=' + posttime + '&formhash=' + formhash + '&usesig=1&subject=++';
         // 计时器累加，实现间隔10000+5000*(0.1~1)毫秒以上
-        randomTime += Math.ceil(Math.random() * 5000) + 11000;
-        // 执行回帖函数 必须间隔10秒以上+随机数1-10
+        randomTime += Math.ceil(Math.random() * 5000) + 10500;
         setTimeout(() => {
-          replyThread(replyUrl, replyData);
+          // POST回帖数据 必须间隔10秒以上+随机数1-10
+          const replyRespo = postData(replyUrl, replyData);
+          // 提取Cdata返回html,错误数据则直接输出
+          if (!checkHtml(replyRespo)) {
+            // xml错误消息
+            messageBox(replyRespo);
+          } else {
+            const info = replyRespo.querySelector('script').innerHTML.split(`, `)[1];
+            // 返回html成功消息
+            messageBox(info.split('，')[0].slice(1) + '，' + info.split('，')[1] + '！');
+          }
         }, randomTime);
       };
       messageBox('正在回帖中... 总共需要' + (randomTime / 1000 / 60).toFixed(1) + '分钟！如无需回帖，请关闭/刷新页面。', randomTime);
@@ -333,41 +336,14 @@ function thkThread(thkData) {
   httpRequest.send(thkData); // post数据
   httpRequest.onreadystatechange = () => {
     if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-      const xmlRepo = httpRequest.responseXML; //获取到服务端返回的数据
-      // 获取数据节点
-      let data = xmlRepo.getElementsByTagName("root")[0].childNodes[0].nodeValue;
-      // 数据类型转换
-      // console.log(replaceHtml(data));
-      if (replaceHtml(data)) {
-        messageBox(replaceHtml(data));
+      const data = turnCdata(httpRequest.responseXML); //返回HTML数据
+      // 如果是html则输出html内容
+      if (checkHtml(data)) {
+        const info = replaceHtml(data.querySelector('.alert_info').innerHTML); //去除html，返回字符串
+        messageBox(info);
       } else {
-        messageBox('感谢作者成功！');
+        messageBox(data);
       }
-
-    };
-  };
-};
-
-
-//post回帖数据
-function replyThread(replyUrl, replyData) {
-  const httpRequest = new XMLHttpRequest();
-  httpRequest.open('POST', replyUrl, true);
-  httpRequest.setRequestHeader('content-Type', 'application/x-www-form-urlencoded');
-  httpRequest.send(replyData); // post数据
-  httpRequest.onreadystatechange = () => {
-    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-      const xmlRepo = httpRequest.responseXML; //获取到服务端返回的数据
-      // 获取数据节点
-      let data = xmlRepo.getElementsByTagName("root")[0].childNodes[0].nodeValue;
-      // 数据类型转换
-      // console.log(replaceHtml(data));
-      if (replaceHtml(data)) {
-        messageBox(replaceHtml(data));
-      } else {
-        messageBox('回帖成功！');
-      }
-
     };
   };
 };
@@ -377,40 +353,75 @@ function getData(url) {
   const httpRequest = new XMLHttpRequest();
   httpRequest.open('GET', url, false);
   httpRequest.send();
-  if (httpRequest.status === 200) {
+  if (httpRequest.readyState == 4 && httpRequest.status == 200) {
     return httpRequest.responseText;
   } else {
     console.log(httpRequest.status);
   }
 };
 
-// POST数据通用模块
-function postData(replyUrl, replyData, type, text) {
+// POST数据通用模块,返回XML
+function postData(replyUrl, replyData, type) {
+  // 传输数据类型判断,默认 'application/x-www-form-urlencoded'
+  if (type) {} else {
+    type = 'application/x-www-form-urlencoded';
+  }
   const httpRequest = new XMLHttpRequest();
-  httpRequest.open('POST', replyUrl, true);
+  httpRequest.open('POST', replyUrl, false);
   httpRequest.setRequestHeader('content-Type', type);
   httpRequest.send(replyData); // post数据
-  httpRequest.onreadystatechange = () => {
-    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-      const xmlRepo = httpRequest.responseXML; //获取到服务端返回的数据
-      // 获取数据节点
-      let data = xmlRepo.getElementsByTagName("root")[0].childNodes[0].nodeValue;
-      // 数据类型转换
-      // console.log(replaceHtml(data));
-      if (replaceHtml(data)) {
-        messageBox(replaceHtml(data));
-      } else {
-        messageBox(text);
-      }
-
-    };
-  };
+  if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+    // 返回xml字符串或者html
+    return turnCdata(httpRequest.responseXML);
+  } else {
+    console.log(httpRequest.status);
+  }
 };
 
+// POST返回 xml数据类型转换成 字符串或html 模块
+function turnCdata(xmlRepo) {
+  let data = xmlRepo.getElementsByTagName("root")[0].childNodes[0].nodeValue;
+  // 如果判断去掉html是否还有文字，否则返回html
+  if (replaceHtml(data)) {
+    // 去掉html内容，返回文字
+    return replaceHtml(data);
+  } else {
+    // 数据类型转换成 html
+    let htmlData = document.createElement('div');
+    htmlData.innerHTML = data;
+    return htmlData;
+  }
+}
+
+// 编码统一资源定位符模块
+function turnUrl(data, type) {
+  if (type) {
+    return decodeURI(data);
+  } else {
+    return encodeURI(data);
+  }
+}
+// 判断html和字符串是不是html
+function checkHtml(htmlStr) {
+  if (htmlStr.nodeName) {
+    return true;
+  } else {
+    var reg = /<[^>]+>/g;
+    return reg.test(htmlStr);
+  }
+}
+// 过滤html标签、前后空格、特殊符号
+function replaceHtml(txt) {
+  const reg3 = /[\\|\/|\:|\*|\r|\n|\b|\f|\t|\v|\`]+/g; //去掉特殊符号
+  const reg2 = /^(\s+)|(\s+)$/g; //去掉前后空格
+  const reg = /<.+>/g; //去掉所有<>内内容
+  // 先reg3,\n特殊符号会影响reg的匹配
+  return txt.replace(reg3, '').replace(reg, '').replace(reg2, '');
+}
 // 自动评分
 // Request URL: https://www.jkforum.net/forum.php?mod=misc&action=rate&ratesubmit=yes&infloat=yes&inajax=1
 // content-type: application/x-www-form-urlencoded
-// formhash: ff3d16d2
+// formhash: 
 // tid: 13684758
 // pid: 140618316
 // referer: https://www.jkforum.net/forum.php?mod=viewthread&tid=13684758&page=0#pid140618316
