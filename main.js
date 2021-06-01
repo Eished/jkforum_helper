@@ -1,12 +1,14 @@
 // ==UserScript==
 // @name         jkforum helper
 // @namespace    https://www.jkforum.net/
-// @version      0.1.8
+// @version      0.1.9
 // @description  捷克论坛助手，自动签到，自动投票任务，一键批量感谢，自动回帖
 // @author       Eished
 // @license      AGPL-3.0
 // @match        *://*.jkforum.net/*
 // @icon         https://www.google.com/s2/favicons?domain=jkforum.net
+// @grant        GM_setValue
+// @grant        GM_getValue
 // ==/UserScript==
 
 (function () {
@@ -45,7 +47,12 @@ function addBtns() {
     b.style.cssText = 'margin:16px 10px 0px 0px;float:left' //添加样式（margin可以让元素间隔开一定距离）
     b.rows = val1;
     b.cols = val2;
-    b.value = '感謝大大分享！';
+    // 油猴脚本存储回帖内容
+    if (GM_getValue('reply')) {
+      b.value = GM_getValue('reply');
+    } else {
+      b.value = '感謝大大分享！';
+    }
     if (id) {
       b.id = id;
     } //如果传入了id，就修改DOM对象的id
@@ -245,6 +252,8 @@ let replyMessage = ''; //回复内容
 function thankauthor() {
   // 获取回复内容
   replyMessage = document.querySelector('#inp1').value;
+  // 油猴脚本存储回帖内容
+  GM_setValue('reply', replyMessage);
   // 获取当前页地址
   const currentHref = window.location.href;
   if (currentHref.split('-')[0] == 'https://www.jkforum.net/forum') {
