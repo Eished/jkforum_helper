@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         jkforum helper
 // @namespace    https://www.jkforum.net/
-// @version      0.1.7
+// @version      0.1.8
 // @description  捷克论坛助手，自动签到，自动投票任务，一键批量感谢，自动回帖
 // @author       Eished
 // @license      AGPL-3.0
@@ -19,6 +19,7 @@ function addBtns() {
   let status_loginned = document.querySelector('.status_loginned');
   let mnoutbox = document.querySelectorAll('.mnoutbox');
 
+  // 生产消息盒子
   function genDiv() {
     let b = document.createElement('div'); //创建类型为div的DOM对象
     b.style.cssText = 'left: 30%; top: 0%;width:200px;float:left;position:absolute;border-radius: 10px';
@@ -39,13 +40,30 @@ function addBtns() {
     return b; //返回修改好的DOM对象
   }
 
+  function genElement(type, id, val1, val2) {
+    let b = document.createElement(type); //创建类型为button的DOM对象
+    b.style.cssText = 'margin:16px 10px 0px 0px;float:left' //添加样式（margin可以让元素间隔开一定距离）
+    b.rows = val1;
+    b.cols = val2;
+    b.value = '感謝大大分享！';
+    if (id) {
+      b.id = id;
+    } //如果传入了id，就修改DOM对象的id
+    return b; //返回修改好的DOM对象
+  }
+  // 回帖输入框
+  const input = genElement('textarea', 'inp1', 1, 20);
+  status_loginned.insertBefore(input, mnoutbox[1]); //添加按钮到指定位置
+
+
   // 感谢 按钮
-  let thkBtn = genButton('感谢/回帖', thankauthor); //设置名称和绑定函数
+  const thkBtn = genButton('感谢/回帖', thankauthor); //设置名称和绑定函数
   status_loginned.insertBefore(thkBtn, mnoutbox[1]); //添加按钮到指定位置
 
   // 签到按钮
-  let btn = genButton('签到/投票', launch); //设置名称和绑定函数
+  const btn = genButton('签到/投票', launch); //设置名称和绑定函数
   status_loginned.insertBefore(btn, mnoutbox[1]); //添加按钮到指定位置
+
 
 };
 
@@ -222,11 +240,12 @@ function messageBox(text, setTime) {
 
 // 自动感谢帖子
 let fid = null; //回帖帖子用
-const replyMessage = '感謝大大分享！'; //回复内容
+let replyMessage = ''; //回复内容
 
 function thankauthor() {
+  // 获取回复内容
+  replyMessage = document.querySelector('#inp1').value;
   // 获取当前页地址
-  // https://www.jkforum.net/forum-640-1.html
   const currentHref = window.location.href;
   if (currentHref.split('-')[0] == 'https://www.jkforum.net/forum') {
     // 获取板块fid
@@ -304,7 +323,7 @@ function getThreads(currentHref) {
         // 拼接回帖报文
         const replyData = 'message=' + turnUrl(replyMessage) + '&posttime=' + posttime + '&formhash=' + formhash + '&usesig=1&subject=++';
         // 计时器累加，实现间隔10000+5000*(0.1~1)毫秒以上
-        randomTime += Math.ceil(Math.random() * 5000) + 10500;
+        randomTime += Math.ceil(Math.random() * 5000) + 11000;
         setTimeout(() => {
           // POST回帖数据 必须间隔10秒以上+随机数1-10
           const replyRespo = postData(replyUrl, replyData);
