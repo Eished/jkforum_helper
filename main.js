@@ -326,16 +326,7 @@ function getThreads(currentHref) {
         randomTime += Math.ceil(Math.random() * 5000) + 11000;
         setTimeout(() => {
           // POST回帖数据 必须间隔10秒以上+随机数1-10
-          const replyRespo = postData(replyUrl, replyData);
-          // 提取Cdata返回html,错误数据则直接输出
-          if (!checkHtml(replyRespo)) {
-            // xml错误消息
-            messageBox(replyRespo);
-          } else {
-            const info = replyRespo.querySelector('script').innerHTML.split(`, `)[1];
-            // 返回html成功消息
-            messageBox(info.split('，')[0].slice(1) + '，' + info.split('，')[1] + '！');
-          }
+          postData(replyUrl, replyData);
         }, randomTime);
       };
       messageBox('正在回帖中... 总共需要' + (randomTime / 1000 / 60).toFixed(1) + '分钟！如无需回帖，请关闭/刷新页面。', randomTime);
@@ -374,9 +365,7 @@ function getData(url) {
   httpRequest.send();
   if (httpRequest.readyState == 4 && httpRequest.status == 200) {
     return httpRequest.responseText;
-  } else {
-    console.log(httpRequest.status);
-  }
+  };
 };
 
 // POST数据通用模块,返回XML
@@ -386,15 +375,29 @@ function postData(replyUrl, replyData, type) {
     type = 'application/x-www-form-urlencoded';
   }
   const httpRequest = new XMLHttpRequest();
-  httpRequest.open('POST', replyUrl, false);
+  httpRequest.open('POST', replyUrl, true); //同步写法会时区响应
   httpRequest.setRequestHeader('content-Type', type);
   httpRequest.send(replyData); // post数据
-  if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-    // 返回xml字符串或者html
-    return turnCdata(httpRequest.responseXML);
-  } else {
-    console.log(httpRequest.status);
-  }
+  httpRequest.onreadystatechange = () => {
+    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+      // 提取Cdata返回html,错误数据则直接输出
+      const replyRespo = turnCdata(httpRequest.responseXML);
+      if (replyUrl.split('?')[0] == 'https://www.jkforum.net/forum.php') {
+        if (!checkHtml(replyRespo)) {
+          // xml错误消息
+          messageBox(replyRespo);
+        } else {
+          const info = replyRespo.querySelector('script').innerHTML.split(`, `)[1];
+          // 返回html成功消息
+          messageBox(info.split('，')[0].slice(1) + '，' + info.split('，')[1] + '！');
+        }
+        // 返回xml字符串或者html
+        return replyRespo;
+      } else {
+        console.log(replyRespo);
+      }
+    };
+  };
 };
 
 // POST返回 xml数据类型转换成 字符串或html 模块
