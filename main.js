@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         jkforum helper
 // @namespace    https://www.jkforum.net/
-// @version      0.1.9
+// @version      0.2.0
 // @description  捷克论坛助手，自动签到，自动投票任务，一键批量感谢，自动回帖
 // @author       Eished
 // @license      AGPL-3.0
@@ -98,8 +98,8 @@ function sign() {
       const data = turnCdata(httpRequest.responseXML); //返回HTML数据或字符串
       // 如果是html则输出html内容
       if (checkHtml(data)) {
-        const info = data.querySelector('.c').innerHTML; //去除html，返回字符串
-        messageBox(info);
+        const info = data.querySelector('.c').innerHTML.split('<')[0]; // 解析html，返回字符串
+        messageBox(info, 'none');
       } else {
         messageBox(data);
       }
@@ -170,6 +170,7 @@ function getAid(vidUrl) {
     }
   };
 };
+// <script type="text/javascript" reload="1">if(typeof succeedhandle_dian=='function') {succeedhandle_dian('https://www.jkforum.net/home.php?mod=space&do=notice', '投票成功，感謝您的參與！', {});}hideWindow('dian');showDialog('投票成功，感謝您的參與！', 'notice', null, function () { window.location.href ='https://www.jkforum.net/home.php?mod=space&do=notice'; }, 0, null, null, '', '', null, 6);</script>
 
 // 投票
 function voted(aid, vid) {
@@ -186,8 +187,15 @@ function voted(aid, vid) {
       const data = turnCdata(httpRequest.responseXML); //返回HTML数据或字符串
       // 如果是html则输出html内容
       if (checkHtml(data)) {
-        const info = turnCdata(data.querySelector('.alert_info').innerHTML); //去除html，返回字符串
-        messageBox(info);
+        let info = '';
+        if (data.querySelector('.alert_info')) {
+          info = turnCdata(data.querySelector('.alert_info').innerHTML); // 解析html，返回字符串，失败警告
+        } else if (data.querySelector('script')) {
+          info = data.querySelector('script').innerHTML.split(`', `)[1].slice(1); // 解析html，获取字符串，成功消息
+        } else {
+          info = "投票返回HTML数据识别失败: " + data;
+        }
+        messageBox(info, 'none');
       } else {
         messageBox(data);
       }
