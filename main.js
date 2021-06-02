@@ -251,40 +251,58 @@ function getThreads(currentHref) {
       }
       // 执行回帖函数和感谢函数 必须间隔10秒以上+随机数10-100毫秒
       let randomTime = 0;
-
+      randomTime = Math.ceil(Math.random() * 1000) + 11000;
+      let i = 0;
       // 遍历所有帖子链接并感谢
-      for (let i = 0; i < hrefs.length; i++) {
-        const href = hrefs[i].href;
-        // 获取帖子ID
-        const tid = href.split('-')[1]; // 无前缀 数字
-        const touser = tousers[i]; // 无前缀 字符串
-        const touserUid = touserUids[i]; //无前缀 数字
-        // 拼接感谢报文
-        const thkData = 'formhash=' + formhash + '&tid=' + tid + '&touser=' + touser + '&touser' + touserUid + '&handlekey=k_thankauthor&addsubmit=true';
-        // 执行感谢函数
-        const thkReqUrl = 'https://www.jkforum.net/plugin/?id=thankauthor:thank&inajax=1'; //请求地址
-        postData(thkReqUrl, thkData, 'thk'); //post感谢数据
+      if (confirm("确认开始感谢并回帖？否则感谢本页帖子！")) { //确认回帖
+        let timer = setInterval(() => {
+          if (i < hrefs.length) {
+            const href = hrefs[i].href;
+            // 获取帖子ID
+            const tid = href.split('-')[1]; // 无前缀 数字
+            const touser = tousers[i]; // 无前缀 字符串
+            const touserUid = touserUids[i]; //无前缀 数字
+            // 拼接感谢报文
+            const thkData = 'formhash=' + formhash + '&tid=' + tid + '&touser=' + touser + '&touser' + touserUid + '&handlekey=k_thankauthor&addsubmit=true';
+            // 执行感谢函数
+            const thkReqUrl = 'https://www.jkforum.net/plugin/?id=thankauthor:thank&inajax=1'; //请求地址
+            postData(thkReqUrl, thkData, 'thk'); //post感谢数据
 
-        // 参数
-        // 拼接回帖url
-        const replyUrl = 'https://www.jkforum.net/forum.php?mod=post&action=reply&fid=' + fid + '&tid=' +
-          tid + '&extra=page%3D1&replysubmit=yes&infloat=yes&handlekey=fastpost&inajax=1';
-        // 生产时间戳
-        const date = new Date();
-        const posttime = parseInt(date.getTime() / 1000);
-        // 拼接回帖报文
-        const replyData = 'message=' + turnUrl(replyMessage) + '&posttime=' + posttime + '&formhash=' + formhash + '&usesig=1&subject=++';
-        // 计时器累加，实现间隔10000+5000*(0.1~1)毫秒以上
-        randomTime += Math.ceil(Math.random() * 5000) + 11000;
-        setTimeout(() => {
-          // POST回帖数据 必须间隔10秒以上+随机数1-10
-          postData(replyUrl, replyData, 'reply');
+            // 参数
+            // 拼接回帖url
+            const replyUrl = 'https://www.jkforum.net/forum.php?mod=post&action=reply&fid=' + fid + '&tid=' +
+              tid + '&extra=page%3D1&replysubmit=yes&infloat=yes&handlekey=fastpost&inajax=1';
+            // 生产时间戳
+            const date = new Date();
+            const posttime = parseInt(date.getTime() / 1000);
+            // 拼接回帖报文
+            const replyData = 'message=' + turnUrl(replyMessage) + '&posttime=' + posttime + '&formhash=' + formhash + '&usesig=1&subject=++';
+            // 计时器累加，实现间隔10000+5000*(0.1~1)毫秒以上
+            // randomTime += Math.ceil(Math.random() * 5000) + 11000;
+            // POST回帖数据 必须间隔10秒以上+随机数1-10
+            postData(replyUrl, replyData, 'reply');
+            i++;
+          } else if (i == hrefs.length) {
+            clearInterval(timer);
+            alert("全部回帖完成！");
+          }
+          console.log(randomTime, i, hrefs.length);
         }, randomTime);
-      };
-      messageBox('正在回帖中... 总共需要' + (randomTime / 1000 / 60).toFixed(1) + '分钟！如无需回帖，请关闭/刷新页面。', randomTime);
-      setTimeout(() => {
-        messageBox("全部回帖完成！", 'none');
-      }, randomTime);
+        messageBox('正在回帖中... 需要' + (randomTime * hrefs.length / 1000 / 60).toFixed(2) + '分钟！如无需回帖，请关闭/刷新页面。请保持本页面前台，否则会导致进程休眠无法正常运行！', 'none');
+      } else {
+        for (i = 0; i < hrefs.length; i++) {
+          const href = hrefs[i].href;
+          // 获取帖子ID
+          const tid = href.split('-')[1]; // 无前缀 数字
+          const touser = tousers[i]; // 无前缀 字符串
+          const touserUid = touserUids[i]; //无前缀 数字
+          // 拼接感谢报文
+          const thkData = 'formhash=' + formhash + '&tid=' + tid + '&touser=' + touser + '&touser' + touserUid + '&handlekey=k_thankauthor&addsubmit=true';
+          // 执行感谢函数
+          const thkReqUrl = 'https://www.jkforum.net/plugin/?id=thankauthor:thank&inajax=1'; //请求地址
+          postData(thkReqUrl, thkData, 'thk'); //post感谢数据
+        }
+      }
     };
   };
 };
@@ -319,7 +337,7 @@ function postData(replyUrl, replyData, fromId, contentType) {
           const info = stringOrHtml.querySelector('script').innerHTML.split(`, `)[1];
           messageBox(info.split('，')[0].slice(1) + '，' + info.split('，')[1] + '！'); // 返回html成功消息
         } else {
-          messageBox(stringOrHtml); //其它情况直接输出
+          messageBox(stringOrHtml, 'none'); //其它情况直接输出
         }
       } else if (fromId == 'sign') { //签到
         if (checkHtml(stringOrHtml)) { // 确认html
@@ -344,7 +362,7 @@ function postData(replyUrl, replyData, fromId, contentType) {
         }
         const urlDraw = 'https://www.jkforum.net/home.php?mod=task&do=draw&id=59';
         taskDone(urlDraw); // 执行领奖励
-      } else if (fromId == 'thk') {
+      } else if (fromId == 'thk') { //感谢
         if (checkHtml(stringOrHtml)) {
           const info = replaceHtml(stringOrHtml.querySelector('.alert_info').innerHTML); //去除html，返回字符串
           messageBox(info);
