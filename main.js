@@ -2,7 +2,7 @@
 // @name         jkforum helper
 // @namespace    https://www.jkforum.net/
 // @version      0.2.0
-// @description  捷克论坛助手，自动签到，自动投票任务，一键批量感谢，自动回帖
+// @description  捷克论坛助手：自动签到，自动投票任务，一键批量感谢，一键批量回帖
 // @author       Eished
 // @license      AGPL-3.0
 // @match        *://*.jkforum.net/*
