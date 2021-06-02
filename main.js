@@ -2,7 +2,7 @@
 // @name         jkforum helper
 // @namespace    https://www.jkforum.net/
 // @version      0.2.2
-// @description  捷克论坛助手：自动签到，自动投票任务，一键批量感谢，一键批量回帖
+// @description  捷克论坛助手：一键签到，一键批量感谢，一键批量回帖，自动完成投票任务
 // @author       Eished
 // @license      AGPL-3.0
 // @match        *://*.jkforum.net/*
@@ -240,7 +240,7 @@ function thankauthor() {
       function sendPage() {
         let currentHrefPage = 'https://www.jkforum.net/forum-' + fid + '-' + pageFrom + '.html'; //生成帖子列表地址
         getThreads(currentHrefPage);
-        console.log('当前地址：', currentHrefPage, '页码', pageFrom);
+        console.log('当前地址：', currentHrefPage, '页码：', pageFrom);
         pageFrom++;
       };
       sendPage();
@@ -256,7 +256,7 @@ function thankauthor() {
               clearInterval(timer1);
               messageBox("所有页码回帖/感谢发送完成", 'none');
             } else if (pageTime != pageTimeCache) { //保持pageTime为最新获取的时间
-              console.log('pageTime1:', pageTime, 'pageTimeCache:', pageTimeCache);
+              console.log('上一页实际运行时间:', pageTime, '上一页设定运行时间:', pageTimeCache);
               clearInterval(timer1);
               pageTimeCache = pageTime; //同步时间
               timeMachine(); //重新生成第二次的计时器，每次矫正要等pageTime
@@ -342,7 +342,7 @@ function getThreads(currentHref) {
 
       function timeMeassage() { //动态赋值pageTime 和通知消息
         pageTime = randomTime * hrefs.length + 20000; // 动态赋值pageTime 每页加 20000ms 等待时间，平衡误差
-        console.log("本页 pageTime：", pageTime);
+        console.log("本页需要运行时间：", pageTime - 20000);
         messageBox('正在回帖中... 当前页需要' + (pageTime / 1000 / 60).toFixed(1) + '分钟！如无需回帖，请关闭/刷新页面。请保持本页面前台，否则会导致进程休眠无法正常运行！', 'none');
       }
 
