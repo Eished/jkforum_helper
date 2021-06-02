@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         jkforum helper
 // @namespace    https://www.jkforum.net/
-// @version      0.2.1
+// @version      0.2.2
 // @description  捷克论坛助手：自动签到，自动投票任务，一键批量感谢，一键批量回帖
 // @author       Eished
 // @license      AGPL-3.0
@@ -240,21 +240,33 @@ function thankauthor() {
       function sendPage() {
         let currentHrefPage = 'https://www.jkforum.net/forum-' + fid + '-' + pageFrom + '.html'; //生成帖子列表地址
         getThreads(currentHrefPage);
-        console.log(currentHrefPage, pageFrom);
+        console.log('当前地址：', currentHrefPage, '页码', pageFrom);
         pageFrom++;
       };
       sendPage();
-      setTimeout(() => { //等待上一次请求sendPage()初始化pageTime
-        console.log('pageTime1:', pageTime);
-        let timer1 = setInterval(() => {
-          if (pageFrom > pageEnd) {
-            clearInterval(timer1);
-            messageBox("所有页码回帖/感谢发送完成", 'none');
-          } else {
-            sendPage();
-          }
-        }, pageTime)
-      }, 10000)
+
+      setTimeout(() => { //等待上一次异步请求sendPage()初始化pageTime
+        let pageTimeCache = pageTime; //缓存上一次的pageTime
+        timeMachine();
+
+        // 时光机自我调用，自我更新pageTime，用上一页的pageTime来运行下一页的sendPage
+        function timeMachine() {
+          let timer1 = setInterval(() => {
+            if (pageFrom > pageEnd) {
+              clearInterval(timer1);
+              messageBox("所有页码回帖/感谢发送完成", 'none');
+            } else if (pageTime != pageTimeCache) { //保持pageTime为最新获取的时间
+              console.log('pageTime1:', pageTime, 'pageTimeCache:', pageTimeCache);
+              clearInterval(timer1);
+              pageTimeCache = pageTime; //同步时间
+              timeMachine(); //重新生成第二次的计时器，每次矫正要等pageTime
+              sendPage(); //计时器需要等待pageTime，不如用第二次的计时器边发边等，生成第三次pageTime；用第三次pageTime执行第四次发送；如果三次<四次，会发送失败，+20秒平衡误差；
+            } else {
+              sendPage(); //第二次执行，重置pageTime；第三次与缓存不符，重新生成计时器，同步计时器pageTimeCache。
+            }
+          }, pageTime)
+        }
+      }, 5000);
       messageBox("多页感谢/回帖中，请等待", 'none');
     } else {
       messageBox('请输入回帖列表页码，格式：版块代码-起点页-终点页 ；例如：640-1-2 ；版块代码见版块URL中间数字：forum-640-1', 10000);
@@ -308,7 +320,7 @@ function getThreads(currentHref) {
       }
       i = 0;
 
-      function chkReply() {
+      function chkReply() { // 回帖函数，提取出来，先于计时器执行
         if (i < hrefs.length) {
           href = hrefs[i].href;
           // 获取帖子ID
@@ -325,8 +337,15 @@ function getThreads(currentHref) {
           postData(replyUrl, replyData, 'reply');
           i++;
         }
-        console.log(randomTime, i, hrefs.length);
+        console.log(randomTime, '帖子序号：', i, '总数量：', hrefs.length);
       };
+
+      function timeMeassage() { //动态赋值pageTime 和通知消息
+        pageTime = randomTime * hrefs.length + 20000; // 动态赋值pageTime 每页加 20000ms 等待时间，平衡误差
+        console.log("本页 pageTime：", pageTime);
+        messageBox('正在回帖中... 当前页需要' + (pageTime / 1000 / 60).toFixed(1) + '分钟！如无需回帖，请关闭/刷新页面。请保持本页面前台，否则会导致进程休眠无法正常运行！', 'none');
+      }
+
       if (pageTime == 1000 && confirm("已感谢，确认回帖？")) { //确认回帖
         chkReply();
         let timer = setInterval(() => {
@@ -337,9 +356,7 @@ function getThreads(currentHref) {
             chkReply();
           }
         }, randomTime);
-        pageTime = (randomTime + 1000) * hrefs.length; //加40秒随机范围
-        console.log("pageTime = randomTime * hrefs.length;", pageTime);
-        messageBox('正在回帖中... 当前页需要' + (randomTime * hrefs.length / 1000 / 60).toFixed(2) + '分钟！如无需回帖，请关闭/刷新页面。请保持本页面前台，否则会导致进程休眠无法正常运行！', 'none');
+        timeMeassage();
       } else if (pageTime != 2000 && pageTime != 1000) { //如果第一次确认回帖，则后面无需确认
         chkReply();
         let timer = setInterval(() => {
@@ -350,12 +367,10 @@ function getThreads(currentHref) {
             chkReply();
           }
         }, randomTime);
-        pageTime = (randomTime + 1000) * hrefs.length; //加40秒随机范围
-        console.log("pageTime = randomTime * hrefs.length;", pageTime);
-        messageBox('正在回帖中... 当前页需要' + (randomTime * hrefs.length / 1000 / 60).toFixed(2) + '分钟！如无需回帖，请关闭/刷新页面。请保持本页面前台，否则会导致进程休眠无法正常运行！', 'none');
+        timeMeassage();
       } else {
         pageTime = 2000; //第一次取消回帖，第二次无需再确认
-        console.log("pageTime = 2000", pageTime);
+        console.log("已取消回帖：", pageTime);
       }
     };
   };
