@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         jkforum helper
 // @namespace    https://www.jkforum.net/
-// @version      0.2.3
+// @version      0.2.4
 // @description  捷克论坛助手：一键签到，一键批量感谢，一键批量回帖，自动完成投票任务
 // @author       Eished
 // @license      AGPL-3.0
@@ -232,12 +232,6 @@ let pageFrom = 0; //回帖起始页
 let pageEnd = 0; //回帖终点页
 
 function thankauthor() {
-  document.querySelector('#video1').play(); // 播放视频，防止休眠
-  if (!document.querySelector('#video1').paused) {
-    messageBox('防止休眠启动，请保持本页处于激活状态，勿最小化本窗口以及全屏运行其它应用！', 'none');
-  } else {
-    console.log(document.querySelector('#video1'));
-  }
   replyMessage = document.querySelector('#inp1').value; // 获取回复内容
   GM_setValue('reply', replyMessage); // 油猴脚本存储回帖内容
   const currentHref = window.location.href; // 获取当前页地址
@@ -260,6 +254,13 @@ function thankauthor() {
     page = document.querySelector('#inp2').value;
     console.log(page);
     if (page) { //如果输入了地址则进行批量处理
+      document.querySelector('#video1').play(); // 播放视频，防止休眠
+      if (!document.querySelector('#video1').paused) {
+        messageBox('防止休眠启动，请保持本页处于激活状态，勿最小化本窗口以及全屏运行其它应用！', 'none');
+      } else {
+        console.log(document.querySelector('#video1'));
+      }
+
       GM_setValue('replyPage', page);
       pageFrom = parseInt(page.split('-')[1]); // 获取起点页码
       pageEnd = parseInt(page.split('-')[2]); // 获取终点页码
