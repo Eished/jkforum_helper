@@ -228,11 +228,13 @@ let fid = null; //回帖帖子用
 let replyMessage = ''; //回复内容
 let page = null; // 帖子列表页码
 let pageTime = 1000; // 翻页时间，默认感谢为1秒，回帖为第一次请求时初始化值
+let pageFrom = 0;
+let pageEnd = 0;
 
 function thankauthor() {
   document.querySelector('#video1').play(); // 播放视频，防止休眠
   if (!document.querySelector('#video1').paused) {
-    messageBox('防止休眠启动，请勿缩小本窗口！', 'none');
+    messageBox('防止休眠启动，请保持本页处于激活状态，勿缩小本窗口以及全屏运行其它应用！', 'none');
   } else {
     console.log(document.querySelector('#video1'));
   }
@@ -259,9 +261,9 @@ function thankauthor() {
     console.log(page);
     if (page) { //如果输入了地址则进行批量处理
       GM_setValue('replyPage', page);
-      let pageFrom = parseInt(page.split('-')[1]); // 获取回复内容
-      let pageEnd = parseInt(page.split('-')[2]); // 获取回复内容
-      fid = page.split('-')[0]; // 获取回复内容
+      pageFrom = parseInt(page.split('-')[1]); // 获取起点页码
+      pageEnd = parseInt(page.split('-')[2]); // 获取终点页码
+      fid = page.split('-')[0]; // 获取版块代码
       function sendPage() {
         let currentHrefPage = 'https://www.jkforum.net/forum-' + fid + '-' + pageFrom + '.html'; //生成帖子列表地址
         getThreads(currentHrefPage);
@@ -292,7 +294,7 @@ function thankauthor() {
           }, pageTime)
         }
       }, 5000);
-      messageBox("多页感谢/回帖中，请等待", 'none');
+      messageBox("多页感谢/回帖中，请等待...", 'none');
     } else {
       messageBox('请输入回帖列表页码，格式：版块代码-起点页-终点页 ；例如：640-1-2 ；版块代码见版块URL中间数字：forum-640-1', 10000);
     }
@@ -368,7 +370,7 @@ function getThreads(currentHref) {
       function timeMeassage() { //动态赋值pageTime 和通知消息
         pageTime = randomTime * hrefs.length + 20000; // 动态赋值pageTime 每页加 20000ms 等待时间，平衡误差
         console.log("本页需要运行时间：", pageTime - 20000);
-        messageBox('正在回帖中... 当前页需要' + (pageTime / 1000 / 60).toFixed(1) + '分钟！如无需回帖，请关闭/刷新页面。', 'none');
+        messageBox('正在回帖中... ' + (pageFrom - 1) + '/' + pageEnd + '页需要' + (pageTime / 1000 / 60).toFixed(1) + '分钟', 'none');
       }
 
       if (pageTime == 1000 && confirm("已感谢，确认回帖？")) { //确认回帖
