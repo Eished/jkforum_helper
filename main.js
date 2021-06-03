@@ -204,7 +204,7 @@ function messageBox(text, setTime) {
     return b; //返回修改好的DOM对象
   };
   // 生成时间 id 
-  const date = new Date;
+  const date = new Date();
   const timeId = 'a' + date.getTime();
   // 初始化消息盒子
   let textBox = genBox(text, timeId);
