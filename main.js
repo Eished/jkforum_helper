@@ -228,13 +228,13 @@ let fid = null; //回帖帖子用
 let replyMessage = ''; //回复内容
 let page = null; // 帖子列表页码
 let pageTime = 1000; // 翻页时间，默认感谢为1秒，回帖为第一次请求时初始化值
-let pageFrom = 0;
-let pageEnd = 0;
+let pageFrom = 0; //回帖起始页
+let pageEnd = 0; //回帖终点页
 
 function thankauthor() {
   document.querySelector('#video1').play(); // 播放视频，防止休眠
   if (!document.querySelector('#video1').paused) {
-    messageBox('防止休眠启动，请保持本页处于激活状态，勿缩小本窗口以及全屏运行其它应用！', 'none');
+    messageBox('防止休眠启动，请保持本页处于激活状态，勿最小化本窗口以及全屏运行其它应用！', 'none');
   } else {
     console.log(document.querySelector('#video1'));
   }
@@ -281,9 +281,9 @@ function thankauthor() {
           let timer1 = setInterval(() => {
             if (pageFrom > pageEnd) {
               clearInterval(timer1);
-              messageBox("所有页码回帖/感谢发送完成", 'none');
+              messageBox(page + "，所有页码回帖/感谢发送完成", 'none');
             } else if (pageTime != pageTimeCache) { //保持pageTime为最新获取的时间
-              console.log('上一页实际运行时间:', pageTime, '上一页设定运行时间:', pageTimeCache);
+              console.log('上一页设定运行时间:', pageTimeCache, '下一页设定运行时间:', pageTime);
               clearInterval(timer1);
               pageTimeCache = pageTime; //同步时间
               timeMachine(); //重新生成第二次的计时器，每次矫正要等pageTime
