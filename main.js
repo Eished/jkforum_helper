@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         jkforum helper
 // @namespace    https://www.jkforum.net/
-// @version      0.2.2
+// @version      0.2.3
 // @description  捷克论坛助手：一键签到，一键批量感谢，一键批量回帖，自动完成投票任务
 // @author       Eished
 // @license      AGPL-3.0
@@ -67,12 +67,28 @@ function addBtns() {
     b.placeholder = `版块-1-2`;
     return b; //返回修改好的DOM对象
   }
+
+  function genVideo() {
+    let video = document.createElement('video');
+    video.style.cssText = 'display: none; z-index: -1000;width:0;height:0;'
+    video.id = 'video1';
+    video.loop = 'true';
+    video.autoplay = 'true';
+    let source = document.createElement('source');
+    source.src = 'https://github.com/Eished/jkforum_helper/blob/master/jkforum_helper/light.mp4';
+    source.type = "video/mp4"
+    video.append(source);
+    return video;
+  }
+  // 回帖输入框
+  const video = genVideo();
+  status_loginned.insertBefore(video, mnoutbox[1]); //添加视频到指定位置
   // 回帖输入框
   const page = genElement2('input', 'inp2');
-  status_loginned.insertBefore(page, mnoutbox[1]); //添加按钮到指定位置
+  status_loginned.insertBefore(page, mnoutbox[1]); //添加输入框到指定位置
   // 回帖输入框
   const input = genElement('textarea', 'inp1', 1, 20);
-  status_loginned.insertBefore(input, mnoutbox[1]); //添加按钮到指定位置
+  status_loginned.insertBefore(input, mnoutbox[1]); //添加文本域到指定位置
 
   // 感谢 按钮
   const thkBtn = genButton('感谢/回帖', thankauthor); //设置名称和绑定函数
@@ -211,6 +227,7 @@ let page = null; // 帖子列表页码
 let pageTime = 1000; // 翻页时间，默认感谢为1秒，回帖为第一次请求时初始化值
 
 function thankauthor() {
+  document.querySelector('#video1').play(); // 播放视频，防止休眠
   replyMessage = document.querySelector('#inp1').value; // 获取回复内容
   GM_setValue('reply', replyMessage); // 油猴脚本存储回帖内容
   const currentHref = window.location.href; // 获取当前页地址
@@ -236,7 +253,6 @@ function thankauthor() {
       let pageFrom = parseInt(page.split('-')[1]); // 获取回复内容
       let pageEnd = parseInt(page.split('-')[2]); // 获取回复内容
       fid = page.split('-')[0]; // 获取回复内容
-      // let pageTime = 1000 * 60 * 8; //八分钟
       function sendPage() {
         let currentHrefPage = 'https://www.jkforum.net/forum-' + fid + '-' + pageFrom + '.html'; //生成帖子列表地址
         getThreads(currentHrefPage);
@@ -343,7 +359,7 @@ function getThreads(currentHref) {
       function timeMeassage() { //动态赋值pageTime 和通知消息
         pageTime = randomTime * hrefs.length + 20000; // 动态赋值pageTime 每页加 20000ms 等待时间，平衡误差
         console.log("本页需要运行时间：", pageTime - 20000);
-        messageBox('正在回帖中... 当前页需要' + (pageTime / 1000 / 60).toFixed(1) + '分钟！如无需回帖，请关闭/刷新页面。请保持本页面前台，否则会导致进程休眠无法正常运行！', 'none');
+        messageBox('正在回帖中... 当前页需要' + (pageTime / 1000 / 60).toFixed(1) + '分钟！如无需回帖，请关闭/刷新页面。请勿缩小浏览器窗口，防止进程休眠！', 'none');
       }
 
       if (pageTime == 1000 && confirm("已感谢，确认回帖？")) { //确认回帖

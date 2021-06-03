@@ -2,9 +2,9 @@
 
 ## 一键签到，自动投票任务，一键批量感谢，一键批量回帖
 
-安装地址：https://greasyfork.org/zh-CN/scripts/427246-jkforum-helper
+安装地址：`https://greasyfork.org/zh-CN/scripts/427246-jkforum-helper`
 
-项目地址：https://github.com/Eished/jkforum_helper
+项目地址：`https://github.com/Eished/jkforum_helper`
 
 ## 已完成功能：
 
