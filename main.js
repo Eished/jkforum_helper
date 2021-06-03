@@ -443,7 +443,7 @@ function postData(replyUrl, replyData, fromId, contentType) {
       } else if (fromId == 'sign') { //签到
         if (checkHtml(stringOrHtml)) { // 确认html
           const info = stringOrHtml.querySelector('.c').innerHTML.split('<')[0]; // 解析html，返回字符串
-          messageBox(info, 'none');
+          messageBox(info, 10000);
         } else {
           messageBox(stringOrHtml); //其它情况直接输出
         }
@@ -457,7 +457,7 @@ function postData(replyUrl, replyData, fromId, contentType) {
           } else {
             info = "投票返回HTML数据识别失败: " + stringOrHtml;
           }
-          messageBox(info, 'none');
+          messageBox(info, 10000);
         } else {
           messageBox(stringOrHtml); //其它情况直接输出
         }
