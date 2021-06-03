@@ -63,7 +63,10 @@ function addBtns() {
     b.style.cssText = 'margin:16px 10px 0px 0px;float:left;width:80px' //添加样式（margin可以让元素间隔开一定距离）
     if (id) {
       b.id = id;
-    } //如果传入了id，就修改DOM对象的id
+    }
+    if (GM_getValue('replyPage')) {
+      b.value = GM_getValue('replyPage');
+    }
     b.placeholder = `版块-1-2`;
     return b; //返回修改好的DOM对象
   }
@@ -75,7 +78,7 @@ function addBtns() {
     video.loop = 'true';
     video.autoplay = 'true';
     let source = document.createElement('source');
-    source.src = 'https://github.com/Eished/jkforum_helper/blob/master/jkforum_helper/light.mp4';
+    source.src = 'https://raw.githubusercontent.com/Eished/jkforum_helper/main/video/light.mp4';
     source.type = "video/mp4"
     video.append(source);
     return video;
@@ -228,6 +231,11 @@ let pageTime = 1000; // 翻页时间，默认感谢为1秒，回帖为第一次�
 
 function thankauthor() {
   document.querySelector('#video1').play(); // 播放视频，防止休眠
+  if (!document.querySelector('#video1').paused) {
+    messageBox('防止休眠启动，请勿缩小本窗口！', 'none');
+  } else {
+    console.log(document.querySelector('#video1'));
+  }
   replyMessage = document.querySelector('#inp1').value; // 获取回复内容
   GM_setValue('reply', replyMessage); // 油猴脚本存储回帖内容
   const currentHref = window.location.href; // 获取当前页地址
@@ -250,6 +258,7 @@ function thankauthor() {
     page = document.querySelector('#inp2').value;
     console.log(page);
     if (page) { //如果输入了地址则进行批量处理
+      GM_setValue('replyPage', page);
       let pageFrom = parseInt(page.split('-')[1]); // 获取回复内容
       let pageEnd = parseInt(page.split('-')[2]); // 获取回复内容
       fid = page.split('-')[0]; // 获取回复内容
@@ -359,7 +368,7 @@ function getThreads(currentHref) {
       function timeMeassage() { //动态赋值pageTime 和通知消息
         pageTime = randomTime * hrefs.length + 20000; // 动态赋值pageTime 每页加 20000ms 等待时间，平衡误差
         console.log("本页需要运行时间：", pageTime - 20000);
-        messageBox('正在回帖中... 当前页需要' + (pageTime / 1000 / 60).toFixed(1) + '分钟！如无需回帖，请关闭/刷新页面。请勿缩小浏览器窗口，防止进程休眠！', 'none');
+        messageBox('正在回帖中... 当前页需要' + (pageTime / 1000 / 60).toFixed(1) + '分钟！如无需回帖，请关闭/刷新页面。', 'none');
       }
 
       if (pageTime == 1000 && confirm("已感谢，确认回帖？")) { //确认回帖
