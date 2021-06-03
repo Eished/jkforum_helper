@@ -265,6 +265,10 @@ function thankauthor() {
       pageFrom = parseInt(page.split('-')[1]); // 获取起点页码
       pageEnd = parseInt(page.split('-')[2]); // 获取终点页码
       fid = page.split('-')[0]; // 获取版块代码
+
+      getData('https://www.jkforum.net/forum.php?mod=forumdisplay&fid=' + fid + '&forumdefstyle=yes'); //切换到列表模式，同步请求。
+      messageBox('已切换到列表模式');
+
       function sendPage() {
         let currentHrefPage = 'https://www.jkforum.net/forum-' + fid + '-' + pageFrom + '.html'; //生成帖子列表地址
         getThreads(currentHrefPage);
