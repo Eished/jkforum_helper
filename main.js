@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         jkforum helper
-// @namespace    https://www.jkforum.net/
-// @version      0.2.4
-// @description  捷克论坛助手：一键签到，一键批量感谢，一键批量回帖，自动完成投票任务
+// @namespace    https://github.com/Eished/jkforum_helper
+// @version      0.2.5
+// @description  捷克论坛助手：一键签到，定时签到，批量回帖，批量感谢，自动完成投票任务
 // @author       Eished
 // @license      AGPL-3.0
 // @match        *://*.jkforum.net/*
@@ -235,7 +235,8 @@ function thankauthor() {
   replyMessage = document.querySelector('#inp1').value; // 获取回复内容
   GM_setValue('reply', replyMessage); // 油猴脚本存储回帖内容
   const currentHref = window.location.href; // 获取当前页地址
-  if (currentHref.split('-')[0] == 'https://www.jkforum.net/forum') {
+  if (currentHref.match('forum-')) {
+    messageBox('已选择单页感谢/回帖');
     fid = currentHref.split('-')[1]; // 获取板块fid
     // 判断当前页是否处于图片模式
     if (document.querySelector('.showmenubox').querySelector('[class="chked"]')) {
@@ -252,7 +253,7 @@ function thankauthor() {
     }
   } else {
     page = document.querySelector('#inp2').value;
-    console.log(page);
+    messageBox('已选择多页感谢/回帖：' + page);
     if (page) { //如果输入了地址则进行批量处理
       document.querySelector('#video1').play(); // 播放视频，防止休眠
       if (!document.querySelector('#video1').paused) {
@@ -286,7 +287,7 @@ function thankauthor() {
           let timer1 = setInterval(() => {
             if (pageFrom > pageEnd) {
               clearInterval(timer1);
-              messageBox(page + "，所有页码回帖/感谢发送完成", 'none');
+              messageBox(page + "：所有页码回帖/感谢发送完成", 'none');
             } else if (pageTime != pageTimeCache) { //保持pageTime为最新获取的时间
               console.log('上一页设定运行时间:', pageTimeCache, '下一页设定运行时间:', pageTime);
               clearInterval(timer1);
@@ -299,7 +300,7 @@ function thankauthor() {
           }, pageTime)
         }
       }, 5000);
-      messageBox("多页感谢/回帖中，请等待...", 'none');
+      messageBox(page + "：多页感谢/回帖中，请等待...", 'none');
     } else {
       messageBox('请输入回帖列表页码，格式：版块代码-起点页-终点页 ；例如：640-1-2 ；版块代码见版块URL中间数字：forum-640-1', 10000);
     }
