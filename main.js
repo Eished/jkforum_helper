@@ -2,10 +2,11 @@
 // @name         jkforum helper
 // @namespace    https://github.com/Eished/jkforum_helper
 // @version      0.2.6
-// @description  捷克论坛助手：一键签到，定时签到，批量回帖，批量感谢，自动加载原图，自动完成投票任务
+// @description  捷克论坛助手：自动签到，一键批量回帖/感谢，自动加载原图，自动完成投票任务
 // @author       Eished
 // @license      AGPL-3.0
 // @match        *://*.jkforum.net/*
+// @exclude      *.jkforum.net/member*
 // @icon         https://www.google.com/s2/favicons?domain=jkforum.net
 // @grant        GM_setValue
 // @grant        GM_getValue
@@ -14,6 +15,7 @@
 (function () {
   'use strict';
   addBtns();
+  launch();
   rePic();
 })();
 
@@ -111,32 +113,40 @@ function addBtns() {
   status_loginned.insertBefore(thkBtn, mnoutbox[1]); //添加按钮到指定位置
 
   // 签到按钮
-  const btn = genButton('签到/投票', launch); //设置名称和绑定函数
-  status_loginned.insertBefore(btn, mnoutbox[1]); //添加按钮到指定位置
+  // const btn = genButton('签到/投票', launch); //设置名称和绑定函数
+  // status_loginned.insertBefore(btn, mnoutbox[1]); //添加按钮到指定位置
 };
 
+
 function launch() {
-  let urlApply = 'https://www.jkforum.net/home.php?mod=task&do=apply&id=59';
-
-  let signTime = GM_getValue('signTime');
-  if (signTime) {
-
-  } else {
-
-    GM_setValue('signTime', signTime);
-
+  const formhash = document.querySelectorAll('#scbar_form input')[1].value; // 全局用户hash值，没有全局变量，
+  if (formhash != GM_getValue('formhash')) {
+    GM_setValue('formhash', formhash); //用GM_setValue当全局变量
   }
-  // 申请任务
-  task(urlApply);
-  // 签到
-  sign();
+  let avatar_info = document.querySelector('.avatar_info'); // 用户名判断唯一用户
+  if (avatar_info) { //验证是否登录
+    avatar_info = avatar_info.querySelector('a').innerHTML;
+    const date = new Date();
+    let signDate = GM_getValue(avatar_info); // 从formhash判断唯一用户, 不行，是变量！avatar_info
+    if (signDate != date.getDate()) { //天变动则签到
+      signDate = date.getDate();
+      GM_setValue(avatar_info, signDate); //保存当天日
+      const urlApply = 'https://www.jkforum.net/home.php?mod=task&do=apply&id=59';
+      // 申请任务
+      task(urlApply);
+      // 签到
+      sign();
+    }
+  } else {
+    messageBox('未登录');
+  }
 }
 
-// 签到 直接post签到数据
-const formhash = document.querySelectorAll('#scbar_form input')[1].value; // 全局用户hash值
+// let formhash = document.querySelectorAll('#scbar_form input')[1].value; // 全局用户hash值，没有全局变量
+
 function sign() {
   const todaysay = '好想睡覺~'; //签到输入内容
-  let pMessage = 'formhash=' + formhash + '&qdxq=ym&qdmode=1&todaysay=' + turnUrl(todaysay) + '&fastreply=1'; //post 报文
+  let pMessage = 'formhash=' + GM_getValue('formhash') + '&qdxq=ym&qdmode=1&todaysay=' + turnUrl(todaysay) + '&fastreply=1'; //post 报文
   let url = 'https://www.jkforum.net/plugin/?id=dsu_paulsign:sign&operation=qiandao&infloat=1&inajax=1'; //请求链接
   // 直接post签到数据
   postData(url, pMessage, 'sign');
@@ -194,7 +204,7 @@ function getAid(vidUrl, vid) {
       const href = htmlData.querySelector('.hp_s_c a').href;
       // 分解链接
       const aid = href.split('&')[2].split('=')[1]; // 纯数字
-      const pMessage = 'formhash=' + formhash + '&inajax=1&handlekey=dian&sid=0&message=1'; //post 投票报文
+      const pMessage = 'formhash=' + GM_getValue('formhash') + '&inajax=1&handlekey=dian&sid=0&message=1'; //post 投票报文
       const url = 'https://www.jkforum.net/plugin/?id=voted&ac=dian&aid=' + aid + '&vid=' + vid + ' & qr = & inajax = 1 '; //拼接投票链接
       postData(url, pMessage, 'voted');
     }
@@ -368,7 +378,7 @@ function getThreads(currentHref) {
         const touser = tousers[i]; // 无前缀 字符串
         const touserUid = touserUids[i]; //无前缀 数字
         // 拼接感谢报文
-        const thkData = 'formhash=' + formhash + '&tid=' + tid + '&touser=' + touser + '&touser' + touserUid + '&handlekey=k_thankauthor&addsubmit=true';
+        const thkData = 'formhash=' + GM_getValue('formhash') + '&tid=' + tid + '&touser=' + touser + '&touser' + touserUid + '&handlekey=k_thankauthor&addsubmit=true';
         // 执行感谢函数
         const thkReqUrl = 'https://www.jkforum.net/plugin/?id=thankauthor:thank&inajax=1'; //请求地址
         postData(thkReqUrl, thkData, 'thk'); //post感谢数据
@@ -388,7 +398,7 @@ function getThreads(currentHref) {
           const date = new Date();
           const posttime = parseInt(date.getTime() / 1000);
           // 拼接回帖报文
-          const replyData = 'message=' + turnUrl(replyMessage) + '&posttime=' + posttime + '&formhash=' + formhash + '&usesig=1&subject=++';
+          const replyData = 'message=' + turnUrl(replyMessage) + '&posttime=' + posttime + '&formhash=' + GM_getValue('formhash') + '&usesig=1&subject=++';
           postData(replyUrl, replyData, 'reply');
           i++;
         }
