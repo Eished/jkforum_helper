@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         jkforum helper
 // @namespace    https://github.com/Eished/jkforum_helper
-// @version      0.2.6
+// @version      0.2.7
 // @description  捷克论坛助手：自动签到，一键批量回帖/感谢，自动加载原图，自动完成投票任务
 // @author       Eished
 // @license      AGPL-3.0
@@ -33,8 +33,8 @@ function rePic() {
 
 // 添加GUI
 function addBtns() {
-  let status_loginned = document.querySelector('.status_loginned');
-  let mnoutbox = document.querySelectorAll('.mnoutbox');
+  const status_loginned = document.querySelector('.status_loginned');
+  const mnoutbox = document.querySelectorAll('.mnoutbox');
 
   // 生产消息盒子
   function genDiv() {
@@ -98,12 +98,16 @@ function addBtns() {
     video.append(source);
     return video;
   }
-  // 回帖输入框
+
+  if (!window.location.href.match('/forum-')) {
+    // 页码输入框
+    const page = genElement2('input', 'inp2');
+    status_loginned.insertBefore(page, mnoutbox[1]); //添加输入框到指定位置
+  }
+  // 视频播放
   const video = genVideo();
   status_loginned.insertBefore(video, mnoutbox[1]); //添加视频到指定位置
-  // 回帖输入框
-  const page = genElement2('input', 'inp2');
-  status_loginned.insertBefore(page, mnoutbox[1]); //添加输入框到指定位置
+
   // 回帖输入框
   const input = genElement('textarea', 'inp1', 1, 20);
   status_loginned.insertBefore(input, mnoutbox[1]); //添加文本域到指定位置
@@ -268,76 +272,84 @@ function thankauthor() {
   GM_setValue('reply', replyMessage); // 油猴脚本存储回帖内容
   const currentHref = window.location.href; // 获取当前页地址
   if (currentHref.match('/forum-')) {
-    messageBox('已选择单页感谢/回帖');
-    fid = currentHref.split('-')[1]; // 获取板块fid
-    // 判断当前页是否处于图片模式
-    if (document.querySelector('.showmenubox').querySelector('[class="chked"]')) {
-      // 图片模式则切换为列表模式
-      if (confirm("是否切换到列表模式并刷新页面？")) {
-        getData('https://www.jkforum.net/forum.php?mod=forumdisplay&fid=' + fid + '&forumdefstyle=yes');
-        location.reload();
-      } else {
-        messageBox('无法在图片模式运行！')
-      }
-    } else {
-      // 获取当前页所有帖子地址
-      getThreads(currentHref);
-    }
+    thankOnePage(currentHref);
   } else {
-    page = document.querySelector('#inp2').value;
-    messageBox('已选择多页感谢/回帖：' + page);
-    if (page) { //如果输入了地址则进行批量处理
-      document.querySelector('#video1').play(); // 播放视频，防止休眠
-      if (!document.querySelector('#video1').paused) {
-        messageBox('防止休眠启动，请保持本页处于激活状态，勿最小化本窗口以及全屏运行其它应用！', 'none');
-      } else {
-        console.log(document.querySelector('#video1'));
-      }
-
-      GM_setValue('replyPage', page);
-      pageFrom = parseInt(page.split('-')[1]); // 获取起点页码
-      pageEnd = parseInt(page.split('-')[2]); // 获取终点页码
-      fid = page.split('-')[0]; // 获取版块代码
-
-      getData('https://www.jkforum.net/forum.php?mod=forumdisplay&fid=' + fid + '&forumdefstyle=yes'); //切换到列表模式，同步请求。
-      messageBox('已切换到列表模式');
-
-      function sendPage() {
-        let currentHrefPage = 'https://www.jkforum.net/forum-' + fid + '-' + pageFrom + '.html'; //生成帖子列表地址
-        getThreads(currentHrefPage);
-        console.log('当前地址：', currentHrefPage, '页码：', pageFrom);
-        pageFrom++;
-      };
-      sendPage();
-
-      setTimeout(() => { //等待上一次异步请求sendPage()初始化pageTime
-        let pageTimeCache = pageTime; //缓存上一次的pageTime
-        timeMachine();
-
-        // 时光机自我调用，自我更新pageTime，用上一页的pageTime来运行下一页的sendPage
-        function timeMachine() {
-          let timer1 = setInterval(() => {
-            if (pageFrom > pageEnd) {
-              clearInterval(timer1);
-              messageBox(page + "：所有页码回帖/感谢发送完成", 'none');
-            } else if (pageTime != pageTimeCache) { //保持pageTime为最新获取的时间
-              console.log('上一页设定运行时间:', pageTimeCache, '下一页设定运行时间:', pageTime);
-              clearInterval(timer1);
-              pageTimeCache = pageTime; //同步时间
-              timeMachine(); //重新生成第二次的计时器，每次矫正要等pageTime
-              sendPage(); //计时器需要等待pageTime，不如用第二次的计时器边发边等，生成第三次pageTime；用第三次pageTime执行第四次发送；如果三次<四次，会发送失败，+20秒平衡误差；
-            } else {
-              sendPage(); //第二次执行，重置pageTime；第三次与缓存不符，重新生成计时器，同步计时器pageTimeCache。
-            }
-          }, pageTime)
-        }
-      }, 5000);
-      messageBox(page + "：多页感谢/回帖中，请等待...", 'none');
-    } else {
-      messageBox('请输入回帖列表页码，格式：版块代码-起点页-终点页 ；例如：640-1-2 ；版块代码见版块URL中间数字：forum-640-1', 10000);
-    }
+    thankBatch();
   }
 };
+
+function thankOnePage(currentHref) {
+  messageBox('已选择单页感谢/回帖');
+  fid = currentHref.split('-')[1]; // 获取板块fid
+  // 判断当前页是否处于图片模式
+  if (document.querySelector('.showmenubox').querySelector('[class="chked"]')) {
+    // 图片模式则切换为列表模式
+    if (confirm("是否切换到列表模式并刷新页面？")) {
+      getData('https://www.jkforum.net/forum.php?mod=forumdisplay&fid=' + fid + '&forumdefstyle=yes');
+      location.reload();
+    } else {
+      messageBox('无法在图片模式运行！')
+    }
+  } else {
+    // 获取当前页所有帖子地址
+    getThreads(currentHref);
+  }
+}
+
+function thankBatch() {
+  page = document.querySelector('#inp2').value;
+  messageBox('已选择多页感谢/回帖：' + page);
+  if (page) { //如果输入了地址则进行批量处理
+    document.querySelector('#video1').play(); // 播放视频，防止休眠
+    if (!document.querySelector('#video1').paused) {
+      messageBox('防止休眠启动，请保持本页处于激活状态，勿最小化本窗口以及全屏运行其它应用！', 'none');
+    } else {
+      console.log(document.querySelector('#video1'));
+    }
+
+    GM_setValue('replyPage', page);
+    pageFrom = parseInt(page.split('-')[1]); // 获取起点页码
+    pageEnd = parseInt(page.split('-')[2]); // 获取终点页码
+    fid = page.split('-')[0]; // 获取版块代码
+
+    getData('https://www.jkforum.net/forum.php?mod=forumdisplay&fid=' + fid + '&forumdefstyle=yes'); //切换到列表模式，同步请求。
+    messageBox('已切换到列表模式');
+
+    function sendPage() {
+      let currentHrefPage = 'https://www.jkforum.net/forum-' + fid + '-' + pageFrom + '.html'; //生成帖子列表地址
+      getThreads(currentHrefPage);
+      console.log('当前地址：', currentHrefPage, '页码：', pageFrom);
+      pageFrom++;
+    };
+    sendPage();
+
+    setTimeout(() => { //等待上一次异步请求sendPage()初始化pageTime
+      let pageTimeCache = pageTime; //缓存上一次的pageTime
+      timeMachine();
+
+      // 时光机自我调用，自我更新pageTime，用上一页的pageTime来运行下一页的sendPage
+      function timeMachine() {
+        let timer1 = setInterval(() => {
+          if (pageFrom > pageEnd) {
+            clearInterval(timer1);
+            messageBox(page + "：所有页码回帖/感谢发送完成", 'none');
+          } else if (pageTime != pageTimeCache) { //保持pageTime为最新获取的时间
+            console.log('上一页设定运行时间:', pageTimeCache, '下一页设定运行时间:', pageTime);
+            clearInterval(timer1);
+            pageTimeCache = pageTime; //同步时间
+            timeMachine(); //重新生成第二次的计时器，每次矫正要等pageTime
+            sendPage(); //计时器需要等待pageTime，不如用第二次的计时器边发边等，生成第三次pageTime；用第三次pageTime执行第四次发送；如果三次<四次，会发送失败，+20秒平衡误差；
+          } else {
+            sendPage(); //第二次执行，重置pageTime；第三次与缓存不符，重新生成计时器，同步计时器pageTimeCache。
+          }
+        }, pageTime)
+      }
+    }, 5000);
+    messageBox(page + "：多页感谢/回帖中，请等待...", 'none');
+  } else {
+    messageBox('请输入回帖列表页码，格式：版块代码-起点页-终点页 ；例如：640-1-2 ；版块代码见版块URL中间数字：forum-640-1', 10000);
+  }
+}
 // 获取当前页所有帖子地址
 function getThreads(currentHref) {
   const httpRequest = new XMLHttpRequest();
