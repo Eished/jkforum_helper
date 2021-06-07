@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         jkforum helper
 // @namespace    https://github.com/Eished/jkforum_helper
-// @version      0.2.5
-// @description  捷克论坛助手：一键签到，定时签到，批量回帖，批量感谢，自动完成投票任务
+// @version      0.2.6
+// @description  捷克论坛助手：一键签到，定时签到，批量回帖，批量感谢，自动加载原图，自动完成投票任务
 // @author       Eished
 // @license      AGPL-3.0
 // @match        *://*.jkforum.net/*
@@ -14,7 +14,20 @@
 (function () {
   'use strict';
   addBtns();
+  rePic();
 })();
+
+function rePic() {
+  if (window.location.href.match('/thread-')) {
+    let imgs = document.querySelector('.t_f').querySelectorAll("img");
+    for (let i = 0; i < imgs.length; i++) {
+      let zoom = imgs[i].getAttribute("zoomfile");
+      if (zoom) {
+        imgs[i].src = zoom;
+      }
+    }
+  }
+}
 
 // 添加GUI
 function addBtns() {
@@ -104,6 +117,15 @@ function addBtns() {
 
 function launch() {
   let urlApply = 'https://www.jkforum.net/home.php?mod=task&do=apply&id=59';
+
+  let signTime = GM_getValue('signTime');
+  if (signTime) {
+
+  } else {
+
+    GM_setValue('signTime', signTime);
+
+  }
   // 申请任务
   task(urlApply);
   // 签到
@@ -235,7 +257,7 @@ function thankauthor() {
   replyMessage = document.querySelector('#inp1').value; // 获取回复内容
   GM_setValue('reply', replyMessage); // 油猴脚本存储回帖内容
   const currentHref = window.location.href; // 获取当前页地址
-  if (currentHref.match('forum-')) {
+  if (currentHref.match('/forum-')) {
     messageBox('已选择单页感谢/回帖');
     fid = currentHref.split('-')[1]; // 获取板块fid
     // 判断当前页是否处于图片模式
@@ -506,7 +528,7 @@ function checkHtml(htmlStr) {
   if (htmlStr.nodeName) {
     return true;
   } else {
-    var reg = /<[^>]+>/g;
+    let reg = /<[^>]+>/g;
     return reg.test(htmlStr);
   }
 }
