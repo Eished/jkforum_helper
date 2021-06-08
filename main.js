@@ -19,13 +19,17 @@
   rePic();
 })();
 
+// 购买图片后没有载入原图
+// 网络差，部分没有加载成原图，没有获取到zoom属性，载完网页，直接修改src
 function rePic() {
   if (window.location.href.match('/thread-')) {
-    let imgs = document.querySelector('.t_f').querySelectorAll("img");
-    for (let i = 0; i < imgs.length; i++) {
-      let zoom = imgs[i].getAttribute("zoomfile");
-      if (zoom) {
-        imgs[i].src = zoom;
+    let ignore_js_ops = document.querySelectorAll('ignore_js_op'); //获取图片列表
+    for (let i = 0; i < ignore_js_ops.length; i++) {
+      let img = ignore_js_ops[i].querySelector("img");
+      ignore_js_ops[i].removeChild(ignore_js_ops[i].querySelector(".tip")); // 去掉下载原图提示
+      if (img.src.match('.thumb.')) { // 去掉缩略图
+        console.log('match：', img.src);
+        img.src = img.src.split('.thumb.')[0];
       }
     }
   }
