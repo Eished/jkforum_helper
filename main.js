@@ -2,7 +2,7 @@
 // @name         jkforum helper
 // @namespace    https://github.com/Eished/jkforum_helper
 // @version      0.2.8
-// @description  捷克论坛助手：自动签到、自动感谢、自动加载原图、自动完成投票任务，一键批量回帖/感谢，提高加载速度
+// @description  捷克论坛助手：自动签到、自动感谢、自动加载原图、自动支付购买主题贴、自动完成投票任务，一键批量回帖/感谢
 // @author       Eished
 // @license      AGPL-3.0
 // @match        *://*.jkforum.net/*
@@ -25,27 +25,43 @@
   }
 })();
 
-// 购买图片后没有载入原图
-// 网络差，部分没有加载成原图，没有获取到zoom属性，载完网页，直接修改src
 function rePic() {
   if (window.location.href.match('/thread-')) {
-    let ignore_js_ops = document.querySelectorAll('ignore_js_op'); //获取图片列表
-    for (let i = 0; i < ignore_js_ops.length; i++) { //遍历图片列表
-      let img = ignore_js_ops[i].querySelector("img");
-      ignore_js_ops[i].removeChild(ignore_js_ops[i].querySelector(".tip")); // 去掉下载原图提示
-      if (img.src.match('.thumb.')) { // 去掉缩略图
-        console.log('match：', img.src);
-        img.src = img.src.split('.thumb.')[0];
+    let ignore_js_ops = document.querySelectorAll('.t_f ignore_js_op'); //获取图片列表，附件也是ignore_js_op
+    if (ignore_js_ops) {
+      for (let i = 0; i < ignore_js_ops.length; i++) { //遍历图片列表
+        if (ignore_js_ops[i].querySelector(".tip")) {
+          ignore_js_ops[i].removeChild(ignore_js_ops[i].querySelector(".tip")); // 去掉下载原图提示
+        }
+        let img = ignore_js_ops[i].querySelector("img");
+        if (img.src.match('.thumb.')) { // 去掉缩略图
+          // console.log('match：', img.src);
+          img.src = img.src.split('.thumb.')[0];
+          messageBox('加载原图成功', 1000)
+        }
       }
     }
     // 自动感谢当前贴
     thankThread();
+    // 自动购买当前贴
+    autoPay();
+  }
+}
+
+function autoPay() {
+  if (document.querySelector('.viewpay')) {
+    const url = `https://www.jkforum.net/forum.php?mod=misc&action=pay&paysubmit=yes&infloat=yes&inajax=1`
+    const referer = location.href;
+    const tid = referer.split('-')[1];
+    const pData = `formhash=${GM_getValue('formhash')}&referer=${turnUrl(referer)}&tid=${tid}&handlekey=pay`
+    postData(url, pData, 'pay');
   }
 }
 
 function thankThread() {
   if (document.querySelector('#thankform') && document.querySelectorAll('#k_thankauthor')[1]) {
     document.querySelectorAll('#k_thankauthor')[1].click();
+    messageBox('感谢成功')
     // location.reload();
   } else if (document.querySelectorAll('#k_thankauthor')[0]) {
     // document.querySelectorAll('#k_thankauthor')[0].click();
@@ -483,47 +499,67 @@ function postData(replyUrl, replyData, fromId, contentType) {
   httpRequest.onreadystatechange = () => {
     if (httpRequest.readyState == 4 && httpRequest.status == 200) {
       const stringOrHtml = turnCdata(httpRequest.responseXML); // 提取Cdata返回html或字符串
-
-      // 判断调用来源，选择对应处理方式
-      if (fromId == 'reply') { //回帖
-        if (checkHtml(stringOrHtml)) { // 确认html
-          const info = stringOrHtml.querySelector('script').innerHTML.split(`, `)[1];
-          messageBox(info.split('，')[0].slice(1) + '，' + info.split('，')[1] + '！'); // 返回html成功消息
-        } else {
-          messageBox(stringOrHtml, 'none'); //其它情况直接输出
-        }
-      } else if (fromId == 'sign') { //签到
-        if (checkHtml(stringOrHtml)) { // 确认html
-          const info = stringOrHtml.querySelector('.c').innerHTML.split('<')[0]; // 解析html，返回字符串
-          messageBox(info, 10000);
-        } else {
-          messageBox(stringOrHtml); //其它情况直接输出
-        }
-      } else if (fromId == 'voted') { //投票
-        if (checkHtml(stringOrHtml)) {
-          let info = '';
-          if (stringOrHtml.querySelector('.alert_info')) {
-            info = stringOrHtml.querySelector('.alert_info').innerHTML; // 解析html，返回字符串，失败警告
-          } else if (stringOrHtml.querySelector('script')) {
-            info = stringOrHtml.querySelector('script').innerHTML.split(`', `)[1].slice(1); // 解析html，获取字符串，成功消息
+      switch (fromId) {
+        case 'reply': {
+          if (checkHtml(stringOrHtml)) { // 确认html
+            const info = stringOrHtml.querySelector('script').innerHTML.split(`, `)[1];
+            messageBox(info.split('，')[0].slice(1) + '，' + info.split('，')[1] + '！'); // 返回html成功消息
           } else {
-            info = "投票返回HTML数据识别失败: " + stringOrHtml;
+            messageBox(stringOrHtml, 'none'); //其它情况直接输出
           }
-          messageBox(info, 10000);
-        } else {
-          messageBox(stringOrHtml); //其它情况直接输出
+          break;
         }
-        const urlDraw = 'https://www.jkforum.net/home.php?mod=task&do=draw&id=59';
-        taskDone(urlDraw); // 执行领奖励
-      } else if (fromId == 'thk') { //感谢
-        if (checkHtml(stringOrHtml)) {
-          const info = replaceHtml(stringOrHtml.querySelector('.alert_info').innerHTML); //去除html，返回字符串
-          messageBox(info);
-        } else {
-          messageBox(stringOrHtml); //其它情况直接输出
+        case 'sign': {
+          if (checkHtml(stringOrHtml)) { // 确认html
+            const info = stringOrHtml.querySelector('.c').innerHTML.split('<')[0]; // 解析html，返回字符串
+            messageBox(info, 10000);
+          } else {
+            messageBox(stringOrHtml); //其它情况直接输出
+          }
+          break;
         }
-      } else {
-        messageBox(stringOrHtml); //其它情况直接输出
+        case 'voted': {
+          if (checkHtml(stringOrHtml)) {
+            let info = '';
+            if (stringOrHtml.querySelector('.alert_info')) {
+              info = stringOrHtml.querySelector('.alert_info').innerHTML; // 解析html，返回字符串，失败警告
+            } else if (stringOrHtml.querySelector('script')) {
+              info = stringOrHtml.querySelector('script').innerHTML.split(`', `)[1].slice(1); // 解析html，获取字符串，成功消息
+            } else {
+              info = "投票返回HTML数据识别失败: " + stringOrHtml;
+            }
+            messageBox(info, 10000);
+          } else {
+            messageBox(stringOrHtml); //其它情况直接输出
+          }
+          const urlDraw = 'https://www.jkforum.net/home.php?mod=task&do=draw&id=59';
+          taskDone(urlDraw); // 执行领奖励
+          break;
+        }
+        case 'thk': {
+          if (checkHtml(stringOrHtml)) {
+            const info = replaceHtml(stringOrHtml.querySelector('.alert_info').innerHTML); //去除html，返回字符串
+            messageBox(info);
+          } else {
+            messageBox(stringOrHtml); //其它情况直接输出
+          }
+          break;
+        }
+        case 'pay': {
+          if (checkHtml(stringOrHtml)) { // 确认html
+            const info = stringOrHtml.querySelector('script').innerHTML.split(`', `)[1].slice(1);
+            messageBox(info);
+            location.reload();
+          } else {
+            messageBox(stringOrHtml); //其它情况直接输出
+          }
+          break;
+        }
+
+        default: {
+          messageBox(stringOrHtml); //其它情况直接输出
+          break;
+        }
       }
     };
   };
