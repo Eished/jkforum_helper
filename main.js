@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         jkforum helper
 // @namespace    https://github.com/Eished/jkforum_helper
-// @version      0.2.7
-// @description  捷克论坛助手：自动签到、感谢、加载原图、完成投票任务，一键批量回帖/感谢
+// @version      0.2.8
+// @description  捷克论坛助手：自动签到、自动感谢、自动加载原图、自动完成投票任务，一键批量回帖/感谢，提高加载速度
 // @author       Eished
 // @license      AGPL-3.0
 // @match        *://*.jkforum.net/*
@@ -14,13 +14,15 @@
 
 (function () {
   'use strict';
-  const formhash = document.querySelectorAll('#scbar_form input')[1].value; // 全局用户hash值，没有全局变量，
-  if (formhash != GM_getValue('formhash')) {
-    GM_setValue('formhash', formhash); //用GM_setValue当全局变量
+  if (document.querySelector('.listmenu li a')) {
+    const formhash = document.querySelector('.listmenu li a').href.split('&')[2].split('=')[1];
+    if (formhash != GM_getValue('formhash')) {
+      GM_setValue('formhash', formhash); //用GM_setValue当全局变量
+    }
+    addBtns();
+    launch();
+    rePic();
   }
-  addBtns();
-  launch();
-  rePic();
 })();
 
 // 购买图片后没有载入原图
@@ -44,7 +46,7 @@ function rePic() {
 function thankThread() {
   if (document.querySelector('#thankform') && document.querySelectorAll('#k_thankauthor')[1]) {
     document.querySelectorAll('#k_thankauthor')[1].click();
-    location.reload();
+    // location.reload();
   } else if (document.querySelectorAll('#k_thankauthor')[0]) {
     // document.querySelectorAll('#k_thankauthor')[0].click();
   }
