@@ -2,7 +2,7 @@
 // @name         jkforum helper
 // @namespace    https://github.com/Eished/jkforum_helper
 // @version      0.2.7
-// @description  捷克论坛助手：自动签到，一键批量回帖/感谢，自动加载原图，自动完成投票任务
+// @description  捷克论坛助手：自动签到、感谢、加载原图、完成投票任务，一键批量回帖/感谢
 // @author       Eished
 // @license      AGPL-3.0
 // @match        *://*.jkforum.net/*
@@ -14,6 +14,10 @@
 
 (function () {
   'use strict';
+  const formhash = document.querySelectorAll('#scbar_form input')[1].value; // 全局用户hash值，没有全局变量，
+  if (formhash != GM_getValue('formhash')) {
+    GM_setValue('formhash', formhash); //用GM_setValue当全局变量
+  }
   addBtns();
   launch();
   rePic();
@@ -24,7 +28,7 @@
 function rePic() {
   if (window.location.href.match('/thread-')) {
     let ignore_js_ops = document.querySelectorAll('ignore_js_op'); //获取图片列表
-    for (let i = 0; i < ignore_js_ops.length; i++) {
+    for (let i = 0; i < ignore_js_ops.length; i++) { //遍历图片列表
       let img = ignore_js_ops[i].querySelector("img");
       ignore_js_ops[i].removeChild(ignore_js_ops[i].querySelector(".tip")); // 去掉下载原图提示
       if (img.src.match('.thumb.')) { // 去掉缩略图
@@ -32,8 +36,19 @@ function rePic() {
         img.src = img.src.split('.thumb.')[0];
       }
     }
+    // 自动感谢当前贴
+    thankThread();
   }
 }
+
+function thankThread() {
+  if (document.querySelector('#thankform') && document.querySelectorAll('#k_thankauthor')[1]) {
+    document.querySelectorAll('#k_thankauthor')[1].click();
+    location.reload();
+  } else if (document.querySelectorAll('#k_thankauthor')[0]) {
+    // document.querySelectorAll('#k_thankauthor')[0].click();
+  }
+};
 
 // 添加GUI
 function addBtns() {
@@ -103,34 +118,28 @@ function addBtns() {
     return video;
   }
 
-  if (!window.location.href.match('/forum-')) {
-    // 页码输入框
-    const page = genElement2('input', 'inp2');
-    status_loginned.insertBefore(page, mnoutbox[1]); //添加输入框到指定位置
-  }
-  // 视频播放
-  const video = genVideo();
-  status_loginned.insertBefore(video, mnoutbox[1]); //添加视频到指定位置
-
   // 回帖输入框
   const input = genElement('textarea', 'inp1', 1, 20);
   status_loginned.insertBefore(input, mnoutbox[1]); //添加文本域到指定位置
 
-  // 感谢 按钮
-  const thkBtn = genButton('感谢/回帖', thankauthor); //设置名称和绑定函数
-  status_loginned.insertBefore(thkBtn, mnoutbox[1]); //添加按钮到指定位置
-
-  // 签到按钮
-  // const btn = genButton('签到/投票', launch); //设置名称和绑定函数
-  // status_loginned.insertBefore(btn, mnoutbox[1]); //添加按钮到指定位置
+  if (window.location.href.match('/forum-')) {
+    // 感谢 按钮
+    const thkBtn = genButton('感谢/回帖', thankOnePage); //设置名称和绑定函数
+    status_loginned.insertBefore(thkBtn, mnoutbox[1]); //添加按钮到指定位置
+  } else {
+    // 页码输入框
+    const page = genElement2('input', 'inp2');
+    status_loginned.insertBefore(page, mnoutbox[1]); //添加输入框到指定位置
+    // 批量感谢/回帖
+    const btn = genButton('批量感谢/回帖', thankBatch); //设置名称和绑定函数
+    status_loginned.insertBefore(btn, mnoutbox[1]); //添加按钮到指定位置
+    // 视频播放
+    const video = genVideo();
+    status_loginned.insertBefore(video, mnoutbox[1]); //添加视频到指定位置
+  }
 };
 
-
 function launch() {
-  const formhash = document.querySelectorAll('#scbar_form input')[1].value; // 全局用户hash值，没有全局变量，
-  if (formhash != GM_getValue('formhash')) {
-    GM_setValue('formhash', formhash); //用GM_setValue当全局变量
-  }
   let avatar_info = document.querySelector('.avatar_info'); // 用户名判断唯一用户
   if (avatar_info) { //验证是否登录
     avatar_info = avatar_info.querySelector('a').innerHTML;
@@ -271,19 +280,11 @@ let pageTime = 1000; // 翻页时间，默认感谢为1秒，回帖为第一次�
 let pageFrom = 0; //回帖起始页
 let pageEnd = 0; //回帖终点页
 
-function thankauthor() {
+function thankOnePage() {
+  messageBox('已选择单页感谢/回帖');
   replyMessage = document.querySelector('#inp1').value; // 获取回复内容
   GM_setValue('reply', replyMessage); // 油猴脚本存储回帖内容
   const currentHref = window.location.href; // 获取当前页地址
-  if (currentHref.match('/forum-')) {
-    thankOnePage(currentHref);
-  } else {
-    thankBatch();
-  }
-};
-
-function thankOnePage(currentHref) {
-  messageBox('已选择单页感谢/回帖');
   fid = currentHref.split('-')[1]; // 获取板块fid
   // 判断当前页是否处于图片模式
   if (document.querySelector('.showmenubox').querySelector('[class="chked"]')) {
