@@ -30,13 +30,15 @@ function rePic() {
     let ignore_js_ops = document.querySelectorAll('.t_f ignore_js_op'); //获取图片列表，附件也是ignore_js_op
     if (ignore_js_ops) {
       for (let i = 0; i < ignore_js_ops.length; i++) { //遍历图片列表
-        if (ignore_js_ops[i].querySelector(".tip")) {
-          ignore_js_ops[i].removeChild(ignore_js_ops[i].querySelector(".tip")); // 去掉下载原图提示
-        }
         let img = ignore_js_ops[i].querySelector("img");
+        img.setAttribute('onmouseover', null); // 去掉下载原图提示
         if (img.src.match('.thumb.')) { // 去掉缩略图
-          // console.log('match：', img.src);
-          img.src = img.src.split('.thumb.')[0];
+          console.log('thumb：', img.src);
+          img.src = img.getAttribute('file').split('.thumb.')[0];
+          messageBox('加载原图成功', 1000)
+        } else if (img.src.match('static/image/common/none.gif')) {
+          img.setAttribute('file', img.getAttribute('file').split('.thumb.')[0]); //网站自带forum_viewthread.js  attachimgshow(pid, onlyinpost) 从file延迟加载
+          console.log('none.gif:', img.src);
           messageBox('加载原图成功', 1000)
         }
       }
