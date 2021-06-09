@@ -403,6 +403,7 @@ function getThreads(currentHref) {
       }
       // 执行回帖函数和感谢函数 必须间隔10秒以上+随机数10-100毫秒
       let randomTime = 0;
+      // 防封号：随机间隔时间，随机快速回帖内容。未完成。
       randomTime = Math.ceil(Math.random() * 1000) + 11000;
       let i = 0;
       let href = null;
