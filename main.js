@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         jkforum helper
 // @namespace    https://github.com/Eished/jkforum_helper
-// @version      0.2.8
+// @version      0.3.0
 // @description  捷克论坛助手：自动签到、自动感谢、自动加载原图、自动支付购买主题贴、自动完成投票任务，一键批量回帖/感谢
 // @author       Eished
 // @license      AGPL-3.0
@@ -38,6 +38,7 @@ function rePic() {
           messageBox('加载原图成功', 1000)
         } else if (img.src.match('static/image/common/none.gif')) {
           img.setAttribute('file', img.getAttribute('file').split('.thumb.')[0]); //网站自带forum_viewthread.js  attachimgshow(pid, onlyinpost) 从file延迟加载
+          // img.src = img.getAttribute('file').split('.thumb.')[0];// 懒加载，下载时激活
           console.log('none.gif:', img.src);
           messageBox('加载原图成功', 1000)
         }
@@ -125,18 +126,6 @@ function addBtns() {
     return b; //返回修改好的DOM对象
   }
 
-  function genVideo() {
-    let video = document.createElement('video');
-    video.style.cssText = 'display: none; z-index: -1000;width:0;height:0;'
-    video.id = 'video1';
-    video.loop = 'true';
-    video.autoplay = 'true';
-    let source = document.createElement('source');
-    source.src = 'https://raw.githubusercontent.com/Eished/jkforum_helper/main/video/light.mp4';
-    source.type = "video/mp4"
-    video.append(source);
-    return video;
-  }
 
   // 回帖输入框
   const input = genElement('textarea', 'inp1', 1, 20);
@@ -153,11 +142,21 @@ function addBtns() {
     // 批量感谢/回帖
     const btn = genButton('批量感谢/回帖', thankBatch); //设置名称和绑定函数
     status_loginned.insertBefore(btn, mnoutbox[1]); //添加按钮到指定位置
-    // 视频播放
-    const video = genVideo();
-    status_loginned.insertBefore(video, mnoutbox[1]); //添加视频到指定位置
   }
 };
+
+function genVideo() {
+  let video = document.createElement('video');
+  video.style.cssText = 'display: none; z-index: -1000;width:0;height:0;'
+  video.id = 'video1';
+  video.loop = 'true';
+  video.autoplay = 'true';
+  let source = document.createElement('source');
+  source.src = 'https://raw.githubusercontent.com/Eished/jkforum_helper/main/video/light.mp4';
+  source.type = "video/mp4"
+  video.append(source);
+  return video;
+}
 
 function launch() {
   let avatar_info = document.querySelector('.avatar_info'); // 用户名判断唯一用户
@@ -178,8 +177,6 @@ function launch() {
     messageBox('未登录');
   }
 }
-
-// let formhash = document.querySelectorAll('#scbar_form input')[1].value; // 全局用户hash值，没有全局变量
 
 function sign() {
   const todaysay = '好想睡覺~'; //签到输入内容
@@ -325,6 +322,9 @@ function thankBatch() {
   page = document.querySelector('#inp2').value;
   messageBox('已选择多页感谢/回帖：' + page);
   if (page) { //如果输入了地址则进行批量处理
+    // 视频播放
+    const video = genVideo(); //需要视频时再加载视频，提高性能
+    document.querySelector('body').appendChild(video); //添加视频到指定位置
     document.querySelector('#video1').play(); // 播放视频，防止休眠
     if (!document.querySelector('#video1').paused) {
       messageBox('防止休眠启动，请保持本页处于激活状态，勿最小化本窗口以及全屏运行其它应用！', 'none');
