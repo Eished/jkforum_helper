@@ -73,8 +73,8 @@ function thankThread() {
 
 // 添加GUI
 function addBtns() {
-  const status_loginned = document.querySelector('.status_loginned');
-  const mnoutbox = document.querySelectorAll('.mnoutbox');
+  // const status_loginned = document.querySelector('.status_loginned');
+  // const mnoutbox = document.querySelectorAll('.mnoutbox');
 
   // 生产消息盒子
   function genDiv() {
@@ -85,64 +85,64 @@ function addBtns() {
   };
   document.querySelector('body').appendChild(genDiv()); // 消息盒子添加到body
 
-  function genButton(text, foo, id) {
-    let b = document.createElement('button'); //创建类型为button的DOM对象
-    b.textContent = text; //修改内部文本为text
-    b.style.cssText = 'margin:16px 10px 0px 0px;float:left' //添加样式（margin可以让元素间隔开一定距离）
-    b.addEventListener('click', foo); //绑定click的事件的监听器
-    if (id) {
-      b.id = id;
-    } //如果传入了id，就修改DOM对象的id
-    return b; //返回修改好的DOM对象
-  }
+  // function genButton(text, foo, id) {
+  //   let b = document.createElement('button'); //创建类型为button的DOM对象
+  //   b.textContent = text; //修改内部文本为text
+  //   b.style.cssText = 'margin:16px 10px 0px 0px;float:left' //添加样式（margin可以让元素间隔开一定距离）
+  //   b.addEventListener('click', foo); //绑定click的事件的监听器
+  //   if (id) {
+  //     b.id = id;
+  //   } //如果传入了id，就修改DOM对象的id
+  //   return b; //返回修改好的DOM对象
+  // }
 
-  function genElement(type, id, val1, val2) {
-    let b = document.createElement(type); //创建类型为button的DOM对象
-    b.style.cssText = 'margin:16px 10px 0px 0px;float:left' //添加样式（margin可以让元素间隔开一定距离）
-    b.rows = val1;
-    b.cols = val2;
-    // 油猴脚本存储回帖内容
-    if (GM_getValue('reply')) {
-      b.value = GM_getValue('reply');
-    } else {
-      b.value = '感謝大大分享！';
-    }
-    if (id) {
-      b.id = id;
-    } //如果传入了id，就修改DOM对象的id
-    return b; //返回修改好的DOM对象
-  }
+  // function genElement(type, id, val1, val2) {
+  //   let b = document.createElement(type); //创建类型为button的DOM对象
+  //   b.style.cssText = 'margin:16px 10px 0px 0px;float:left' //添加样式（margin可以让元素间隔开一定距离）
+  //   b.rows = val1;
+  //   b.cols = val2;
+  //   // 油猴脚本存储回帖内容
+  //   if (GM_getValue('reply')) {
+  //     b.value = GM_getValue('reply');
+  //   } else {
+  //     b.value = '感謝大大分享！';
+  //   }
+  //   if (id) {
+  //     b.id = id;
+  //   } //如果传入了id，就修改DOM对象的id
+  //   return b; //返回修改好的DOM对象
+  // }
 
-  function genElement2(type, id) {
-    let b = document.createElement(type); //创建类型为button的DOM对象
-    b.style.cssText = 'margin:16px 10px 0px 0px;float:left;width:80px' //添加样式（margin可以让元素间隔开一定距离）
-    if (id) {
-      b.id = id;
-    }
-    if (GM_getValue('replyPage')) {
-      b.value = GM_getValue('replyPage');
-    }
-    b.placeholder = `版块-1-2`;
-    return b; //返回修改好的DOM对象
-  }
+  // function genElement2(type, id) {
+  //   let b = document.createElement(type); //创建类型为button的DOM对象
+  //   b.style.cssText = 'margin:16px 10px 0px 0px;float:left;width:80px' //添加样式（margin可以让元素间隔开一定距离）
+  //   if (id) {
+  //     b.id = id;
+  //   }
+  //   if (GM_getValue('replyPage')) {
+  //     b.value = GM_getValue('replyPage');
+  //   }
+  //   b.placeholder = `版块-1-2`;
+  //   return b; //返回修改好的DOM对象
+  // }
 
 
-  // 回帖输入框
-  const input = genElement('textarea', 'inp1', 1, 20);
-  status_loginned.insertBefore(input, mnoutbox[1]); //添加文本域到指定位置
+  // // 回帖输入框
+  // const input = genElement('textarea', 'inp1', 1, 20);
+  // status_loginned.insertBefore(input, mnoutbox[1]); //添加文本域到指定位置
 
-  if (window.location.href.match('/forum-')) {
-    // 感谢 按钮
-    const thkBtn = genButton('感谢/回帖', thankOnePage); //设置名称和绑定函数
-    status_loginned.insertBefore(thkBtn, mnoutbox[1]); //添加按钮到指定位置
-  } else {
-    // 页码输入框
-    const page = genElement2('input', 'inp2');
-    status_loginned.insertBefore(page, mnoutbox[1]); //添加输入框到指定位置
-    // 批量感谢/回帖
-    const btn = genButton('批量感谢/回帖', thankBatch); //设置名称和绑定函数
-    status_loginned.insertBefore(btn, mnoutbox[1]); //添加按钮到指定位置
-  }
+  // if (window.location.href.match('/forum-')) {
+  //   // 感谢 按钮
+  //   const thkBtn = genButton('感谢/回帖', thankOnePage); //设置名称和绑定函数
+  //   status_loginned.insertBefore(thkBtn, mnoutbox[1]); //添加按钮到指定位置
+  // } else {
+  //   // 页码输入框
+  //   const page = genElement2('input', 'inp2');
+  //   status_loginned.insertBefore(page, mnoutbox[1]); //添加输入框到指定位置
+  //   // 批量感谢/回帖
+  //   const btn = genButton('批量感谢/回帖', thankBatch); //设置名称和绑定函数
+  //   status_loginned.insertBefore(btn, mnoutbox[1]); //添加按钮到指定位置
+  // }
 };
 
 function genVideo() {
@@ -444,32 +444,29 @@ function getThreads(currentHref) {
       };
 
       function timeMeassage() { //动态赋值pageTime 和通知消息
-        pageTime = randomTime * hrefs.length + 20000; // 动态赋值pageTime 每页加 20000ms 等待时间，平衡误差
-        console.log("本页需要运行时间：", pageTime - 20000);
+        pageTime = 12000 * hrefs.length; // 动态赋值pageTime 每页加 20000ms 等待时间，平衡误差
+        // console.log("本页需要运行时间：", pageTime - 20000);
         messageBox('正在回帖中... ' + (pageFrom - 1) + '/' + pageEnd + '页需要' + (pageTime / 1000 / 60).toFixed(1) + '分钟', 'none');
       }
 
-      if (pageTime == 1000 && confirm("已感谢，确认回帖？")) { //确认回帖
+      function circleReply() {
         chkReply();
         let timer = setInterval(() => {
           if (i == hrefs.length) {
             clearInterval(timer);
             messageBox("本页回帖完成！", 'none');
           } else {
-            chkReply();
+            clearInterval(timer);
+            randomTime = Math.ceil(Math.random() * 1000) + 11000;
+            circleReply();
           }
         }, randomTime);
+      }
+      if (pageTime == 1000 && confirm("已感谢，确认回帖？")) { //确认回帖
+        circleReply();
         timeMeassage();
       } else if (pageTime != 2000 && pageTime != 1000) { //如果第一次确认回帖，则后面无需确认
-        chkReply();
-        let timer = setInterval(() => {
-          if (i == hrefs.length) {
-            clearInterval(timer);
-            messageBox("本页回帖完成！", 'none');
-          } else {
-            chkReply();
-          }
-        }, randomTime);
+        circleReply();
         timeMeassage();
       } else {
         pageTime = 2000; //第一次取消回帖，第二次无需再确认
