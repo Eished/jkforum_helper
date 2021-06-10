@@ -2,7 +2,7 @@
 // @name         jkforum helper
 // @namespace    https://github.com/Eished/jkforum_helper
 // @version      0.3.2
-// @description  捷克论坛助手：自动签到、自动感谢、自动加载原图、自动支付购买主题贴、自动完成投票任务，一键批量回帖/感谢
+// @description  捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动支付购买主题贴、自动完成投票任务，一键批量回帖/感谢
 // @author       Eished
 // @license      AGPL-3.0
 // @match        *://*.jkforum.net/*
@@ -96,25 +96,22 @@ function addBtns() {
   const mnoutbox = document.querySelectorAll('.mnoutbox');
 
   // 在签到页面激活 定时签到
-  if (location.href == `https://www.jkforum.net/plugin/?id=dsu_paulsign:sign`) {
-    let btn = genButton('定时签到', aotuSign); //设置名称和绑定函数
+  if (location.href.match(`id=dsu_paulsign:sign`)) {
+    let btn = genButton('定时签到', timeControl); //设置名称和绑定函数
     status_loginned.insertBefore(btn, mnoutbox[1]); //添加按钮到指定位置
     const video = genVideo();
     status_loginned.insertBefore(video, mnoutbox[1]); //添加视频到指定位置
   }
 
+  // 回帖输入框
+  // const input = genElement('textarea', 'inp1', 1, 20);
+  // status_loginned.insertBefore(input, mnoutbox[1]); //添加文本域到指定位置
 
   if (window.location.href.match('/forum-')) {
-    // 回帖输入框
-    const input = genElement('textarea', 'inp1', 1, 20);
-    status_loginned.insertBefore(input, mnoutbox[1]); //添加文本域到指定位置
     // 感谢 按钮
     const thkBtn = genButton('感谢/回帖', thankOnePage); //设置名称和绑定函数
     status_loginned.insertBefore(thkBtn, mnoutbox[1]); //添加按钮到指定位置
   } else if (location.href == `https://www.jkforum.net/forum.php`) { //在首页激活批量感谢功能
-    // 回帖输入框
-    const input = genElement('textarea', 'inp1', 1, 20);
-    status_loginned.insertBefore(input, mnoutbox[1]); //添加文本域到指定位置
     // 页码输入框
     const page = genElement2('input', 'inp2');
     status_loginned.insertBefore(page, mnoutbox[1]); //添加输入框到指定位置
@@ -319,8 +316,8 @@ let pageEnd = 0; //回帖终点页
 
 function thankOnePage() {
   messageBox('已选择单页感谢/回帖');
-  replyMessage = document.querySelector('#inp1').value; // 获取回复内容
-  GM_setValue('reply', replyMessage); // 油猴脚本存储回帖内容
+  // replyMessage = document.querySelector('#inp1').value; // 获取回复内容
+  // GM_setValue('reply', replyMessage); // 油猴脚本存储回帖内容
   const currentHref = window.location.href; // 获取当前页地址
   fid = currentHref.split('-')[1]; // 获取板块fid
   // 判断当前页是否处于图片模式
@@ -377,7 +374,7 @@ function thankBatch() {
         let timer1 = setInterval(() => {
           if (pageFrom > pageEnd) {
             clearInterval(timer1);
-            messageBox(page + "：所有页码回帖/感谢发送完成", 'none');
+            messageBox(page + "：所有页码回帖/感谢发送完成！请关闭/刷新窗口！", 'none');
           } else if (pageTime != pageTimeCache) { //保持pageTime为最新获取的时间
             console.log('上一页设定运行时间:', pageTimeCache, '下一页设定运行时间:', pageTime);
             clearInterval(timer1);
@@ -628,23 +625,25 @@ function replaceHtml(txt) {
   return txt.replace(reg3, '').replace(reg, '').replace(reg2, '');
 }
 
-function aotuSign() {
+// 定时签到
+function timeControl() {
+  const _this = this; //获取对象
+  clearInterval(_this.timer); //清除重复定时器
   document.querySelector('#video1').play(); // 播放视频，防止休眠
   if (!document.querySelector('#video1').paused) {
-    messageBox('防止休眠启动，请保持本页处于激活状态，勿最小化本窗口以及全屏运行其它应用！', 'none');
+    const date = new Date()
+    const holdTime = date.getTime();
+    // 1000*60*60*24
+    const signTime = ((1000 * 60 * 60) - holdTime % (1000 * 60 * 60)); //通知持续时间，1小时-已运行分钟
+    messageBox('防止休眠启动，请保持本页处于激活状态，勿最小化本窗口以及全屏运行其它应用！', signTime);
+    messageBox('定时签到中，请勿退出...', signTime);
   } else {
     console.log(document.querySelector('#video1'));
   }
-  // 定时签到
-  timeControl();
-}
-
-// 定时签到
-function timeControl() {
-  var hours, minutes, seconds;
-  const h = 0,
-    m = 0,
-    s = 0;
+  let hours, minutes, seconds;
+  const h = 23,
+    m = 59,
+    s = 59;
 
   function nowTime() {
     hours = new Date().getHours();
@@ -654,10 +653,15 @@ function timeControl() {
 
   function control() {
     if (hours == h && minutes == m && seconds == s) {
-      clearInterval(timmer);
-      console.log('执行中....');
-      for (let i = 0; i < 10; i++) {
-        sign();
+      clearInterval(_this.timer);
+      messageBox('执行中....');
+      let retryTime = 0;
+      for (let i = 0; i < 10; i++) { //重试次数
+        setTimeout(() => {
+          sign();
+          messageBox('执行第' + (i + 2) + '次');
+          console.log('执行第' + (i + 2) + '次');
+        }, retryTime += 200) //重试间隔
       }
     } else {
       console.log('时间没有到：', h, m, s, '目前时间：', hours, minutes, seconds);
@@ -668,5 +672,5 @@ function timeControl() {
     nowTime();
     control();
   }
-  let timmer = setInterval(check, 500);
+  _this.timer = setInterval(check, 500);
 }
