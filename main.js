@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         jkforum helper
 // @namespace    https://github.com/Eished/jkforum_helper
-// @version      0.3.1
+// @version      0.3.2
 // @description  捷克论坛助手：自动签到、自动感谢、自动加载原图、自动支付购买主题贴、自动完成投票任务，一键批量回帖/感谢
 // @author       Eished
 // @license      AGPL-3.0
@@ -103,22 +103,25 @@ function addBtns() {
     status_loginned.insertBefore(video, mnoutbox[1]); //添加视频到指定位置
   }
 
-  // // 回帖输入框
-  // const input = genElement('textarea', 'inp1', 1, 20);
-  // status_loginned.insertBefore(input, mnoutbox[1]); //添加文本域到指定位置
 
-  // if (window.location.href.match('/forum-')) {
-  //   // 感谢 按钮
-  //   const thkBtn = genButton('感谢/回帖', thankOnePage); //设置名称和绑定函数
-  //   status_loginned.insertBefore(thkBtn, mnoutbox[1]); //添加按钮到指定位置
-  // } else {
-  //   // 页码输入框
-  //   const page = genElement2('input', 'inp2');
-  //   status_loginned.insertBefore(page, mnoutbox[1]); //添加输入框到指定位置
-  //   // 批量感谢/回帖
-  //   const btn = genButton('批量感谢/回帖', thankBatch); //设置名称和绑定函数
-  //   status_loginned.insertBefore(btn, mnoutbox[1]); //添加按钮到指定位置
-  // }
+  if (window.location.href.match('/forum-')) {
+    // 回帖输入框
+    const input = genElement('textarea', 'inp1', 1, 20);
+    status_loginned.insertBefore(input, mnoutbox[1]); //添加文本域到指定位置
+    // 感谢 按钮
+    const thkBtn = genButton('感谢/回帖', thankOnePage); //设置名称和绑定函数
+    status_loginned.insertBefore(thkBtn, mnoutbox[1]); //添加按钮到指定位置
+  } else if (location.href == `https://www.jkforum.net/forum.php`) { //在首页激活批量感谢功能
+    // 回帖输入框
+    const input = genElement('textarea', 'inp1', 1, 20);
+    status_loginned.insertBefore(input, mnoutbox[1]); //添加文本域到指定位置
+    // 页码输入框
+    const page = genElement2('input', 'inp2');
+    status_loginned.insertBefore(page, mnoutbox[1]); //添加输入框到指定位置
+    // 批量感谢/回帖
+    const btn = genButton('批量感谢/回帖', thankBatch); //设置名称和绑定函数
+    status_loginned.insertBefore(btn, mnoutbox[1]); //添加按钮到指定位置
+  }
 };
 
 function genButton(text, foo, id) {
@@ -481,16 +484,16 @@ function getThreads(currentHref) {
           }
         }, randomTime);
       }
-      if (pageTime == 1000 && confirm("已感谢，确认回帖？")) { //确认回帖
-        circleReply();
-        timeMeassage();
-      } else if (pageTime != 2000 && pageTime != 1000) { //如果第一次确认回帖，则后面无需确认
-        circleReply();
-        timeMeassage();
-      } else {
-        pageTime = 2000; //第一次取消回帖，第二次无需再确认
-        console.log("已取消回帖：", pageTime);
-      }
+      // if (pageTime == 1000 && confirm("已感谢，确认回帖？")) { //确认回帖
+      //   circleReply();
+      //   timeMeassage();
+      // } else if (pageTime != 2000 && pageTime != 1000) { //如果第一次确认回帖，则后面无需确认
+      //   circleReply();
+      //   timeMeassage();
+      // } else {
+      //   pageTime = 2000; //第一次取消回帖，第二次无需再确认
+      //   console.log("已取消回帖：", pageTime);
+      // }
     };
   };
 };
