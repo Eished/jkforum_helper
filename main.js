@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         jkforum helper
 // @namespace    https://github.com/Eished/jkforum_helper
-// @version      0.3.0
+// @version      0.3.1
 // @description  捷克论坛助手：自动签到、自动感谢、自动加载原图、自动支付购买主题贴、自动完成投票任务，一键批量回帖/感谢
 // @author       Eished
 // @license      AGPL-3.0
@@ -27,6 +27,8 @@
 
 function rePic() {
   if (window.location.href.match('/thread-')) {
+    thankThread(); // 自动感谢当前贴
+    autoPay(); // 自动购买当前贴
     let ignore_js_ops = document.querySelectorAll('.t_f ignore_js_op'); //获取图片列表，附件也是ignore_js_op
     if (ignore_js_ops) {
       for (let i = 0; i < ignore_js_ops.length; i++) { //遍历图片列表
@@ -44,10 +46,6 @@ function rePic() {
         }
       }
     }
-    // 自动感谢当前贴
-    thankThread();
-    // 自动购买当前贴
-    autoPay();
   }
 }
 
@@ -62,20 +60,29 @@ function autoPay() {
 }
 
 function thankThread() {
-  if (document.querySelector('#thankform') && document.querySelectorAll('#k_thankauthor')[1]) {
-    document.querySelectorAll('#k_thankauthor')[1].click();
-    messageBox('感谢成功')
-    // location.reload();
-  } else if (document.querySelectorAll('#k_thankauthor')[0]) {
-    // document.querySelectorAll('#k_thankauthor')[0].click();
+  if (document.querySelector('#thankform') && document.querySelectorAll('#k_thankauthor')[1]) { //感谢可见
+    thankThreadPost();
+    setTimeout(() => {
+      location.reload();
+    }, 500)
+  } else if (document.querySelectorAll('#k_thankauthor')[0]) { //普通贴
+    thankThreadPost();
   }
 };
 
+function thankThreadPost() {
+  const thankform = document.querySelector('#thankform');
+  // const formhash = thankform.querySelector('[name=formhash]').value;
+  const tid = thankform.querySelector('[name=tid]').value;
+  const touser = thankform.querySelector('[name=touser]').value;
+  const touseruid = thankform.querySelector('[name=touseruid]').value;
+  const thkData = `formhash=${GM_getValue('formhash')}&tid=${tid}&touser=${touser}&touseruid=${touseruid}&handlekey=k_thankauthor&addsubmit=true`;
+  // 执行感谢函数
+  const thkReqUrl = 'https://www.jkforum.net/plugin/?id=thankauthor:thank&inajax=1'; //请求地址
+  postData(thkReqUrl, thkData, 'thk'); //post感谢数据
+}
 // 添加GUI
 function addBtns() {
-  // const status_loginned = document.querySelector('.status_loginned');
-  // const mnoutbox = document.querySelectorAll('.mnoutbox');
-
   // 生产消息盒子
   function genDiv() {
     let b = document.createElement('div'); //创建类型为div的DOM对象
@@ -85,47 +92,8 @@ function addBtns() {
   };
   document.querySelector('body').appendChild(genDiv()); // 消息盒子添加到body
 
-  // function genButton(text, foo, id) {
-  //   let b = document.createElement('button'); //创建类型为button的DOM对象
-  //   b.textContent = text; //修改内部文本为text
-  //   b.style.cssText = 'margin:16px 10px 0px 0px;float:left' //添加样式（margin可以让元素间隔开一定距离）
-  //   b.addEventListener('click', foo); //绑定click的事件的监听器
-  //   if (id) {
-  //     b.id = id;
-  //   } //如果传入了id，就修改DOM对象的id
-  //   return b; //返回修改好的DOM对象
-  // }
-
-  // function genElement(type, id, val1, val2) {
-  //   let b = document.createElement(type); //创建类型为button的DOM对象
-  //   b.style.cssText = 'margin:16px 10px 0px 0px;float:left' //添加样式（margin可以让元素间隔开一定距离）
-  //   b.rows = val1;
-  //   b.cols = val2;
-  //   // 油猴脚本存储回帖内容
-  //   if (GM_getValue('reply')) {
-  //     b.value = GM_getValue('reply');
-  //   } else {
-  //     b.value = '感謝大大分享！';
-  //   }
-  //   if (id) {
-  //     b.id = id;
-  //   } //如果传入了id，就修改DOM对象的id
-  //   return b; //返回修改好的DOM对象
-  // }
-
-  // function genElement2(type, id) {
-  //   let b = document.createElement(type); //创建类型为button的DOM对象
-  //   b.style.cssText = 'margin:16px 10px 0px 0px;float:left;width:80px' //添加样式（margin可以让元素间隔开一定距离）
-  //   if (id) {
-  //     b.id = id;
-  //   }
-  //   if (GM_getValue('replyPage')) {
-  //     b.value = GM_getValue('replyPage');
-  //   }
-  //   b.placeholder = `版块-1-2`;
-  //   return b; //返回修改好的DOM对象
-  // }
-
+  // const status_loginned = document.querySelector('.status_loginned');
+  // const mnoutbox = document.querySelectorAll('.mnoutbox');
 
   // // 回帖输入框
   // const input = genElement('textarea', 'inp1', 1, 20);
@@ -144,6 +112,47 @@ function addBtns() {
   //   status_loginned.insertBefore(btn, mnoutbox[1]); //添加按钮到指定位置
   // }
 };
+
+function genButton(text, foo, id) {
+  let b = document.createElement('button'); //创建类型为button的DOM对象
+  b.textContent = text; //修改内部文本为text
+  b.style.cssText = 'margin:16px 10px 0px 0px;float:left' //添加样式（margin可以让元素间隔开一定距离）
+  b.addEventListener('click', foo); //绑定click的事件的监听器
+  if (id) {
+    b.id = id;
+  } //如果传入了id，就修改DOM对象的id
+  return b; //返回修改好的DOM对象
+}
+
+function genElement(type, id, val1, val2) {
+  let b = document.createElement(type); //创建类型为button的DOM对象
+  b.style.cssText = 'margin:16px 10px 0px 0px;float:left' //添加样式（margin可以让元素间隔开一定距离）
+  b.rows = val1;
+  b.cols = val2;
+  // 油猴脚本存储回帖内容
+  if (GM_getValue('reply')) {
+    b.value = GM_getValue('reply');
+  } else {
+    b.value = '感謝大大分享！';
+  }
+  if (id) {
+    b.id = id;
+  } //如果传入了id，就修改DOM对象的id
+  return b; //返回修改好的DOM对象
+}
+
+function genElement2(type, id) {
+  let b = document.createElement(type); //创建类型为button的DOM对象
+  b.style.cssText = 'margin:16px 10px 0px 0px;float:left;width:80px' //添加样式（margin可以让元素间隔开一定距离）
+  if (id) {
+    b.id = id;
+  }
+  if (GM_getValue('replyPage')) {
+    b.value = GM_getValue('replyPage');
+  }
+  b.placeholder = `版块-1-2`;
+  return b; //返回修改好的DOM对象
+}
 
 function genVideo() {
   let video = document.createElement('video');
@@ -404,7 +413,9 @@ function getThreads(currentHref) {
       // 执行回帖函数和感谢函数 必须间隔10秒以上+随机数10-100毫秒
       let randomTime = 0;
       // 防封号：随机间隔时间，随机快速回帖内容。未完成。
-      randomTime = Math.ceil(Math.random() * 1000) + 11000;
+      const differ = 5000; // 回单贴随机差值
+      const interval = 11000; // 回帖基础间隔
+      randomTime = Math.ceil(Math.random() * differ) + interval; //回帖随机时间
       let i = 0;
       let href = null;
       let tid = null;
@@ -444,7 +455,7 @@ function getThreads(currentHref) {
       };
 
       function timeMeassage() { //动态赋值pageTime 和通知消息
-        pageTime = 12000 * hrefs.length; // 动态赋值pageTime 每页加 20000ms 等待时间，平衡误差
+        pageTime = (differ + interval) * hrefs.length; // 动态赋值pageTime 每页加 20000ms 等待时间，平衡误差
         // console.log("本页需要运行时间：", pageTime - 20000);
         messageBox('正在回帖中... ' + (pageFrom - 1) + '/' + pageEnd + '页需要' + (pageTime / 1000 / 60).toFixed(1) + '分钟', 'none');
       }
@@ -457,7 +468,7 @@ function getThreads(currentHref) {
             messageBox("本页回帖完成！", 'none');
           } else {
             clearInterval(timer);
-            randomTime = Math.ceil(Math.random() * 1000) + 11000;
+            randomTime = Math.ceil(Math.random() * differ) + interval;
             circleReply();
           }
         }, randomTime);
