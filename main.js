@@ -92,8 +92,16 @@ function addBtns() {
   };
   document.querySelector('body').appendChild(genDiv()); // 消息盒子添加到body
 
-  // const status_loginned = document.querySelector('.status_loginned');
-  // const mnoutbox = document.querySelectorAll('.mnoutbox');
+  const status_loginned = document.querySelector('.status_loginned');
+  const mnoutbox = document.querySelectorAll('.mnoutbox');
+
+  // 在签到页面激活 定时签到
+  if (location.href == `https://www.jkforum.net/plugin/?id=dsu_paulsign:sign`) {
+    let btn = genButton('定时签到', aotuSign); //设置名称和绑定函数
+    status_loginned.insertBefore(btn, mnoutbox[1]); //添加按钮到指定位置
+    const video = genVideo();
+    status_loginned.insertBefore(video, mnoutbox[1]); //添加视频到指定位置
+  }
 
   // // 回帖输入框
   // const input = genElement('textarea', 'inp1', 1, 20);
@@ -615,4 +623,47 @@ function replaceHtml(txt) {
   const reg = /<.+>/g; //去掉所有<>内内容
   // 先reg3,\n特殊符号会影响reg的匹配
   return txt.replace(reg3, '').replace(reg, '').replace(reg2, '');
+}
+
+function aotuSign() {
+  document.querySelector('#video1').play(); // 播放视频，防止休眠
+  if (!document.querySelector('#video1').paused) {
+    messageBox('防止休眠启动，请保持本页处于激活状态，勿最小化本窗口以及全屏运行其它应用！', 'none');
+  } else {
+    console.log(document.querySelector('#video1'));
+  }
+  // 定时签到
+  timeControl();
+}
+
+// 定时签到
+function timeControl() {
+  var hours, minutes, seconds;
+  const h = 0,
+    m = 0,
+    s = 0;
+
+  function nowTime() {
+    hours = new Date().getHours();
+    minutes = new Date().getMinutes();
+    seconds = new Date().getSeconds();
+  }
+
+  function control() {
+    if (hours == h && minutes == m && seconds == s) {
+      clearInterval(timmer);
+      console.log('执行中....');
+      for (let i = 0; i < 10; i++) {
+        sign();
+      }
+    } else {
+      console.log('时间没有到：', h, m, s, '目前时间：', hours, minutes, seconds);
+    }
+  }
+
+  function check() {
+    nowTime();
+    control();
+  }
+  let timmer = setInterval(check, 500);
 }
