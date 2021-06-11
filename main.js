@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         jkforum helper
 // @namespace    https://github.com/Eished/jkforum_helper
-// @version      0.3.2
+// @version      0.3.3
 // @description  捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动支付购买主题贴、自动完成投票任务，一键批量回帖/感谢
 // @author       Eished
 // @license      AGPL-3.0
@@ -86,12 +86,17 @@ function addBtns() {
   // 生产消息盒子
   function genDiv() {
     let b = document.createElement('div'); //创建类型为div的DOM对象
-    b.style.cssText = 'left: 30%; top: 0%;width:200px;float:left;position:absolute;border-radius: 10px';
+    b.style.cssText = 'width: 200px;float: left;position: absolute;border-radius: 10px;left: auto;right: 5%;bottom: 20px;';
     b.id = 'messageBox';
     return b; //返回修改好的DOM对象
   };
   document.querySelector('body').appendChild(genDiv()); // 消息盒子添加到body
-
+  const messageBox = document.querySelector('#messageBox');
+  const messageBoxBottom = parseInt(messageBox.style.bottom);
+  window.onscroll = function () { //定位在右下角
+    const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+    messageBox.style.bottom = messageBoxBottom - scrollTop + 'px';
+  }
   const status_loginned = document.querySelector('.status_loginned');
   const mnoutbox = document.querySelectorAll('.mnoutbox');
 
@@ -659,8 +664,8 @@ function timeControl() {
       for (let i = 0; i < 10; i++) { //重试次数
         setTimeout(() => {
           sign();
-          messageBox('执行第' + (i + 2) + '次');
-          console.log('执行第' + (i + 2) + '次');
+          messageBox('执行第' + (i + 1) + '次');
+          console.log('执行第' + (i + 1) + '次');
         }, retryTime += 200) //重试间隔
       }
     } else {
