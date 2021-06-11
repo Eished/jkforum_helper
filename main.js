@@ -15,15 +15,45 @@
 (function () {
   'use strict';
   if (document.querySelector('.listmenu li a')) {
-    const formhash = document.querySelector('.listmenu li a').href.split('&')[2].split('=')[1];
-    if (formhash != GM_getValue('formhash')) {
-      GM_setValue('formhash', formhash); //用GM_setValue当全局变量
-    }
+    newUser();
     addBtns();
     launch();
     rePic();
   }
 })();
+
+function newUser() {
+  const user = {
+    username: '',
+    formhash: '',
+    page: '',
+    day: '',
+    todaysay: '',
+    mood: 'fd',
+    votedMessage: '+1',
+    applyVotedUrl: 'https://www.jkforum.net/home.php?mod=task&do=apply&id=59',
+    votedUrl: 'https://www.jkforum.net/plugin.php?id=voted',
+    taskDoneUrl: 'https://www.jkforum.net/home.php?mod=task&do=draw&id=59',
+    signUrl: 'https://www.jkforum.net/plugin/?id=dsu_paulsign:sign&operation=qiandao&infloat=1&inajax=1',
+    thkUrl: 'https://www.jkforum.net/plugin/?id=thankauthor:thank&inajax=1',
+    payUrl: 'https://www.jkforum.net/forum.php?mod=misc&action=pay&paysubmit=yes&infloat=yes&inajax=1',
+    replyMessage: ['我看到了我的女神 暈了暈了', '太銷魂了吧~果真讓人快把持不住了', '這真的是太正點了！要是我有這種女友一定幸福的', '眼睛超會勾 魂都被勾走了啦', '超正的耶!! 他的眼睛好會放電 整個就是超級完美的', '那對眼睛真是超吸引人的阿XD 要被吸進去了...', '這不是我的前女友嗎?', '哇∼來人阿把這位正妹給脫了 正妹不該穿太多', '真是身材臉蛋一流之女優', '我來挑戰看看自己的"把持力"！！', '這誰受的了呀 殺人了', '可惡 想騎！！！', '能把持住的就不是男人啦！！！', '真的是太美了 正點看得我心中的火高漲呀', '我心中的女神阿！！！！您好眷顧我阿', '開放的少女都滿漂亮火辣 看了真是賞心悅目', '胸部整個反地心引力呀！！！', '太漂亮了吧 眼睛都快掉出來了 很合我的胃口', '這麼正，這樣怎還得了！', '正點死啦~~ 鼻血都快噴出來了', '美體美貌相呼應，是人夢中求也', '歐耶 我投降了 這麼美的車頭燈.........', '這胸部太偉大了，靠在上面有種溫暖的感覺 感謝分享', '身材比例真是完美 不看真是太可惜 皮膚白皙吹彈可破阿', '這真的是~立馬讓人硬邦邦啊！！！！', '腰瘦奶大人美皮膚好 再加上翹臀 真的是精華好文呀！！', '身材果然是棒...真是人間胸器啊', '如此的人間美景豈能放過 讓我們繼續看下去!', '真乃美胸也 小弟昂然佩服~', '真的波濤洶湧 好想摸摸看唷&gt;&lt;！！', '天啊！超正的 再看下去就要爆炸啦∼', '年輕、貌美、身材好~怎麼，日本的正妹是都跑來當女優了嗎', '路過看看 我覺得很實用', '大家一起來跟我推爆！', '我覺得原PO說的真是有道理', '原PO好帥！愛死你了', '原PO是正妹！愛死妳了', '推！是為了讓你分享更多', '發這文真是個天才', '太有趣了！謝樓主 借分享', '真是生我者父母，知我者樓主呀！', '這麼好的帖 不推對不起自己阿', '感謝您的分享才有的欣賞', '由衷感謝樓主辛苦無私的分享'],
+  }
+  const formhash = document.querySelector('.listmenu li a').href.split('&')[2].split('=')[1];
+  const username = document.querySelector('.avatar_info').querySelector('a').innerHTML;
+  if (!GM_getValue(username)) { //空则写入
+    user.username = username;
+    user.formhash = formhash;
+    GM_setValue(username, user);
+  } else if (GM_getValue(username).formhash != formhash) { //formhash 变动存储
+    user.formhash = formhash;
+    GM_setValue(username, user);
+  }
+  if (!GM_getValue(username).todaysay) {
+    user.todaysay = '簽到'; //签到输入内容默认值
+    GM_setValue(username, user);
+  }
+}
 
 function rePic() {
   if (window.location.href.match('/thread-')) {
@@ -51,10 +81,11 @@ function rePic() {
 
 function autoPay() {
   if (document.querySelector('.viewpay')) {
-    const url = `https://www.jkforum.net/forum.php?mod=misc&action=pay&paysubmit=yes&infloat=yes&inajax=1`
+    const user = getUserFromName();
+    const url = user.payUrl;
     const referer = location.href;
     const tid = referer.split('-')[1];
-    const pData = `formhash=${GM_getValue('formhash')}&referer=${turnUrl(referer)}&tid=${tid}&handlekey=pay`
+    const pData = `formhash=${user.formhash}&referer=${turnUrl(referer)}&tid=${tid}&handlekey=pay`
     postData(url, pData, 'pay');
   }
 }
@@ -76,9 +107,10 @@ function thankThreadPost() {
   const tid = thankform.querySelector('[name=tid]').value;
   const touser = thankform.querySelector('[name=touser]').value;
   const touseruid = thankform.querySelector('[name=touseruid]').value;
-  const thkData = `formhash=${GM_getValue('formhash')}&tid=${tid}&touser=${touser}&touseruid=${touseruid}&handlekey=k_thankauthor&addsubmit=true`;
+  const user = getUserFromName();
+  const thkData = `formhash=${user.formhash}&tid=${tid}&touser=${touser}&touseruid=${touseruid}&handlekey=k_thankauthor&addsubmit=true`;
   // 执行感谢函数
-  const thkReqUrl = 'https://www.jkforum.net/plugin/?id=thankauthor:thank&inajax=1'; //请求地址
+  const thkReqUrl = user.thkUrl; //请求地址
   postData(thkReqUrl, thkData, 'thk'); //post感谢数据
 }
 // 添加GUI
@@ -86,7 +118,7 @@ function addBtns() {
   // 生产消息盒子
   function genDiv() {
     let b = document.createElement('div'); //创建类型为div的DOM对象
-    b.style.cssText = 'width: 200px;float: left;position: absolute;border-radius: 10px;left: auto;right: 5%;bottom: 20px;';
+    b.style.cssText = 'width: 200px;float: left;position: absolute;border-radius: 10px;left: auto;right: 5%;bottom: 20px;z-index:999';
     b.id = 'messageBox';
     return b; //返回修改好的DOM对象
   };
@@ -143,8 +175,9 @@ function genElement(type, id, val1, val2) {
   b.rows = val1;
   b.cols = val2;
   // 油猴脚本存储回帖内容
-  if (GM_getValue('reply')) {
-    b.value = GM_getValue('reply');
+  const user = getUserFromName();
+  if (user.reply) {
+    b.value = user.reply;
   } else {
     b.value = '感謝大大分享！';
   }
@@ -160,8 +193,9 @@ function genElement2(type, id) {
   if (id) {
     b.id = id;
   }
-  if (GM_getValue('replyPage')) {
-    b.value = GM_getValue('replyPage');
+  const user = getUserFromName();
+  if (user.replyPage) {
+    b.value = user.replyPage;
   }
   b.placeholder = `版块-1-2`;
   return b; //返回修改好的DOM对象
@@ -180,16 +214,21 @@ function genVideo() {
   return video;
 }
 
+function getUserFromName() { //获取用户名
+  const avatar_info = document.querySelector('.avatar_info'); // 用户名判断唯一用户
+  const username = avatar_info.querySelector('a').innerHTML;
+  const user = GM_getValue(username);
+  return user;
+}
+
 function launch() {
-  let avatar_info = document.querySelector('.avatar_info'); // 用户名判断唯一用户
-  if (avatar_info) { //验证是否登录
-    avatar_info = avatar_info.querySelector('a').innerHTML;
+  const user = getUserFromName(); // 从formhash判断唯一用户, 不行，是变量！username
+  if (user.username) { //验证是否登录
     const date = new Date();
-    let signDate = GM_getValue(avatar_info); // 从formhash判断唯一用户, 不行，是变量！avatar_info
-    if (signDate != date.getDate()) { //天变动则签到
-      signDate = date.getDate();
-      GM_setValue(avatar_info, signDate); //保存当天日
-      const urlApply = 'https://www.jkforum.net/home.php?mod=task&do=apply&id=59';
+    if (user.day != date.getDate()) { //天变动则签到
+      user.day = date.getDate();
+      GM_setValue(user.username, user); //保存当天日
+      const urlApply = user.applyVotedUrl;
       // 申请任务
       task(urlApply);
       // 签到
@@ -201,9 +240,9 @@ function launch() {
 }
 
 function sign() {
-  const todaysay = '好想睡覺~'; //签到输入内容
-  let pMessage = 'formhash=' + GM_getValue('formhash') + '&qdxq=ym&qdmode=1&todaysay=' + turnUrl(todaysay) + '&fastreply=1'; //post 报文
-  let url = 'https://www.jkforum.net/plugin/?id=dsu_paulsign:sign&operation=qiandao&infloat=1&inajax=1'; //请求链接
+  const user = getUserFromName();
+  let pMessage = 'formhash=' + user.formhash + '&qdxq=' + user.mood + '&qdmode=1&todaysay=' + turnUrl(user.todaysay) + '&fastreply=1'; //post 报文
+  let url = user.signUrl; //请求链接
   // 直接post签到数据
   postData(url, pMessage, 'sign');
 }
@@ -216,7 +255,7 @@ function task(urlApply) {
   httpRequest.onreadystatechange = function () {
     if (httpRequest.readyState == 4 && httpRequest.status == 200) {
       messageBox("申请投票任务执行成功！");
-      let urlVote = 'https://www.jkforum.net/plugin.php?id=voted';
+      let urlVote = getUserFromName().votedUrl;
       // 执行获取vid
       getVid(urlVote);
     }
@@ -260,7 +299,8 @@ function getAid(vidUrl, vid) {
       const href = htmlData.querySelector('.hp_s_c a').href;
       // 分解链接
       const aid = href.split('&')[2].split('=')[1]; // 纯数字
-      const pMessage = 'formhash=' + GM_getValue('formhash') + '&inajax=1&handlekey=dian&sid=0&message=1'; //post 投票报文
+      const user = getUserFromName();
+      const pMessage = 'formhash=' + user.formhash + '&inajax=1&handlekey=dian&sid=0&message=' + turnUrl(user.votedMessage); //post 投票报文
       const url = 'https://www.jkforum.net/plugin/?id=voted&ac=dian&aid=' + aid + '&vid=' + vid + ' & qr = & inajax = 1 '; //拼接投票链接
       postData(url, pMessage, 'voted');
     }
@@ -313,7 +353,7 @@ function messageBox(text, setTime) {
 
 // 自动感谢帖子
 let fid = null; //回帖帖子用
-let replyMessage = ''; //回复内容
+// let replyMessage = ''; //回复内容
 let page = null; // 帖子列表页码
 let pageTime = 1000; // 翻页时间，默认感谢为1秒，回帖为第一次请求时初始化值
 let pageFrom = 0; //回帖起始页
@@ -321,8 +361,12 @@ let pageEnd = 0; //回帖终点页
 
 function thankOnePage() {
   messageBox('已选择单页感谢/回帖');
-  // replyMessage = document.querySelector('#inp1').value; // 获取回复内容
-  // GM_setValue('reply', replyMessage); // 油猴脚本存储回帖内容
+  const replyMessage = document.querySelector('#inp1').value; // 获取回复内容
+  const user = getUserFromName();
+  if (replyMessage) {
+    user.replyMessage = replyMessage;
+    GM_setValue(user.username, user); // 油猴脚本存储回帖内容
+  }
   const currentHref = window.location.href; // 获取当前页地址
   fid = currentHref.split('-')[1]; // 获取板块fid
   // 判断当前页是否处于图片模式
@@ -353,8 +397,9 @@ function thankBatch() {
     } else {
       console.log(document.querySelector('#video1'));
     }
-
-    GM_setValue('replyPage', page);
+    const user = getUserFromName();
+    user.page = page;
+    GM_setValue(user.username, user);
     pageFrom = parseInt(page.split('-')[1]); // 获取起点页码
     pageEnd = parseInt(page.split('-')[2]); // 获取终点页码
     fid = page.split('-')[0]; // 获取版块代码
@@ -433,6 +478,7 @@ function getThreads(currentHref) {
       let href = null;
       let tid = null;
       // 遍历所有帖子链接并感谢
+      const user = getUserFromName();
       for (i = 0; i < hrefs.length; i++) {
         href = hrefs[i].href;
         // 获取帖子ID
@@ -440,7 +486,7 @@ function getThreads(currentHref) {
         const touser = tousers[i]; // 无前缀 字符串
         const touserUid = touserUids[i]; //无前缀 数字
         // 拼接感谢报文
-        const thkData = 'formhash=' + GM_getValue('formhash') + '&tid=' + tid + '&touser=' + touser + '&touser' + touserUid + '&handlekey=k_thankauthor&addsubmit=true';
+        const thkData = 'formhash=' + user.formhash + '&tid=' + tid + '&touser=' + touser + '&touser' + touserUid + '&handlekey=k_thankauthor&addsubmit=true';
         // 执行感谢函数
         const thkReqUrl = 'https://www.jkforum.net/plugin/?id=thankauthor:thank&inajax=1'; //请求地址
         postData(thkReqUrl, thkData, 'thk'); //post感谢数据
@@ -460,7 +506,7 @@ function getThreads(currentHref) {
           const date = new Date();
           const posttime = parseInt(date.getTime() / 1000);
           // 拼接回帖报文
-          const replyData = 'message=' + turnUrl(replyMessage) + '&posttime=' + posttime + '&formhash=' + GM_getValue('formhash') + '&usesig=1&subject=++';
+          const replyData = 'message=' + turnUrl(user.replyMessage) + '&posttime=' + posttime + '&formhash=' + user.formhash + '&usesig=1&subject=++';
           postData(replyUrl, replyData, 'reply');
           i++;
         }
@@ -556,7 +602,7 @@ function postData(replyUrl, replyData, fromId, contentType) {
           } else {
             messageBox(stringOrHtml); //其它情况直接输出
           }
-          const urlDraw = 'https://www.jkforum.net/home.php?mod=task&do=draw&id=59';
+          const urlDraw = getUserFromName().taskDoneUrl;
           taskDone(urlDraw); // 执行领奖励
           break;
         }
