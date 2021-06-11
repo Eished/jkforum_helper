@@ -23,35 +23,66 @@
 })();
 
 function newUser() {
-  const user = {
-    username: '',
-    formhash: '',
-    page: '',
-    day: '',
-    todaysay: '',
-    mood: 'fd',
-    votedMessage: '+1',
-    applyVotedUrl: 'https://www.jkforum.net/home.php?mod=task&do=apply&id=59',
-    votedUrl: 'https://www.jkforum.net/plugin.php?id=voted',
-    taskDoneUrl: 'https://www.jkforum.net/home.php?mod=task&do=draw&id=59',
-    signUrl: 'https://www.jkforum.net/plugin/?id=dsu_paulsign:sign&operation=qiandao&infloat=1&inajax=1',
-    thkUrl: 'https://www.jkforum.net/plugin/?id=thankauthor:thank&inajax=1',
-    payUrl: 'https://www.jkforum.net/forum.php?mod=misc&action=pay&paysubmit=yes&infloat=yes&inajax=1',
-    replyMessage: ['我看到了我的女神 暈了暈了', '太銷魂了吧~果真讓人快把持不住了', '這真的是太正點了！要是我有這種女友一定幸福的', '眼睛超會勾 魂都被勾走了啦', '超正的耶!! 他的眼睛好會放電 整個就是超級完美的', '那對眼睛真是超吸引人的阿XD 要被吸進去了...', '這不是我的前女友嗎?', '哇∼來人阿把這位正妹給脫了 正妹不該穿太多', '真是身材臉蛋一流之女優', '我來挑戰看看自己的"把持力"！！', '這誰受的了呀 殺人了', '可惡 想騎！！！', '能把持住的就不是男人啦！！！', '真的是太美了 正點看得我心中的火高漲呀', '我心中的女神阿！！！！您好眷顧我阿', '開放的少女都滿漂亮火辣 看了真是賞心悅目', '胸部整個反地心引力呀！！！', '太漂亮了吧 眼睛都快掉出來了 很合我的胃口', '這麼正，這樣怎還得了！', '正點死啦~~ 鼻血都快噴出來了', '美體美貌相呼應，是人夢中求也', '歐耶 我投降了 這麼美的車頭燈.........', '這胸部太偉大了，靠在上面有種溫暖的感覺 感謝分享', '身材比例真是完美 不看真是太可惜 皮膚白皙吹彈可破阿', '這真的是~立馬讓人硬邦邦啊！！！！', '腰瘦奶大人美皮膚好 再加上翹臀 真的是精華好文呀！！', '身材果然是棒...真是人間胸器啊', '如此的人間美景豈能放過 讓我們繼續看下去!', '真乃美胸也 小弟昂然佩服~', '真的波濤洶湧 好想摸摸看唷&gt;&lt;！！', '天啊！超正的 再看下去就要爆炸啦∼', '年輕、貌美、身材好~怎麼，日本的正妹是都跑來當女優了嗎', '路過看看 我覺得很實用', '大家一起來跟我推爆！', '我覺得原PO說的真是有道理', '原PO好帥！愛死你了', '原PO是正妹！愛死妳了', '推！是為了讓你分享更多', '發這文真是個天才', '太有趣了！謝樓主 借分享', '真是生我者父母，知我者樓主呀！', '這麼好的帖 不推對不起自己阿', '感謝您的分享才有的欣賞', '由衷感謝樓主辛苦無私的分享'],
-  }
   const formhash = document.querySelector('.listmenu li a').href.split('&')[2].split('=')[1];
   const username = document.querySelector('.avatar_info').querySelector('a').innerHTML;
   if (!GM_getValue(username)) { //空则写入
+    const user = {
+      username: '',
+      formhash: '',
+      page: '',
+      day: '',
+      todaysay: '',
+      mood: '',
+      votedMessage: '',
+      differ: 0,
+      interval: 0,
+      applyVotedUrl: 'https://www.jkforum.net/home.php?mod=task&do=apply&id=59',
+      votedUrl: 'https://www.jkforum.net/plugin.php?id=voted',
+      taskDoneUrl: 'https://www.jkforum.net/home.php?mod=task&do=draw&id=59',
+      signUrl: 'https://www.jkforum.net/plugin/?id=dsu_paulsign:sign&operation=qiandao&infloat=1&inajax=1',
+      thkUrl: 'https://www.jkforum.net/plugin/?id=thankauthor:thank&inajax=1',
+      payUrl: 'https://www.jkforum.net/forum.php?mod=misc&action=pay&paysubmit=yes&infloat=yes&inajax=1',
+      fastReply: ['我看到了我的女神 暈了暈了', '太銷魂了吧~果真讓人快把持不住了', '這真的是太正點了！要是我有這種女友一定幸福的', '眼睛超會勾 魂都被勾走了啦', '超正的耶!! 他的眼睛好會放電 整個就是超級完美的', '那對眼睛真是超吸引人的阿XD 要被吸進去了...', '這不是我的前女友嗎?', '哇∼來人阿把這位正妹給脫了 正妹不該穿太多', '真是身材臉蛋一流之女優', '這誰受的了呀 殺人了', '可惡 想騎！！！', '能把持住的就不是男人啦！！！', '真的是太美了 正點看得我心中的火高漲呀', '我心中的女神阿！！！！您好眷顧我阿', '開放的少女都滿漂亮火辣 看了真是賞心悅目', '胸部整個反地心引力呀！！！', '太漂亮了吧 眼睛都快掉出來了 很合我的胃口', '這麼正，這樣怎還得了！', '正點死啦~~ 鼻血都快噴出來了', '美體美貌相呼應，是人夢中求也', '歐耶 我投降了 這麼美的車頭燈.........', '這胸部太偉大了，靠在上面有種溫暖的感覺 感謝分享', '身材比例真是完美 不看真是太可惜 皮膚白皙吹彈可破阿', '這真的是~立馬讓人硬邦邦啊！！！！', '腰瘦奶大人美皮膚好 再加上翹臀 真的是精華好文呀！！', '身材果然是棒...真是人間胸器啊', '如此的人間美景豈能放過 讓我們繼續看下去!', '真乃美胸也 小弟昂然佩服~', '真的波濤洶湧 好想摸摸看唷><！！', '天啊！超正的 再看下去就要爆炸啦∼', '年輕、貌美、身材好~怎麼，日本的正妹是都跑來當女優了嗎', '路過看看 我覺得很實用', '大家一起來跟我推爆！', '我覺得原PO說的真是有道理', '原PO好帥！愛死你了', '原PO是正妹！愛死妳了', '推！是為了讓你分享更多', '發這文真是個天才', '太有趣了！謝樓主 借分享', '真是生我者父母，知我者樓主呀！', '這麼好的帖 不推對不起自己阿', '感謝您的分享才有的欣賞', '由衷感謝樓主辛苦無私的分享'],
+      replyMessage: [],
+    }
     user.username = username;
     user.formhash = formhash;
     GM_setValue(username, user);
-  } else if (GM_getValue(username).formhash != formhash) { //formhash 变动存储
+  }
+
+  const user = getUserFromName();
+  if (user.formhash != formhash) { //formhash 变动存储
     user.formhash = formhash;
     GM_setValue(username, user);
   }
-  if (!GM_getValue(username).todaysay) {
+  if (!user.todaysay) {
     user.todaysay = '簽到'; //签到输入内容默认值
     GM_setValue(username, user);
+  }
+  if (!user.mood) {
+    user.mood = 'fd'; //签到心情内容默认值
+    GM_setValue(username, user);
+  }
+  if (!user.votedMessage) {
+    user.votedMessage = '+1'; //投票输入内容默认值
+    GM_setValue(username, user);
+  }
+  if (!user.differ) {
+    user.differ = 10000; //自动回帖随机范围默认值
+    GM_setValue(username, user);
+  }
+  if (!user.interval) {
+    user.interval = 20000; //自动回帖基础间隔默认值
+    GM_setValue(username, user);
+  }
+}
+
+function getUserFromName() { //从用户名获取对象
+  const avatar_info = document.querySelector('.avatar_info'); // 用户名判断唯一用户
+  if (avatar_info) {
+    const username = avatar_info.querySelector('a').innerHTML;
+    const user = GM_getValue(username);
+    return user;
   }
 }
 
@@ -113,6 +144,7 @@ function thankThreadPost() {
   const thkReqUrl = user.thkUrl; //请求地址
   postData(thkReqUrl, thkData, 'thk'); //post感谢数据
 }
+
 // 添加GUI
 function addBtns() {
   // 生产消息盒子
@@ -140,15 +172,18 @@ function addBtns() {
     status_loginned.insertBefore(video, mnoutbox[1]); //添加视频到指定位置
   }
 
-  // 回帖输入框
-  // const input = genElement('textarea', 'inp1', 1, 20);
-  // status_loginned.insertBefore(input, mnoutbox[1]); //添加文本域到指定位置
 
   if (window.location.href.match('/forum-')) {
+    // 回帖输入框
+    const input = genElement('textarea', 'inpreply', 1, 20);
+    status_loginned.insertBefore(input, mnoutbox[1]); //添加文本域到指定位置
     // 感谢 按钮
     const thkBtn = genButton('感谢/回帖', thankOnePage); //设置名称和绑定函数
     status_loginned.insertBefore(thkBtn, mnoutbox[1]); //添加按钮到指定位置
   } else if (location.href == `https://www.jkforum.net/forum.php`) { //在首页激活批量感谢功能
+    // 回帖输入框
+    const input = genElement('textarea', 'inpreply', 1, 20);
+    status_loginned.insertBefore(input, mnoutbox[1]); //添加文本域到指定位置  
     // 页码输入框
     const page = genElement2('input', 'inp2');
     status_loginned.insertBefore(page, mnoutbox[1]); //添加输入框到指定位置
@@ -175,12 +210,7 @@ function genElement(type, id, val1, val2) {
   b.rows = val1;
   b.cols = val2;
   // 油猴脚本存储回帖内容
-  const user = getUserFromName();
-  if (user.reply) {
-    b.value = user.reply;
-  } else {
-    b.value = '感謝大大分享！';
-  }
+  b.placeholder = '感謝大大分享';
   if (id) {
     b.id = id;
   } //如果传入了id，就修改DOM对象的id
@@ -194,8 +224,8 @@ function genElement2(type, id) {
     b.id = id;
   }
   const user = getUserFromName();
-  if (user.replyPage) {
-    b.value = user.replyPage;
+  if (user.page) {
+    b.value = user.page;
   }
   b.placeholder = `版块-1-2`;
   return b; //返回修改好的DOM对象
@@ -212,13 +242,6 @@ function genVideo() {
   source.type = "video/mp4"
   video.append(source);
   return video;
-}
-
-function getUserFromName() { //获取用户名
-  const avatar_info = document.querySelector('.avatar_info'); // 用户名判断唯一用户
-  const username = avatar_info.querySelector('a').innerHTML;
-  const user = GM_getValue(username);
-  return user;
 }
 
 function launch() {
@@ -359,14 +382,20 @@ let pageTime = 1000; // 翻页时间，默认感谢为1秒，回帖为第一次�
 let pageFrom = 0; //回帖起始页
 let pageEnd = 0; //回帖终点页
 
-function thankOnePage() {
-  messageBox('已选择单页感谢/回帖');
-  const replyMessage = document.querySelector('#inp1').value; // 获取回复内容
+function chooceReply() {
+  const inpreply = document.querySelector('#inpreply'); // 获取回复内容
   const user = getUserFromName();
-  if (replyMessage) {
-    user.replyMessage = replyMessage;
+  if (inpreply && inpreply.value) {
+    user.replyMessage = [inpreply.value];
+    GM_setValue(user.username, user); // 油猴脚本存储回帖内容
+  } else {
+    user.replyMessage = user.fastReply;
     GM_setValue(user.username, user); // 油猴脚本存储回帖内容
   }
+}
+
+function thankOnePage() {
+  messageBox('已选择单页感谢/回帖');
   const currentHref = window.location.href; // 获取当前页地址
   fid = currentHref.split('-')[1]; // 获取板块fid
   // 判断当前页是否处于图片模式
@@ -455,7 +484,6 @@ function getThreads(currentHref) {
       htmlData.innerHTML = data;
       //帖子类名 40个a标签数组
       let hrefs = htmlData.querySelectorAll('.s');
-
       // 获取作者昵称和 UID
       let cites = htmlData.querySelectorAll('cite a');
       // uid 数组
@@ -468,17 +496,17 @@ function getThreads(currentHref) {
         tousers.push(cites[i].innerHTML);
         touserUids.push(cites[i].href.split('&')[1]);
       }
-      // 执行回帖函数和感谢函数 必须间隔10秒以上+随机数10-100毫秒
-      let randomTime = 0;
-      // 防封号：随机间隔时间，随机快速回帖内容。未完成。
-      const differ = 5000; // 回单贴随机差值
-      const interval = 11000; // 回帖基础间隔
-      randomTime = Math.ceil(Math.random() * differ) + interval; //回帖随机时间
+
+      chooceReply(); //如果输入了值则使用用户值，如果没有则使用默认值；
+      const user = getUserFromName(); //获取user对象
+      let randomTime = 0; // 执行回帖函数和感谢函数 必须间隔10秒以上+随机数10-100毫秒
+      const differ = user.differ; // 回单贴随机差值 // 防封号：随机间隔时间，随机快速回帖内容。
+      const interval = user.interval; // 回帖基础间隔
+      randomTime = rdNum(interval, interval + differ); //回帖随机时间
       let i = 0;
       let href = null;
       let tid = null;
       // 遍历所有帖子链接并感谢
-      const user = getUserFromName();
       for (i = 0; i < hrefs.length; i++) {
         href = hrefs[i].href;
         // 获取帖子ID
@@ -492,6 +520,7 @@ function getThreads(currentHref) {
         postData(thkReqUrl, thkData, 'thk'); //post感谢数据
       }
       i = 0;
+      let countRandomTime = 0;
 
       function chkReply() { // 回帖函数，提取出来，先于计时器执行
         if (i < hrefs.length) {
@@ -505,17 +534,19 @@ function getThreads(currentHref) {
           // 生产时间戳
           const date = new Date();
           const posttime = parseInt(date.getTime() / 1000);
+          // 随机快速回帖
+          const replyIndex = rdNum(0, user.replyMessage.length - 1);
           // 拼接回帖报文
-          const replyData = 'message=' + turnUrl(user.replyMessage) + '&posttime=' + posttime + '&formhash=' + user.formhash + '&usesig=1&subject=++';
+          const replyData = 'message=' + turnUrl(user.replyMessage[replyIndex]) + '&posttime=' + posttime + '&formhash=' + user.formhash + '&usesig=1&subject=++';
           postData(replyUrl, replyData, 'reply');
+          console.log('内容:', user.replyMessage[replyIndex], replyIndex); //测试使用
           i++;
         }
-        console.log(randomTime, '帖子序号：', i, '总数量：', hrefs.length);
+        console.log('帖子序号：', i, '总数量：', hrefs.length, '当前回帖/秒：', randomTime / 1000, '总耗时/分钟：', ((countRandomTime += randomTime) / 1000 / 60).toFixed(1));
       };
 
       function timeMeassage() { //动态赋值pageTime 和通知消息
-        pageTime = (differ + interval) * hrefs.length; // 动态赋值pageTime 每页加 20000ms 等待时间，平衡误差
-        // console.log("本页需要运行时间：", pageTime - 20000);
+        pageTime = (differ + interval) * hrefs.length; // 动态赋值pageTime ,静态： 总时间=(随即范围+时间间隔)*总贴数
         messageBox('正在回帖中... ' + (pageFrom - 1) + '/' + pageEnd + '页需要' + (pageTime / 1000 / 60).toFixed(1) + '分钟', 'none');
       }
 
@@ -527,24 +558,30 @@ function getThreads(currentHref) {
             messageBox("本页回帖完成！", 'none');
           } else {
             clearInterval(timer);
-            randomTime = Math.ceil(Math.random() * differ) + interval;
+            randomTime = rdNum(interval, differ + interval);
             circleReply();
           }
         }, randomTime);
       }
-      // if (pageTime == 1000 && confirm("已感谢，确认回帖？")) { //确认回帖
-      //   circleReply();
-      //   timeMeassage();
-      // } else if (pageTime != 2000 && pageTime != 1000) { //如果第一次确认回帖，则后面无需确认
-      //   circleReply();
-      //   timeMeassage();
-      // } else {
-      //   pageTime = 2000; //第一次取消回帖，第二次无需再确认
-      //   console.log("已取消回帖：", pageTime);
-      // }
+      if (pageTime == 1000 && confirm("已感谢，确认回帖？")) { //确认回帖
+        circleReply();
+        timeMeassage();
+      } else if (pageTime != 2000 && pageTime != 1000) { //如果第一次确认回帖，则后面无需确认
+        circleReply();
+        timeMeassage();
+      } else {
+        pageTime = 2000; //第一次取消回帖，第二次无需再确认
+        console.log("已取消回帖：", pageTime);
+      }
     };
   };
 };
+
+// n, m 范围随机整数生成 
+function rdNum(n, m) {
+  let c = m - n + 1;
+  return Math.floor(Math.random() * c + n);
+}
 
 // GET数据通用模块
 function getData(url) {
