@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         jkforum helper
 // @namespace    https://github.com/Eished/jkforum_helper
-// @version      0.3.3
+// @version      0.3.4
 // @description  捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动支付购买主题贴、自动完成投票任务，一键批量回帖/感谢
 // @author       Eished
 // @license      AGPL-3.0
@@ -10,6 +10,8 @@
 // @icon         https://www.google.com/s2/favicons?domain=jkforum.net
 // @grant        GM_setValue
 // @grant        GM_getValue
+// @grant        GM_notification
+// @grant        GM_download
 // ==/UserScript==
 
 (function () {
@@ -454,6 +456,7 @@ function thankBatch() {
           if (pageFrom > pageEnd) {
             clearInterval(timer1);
             messageBox(page + "：所有页码回帖/感谢发送完成！请关闭/刷新窗口！", 'none');
+            GM_notification(page + "：所有页码回帖/感谢发送完成！请关闭/刷新窗口！", 'jkforum helper');
           } else if (pageTime != pageTimeCache) { //保持pageTime为最新获取的时间
             console.log('上一页设定运行时间:', pageTimeCache, '下一页设定运行时间:', pageTime);
             clearInterval(timer1);
