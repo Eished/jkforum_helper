@@ -2,7 +2,7 @@
 // @name         jkforum helper
 // @namespace    https://github.com/Eished/jkforum_helper
 // @version      0.3.4
-// @description  捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动支付购买主题贴、自动完成投票任务，一键批量回帖/感谢
+// @description  捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动支付购买主题贴、自动完成投票任务，一键批量回帖/感谢，一键打包下载帖子图片
 // @author       Eished
 // @license      AGPL-3.0
 // @match        *://*.jkforum.net/*
@@ -81,11 +81,9 @@ function newUser() {
 
 function getUserFromName() { //从用户名获取对象
   const avatar_info = document.querySelector('.avatar_info'); // 用户名判断唯一用户
-  if (avatar_info) {
-    const username = avatar_info.querySelector('a').innerHTML;
-    const user = GM_getValue(username);
-    return user;
-  }
+  const username = avatar_info.querySelector('a').innerHTML;
+  const user = GM_getValue(username);
+  return user;
 }
 
 function rePic() {
@@ -388,7 +386,7 @@ function chooceReply() {
   const inpreply = document.querySelector('#inpreply'); // 获取回复内容
   const user = getUserFromName();
   if (inpreply && inpreply.value) {
-    user.replyMessage = [inpreply.value];
+    user.replyMessage = inpreply.value.split('；'); //中文分号分隔字符串
     GM_setValue(user.username, user); // 油猴脚本存储回帖内容
   } else {
     user.replyMessage = user.fastReply;
