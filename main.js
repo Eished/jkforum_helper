@@ -127,7 +127,7 @@ function thankThread() {
     setTimeout(() => {
       location.reload();
     }, 500)
-  } else if (document.querySelectorAll('#k_thankauthor')[0]) { //普通贴
+  } else if (document.querySelector('#thankform') && document.querySelectorAll('#k_thankauthor')[0]) { //普通贴
     thankThreadPost();
   }
 };
@@ -619,8 +619,9 @@ function postData(replyUrl, replyData, fromId, contentType) {
         }
         case 'sign': {
           if (checkHtml(stringOrHtml)) { // 确认html
-            const info = stringOrHtml.querySelector('.c').innerHTML.split('<')[0]; // 解析html，返回字符串
+            const info = stringOrHtml.querySelector('.c').innerHTML.split('<')[0].trim(); // 解析html，返回字符串
             messageBox(info, 10000);
+            console.log(info, 10000);
           } else {
             messageBox(stringOrHtml); //其它情况直接输出
           }
@@ -708,10 +709,10 @@ function checkHtml(htmlStr) {
 // 过滤html标签、前后空格、特殊符号
 function replaceHtml(txt) {
   const reg3 = /[\\|\/|\:|\*|\r|\n|\b|\f|\t|\v|\`]+/g; //去掉特殊符号
-  const reg2 = /^(\s+)|(\s+)$/g; //去掉前后空格
+  // const reg2 = /^(\s+)|(\s+)$/g; //trim() 去掉前后空格,\n等
   const reg = /<.+>/g; //去掉所有<>内内容
   // 先reg3,\n特殊符号会影响reg的匹配
-  return txt.replace(reg3, '').replace(reg, '').replace(reg2, '');
+  return txt.replace(reg3, '').replace(reg, '').trim();
 }
 
 // 定时签到
