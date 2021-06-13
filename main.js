@@ -595,11 +595,8 @@ function getData(url) {
 };
 
 // POST数据通用模块,返回XML
-function postData(replyUrl, replyData, fromId, contentType) {
+function postData(replyUrl, replyData, fromId, contentType = 'application/x-www-form-urlencoded') {
   // 传输数据类型判断,默认 'application/x-www-form-urlencoded'
-  if (contentType) {} else {
-    contentType = 'application/x-www-form-urlencoded';
-  }
   const httpRequest = new XMLHttpRequest();
   httpRequest.open('POST', replyUrl, true); //同步写法会时区响应
   httpRequest.setRequestHeader('content-Type', contentType);
@@ -730,19 +727,21 @@ function timeControl() {
   } else {
     console.log(document.querySelector('#video1'));
   }
-  let hours, minutes, seconds;
+  let hours, minutes, seconds, millisecond;
   const h = 23,
     m = 59,
-    s = 59;
+    s = 59,
+    ms = 0; // 最小间距4ms
 
   function nowTime() {
     hours = new Date().getHours();
     minutes = new Date().getMinutes();
     seconds = new Date().getSeconds();
+    millisecond = new Date().getMilliseconds();
   }
 
   function control() {
-    if (hours == h && minutes == m && seconds == s) {
+    if (hours == h && minutes == m && seconds == s && millisecond >= ms) {
       clearInterval(_this.timer);
       messageBox('执行中....');
       let retryTime = 0;
