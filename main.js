@@ -185,7 +185,7 @@ function addBtns() {
     const input = genElement('textarea', 'inpreply', 1, 20);
     status_loginned.insertBefore(input, mnoutbox[1]); //添加文本域到指定位置  
     // 页码输入框
-    const page = genElement2('input', 'inp2');
+    const page = genElement2('input', 'inp_page');
     status_loginned.insertBefore(page, mnoutbox[1]); //添加输入框到指定位置
     // 批量感谢/回帖
     const btn = genButton('批量感谢/回帖', thankBatch); //设置名称和绑定函数
@@ -414,7 +414,7 @@ function thankOnePage() {
 }
 
 function thankBatch() {
-  page = document.querySelector('#inp2').value;
+  page = document.querySelector('#inp_page').value;
   messageBox('已选择多页感谢/回帖：' + page);
   if (page) { //如果输入了地址则进行批量处理
     // 视频播放
@@ -483,7 +483,14 @@ function getThreads(currentHref) {
       // 数据类型转换
       let htmlData = document.createElement('div');
       htmlData.innerHTML = data;
-      //帖子类名 40个a标签数组
+
+      // 将数组和id整体合并，储存到对象中，即可分离感谢和回帖功能。先解决回帖异步问题。
+      // 先请求完640-1-10所有页码，然后合并所有页，当作一个页面运行，为批量回帖对象。即可解决异步问题。
+      // 合并页后，从批量回帖对象中获取相关元素依次运行，记录整体对象、以及当前回帖的位置，增加为批量回帖对象属性。
+      // 任务链接可自动识别和申请，并记录任务信息到对象的数组中，然后在达到条件后自动完成。
+      // 减少常量和参数，都封装到对象中
+
+      //帖子类名 40个a标签数组 
       let hrefs = htmlData.querySelectorAll('.s');
       // 获取作者昵称和 UID
       let cites = htmlData.querySelectorAll('cite a');
