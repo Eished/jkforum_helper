@@ -12,6 +12,7 @@
 // @grant        GM_getValue
 // @grant        GM_notification
 // @grant        GM_download
+// @grant        GM_info
 // ==/UserScript==
 
 (function () {
@@ -19,7 +20,7 @@
   if (document.querySelector('.listmenu li a')) {
     newUser();
     addBtns();
-    launch();
+    launch(); // 启动自动签到 自动投票
     rePic();
   }
 })();
@@ -27,25 +28,32 @@
 function newUser() {
   const formhash = document.querySelector('.listmenu li a').href.split('&')[2].split('=')[1];
   const username = document.querySelector('.avatar_info').querySelector('a').innerHTML;
-  if (!GM_getValue(username)) { //空则写入
+  if (!GM_getValue(username) || GM_getValue(username).version != GM_info.script.version) { //空则写入，或版本变动写入
+    const fastReplyUrl = 'https://www.jkforum.net/thread-8364615-1-1.html'; // 获取快速回复的地址
+    const fastReply = getFastReply(fastReplyUrl); // 从置顶帖子初始化快速回贴内容, 返回数组
     const user = {
       username: '',
       formhash: '',
-      page: '',
-      day: '',
-      todaysay: '',
-      mood: '',
-      votedMessage: '',
-      differ: 0,
-      interval: 0,
+      version: GM_info.script.version,
+      today: '', // 签到日期
+      todaysay: '', // 签到输入内容
+      mood: '', // 签到心情
+      differ: 0, // 回帖随机间隔时间
+      interval: 0, // 回帖基础间隔时间
+      autoPaySw: 1, // 自动支付开关
+      autoThkSw: 1, // 自动感谢开关
+      autoRePicSw: 1, // 自动加载原图开关
+      page: '', // 批量回帖页码
+      votedMessage: '', //投票输入内容
       applyVotedUrl: 'https://www.jkforum.net/home.php?mod=task&do=apply&id=59',
       votedUrl: 'https://www.jkforum.net/plugin.php?id=voted',
       taskDoneUrl: 'https://www.jkforum.net/home.php?mod=task&do=draw&id=59',
       signUrl: 'https://www.jkforum.net/plugin/?id=dsu_paulsign:sign&operation=qiandao&infloat=1&inajax=1',
       thkUrl: 'https://www.jkforum.net/plugin/?id=thankauthor:thank&inajax=1',
       payUrl: 'https://www.jkforum.net/forum.php?mod=misc&action=pay&paysubmit=yes&infloat=yes&inajax=1',
-      fastReply: ['我看到了我的女神 暈了暈了', '太銷魂了吧~果真讓人快把持不住了', '這真的是太正點了！要是我有這種女友一定幸福的', '眼睛超會勾 魂都被勾走了啦', '超正的耶!! 他的眼睛好會放電 整個就是超級完美的', '那對眼睛真是超吸引人的阿XD 要被吸進去了...', '這不是我的前女友嗎?', '哇∼來人阿把這位正妹給脫了 正妹不該穿太多', '真是身材臉蛋一流之女優', '這誰受的了呀 殺人了', '可惡 想騎！！！', '能把持住的就不是男人啦！！！', '真的是太美了 正點看得我心中的火高漲呀', '我心中的女神阿！！！！您好眷顧我阿', '開放的少女都滿漂亮火辣 看了真是賞心悅目', '胸部整個反地心引力呀！！！', '太漂亮了吧 眼睛都快掉出來了 很合我的胃口', '這麼正，這樣怎還得了！', '正點死啦~~ 鼻血都快噴出來了', '美體美貌相呼應，是人夢中求也', '歐耶 我投降了 這麼美的車頭燈.........', '這胸部太偉大了，靠在上面有種溫暖的感覺 感謝分享', '身材比例真是完美 不看真是太可惜 皮膚白皙吹彈可破阿', '這真的是~立馬讓人硬邦邦啊！！！！', '腰瘦奶大人美皮膚好 再加上翹臀 真的是精華好文呀！！', '身材果然是棒...真是人間胸器啊', '如此的人間美景豈能放過 讓我們繼續看下去!', '真乃美胸也 小弟昂然佩服~', '真的波濤洶湧 好想摸摸看唷><！！', '天啊！超正的 再看下去就要爆炸啦∼', '年輕、貌美、身材好~怎麼，日本的正妹是都跑來當女優了嗎', '路過看看 我覺得很實用', '大家一起來跟我推爆！', '我覺得原PO說的真是有道理', '原PO好帥！愛死你了', '原PO是正妹！愛死妳了', '推！是為了讓你分享更多', '發這文真是個天才', '太有趣了！謝樓主 借分享', '真是生我者父母，知我者樓主呀！', '這麼好的帖 不推對不起自己阿', '感謝您的分享才有的欣賞', '由衷感謝樓主辛苦無私的分享'],
-      replyMessage: [],
+      replyMessage: [], // 用于回复的内容
+      userReplyMessage: [], // 用户保存的回复
+      fastReply: fastReply, // 保存的快速回复
     }
     user.username = username;
     user.formhash = formhash;
@@ -84,6 +92,19 @@ function getUserFromName() { //从用户名获取对象
   const username = avatar_info.querySelector('a').innerHTML;
   const user = GM_getValue(username);
   return user;
+}
+
+function getFastReply(url) { //获取快速回复
+  const html = getData(url);
+  const options = html.querySelectorAll('#rqcss select option');
+  let fastReply = []; //返回数组
+  const reg = /[\"]+|[\n]/g; //去掉需要转义的内容
+  options.forEach(option => {
+    if (option.outerText) { //去掉空值
+      fastReply.push(option.value.replace(reg, ''));
+    }
+  });
+  return fastReply;
 }
 
 function rePic() {
@@ -246,10 +267,12 @@ function genVideo() {
 
 function launch() {
   const user = getUserFromName(); // 从formhash判断唯一用户, 不行，是变量！username
-  if (user.username) { //验证是否登录
-    const date = new Date();
-    if (user.day != date.getDate()) { //天变动则签到
-      user.day = date.getDate();
+  // console.log(user, user.today, user.version, user.username, user.differ);
+  // 版本更新后，today 写入空值，在此初始化。
+  const date = new Date();
+  if (user.username) { //验证是否登录 //天变动则签到
+    if (user.today != date.getDate()) {
+      user.today = date.getDate();
       GM_setValue(user.username, user); //保存当天日
       const urlApply = user.applyVotedUrl;
       // 申请任务
@@ -416,7 +439,8 @@ function thankOnePage() {
 function thankBatch() {
   page = document.querySelector('#inp_page').value;
   messageBox('已选择多页感谢/回帖：' + page);
-  if (page) { //如果输入了地址则进行批量处理
+  const reg = new RegExp(/^\d+-\d+-\d+$/);
+  if (reg.test(page)) { //如果输入了正确地址则进行批量处理
     // 视频播放
     const video = genVideo(); //需要视频时再加载视频，提高性能
     document.querySelector('body').appendChild(video); //添加视频到指定位置
@@ -484,6 +508,9 @@ function getThreads(currentHref) {
       let htmlData = document.createElement('div');
       htmlData.innerHTML = data;
 
+      // 如果版块错误，根据服务器返回提示消息
+      // 附件模式显示原图 
+      // 批量打包下载
       // 将数组和id整体合并，储存到对象中，即可分离感谢和回帖功能。先解决回帖异步问题。
       // 先请求完640-1-10所有页码，然后合并所有页，当作一个页面运行，为批量回帖对象。即可解决异步问题。
       // 合并页后，从批量回帖对象中获取相关元素依次运行，记录整体对象、以及当前回帖的位置，增加为批量回帖对象属性。
@@ -591,13 +618,15 @@ function rdNum(n, m) {
   return Math.floor(Math.random() * c + n);
 }
 
-// GET数据通用模块
+// GET数据通用模块，返回html
 function getData(url) {
   const httpRequest = new XMLHttpRequest();
   httpRequest.open('GET', url, false);
   httpRequest.send();
   if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-    return httpRequest.responseText;
+    let htmlData = document.createElement('div');
+    htmlData.innerHTML = httpRequest.responseText;
+    return htmlData;
   };
 };
 
