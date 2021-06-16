@@ -108,10 +108,15 @@ function getFastReply(url) { //获取快速回复
 
 function rePic() {
   if (window.location.href.match('/thread-')) {
-    thankThread(); // 自动感谢当前贴
-    autoPay(); // 自动购买当前贴
+    const user = getUserFromName();
+    if (user.autoThkSw) { // 自动感谢当前贴开关
+      thankThread(); // 自动感谢当前贴
+    }
+    if (user.autoPaySw) { // 自动购买当前贴开关
+      autoPay(); // 自动购买当前贴
+    }
     let ignore_js_ops = document.querySelectorAll('.t_f ignore_js_op'); //获取图片列表，附件也是ignore_js_op
-    if (ignore_js_ops) {
+    if (ignore_js_ops && user.autoRePicSw) { // 加载原图开关
       for (let i = 0; i < ignore_js_ops.length; i++) { //遍历图片列表
         let img = ignore_js_ops[i].querySelector("img");
         img.setAttribute('onmouseover', null); // 去掉下载原图提示
@@ -408,7 +413,8 @@ function chooceReply() {
   const inpreply = document.querySelector('#inpreply'); // 获取回复内容
   const user = getUserFromName();
   if (inpreply && inpreply.value) {
-    user.replyMessage = inpreply.value.split('；'); //中文分号分隔字符串
+    user.replyMessage = inpreply.value.split('；'); // 中文分号分隔字符串
+    user.userReplyMessage.push(inpreply.value); // 存储自定义回帖内容
     GM_setValue(user.username, user); // 油猴脚本存储回帖内容
   } else {
     user.replyMessage = user.fastReply;
