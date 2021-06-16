@@ -98,10 +98,9 @@ function getFastReply(url) { //获取快速回复
   const html = getData(url);
   const options = html.querySelectorAll('#rqcss select option');
   let fastReply = []; //返回数组
-  const reg = /[\"]+|[\n]/g; //去掉需要转义的内容
   options.forEach(option => {
     if (option.outerText) { //去掉空值
-      fastReply.push(option.value.replace(reg, ''));
+      fastReply.push(replaceHtml(option.value)); //去掉需要转义的内容
     }
   });
   return fastReply;
@@ -572,7 +571,7 @@ function getThreads(currentHref) {
           // 随机快速回帖
           const replyIndex = rdNum(0, user.replyMessage.length - 1);
           // 拼接回帖报文
-          const replyData = 'message=' + turnUrl(user.replyMessage[replyIndex]) + '&posttime=' + posttime + '&formhash=' + user.formhash + '&usesig=1&subject=++';
+          const replyData = 'message=' + turnUrl(user.replyMessage[replyIndex].replace(/\\/, '')) + '&posttime=' + posttime + '&formhash=' + user.formhash + '&usesig=1&subject=++'; // 去掉存储空间转义
           postData(replyUrl, replyData, 'reply');
           console.log('内容:', user.replyMessage[replyIndex], replyIndex); //测试使用
           i++;
