@@ -32,19 +32,19 @@ function newUser() {
     const fastReplyUrl = 'https://www.jkforum.net/thread-8364615-1-1.html'; // 获取快速回复的地址
     const fastReply = getFastReply(fastReplyUrl); // 从置顶帖子初始化快速回贴内容, 返回数组
     const user = {
-      username: '',
-      formhash: '',
+      username: username,
+      formhash: formhash,
       version: GM_info.script.version,
-      today: '', // 签到日期
-      todaysay: '', // 签到输入内容
-      mood: '', // 签到心情
-      differ: 0, // 回帖随机间隔时间
-      interval: 0, // 回帖基础间隔时间
+      today: 0, // 签到日期
+      todaysay: '簽到', // 签到输入内容
+      mood: 'fd', // 签到心情
+      differ: 10000, // 回帖随机间隔时间
+      interval: 20000, // 回帖基础间隔时间
       autoPaySw: 1, // 自动支付开关
       autoThkSw: 1, // 自动感谢开关
       autoRePicSw: 1, // 自动加载原图开关
       page: '', // 批量回帖页码
-      votedMessage: '', //投票输入内容
+      votedMessage: '+1', //投票输入内容
       applyVotedUrl: 'https://www.jkforum.net/home.php?mod=task&do=apply&id=59',
       votedUrl: 'https://www.jkforum.net/plugin.php?id=voted',
       taskDoneUrl: 'https://www.jkforum.net/home.php?mod=task&do=draw&id=59',
@@ -55,34 +55,12 @@ function newUser() {
       userReplyMessage: [], // 用户保存的回复
       fastReply: fastReply, // 保存的快速回复
     }
-    user.username = username;
-    user.formhash = formhash;
     GM_setValue(username, user);
   }
 
   const user = getUserFromName();
   if (user.formhash != formhash) { //formhash 变动存储
     user.formhash = formhash;
-    GM_setValue(username, user);
-  }
-  if (!user.todaysay) {
-    user.todaysay = '簽到'; //签到输入内容默认值
-    GM_setValue(username, user);
-  }
-  if (!user.mood) {
-    user.mood = 'fd'; //签到心情内容默认值
-    GM_setValue(username, user);
-  }
-  if (!user.votedMessage) {
-    user.votedMessage = '+1'; //投票输入内容默认值
-    GM_setValue(username, user);
-  }
-  if (!user.differ) {
-    user.differ = 10000; //自动回帖随机范围默认值
-    GM_setValue(username, user);
-  }
-  if (!user.interval) {
-    user.interval = 20000; //自动回帖基础间隔默认值
     GM_setValue(username, user);
   }
 }
