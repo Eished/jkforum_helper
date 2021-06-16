@@ -150,6 +150,15 @@ function thankThreadPost() {
 
 // 添加GUI
 function addBtns() {
+  // 增加 visited 样式，图片模式已阅的帖子变灰色
+  function genStlye() {
+    let b = document.createElement('style');
+    b.innerHTML = `.xw0 a:visited {color: grey;}`;
+    return b;
+  };
+  document.querySelector('body').appendChild(genStlye()); // 增加 visited 样式到 body
+
+
   // 生产消息盒子
   function genDiv() {
     let b = document.createElement('div'); //创建类型为div的DOM对象
@@ -213,7 +222,7 @@ function genElement(type, id, val1, val2) {
   b.rows = val1;
   b.cols = val2;
   // 油猴脚本存储回帖内容
-  b.placeholder = '使用中文分号；分隔回帖内容';
+  b.placeholder = '中文分号；分隔回帖内容';
   if (id) {
     b.id = id;
   } //如果传入了id，就修改DOM对象的id
