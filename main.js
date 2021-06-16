@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         jkforum helper
 // @namespace    https://github.com/Eished/jkforum_helper
-// @version      0.3.4
+// @version      0.3.5
 // @description  捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动支付购买主题贴、自动完成投票任务，一键批量回帖/感谢，一键打包下载帖子图片
 // @author       Eished
 // @license      AGPL-3.0
@@ -213,7 +213,7 @@ function genElement(type, id, val1, val2) {
   b.rows = val1;
   b.cols = val2;
   // 油猴脚本存储回帖内容
-  b.placeholder = '感謝大大分享';
+  b.placeholder = '使用中文分号；分隔回帖内容';
   if (id) {
     b.id = id;
   } //如果传入了id，就修改DOM对象的id
@@ -381,7 +381,6 @@ function messageBox(text, setTime) {
 
 // 自动感谢帖子
 let fid = null; //回帖帖子用
-// let replyMessage = ''; //回复内容
 let page = null; // 帖子列表页码
 let pageTime = 1000; // 翻页时间，默认感谢为1秒，回帖为第一次请求时初始化值
 let pageFrom = 0; //回帖起始页
@@ -555,7 +554,7 @@ function getThreads(currentHref) {
           // 随机快速回帖
           const replyIndex = rdNum(0, user.replyMessage.length - 1);
           // 拼接回帖报文
-          const replyData = 'message=' + turnUrl(user.replyMessage[replyIndex].replace(/\\/, '')) + '&posttime=' + posttime + '&formhash=' + user.formhash + '&usesig=1&subject=++'; // 去掉存储空间转义
+          const replyData = 'message=' + turnUrl(user.replyMessage[replyIndex]) + '&posttime=' + posttime + '&formhash=' + user.formhash + '&usesig=1&subject=++';
           postData(replyUrl, replyData, 'reply');
           console.log('内容:', user.replyMessage[replyIndex], replyIndex); //测试使用
           i++;
@@ -724,8 +723,7 @@ function checkHtml(htmlStr) {
 }
 // 过滤html标签、前后空格、特殊符号
 function replaceHtml(txt) {
-  const reg3 = /[\\|\/|\:|\*|\r|\n|\b|\f|\t|\v|\`]+/g; //去掉特殊符号
-  // const reg2 = /^(\s+)|(\s+)$/g; //trim() 去掉前后空格,\n等
+  const reg3 = /[\a|\r|\n|\b|\f|\t|\v]+/g; //去掉特殊符号
   const reg = /<.+>/g; //去掉所有<>内内容
   // 先reg3,\n特殊符号会影响reg的匹配
   return txt.replace(reg3, '').replace(reg, '').trim();
