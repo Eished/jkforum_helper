@@ -35,7 +35,10 @@ function newUser() {
       username: username,
       formhash: formhash,
       version: GM_info.script.version,
-      today: 0, // 签到日期
+      today: '', // 签到日期
+      signtime: '23:59:59', // 签到时间
+      signNum: 10, // 签到重试次数
+      interTime: 200, // 签到重试间隔时间
       todaysay: '簽到', // 签到输入内容
       mood: 'fd', // 签到心情
       differ: 10000, // 回帖随机间隔时间
@@ -51,9 +54,23 @@ function newUser() {
       signUrl: 'https://www.jkforum.net/plugin/?id=dsu_paulsign:sign&operation=qiandao&infloat=1&inajax=1',
       thkUrl: 'https://www.jkforum.net/plugin/?id=thankauthor:thank&inajax=1',
       payUrl: 'https://www.jkforum.net/forum.php?mod=misc&action=pay&paysubmit=yes&infloat=yes&inajax=1',
-      replyMessage: [], // 用于回复的内容
       userReplyMessage: [], // 用户保存的回复
+      replyMessage: [], // 用于回复的内容
       fastReply: fastReply, // 保存的快速回复
+      replyThreads: { // 批量回帖的帖子数据，将此数据单独生成对象保存在此对象外，作为保留历史回帖数据
+        index: 0, // 当前回帖序号
+        pages: '', // 批量回帖页码
+        threads: { // 感谢/回帖相关 数据
+          fid: '',
+          tid: '',
+          touseruid: '',
+          touser: '',
+          thkData: '',
+          replyData: '',
+          posttime: '',
+          randomTime: '',
+        }
+      },
     }
     GM_setValue(username, user);
   }
@@ -256,14 +273,92 @@ function genVideo() {
   return video;
 }
 
-function launch() {
-  const user = getUserFromName(); // 从formhash判断唯一用户, 不行，是变量！username
-  // console.log(user, user.today, user.version, user.username, user.differ);
-  // 版本更新后，today 写入空值，在此初始化。
+function nowTime(time) {
   const date = new Date();
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  let hours = date.getHours();
+  let minutes = date.getMinutes();
+  let seconds = date.getSeconds();
+  // 补零
+  if (hours < 10) {
+    hours = `0${hours}`;
+  }
+  if (minutes < 10) {
+    minutes = `0${minutes}`;
+  }
+  if (seconds < 10) {
+    seconds = `0${seconds}`;
+  }
+  switch (time) {
+    case 'year': {
+      return year;
+    }
+    case 'month': {
+      return `${year}/${month}`;
+    }
+    case 'day': {
+      return `${year}/${month}/${day}`;
+    }
+    case 'hours': {
+      return `${year}/${month}/${day} ${hours}`;
+    }
+    case 'minutes': {
+      return `${year}/${month}/${day} ${hours}:${minutes}`;
+    }
+    case 'seconds': {
+      return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
+    }
+    default:
+      return "输入时间";
+  }
+}
+
+// 定时签到
+function timeControl() {
+  const _this = this; //获取对象
+  clearInterval(_this.timer); //清除重复定时器
+  document.querySelector('#video1').play(); // 播放视频，防止休眠
+  if (!document.querySelector('#video1').paused) {
+    const date = new Date()
+    const holdTime = date.getTime();
+    // 1000*60*60*24
+    const hold = ((1000 * 60 * 60) - holdTime % (1000 * 60 * 60)); //通知持续时间，1小时-已运行分钟
+    messageBox('防止休眠启动，请保持本页处于激活状态，勿最小化本窗口以及全屏运行其它应用！', hold);
+    messageBox('定时签到中，请勿退出...', hold);
+  } else {
+    console.log(document.querySelector('#video1'));
+  }
+  const user = getUserFromName();
+  const signtime = user.signtime; // 设定签到时间
+
+  function control() {
+    const nowtime = nowTime('seconds').split(' ')[1]; // 获取当前时间，到秒
+    if (nowtime == signtime) {
+      clearInterval(_this.timer);
+      messageBox('执行中....');
+      let retryTime = 0;
+      for (let i = 0; i < user.signNum; i++) { //重试次数
+        setTimeout(() => {
+          sign();
+          messageBox('执行第' + (i + 1) + '次');
+          console.log('执行第' + (i + 1) + '次');
+        }, retryTime += user.interTime) //重试间隔
+      }
+    } else {
+      console.log('时间没有到：', signtime, '目前时间：', nowTime('seconds').split(' ')[1]);
+    }
+  }
+  _this.timer = setInterval(control, 500);
+}
+
+function launch() {
+  const user = getUserFromName();
+  // 版本更新后，today 写入空值，在此初始化。
   if (user.username) { //验证是否登录 //天变动则签到
-    if (user.today != date.getDate()) {
-      user.today = date.getDate();
+    if (user.today != nowTime('day')) {
+      user.today = nowTime('day');
       GM_setValue(user.username, user); //保存当天日
       const urlApply = user.applyVotedUrl;
       // 申请任务
@@ -736,56 +831,4 @@ function replaceHtml(txt) {
   const reg = /<.+>/g; //去掉所有<>内内容
   // 先reg3,\n特殊符号会影响reg的匹配
   return txt.replace(reg3, '').replace(reg, '').trim();
-}
-
-// 定时签到
-function timeControl() {
-  const _this = this; //获取对象
-  clearInterval(_this.timer); //清除重复定时器
-  document.querySelector('#video1').play(); // 播放视频，防止休眠
-  if (!document.querySelector('#video1').paused) {
-    const date = new Date()
-    const holdTime = date.getTime();
-    // 1000*60*60*24
-    const signTime = ((1000 * 60 * 60) - holdTime % (1000 * 60 * 60)); //通知持续时间，1小时-已运行分钟
-    messageBox('防止休眠启动，请保持本页处于激活状态，勿最小化本窗口以及全屏运行其它应用！', signTime);
-    messageBox('定时签到中，请勿退出...', signTime);
-  } else {
-    console.log(document.querySelector('#video1'));
-  }
-  let hours, minutes, seconds, millisecond;
-  const h = 23,
-    m = 59,
-    s = 59,
-    ms = 0; // 最小间距4ms
-
-  function nowTime() {
-    hours = new Date().getHours();
-    minutes = new Date().getMinutes();
-    seconds = new Date().getSeconds();
-    millisecond = new Date().getMilliseconds();
-  }
-
-  function control() {
-    if (hours == h && minutes == m && seconds == s && millisecond >= ms) {
-      clearInterval(_this.timer);
-      messageBox('执行中....');
-      let retryTime = 0;
-      for (let i = 0; i < 10; i++) { //重试次数
-        setTimeout(() => {
-          sign();
-          messageBox('执行第' + (i + 1) + '次');
-          console.log('执行第' + (i + 1) + '次');
-        }, retryTime += 200) //重试间隔
-      }
-    } else {
-      console.log('时间没有到：', h, m, s, '目前时间：', hours, minutes, seconds);
-    }
-  }
-
-  function check() {
-    nowTime();
-    control();
-  }
-  _this.timer = setInterval(check, 500);
 }
