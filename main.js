@@ -192,13 +192,6 @@ function addBtns() {
     status_loginned.insertBefore(video, mnoutbox[1]); //添加视频到指定位置
   }
 
-  // 感谢 按钮
-  const repBtn = genButton('回帖', replyBtn); //设置名称和绑定函数
-  status_loginned.insertBefore(repBtn, mnoutbox[1]); //添加按钮到指定位置
-  // 感谢 按钮
-  const thankBtn = genButton('感谢', thkBtn); //设置名称和绑定函数
-  status_loginned.insertBefore(thankBtn, mnoutbox[1]); //添加按钮到指定位置
-
   if (window.location.href.match('/forum-')) {
     // 回帖输入框
     const input = genElement('textarea', 'inpreply', 1, 20);
@@ -207,6 +200,12 @@ function addBtns() {
     const thkBtn = genButton('添加本页', thankOnePage); //设置名称和绑定函数
     status_loginned.insertBefore(thkBtn, mnoutbox[1]); //添加按钮到指定位置
   } else if (location.href == `https://www.jkforum.net/forum.php`) { //在首页激活批量感谢功能
+    // 回帖 按钮
+    const repBtn = genButton('回帖', replyBtn); //设置名称和绑定函数
+    status_loginned.insertBefore(repBtn, mnoutbox[1]); //添加按钮到指定位置
+    // 感谢 按钮
+    const thankBtn = genButton('感谢', thkBtn); //设置名称和绑定函数
+    status_loginned.insertBefore(thankBtn, mnoutbox[1]); //添加按钮到指定位置  
     // 回帖输入框
     const input = genElement('textarea', 'inpreply', 1, 20);
     status_loginned.insertBefore(input, mnoutbox[1]); //添加文本域到指定位置  
@@ -214,7 +213,7 @@ function addBtns() {
     const page = genElement2('input', 'inp_page');
     status_loginned.insertBefore(page, mnoutbox[1]); //添加输入框到指定位置
     // 批量感谢/回帖
-    const btn = genButton('批量添加', thankBatch); //设置名称和绑定函数
+    const btn = genButton('添加任务', thankBatch); //设置名称和绑定函数
     status_loginned.insertBefore(btn, mnoutbox[1]); //添加按钮到指定位置
   }
 };
@@ -508,7 +507,6 @@ function chooceReply() {
 }
 
 function thankOnePage() {
-  messageBox('正在添加本页...');
   const currentHref = window.location.href; // 获取当前页地址
   const fid = currentHref.split('-')[1]; // 获取板块fid
   // 判断当前页是否处于图片模式
@@ -521,6 +519,7 @@ function thankOnePage() {
       messageBox('无法在图片模式运行！')
     }
   } else {
+    messageBox('正在添加本页...');
     // 获取当前页所有帖子地址
     getThreads(currentHref, fid);
   }
@@ -528,9 +527,9 @@ function thankOnePage() {
 
 function thankBatch() {
   const page = document.querySelector('#inp_page').value;
-  messageBox('正则添加：' + page);
   const reg = new RegExp(/^\d+-\d+-\d+$/);
   if (reg.test(page)) { //如果输入了正确地址则进行批量处理
+    messageBox('正在添加：' + page);
     const user = getUserFromName();
     user.page = page;
     GM_setValue(user.username, user);
