@@ -48,19 +48,20 @@ function newUser() {
       autoRePicSw: 1, // 自动加载原图开关
       page: '', // 批量回帖页码
       votedMessage: '+1', //投票输入内容
+      userReplyMessage: [], // 用户保存的回复
+      replyThreads: { // 批量回帖的帖子数据，将此数据单独生成对象保存在此对象外，作为保留历史回帖数据
+        fidIndex: 0, // 当前回帖版块序号
+        threadIndex: 0, // 当前回帖序号
+        threads: [], // 感谢/回帖相关 数据
+      },
+      replyMessage: [], // 用于回复的内容
+      fastReply: fastReply, // 保存的快速回复
       applyVotedUrl: 'https://www.jkforum.net/home.php?mod=task&do=apply&id=59',
       votedUrl: 'https://www.jkforum.net/plugin.php?id=voted',
       taskDoneUrl: 'https://www.jkforum.net/home.php?mod=task&do=draw&id=59',
       signUrl: 'https://www.jkforum.net/plugin/?id=dsu_paulsign:sign&operation=qiandao&infloat=1&inajax=1',
       thkUrl: 'https://www.jkforum.net/plugin/?id=thankauthor:thank&inajax=1',
       payUrl: 'https://www.jkforum.net/forum.php?mod=misc&action=pay&paysubmit=yes&infloat=yes&inajax=1',
-      userReplyMessage: [], // 用户保存的回复
-      replyMessage: [], // 用于回复的内容
-      fastReply: fastReply, // 保存的快速回复
-      replyThreads: { // 批量回帖的帖子数据，将此数据单独生成对象保存在此对象外，作为保留历史回帖数据
-        index: 0, // 当前回帖序号
-        threads: [], // 感谢/回帖相关 数据
-      },
     }
     GM_setValue(username, user);
   }
@@ -191,13 +192,19 @@ function addBtns() {
     status_loginned.insertBefore(video, mnoutbox[1]); //添加视频到指定位置
   }
 
+  // 感谢 按钮
+  const repBtn = genButton('回帖', replyBtn); //设置名称和绑定函数
+  status_loginned.insertBefore(repBtn, mnoutbox[1]); //添加按钮到指定位置
+  // 感谢 按钮
+  const thankBtn = genButton('感谢', thkBtn); //设置名称和绑定函数
+  status_loginned.insertBefore(thankBtn, mnoutbox[1]); //添加按钮到指定位置
 
   if (window.location.href.match('/forum-')) {
     // 回帖输入框
     const input = genElement('textarea', 'inpreply', 1, 20);
     status_loginned.insertBefore(input, mnoutbox[1]); //添加文本域到指定位置
     // 感谢 按钮
-    const thkBtn = genButton('感谢/回帖', thankOnePage); //设置名称和绑定函数
+    const thkBtn = genButton('添加本页', thankOnePage); //设置名称和绑定函数
     status_loginned.insertBefore(thkBtn, mnoutbox[1]); //添加按钮到指定位置
   } else if (location.href == `https://www.jkforum.net/forum.php`) { //在首页激活批量感谢功能
     // 回帖输入框
@@ -207,10 +214,18 @@ function addBtns() {
     const page = genElement2('input', 'inp_page');
     status_loginned.insertBefore(page, mnoutbox[1]); //添加输入框到指定位置
     // 批量感谢/回帖
-    const btn = genButton('批量感谢/回帖', thankBatch); //设置名称和绑定函数
+    const btn = genButton('批量添加', thankBatch); //设置名称和绑定函数
     status_loginned.insertBefore(btn, mnoutbox[1]); //添加按钮到指定位置
   }
 };
+
+function replyBtn() {
+  replyOrThk('reply');
+}
+
+function thkBtn() {
+  replyOrThk('thk');
+}
 
 function genButton(text, foo, id) {
   let b = document.createElement('button'); //创建类型为button的DOM对象
@@ -473,13 +488,6 @@ function messageBox(text, setTime) {
   }
 }
 
-// 自动感谢帖子
-// let fid = null; //回帖帖子用
-// let page = null; // 帖子列表页码
-// let pageTime = 1000; // 翻页时间，默认感谢为1秒，回帖为第一次请求时初始化值
-// let pageFrom = 0; //回帖起始页
-// let pageEnd = 0; //回帖终点页
-
 function chooceReply() {
   const inpreply = document.querySelector('#inpreply'); // 获取回复内容
   const user = getUserFromName();
@@ -546,30 +554,6 @@ function thankBatch() {
     while (pageFrom <= pageEnd) {
       sendPage();
     }
-
-    // setTimeout(() => { //等待上一次异步请求sendPage()初始化pageTime
-    //   let pageTimeCache = pageTime; //缓存上一次的pageTime
-    //   timeMachine();
-
-    //   // 时光机自我调用，自我更新pageTime，用上一页的pageTime来运行下一页的sendPage
-    //   function timeMachine() {
-    //     let timer1 = setInterval(() => {
-    //       if (pageFrom > pageEnd) {
-    //         clearInterval(timer1);
-    //         messageBox(page + "：所有页码回帖/感谢发送完成！请关闭/刷新窗口！", 'none');
-    //         GM_notification(page + "：所有页码回帖/感谢发送完成！请关闭/刷新窗口！", 'jkforum helper');
-    //       } else if (pageTime != pageTimeCache) { //保持pageTime为最新获取的时间
-    //         console.log('上一页设定运行时间:', pageTimeCache, '下一页设定运行时间:', pageTime);
-    //         clearInterval(timer1);
-    //         pageTimeCache = pageTime; //同步时间
-    //         timeMachine(); //重新生成第二次的计时器，每次矫正要等pageTime
-    //         sendPage(); //计时器需要等待pageTime，不如用第二次的计时器边发边等，生成第三次pageTime；用第三次pageTime执行第四次发送；如果三次<四次，会发送失败，+20秒平衡误差；
-    //       } else {
-    //         sendPage(); //第二次执行，重置pageTime；第三次与缓存不符，重新生成计时器，同步计时器pageTimeCache。
-    //       }
-    //     }, pageTime)
-    //   }
-    // }, 5000);
     messageBox(page + "：多页感谢/回帖中，请等待...", 'none');
   } else {
     messageBox('请输入回帖列表页码，格式：版块代码-起点页-终点页 ；例如：640-1-2 ；版块代码见版块URL中间数字：forum-640-1', 10000);
@@ -593,20 +577,20 @@ function getThreads(currentHref, fid) {
       // 如果版块错误，根据服务器返回提示消息
       // 附件模式显示原图 
       // 批量打包下载
-      // 将数组和id整体合并，储存到对象中，即可分离感谢和回帖功能。先解决回帖异步问题。
-      // 先请求完640-1-10所有页码，然后合并所有页，当作一个页面运行，为批量回帖对象。即可解决异步问题。
-      // 合并页后，从批量回帖对象中获取相关元素依次运行，记录整体对象、以及当前回帖的位置，增加为批量回帖对象属性。
+      // 将数组和id整体合并，储存到对象中，即可分离感谢和回帖功能。先解决回帖异步问题。 已完成
+      // 先请求完640-1-10所有页码，然后合并所有页，当作一个页面运行，为批量回帖对象。即可解决异步问题。 已完成
+      // 合并页后，从批量回帖对象中获取相关元素依次运行，记录整体对象、以及当前回帖的位置，增加为批量回帖对象属性。 已完成
       // 任务链接可自动识别和申请，并记录任务信息到对象的数组中，然后在达到条件后自动完成。
-      // 减少常量和参数，都封装到对象中
+      // 减少常量和参数，都封装到对象中 已完成
+
+      // for循环异步运行，解决异步。用fidIndex和threadIdex手动循环解决异步。
+      // index 一直前进，直到遍历完
+      // 任务列表功能，用于管理回帖任务
 
       //帖子类名 40个a标签数组 
       let hrefs = htmlData.querySelectorAll('.s');
       // 获取作者昵称和 UID
       let cites = htmlData.querySelectorAll('cite a');
-      // // uid 数组
-      // let touserUids = new Array();
-      // // 用户名数组
-      // let tousers = new Array();
 
       // 以 fid 创建对象，如果fid存在则写入fid的数组的fidthreads属性的数组内；否则创建新的 fidthreads，自我调用
       const fidthreads = {
@@ -637,8 +621,6 @@ function getThreads(currentHref, fid) {
           // 加入数组
           const touser = cites[i].innerHTML;
           const touseruid = cites[i].href.split('uid=')[1]; // href="home.php?mod=space&uid=1123445"
-          // tousers.push(cites[i].innerHTML);
-          // touserUids.push(cites[i].href.split('&')[1]);
           const href = hrefs[i / 2].href;
           // 获取帖子ID
           const tid = href.split('-')[1];
@@ -646,7 +628,7 @@ function getThreads(currentHref, fid) {
           for (let i = 0; i < elem.fidthreads.length; i++) {
             const element = elem.fidthreads[i];
             if (element.tid == tid) {
-              return `thread-${tid}-1-1 ：此帖子已回复过，请选择其它帖子！`;
+              return `thread-${tid}-1-1 ：此帖子已回复过，已跳过所在页！`;
             }
           }
 
@@ -674,83 +656,51 @@ function getThreads(currentHref, fid) {
       if (info) {
         messageBox(info, 'none');
       }
-
-      // let randomTime = 0; // 执行回帖函数和感谢函数 必须间隔10秒以上+随机数10-100毫秒
-      // const differ = user.differ; // 回单贴随机差值 // 防封号：随机间隔时间，随机快速回帖内容。
-      // const interval = user.interval; // 回帖基础间隔
-      // randomTime = rdNum(interval, interval + differ); //回帖随机时间
-      // let i = 0;
-      // let href = null;
-      // let tid = null;
-      // // 遍历所有帖子链接并感谢
-      // for (i = 0; i < hrefs.length; i++) {
-      //   href = hrefs[i].href;
-      //   // 获取帖子ID
-      //   tid = href.split('-')[1]; // 无前缀 数字
-      //   const touser = tousers[i]; // 无前缀 字符串
-      //   const touserUid = touserUids[i]; //无前缀 数字
-      //   // 拼接感谢报文
-      //   const thkData = 'formhash=' + user.formhash + '&tid=' + tid + '&touser=' + touser + '&touser' + touserUid + '&handlekey=k_thankauthor&addsubmit=true';
-      //   // 执行感谢函数
-      //   const thkReqUrl = 'https://www.jkforum.net/plugin/?id=thankauthor:thank&inajax=1'; //请求地址
-      //   postData(thkReqUrl, thkData, 'thk'); //post感谢数据
-      // }
-      // i = 0;
-      // let countRandomTime = 0;
-
-      // function chkReply() { // 回帖函数，提取出来，先于计时器执行
-      //   if (i < hrefs.length) {
-      //     href = hrefs[i].href;
-      //     // 获取帖子ID
-      //     tid = href.split('-')[1]; // 无前缀 数字
-      //     // 参数
-      //     // 拼接回帖url
-      //     const replyUrl = 'https://www.jkforum.net/forum.php?mod=post&action=reply&fid=' + fid + '&tid=' +
-      //       tid + '&extra=page%3D1&replysubmit=yes&infloat=yes&handlekey=fastpost&inajax=1';
-      //     // 生产时间戳
-      //     const date = new Date();
-      //     const posttime = parseInt(date.getTime() / 1000);
-      //     // 随机快速回帖
-      //     const replyIndex = rdNum(0, user.replyMessage.length - 1);
-      //     // 拼接回帖报文
-      //     const replyData = 'message=' + turnUrl(user.replyMessage[replyIndex]) + '&posttime=' + posttime + '&formhash=' + user.formhash + '&usesig=1&subject=++';
-      //     postData(replyUrl, replyData, 'reply');
-      //     console.log('内容:', user.replyMessage[replyIndex], replyIndex); //测试使用
-      //     i++;
-      //   }
-      //   console.log('帖子序号：', i, '总数量：', hrefs.length, '当前回帖/秒：', randomTime / 1000, '总耗时/分钟：', ((countRandomTime += randomTime) / 1000 / 60).toFixed(1));
-      // };
-
-      // function timeMeassage() { //动态赋值pageTime 和通知消息
-      //   pageTime = (differ + interval) * hrefs.length; // 动态赋值pageTime ,静态： 总时间=(随即范围+时间间隔)*总贴数
-      //   messageBox('正在回帖中... ' + (pageFrom - 1) + '/' + pageEnd + '页需要' + (pageTime / 1000 / 60).toFixed(1) + '分钟', 'none');
-      // }
-
-      // function circleReply() {
-      //   chkReply();
-      //   let timer = setInterval(() => {
-      //     if (i == hrefs.length) {
-      //       clearInterval(timer);
-      //       messageBox("本页回帖完成！", 'none');
-      //     } else {
-      //       clearInterval(timer);
-      //       randomTime = rdNum(interval, differ + interval);
-      //       circleReply();
-      //     }
-      //   }, randomTime);
-      // }
-      // if (pageTime == 1000 && confirm("已感谢，确认回帖？")) { //确认回帖
-      //   circleReply();
-      //   timeMeassage();
-      // } else if (pageTime != 2000 && pageTime != 1000) { //如果第一次确认回帖，则后面无需确认
-      //   circleReply();
-      //   timeMeassage();
-      // } else {
-      //   pageTime = 2000; //第一次取消回帖，第二次无需再确认
-      //   console.log("已取消回帖：", pageTime);
-      // }
     };
   };
+};
+
+function replyOrThk(type = 'reply') { // 回帖函数，提取出来，先于计时器执行
+  const user = getUserFromName();
+  const thkUrl = user.thkUrl;
+  console.log(type);
+  user.replyThreads.threads.forEach((elementForum, index) => {
+    user.replyThreads.fidIndex = index;
+    const fid = elementForum.fid;
+    elementForum.fidthreads.forEach((elementThr, index) => {
+      user.replyThreads.threadIndex = index;
+      switch (type) {
+        case 'reply': {
+          const tid = elementThr.tid;
+          const replyIndex = elementThr.replyIndex;
+          const randomTime = elementThr.randomTime;
+          const replyUrl = 'https://www.jkforum.net/forum.php?mod=post&action=reply&fid=' + fid + '&tid=' +
+            tid + '&extra=page%3D1&replysubmit=yes&infloat=yes&handlekey=fastpost&inajax=1'; // 拼接回帖url
+          const date = new Date();
+          const posttime = parseInt(date.getTime() / 1000); // 生产时间戳
+          // 拼接回帖报文
+          const replyData = 'message=' + turnUrl(user.replyMessage[replyIndex]) + '&posttime=' + posttime + '&formhash=' + user.formhash + '&usesig=1&subject=++';
+          // console.log(index, '内容:', user.replyMessage[replyIndex], replyIndex, randomTime); //测试使用
+          let timer = setInterval(() => {
+            clearInterval(timer);
+            // postData(replyUrl, replyData, type);
+            console.log(index, '内容:', user.replyMessage[replyIndex], replyIndex, randomTime); //测试使用
+          }, randomTime);
+          break;
+        }
+        case 'thk': {
+          const thkData = elementThr.thkData;
+          // postData(thkUrl, thkData, type); //post感谢数据
+          console.log(thkUrl, thkData, type); //post感谢数据
+          break;
+        }
+
+        default:
+          break;
+      }
+    });
+  });
+  GM_setValue(user.username, user);
 };
 
 // n, m 范围随机整数生成 
