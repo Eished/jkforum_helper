@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         jkforum helper
 // @namespace    https://github.com/Eished/jkforum_helper
-// @version      0.3.7
+// @version      0.3.8
 // @description  捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片
 // @author       Eished
 // @license      AGPL-3.0
@@ -28,38 +28,53 @@
 function newUser() {
   const formhash = document.querySelector('.listmenu li a').href.split('&')[2].split('=')[1];
   const username = document.querySelector('.avatar_info').querySelector('a').innerHTML;
-  if (!GM_getValue(username) || GM_getValue(username).version != GM_info.script.version) { //空则写入，或版本变动写入
-    const fastReplyUrl = 'https://www.jkforum.net/thread-8364615-1-1.html'; // 获取快速回复的地址
-    const fastReply = getFastReply(fastReplyUrl); // 从置顶帖子初始化快速回贴内容, 返回数组
-    const user = {
-      username: username,
-      formhash: formhash,
-      version: GM_info.script.version,
-      today: '', // 签到日期
-      signtime: '23:59:59', // 签到时间
-      signNum: 10, // 签到重试次数
-      interTime: 200, // 签到重试间隔时间
-      todaysay: '簽到', // 签到输入内容
-      mood: 'fd', // 签到心情
-      differ: 10000, // 回帖随机间隔时间
-      interval: 20000, // 回帖基础间隔时间
-      autoPaySw: 1, // 自动支付开关
-      autoThkSw: 1, // 自动感谢开关
-      autoRePicSw: 1, // 自动加载原图开关
-      page: '', // 批量回帖页码
-      votedMessage: '+1', //投票输入内容
-      userReplyMessage: [], // 用户保存的回复，历史回帖内容
-      replyMessage: [], // 用于回复的内容，临时回帖内容
-      fastReply: fastReply, // 保存的快速回复，快速回帖内容
-      replyThreads: [], // 回帖数据
-      applyVotedUrl: 'https://www.jkforum.net/home.php?mod=task&do=apply&id=59',
-      votedUrl: 'https://www.jkforum.net/plugin.php?id=voted',
-      taskDoneUrl: 'https://www.jkforum.net/home.php?mod=task&do=draw&id=59',
-      signUrl: 'https://www.jkforum.net/plugin/?id=dsu_paulsign:sign&operation=qiandao&infloat=1&inajax=1',
-      thkUrl: 'https://www.jkforum.net/plugin/?id=thankauthor:thank&inajax=1',
-      payUrl: 'https://www.jkforum.net/forum.php?mod=misc&action=pay&paysubmit=yes&infloat=yes&inajax=1',
+  // 已存在用户，版本更新时 备份和恢复回帖数据
+  if (GM_getValue(username) && GM_getValue(username).version != GM_info.script.version) {
+    const user = getUserFromName();
+    if (user.replyThreads.length || user.userReplyMessage.length) {
+      user.version = GM_info.script.version; // 记录新版本
+      GM_setValue('backup', user);
+      console.log('备份数据成功！');
     }
-    GM_setValue(username, user);
+  }
+  if (!GM_getValue(username) || GM_getValue(username).version != GM_info.script.version) { //空则写入，或版本变动写入
+    if (GM_getValue('backup')) { // 恢复数据
+      GM_setValue(username, GM_getValue('backup'));
+      GM_setValue('backup', ''); // 删除备份
+      console.log('恢复数据成功！');
+    } else { // 没有备份就新建
+      const fastReplyUrl = 'https://www.jkforum.net/thread-8364615-1-1.html'; // 获取快速回复的地址
+      const fastReply = getFastReply(fastReplyUrl); // 从置顶帖子初始化快速回贴内容, 返回数组
+      const user = {
+        username: username,
+        formhash: formhash,
+        version: GM_info.script.version,
+        today: '', // 签到日期
+        signtime: '23:59:59', // 签到时间
+        signNum: 10, // 签到重试次数
+        interTime: 200, // 签到重试间隔时间
+        todaysay: '簽到', // 签到输入内容
+        mood: 'fd', // 签到心情
+        differ: 10000, // 回帖随机间隔时间
+        interval: 20000, // 回帖基础间隔时间
+        autoPaySw: 1, // 自动支付开关
+        autoThkSw: 1, // 自动感谢开关
+        autoRePicSw: 1, // 自动加载原图开关
+        page: '', // 批量回帖页码
+        votedMessage: '+1', //投票输入内容
+        userReplyMessage: [], // 用户保存的回复，历史回帖内容
+        replyMessage: [], // 用于回复的内容，临时回帖内容
+        fastReply: fastReply, // 保存的快速回复，快速回帖内容
+        replyThreads: [], // 回帖数据
+        applyVotedUrl: 'https://www.jkforum.net/home.php?mod=task&do=apply&id=59',
+        votedUrl: 'https://www.jkforum.net/plugin.php?id=voted',
+        taskDoneUrl: 'https://www.jkforum.net/home.php?mod=task&do=draw&id=59',
+        signUrl: 'https://www.jkforum.net/plugin/?id=dsu_paulsign:sign&operation=qiandao&infloat=1&inajax=1',
+        thkUrl: 'https://www.jkforum.net/plugin/?id=thankauthor:thank&inajax=1',
+        payUrl: 'https://www.jkforum.net/forum.php?mod=misc&action=pay&paysubmit=yes&infloat=yes&inajax=1',
+      }
+      GM_setValue(username, user);
+    }
   }
 
   const user = getUserFromName();
