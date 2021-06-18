@@ -52,6 +52,8 @@ function newUser() {
       replyThreads: { // 批量回帖的帖子数据，将此数据单独生成对象保存在此对象外，作为保留历史回帖数据
         fidIndex: 0, // 当前回帖版块序号
         threadIndex: 0, // 当前回帖序号
+        thkFidIndex: 0, // 当前感谢版块序号
+        thkThreadIndex: 0, // 当前感谢序号
         threads: [], // 感谢/回帖相关 数据
       },
       replyMessage: [], // 用于回复的内容
@@ -569,19 +571,6 @@ function getThreads(currentHref, fid) {
       chooceReply(); //如果输入了值则使用用户值，如果没有则使用默认值；
       const user = getUserFromName(); //获取user对象，必须在用户输入值后面，不然取不到快速回复
 
-      // 如果版块错误，根据服务器返回提示消息
-      // 附件模式显示原图 
-      // 批量打包下载
-      // 将数组和id整体合并，储存到对象中，即可分离感谢和回帖功能。先解决回帖异步问题。 已完成
-      // 先请求完640-1-10所有页码，然后合并所有页，当作一个页面运行，为批量回帖对象。即可解决异步问题。 已完成
-      // 合并页后，从批量回帖对象中获取相关元素依次运行，记录整体对象、以及当前回帖的位置，增加为批量回帖对象属性。 已完成
-      // 任务链接可自动识别和申请，并记录任务信息到对象的数组中，然后在达到条件后自动完成。
-      // 减少常量和参数，都封装到对象中 已完成
-
-      // for循环异步运行，解决异步。用fidIndex和threadIdex手动循环解决异步。
-      // index 一直前进，直到遍历完
-      // 任务列表功能，用于管理回帖任务
-
       //帖子类名 40个a标签数组 
       let hrefs = htmlData.querySelectorAll('.s');
       // 获取作者昵称和 UID
@@ -672,21 +661,42 @@ function replyOrThk(_this, type = 'reply') { // 回帖函数
   }
   const user = getUserFromName();
   const thkUrl = user.thkUrl;
-  let fidIndex = user.replyThreads.fidIndex;
-  let threadIndex = user.replyThreads.threadIndex;
-  console.log(type, ":开始回帖...");
+  let fidIndex = user.replyThreads.fidIndex; // 当前回帖版块序号
+  let threadIndex = user.replyThreads.threadIndex; // 当前回帖序号
+  let thkFidIndex = user.replyThreads.thkFidIndex; // 当前感谢版块序号
+  let thkThreadIndex = user.replyThreads.thkThreadIndex; // 当前感谢序号
+  if (!user.replyThreads.threads.length) {
+    messageBox('任务列表为空，请先添加任务！');
+    console.log('任务列表为空，请先添加任务！');
+    return 0; // 打断了通知消息的异步执行
+  } else if ((type == 'reply' && fidIndex == user.replyThreads.threads.length) || (type == 'thk' && thkFidIndex == user.replyThreads.threads.length)) {
+    if (type == 'thk') {
+      console.log(type + '：没有新的感谢任务！');
+      messageBox(type + '：没有新的感谢任务！');
+    } else if (type == 'reply') {
+      console.log(type + '：没有新的回复任务！');
+      messageBox(type + '：没有新的回复任务！');
+    }
+    return 0; // 打断了通知消息的异步执行
+  } else if (type == 'reply') {
+    console.log(type, ":开始回帖...");
+  } else {
+    console.log(type, ":开始感谢...");
+  }
   cricleReplyForum();
 
   function cricleReplyForum() {
-    if (fidIndex < user.replyThreads.threads.length) {
+    if ((type == 'reply' && fidIndex < user.replyThreads.threads.length) || (type == 'thk' && thkFidIndex < user.replyThreads.threads.length)) { // 分别处理感谢和回帖
       const elementForum = user.replyThreads.threads[fidIndex]
       const fid = elementForum.fid;
-      console.log(fid + "：版块总需" + (elementForum.fidTime / 1000 / 60).toFixed(1) + "分钟时间")
-      messageBox(fid + "：版块总需" + (elementForum.fidTime / 1000 / 60).toFixed(1) + "分钟时间", elementForum.fidTime)
+      if (type == 'reply') {
+        console.log(fid + "：版块总需" + (elementForum.fidTime / 1000 / 60).toFixed(1) + "分钟时间");
+        messageBox(fid + "：版块总需" + (elementForum.fidTime / 1000 / 60).toFixed(1) + "分钟时间", elementForum.fidTime);
+      }
       cricleReply();
 
       function cricleReply() {
-        if (threadIndex < elementForum.fidthreads.length) {
+        if ((type == 'reply' && threadIndex < elementForum.fidthreads.length) || (type == 'thk' && thkThreadIndex < elementForum.fidthreads.length)) { // 分别处理感谢和回帖
           const elementThr = elementForum.fidthreads[threadIndex];
           switch (type) {
             case 'reply': {
@@ -715,8 +725,8 @@ function replyOrThk(_this, type = 'reply') { // 回帖函数
             case 'thk': {
               const thkData = elementThr.thkData;
               postData(thkUrl, thkData, type); //post感谢数据
-              console.log(thkUrl, thkData, type); //post感谢数据
-              user.replyThreads.threadIndex = ++threadIndex;
+              console.log(thkThreadIndex, thkData, type); //post感谢数据
+              user.replyThreads.thkThreadIndex = ++thkThreadIndex;
               cricleReply();
               break;
             }
@@ -725,25 +735,29 @@ function replyOrThk(_this, type = 'reply') { // 回帖函数
               break;
           }
         } else {
-          clearInterval(_this.timer);
-          messageBox(fid + "：版块感谢/回帖完成！");
-          // GM_notification(fid + "：版块感谢/回帖完成！");
-          user.replyThreads.fidIndex = ++fidIndex; // 执行完才++
-          threadIndex = 0; // 重置起点
-          user.replyThreads.threadIndex = threadIndex;
+          if (type == 'thk') { // 重置起始位置，回帖/感谢独立使用，否则清空回帖位置
+            user.replyThreads.thkFidIndex = ++thkFidIndex; // 版块++
+            thkThreadIndex = 0; // 重置起点
+            user.replyThreads.thkThreadIndex = thkThreadIndex;
+          } else if (type == 'reply') {
+            clearInterval(_this.timer);
+            messageBox(fid + "：版块感谢/回帖完成！");
+            // GM_notification(fid + "：版块感谢/回帖完成！");
+            user.replyThreads.fidIndex = ++fidIndex; // 执行完才++
+            threadIndex = 0; // 重置起点
+            user.replyThreads.threadIndex = threadIndex;
+          }
+          GM_setValue(user.username, user);
           cricleReplyForum();
         }
       }
     } else {
-      if (type == 'thk') { // 重置起始位置，回帖/感谢独立使用，否则清空回帖位置
-        threadIndex = 0; // 重置起点
-        fidIndex = 0; // 重置起点
-        user.replyThreads.fidIndex = 0;
-        user.replyThreads.threadIndex = 0;
-        GM_setValue(user.username, user);
+      if (type == 'thk') {
+        messageBox("全部感谢完成！");
+      } else if (type == 'reply') {
+        messageBox("全部回帖完成！");
+        GM_notification("全部回帖完成！");
       }
-      messageBox("全部感谢/回帖完成！");
-      GM_notification("全部感谢/回帖完成！");
     }
   }
   GM_setValue(user.username, user);
@@ -784,6 +798,7 @@ function postData(replyUrl, replyData, fromId, contentType = 'application/x-www-
             messageBox(info.split('，')[0].slice(1) + '，' + info.split('，')[1] + '！'); // 返回html成功消息
           } else {
             messageBox(stringOrHtml, 'none'); //其它情况直接输出
+            console.log(stringOrHtml);
           }
           break;
         }
