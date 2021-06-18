@@ -80,21 +80,21 @@
             "version": "0.3.8",
             "today": "",
             "signtime": "23:59:59", // 定时签到时间
-            "signNum": 10, 					// 定时签到重试次数
-            "interTime": 200,				// 定时签到重试间隔时间
-            "todaysay": "簽到",			 // 签到输入内容
-            "mood": "fd",						// 签到心情
-            "differ": 10000,				// 回帖随机间隔时间
-            "interval": 20000,			// 回帖基础间隔时间
-            "autoPaySw": 1,					// 自动支付开关
-            "autoThkSw": 1,					// 自动感谢开关
-            "autoRePicSw": 1,				// 自动加载原图开关
-            "page": "",							// 批量回帖页码
-            "votedMessage": "+1",		// 投票输入内容
+            "signNum": 10, // 定时签到重试次数
+            "interTime": 200, // 定时签到重试间隔时间
+            "todaysay": "簽到", // 签到输入内容
+            "mood": "fd", // 签到心情
+            "differ": 10000, // 回帖随机间隔时间
+            "interval": 20000, // 回帖基础间隔时间
+            "autoPaySw": 1, // 自动支付开关
+            "autoThkSw": 1, // 自动感谢开关
+            "autoRePicSw": 1, // 自动加载原图开关
+            "page": "", // 批量回帖页码
+            "votedMessage": "+1", // 投票输入内容
             "userReplyMessage": [], // 用户输入的回复历史记录
-            "replyMessage": [],			// 输入的回复缓存
-            "fastReply": [],				// 默认快速回复
-            "replyThreads": [],   	// 回帖任务数据
+            "replyMessage": [], // 输入的回复缓存
+            "fastReply": [], // 默认快速回复
+            "replyThreads": [], // 回帖任务数据
     ```
     
   - 如果参数改错了或出现异常，删掉 `"version": "0.3.8",` 和错误的参数行，运行脚本会自动初始化缺失的参数。
