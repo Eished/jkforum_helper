@@ -177,6 +177,12 @@ function addBtns() {
   };
   document.querySelector('body').appendChild(genStlye()); // 增加 visited 样式到 body
 
+  if (window.location.href.match('/forum-') || window.location.href.match('/type-')) {
+    // 去掉高亮颜色标题
+    document.querySelectorAll('[style="color: #2B65B7"]').forEach((e) => {
+      e.style = '';
+    })
+  }
 
   // 生产消息盒子
   function genDiv() {
