@@ -84,11 +84,9 @@
           page: '', // 批量回帖页码
           votedMessage: '+1', //投票输入内容
           userReplyMessage: [], // 用户保存的回复
-          replyThreads: { // 批量回帖的帖子数据
-            fidIndex: 0, // 当前回帖版块序号
-            threadIndex: 0, // 当前回帖序号
-            threads: [], // 感谢/回帖相关 数据
-          }
+          replyThreads: [], // 回帖数据
+          replyMessage: [], // 用于回复的内容
+          fastReply: fastReply, // 保存的快速回复
     ```
     
   - 如果改错了或出现异常，把大括号内内容全删掉，只保留最外层大括号，脚本会自动重新初始化参数。
