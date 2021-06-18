@@ -758,7 +758,7 @@ function replyOrThk(_this, type = 'reply') { // 回帖函数
               clearInterval(_this.timer);
               _this.timer = setInterval(() => {
                 clearInterval(_this.timer);
-                // postData(replyUrl, replyData, type);
+                postData(replyUrl, replyData, type);
                 console.log("版块：" + fidRepIndex, '随机序号:', replyIndex, '内容:', turnUrl(replyData, 1), '用时:', randomTime); //测试使用  
                 elementForum.fidRepIndex = ++fidRepIndex;
                 GM_setValue(user.username, user);
@@ -769,7 +769,7 @@ function replyOrThk(_this, type = 'reply') { // 回帖函数
             case 'thk': {
               const elementThr = elementForum.fidthreads[fidThkIndex];
               const thkData = elementThr.thkData;
-              // postData(thkUrl, thkData, type); //post感谢数据
+              postData(thkUrl, thkData, type); //post感谢数据
               console.log(fidThkIndex, thkData, type); //post感谢数据
               elementForum.fidThkIndex = ++fidThkIndex;
               cricleReply();
