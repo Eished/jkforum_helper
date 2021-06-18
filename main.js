@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         jkforum helper
 // @namespace    https://github.com/Eished/jkforum_helper
-// @version      0.3.8
+// @version      0.3.9
 // @description  捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片
 // @author       Eished
 // @license      AGPL-3.0
@@ -18,77 +18,99 @@
 (function () {
   'use strict';
   if (document.querySelector('.listmenu li a')) {
-    newUser();
-    addBtns();
+    addBtns(); // 添加DOM
+    creatUser(); // 添加用户
     launch(); // 启动自动签到 自动投票
-    rePic();
   }
 })();
 
-function newUser() {
+function creatUser() {
   const formhash = document.querySelector('.listmenu li a').href.split('&')[2].split('=')[1];
   const username = document.querySelector('.avatar_info').querySelector('a').innerHTML;
-  // 已存在用户，版本更新时 备份和恢复回帖数据
-  if (GM_getValue(username) && GM_getValue(username).version != GM_info.script.version) {
-    const user = getUserFromName();
-    if (user.replyThreads.length || user.userReplyMessage.length) {
+  let user = getUserFromName();
+  if (!user) { // 空则写入，或版本变动写入
+    user = newUser(username, formhash);
+    messageBox("添加用户成功！");
+    console.log("添加用户成功！");
+  } else if (user.version != GM_info.script.version) {
+    const userMod = newUser(username, formhash);
+    const compa = compaObjKey(userMod, user); // 比较key
+    if (compa) { // key相同 只改变版本
       user.version = GM_info.script.version; // 记录新版本
-      GM_setValue('backup', user);
-      console.log('备份数据成功！');
+    } else { // key不同
+      user.version = GM_info.script.version; // 记录新版本
+      user = copyObjVal(userMod, user); // 对newUser赋值
     }
+    messageBox("版本更新成功！请阅读使用说明。");
+    console.log("版本更新成功！");
   }
-  if (!GM_getValue(username) || GM_getValue(username).version != GM_info.script.version) { //空则写入，或版本变动写入
-    if (GM_getValue('backup')) { // 恢复数据
-      GM_setValue(username, GM_getValue('backup'));
-      GM_setValue('backup', ''); // 删除备份
-      console.log('恢复数据成功！');
-    } else { // 没有备份就新建
-      const fastReplyUrl = 'https://www.jkforum.net/thread-8364615-1-1.html'; // 获取快速回复的地址
-      const fastReply = getFastReply(fastReplyUrl); // 从置顶帖子初始化快速回贴内容, 返回数组
-      const user = {
-        username: username,
-        formhash: formhash,
-        version: GM_info.script.version,
-        today: '', // 签到日期
-        signtime: '23:59:59', // 签到时间
-        signNum: 10, // 签到重试次数
-        interTime: 200, // 签到重试间隔时间
-        todaysay: '簽到', // 签到输入内容
-        mood: 'fd', // 签到心情
-        differ: 10000, // 回帖随机间隔时间
-        interval: 20000, // 回帖基础间隔时间
-        autoPaySw: 1, // 自动支付开关
-        autoThkSw: 1, // 自动感谢开关
-        autoRePicSw: 1, // 自动加载原图开关
-        page: '', // 批量回帖页码
-        votedMessage: '+1', //投票输入内容
-        userReplyMessage: [], // 用户保存的回复，历史回帖内容
-        replyMessage: [], // 用于回复的内容，临时回帖内容
-        fastReply: fastReply, // 保存的快速回复，快速回帖内容
-        replyThreads: [], // 回帖数据
-        applyVotedUrl: 'https://www.jkforum.net/home.php?mod=task&do=apply&id=59',
-        votedUrl: 'https://www.jkforum.net/plugin.php?id=voted',
-        taskDoneUrl: 'https://www.jkforum.net/home.php?mod=task&do=draw&id=59',
-        signUrl: 'https://www.jkforum.net/plugin/?id=dsu_paulsign:sign&operation=qiandao&infloat=1&inajax=1',
-        thkUrl: 'https://www.jkforum.net/plugin/?id=thankauthor:thank&inajax=1',
-        payUrl: 'https://www.jkforum.net/forum.php?mod=misc&action=pay&paysubmit=yes&infloat=yes&inajax=1',
-      }
-      GM_setValue(username, user);
-    }
-  }
-
-  const user = getUserFromName();
+  GM_setValue(username, user);
   if (user.formhash != formhash) { //formhash 变动存储
     user.formhash = formhash;
     GM_setValue(username, user);
   }
 }
 
-function getUserFromName() { //从用户名获取对象
-  const avatar_info = document.querySelector('.avatar_info'); // 用户名判断唯一用户
-  const username = avatar_info.querySelector('a').innerHTML;
-  const user = GM_getValue(username);
+function newUser(username, formhash) {
+  const fastReplyUrl = 'https://www.jkforum.net/thread-8364615-1-1.html'; // 获取快速回复的地址
+  const fastReply = getFastReply(fastReplyUrl); // 从置顶帖子初始化快速回贴内容, 返回数组
+  const user = {
+    username: username,
+    formhash: formhash,
+    version: GM_info.script.version,
+    today: '', // 签到日期
+    signtime: '23:59:59', // 签到时间
+    signNum: 10, // 签到重试次数
+    interTime: 200, // 签到重试间隔时间
+    todaysay: '簽到', // 签到输入内容
+    mood: 'fd', // 签到心情
+    differ: 10000, // 回帖随机间隔时间
+    interval: 20000, // 回帖基础间隔时间
+    autoPaySw: 1, // 自动支付开关
+    autoThkSw: 1, // 自动感谢开关
+    autoRePicSw: 1, // 自动加载原图开关
+    page: '', // 批量回帖页码
+    votedMessage: '+1', //投票输入内容
+    userReplyMessage: [], // 用户保存的回复，历史回帖内容
+    replyMessage: [], // 用于回复的内容，临时回帖内容
+    fastReply: fastReply, // 保存的快速回复，快速回帖内容
+    replyThreads: [], // 回帖数据
+    applyVotedUrl: 'https://www.jkforum.net/home.php?mod=task&do=apply&id=59',
+    votedUrl: 'https://www.jkforum.net/plugin.php?id=voted',
+    taskDoneUrl: 'https://www.jkforum.net/home.php?mod=task&do=draw&id=59',
+    signUrl: 'https://www.jkforum.net/plugin/?id=dsu_paulsign:sign&operation=qiandao&infloat=1&inajax=1',
+    thkUrl: 'https://www.jkforum.net/plugin/?id=thankauthor:thank&inajax=1',
+    payUrl: 'https://www.jkforum.net/forum.php?mod=misc&action=pay&paysubmit=yes&infloat=yes&inajax=1',
+  }
   return user;
+}
+// 比较键
+function compaObjKey(source, target) {
+  let count = 0;
+  Object.keys(source).forEach(ea => {
+    Object.keys(target).forEach(eb => {
+      if (ea === eb) {
+        count++;
+      }
+    })
+  });
+  if (count == Object.keys(source).length) {
+    return true;
+  } else {
+    return false;
+  }
+}
+// 赋值对象的值
+function copyObjVal(target, source) {
+  Object.keys(source).forEach((key) => {
+    target[key] = source[key];
+  });
+  return target;
+}
+
+function getUserFromName() { //从用户名获取对象
+  const username = document.querySelector('.avatar_info').querySelector('a').innerHTML; // 用户名判断唯一用户
+  return GM_getValue(username);
 }
 
 function getFastReply(url) { //获取快速回复
@@ -101,6 +123,25 @@ function getFastReply(url) { //获取快速回复
     }
   });
   return fastReply;
+}
+
+function launch() {
+  rePic(); // 启动自动加载原图，自动感谢等；
+  const user = getUserFromName();
+  // 版本更新后，today 写入空值，在此初始化。
+  if (user.username) { //验证是否登录 //天变动则签到
+    if (user.today != nowTime('day')) {
+      user.today = nowTime('day');
+      GM_setValue(user.username, user); //保存当天日
+      const urlApply = user.applyVotedUrl;
+      // 申请任务
+      task(urlApply);
+      // 签到
+      sign();
+    }
+  } else {
+    messageBox('未登录');
+  }
 }
 
 function rePic() {
@@ -177,7 +218,7 @@ function addBtns() {
   };
   document.querySelector('body').appendChild(genStlye()); // 增加 visited 样式到 body
 
-  if (window.location.href.match('/forum-') || window.location.href.match('/type-')) {
+  if (window.location.href.match('/forum-') || window.location.href.match('/type-') || window.location.href.match('mod=forum')) {
     // 去掉高亮颜色标题
     document.querySelectorAll('[style="color: #2B65B7"]').forEach((e) => {
       e.style = '';
@@ -187,7 +228,7 @@ function addBtns() {
   // 生产消息盒子
   function genDiv() {
     let b = document.createElement('div'); //创建类型为div的DOM对象
-    b.style.cssText = 'width: 200px;float: left;position: absolute;border-radius: 10px;left: auto;right: 5%;bottom: 20px;z-index:999';
+    b.style.cssText = 'width: 220px;float: left;position: absolute;border-radius: 10px;left: auto;right: 5%;bottom: 20px;z-index:999';
     b.id = 'messageBox';
     return b; //返回修改好的DOM对象
   };
@@ -237,16 +278,12 @@ function addBtns() {
 
 function replyBtn() {
   if (!this.timer) {
-    const _this = this;
-    replyOrThk(_this, 'reply');
+    replyOrThk(this, 'reply');
   }
 }
 
 function thkBtn() {
-  if (!this.timer) {
-    const _this = this;
-    replyOrThk(_this, 'thk');
-  }
+  replyOrThk(this, 'thk');
 }
 
 function genButton(text, foo, id) {
@@ -380,24 +417,6 @@ function timeControl() {
   _this.timer = setInterval(control, 500);
 }
 
-function launch() {
-  const user = getUserFromName();
-  // 版本更新后，today 写入空值，在此初始化。
-  if (user.username) { //验证是否登录 //天变动则签到
-    if (user.today != nowTime('day')) {
-      user.today = nowTime('day');
-      GM_setValue(user.username, user); //保存当天日
-      const urlApply = user.applyVotedUrl;
-      // 申请任务
-      task(urlApply);
-      // 签到
-      sign();
-    }
-  } else {
-    messageBox('未登录');
-  }
-}
-
 function sign() {
   const user = getUserFromName();
   let pMessage = 'formhash=' + user.formhash + '&qdxq=' + user.mood + '&qdmode=1&todaysay=' + turnUrl(user.todaysay) + '&fastreply=1'; //post 报文
@@ -483,7 +502,7 @@ function messageBox(text, setTime) {
   function genBox(text, id) {
     let b = document.createElement('div'); //创建类型为button的DOM对象
     b.textContent = text; //修改内部文本为text
-    b.style.cssText = 'width:100%;background-color:#64ce83;float:left;padding:5px 10px;margin-top:5px;border-radius:10px;color:#fff;' //添加样式（margin可以让元素间隔开一定距离）
+    b.style.cssText = 'width:100%;background-color:#64ce83;float:left;padding:5px 10px;margin-top:10px;border-radius:10px;color:#fff;    box-shadow: 0px 0px 1px 3px #ffffff;' //添加样式（margin可以让元素间隔开一定距离）
     // b.addEventListener('click', foo); //绑定click的事件的监听器
     if (id) {
       b.id = id;
@@ -522,18 +541,18 @@ function chooceReply() {
       }
     })
     GM_setValue(user.username, user); // 油猴脚本存储回帖内容
-    console.log("已使用自定义回复");
+    // console.log("已使用自定义回复");
     messageBox("已使用自定义回复");
     return user.replyMessage.length;
   } else {
     if (user.fastReply.length) {
       GM_setValue(user.username, user); // 油猴脚本存储回帖内容
-      console.log("已使用快速回复");
+      // console.log("已使用快速回复");
       messageBox("已使用快速回复");
       return user.fastReply.length;
     } else if (user.userReplyMessage.length && confirm("是否使用历史自定义回复？")) {
       GM_setValue(user.username, user); // 油猴脚本存储回帖内容
-      console.log("已使用历史自定义回复");
+      // console.log("已使用历史自定义回复");
       messageBox("已使用历史自定义回复");
       return user.userReplyMessage.length;
     } else {
@@ -692,11 +711,13 @@ function getThreads(currentHref, fid) {
         GM_setValue(user.username, user);
         // console.log(user.replyThreads.length)
         messageBox('回帖列表任务添加成功！')
+        console.log('回帖列表任务添加成功！')
       }
       // 错误提示
       const info = newFid();
       if (info) {
         messageBox(info);
+        console.log(info);
       }
     };
   };
@@ -733,11 +754,11 @@ function replyOrThk(_this, type = 'reply') { // 回帖函数
       let fidRepIndex = elementForum.fidRepIndex; // 上次回复位置
       let fidThkIndex = elementForum.fidThkIndex; // 上次感谢位置
       if (type == 'reply') {
-        console.log(fid + " 版块，起始位置：" + fidRepIndex + " 总数：" + elementForum.fidthreads.length + "，版块总需" + (elementForum.fidTime / 1000 / 60).toFixed(1) + " 分钟时间");
-        messageBox(fid + " 版块，起始位置：" + fidRepIndex + " 总数：" + elementForum.fidthreads.length + "，版块总需" + (elementForum.fidTime / 1000 / 60).toFixed(1) + " 分钟时间");
+        console.log(fid + "-版块，当前位置：" + fidRepIndex + " ，总数：" + elementForum.fidthreads.length + "，版块总需" + (elementForum.fidTime / 1000 / 60).toFixed(1) + " 分钟时间");
+        messageBox(fid + "-版块，当前位置：" + fidRepIndex + " ，总数：" + elementForum.fidthreads.length + "，版块总需" + (elementForum.fidTime / 1000 / 60).toFixed(1) + " 分钟时间");
       } else if (type == 'thk') {
-        console.log(fid + " 版块，起始位置：" + fidThkIndex + " 总数：" + elementForum.fidthreads.length);
-        messageBox(fid + " 版块，起始位置：" + fidThkIndex + " 总数：" + elementForum.fidthreads.length);
+        console.log(fid + "-版块，当前位置：" + fidThkIndex + " ，总数：" + elementForum.fidthreads.length);
+        messageBox(fid + "-版块，当前位置：" + fidThkIndex + " ，总数：" + elementForum.fidthreads.length);
       }
       cricleReply();
 
@@ -765,7 +786,7 @@ function replyOrThk(_this, type = 'reply') { // 回帖函数
               _this.timer = setInterval(() => {
                 clearInterval(_this.timer);
                 postData(replyUrl, replyData, type);
-                console.log("版块：" + fidRepIndex, '随机序号:', replyIndex, '内容:', turnUrl(replyData, 1), '用时:', randomTime); //测试使用  
+                console.log("序号：" + fidRepIndex, '随机号:', replyIndex, '内容:', turnUrl(replyData, 1), '用时:', randomTime); //测试使用  
                 elementForum.fidRepIndex = ++fidRepIndex;
                 GM_setValue(user.username, user);
                 cricleReply();
