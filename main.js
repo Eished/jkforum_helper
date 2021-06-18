@@ -48,10 +48,10 @@ function newUser() {
       autoRePicSw: 1, // 自动加载原图开关
       page: '', // 批量回帖页码
       votedMessage: '+1', //投票输入内容
-      userReplyMessage: [], // 用户保存的回复
+      userReplyMessage: [], // 用户保存的回复，历史回帖内容
+      replyMessage: [], // 用于回复的内容，临时回帖内容
+      fastReply: fastReply, // 保存的快速回复，快速回帖内容
       replyThreads: [], // 回帖数据
-      replyMessage: [], // 用于回复的内容
-      fastReply: fastReply, // 保存的快速回复
       applyVotedUrl: 'https://www.jkforum.net/home.php?mod=task&do=apply&id=59',
       votedUrl: 'https://www.jkforum.net/plugin.php?id=voted',
       taskDoneUrl: 'https://www.jkforum.net/home.php?mod=task&do=draw&id=59',
@@ -89,7 +89,7 @@ function getFastReply(url) { //获取快速回复
 }
 
 function rePic() {
-  if (window.location.href.match('/thread-')) {
+  if (window.location.href.match('thread')) {
     const user = getUserFromName();
     if (user.autoThkSw) { // 自动感谢当前贴开关
       thankThread(); // 自动感谢当前贴
@@ -493,12 +493,31 @@ function chooceReply() {
   const inpreply = document.querySelector('#inpreply'); // 获取回复内容
   const user = getUserFromName();
   if (inpreply && inpreply.value) {
-    user.replyMessage = inpreply.value.split('；'); // 中文分号分隔字符串
-    user.userReplyMessage.push(inpreply.value); // 存储自定义回帖内容
+    user.replyMessage = []; // 中文分号分隔字符串
+    inpreply.value.split('；').forEach((element) => {
+      if (element) {
+        user.replyMessage.push(element); // 中文分号分隔字符串
+        user.userReplyMessage.push(element); // 存储自定义回帖内容
+      }
+    })
     GM_setValue(user.username, user); // 油猴脚本存储回帖内容
+    console.log("已使用自定义回复");
+    messageBox("已使用自定义回复");
   } else {
-    user.replyMessage = user.fastReply;
-    GM_setValue(user.username, user); // 油猴脚本存储回帖内容
+    if (user.fastReply.length) {
+      user.replyMessage = user.fastReply;
+      GM_setValue(user.username, user); // 油猴脚本存储回帖内容
+      console.log("已使用快速回复");
+      messageBox("已使用快速回复");
+    } else if (user.userReplyMessage.length && confirm("是否使用历史自定义回复？")) {
+      user.replyMessage = user.userReplyMessage;
+      GM_setValue(user.username, user); // 油猴脚本存储回帖内容
+      console.log("已使用历史自定义回复");
+      messageBox("已使用历史自定义回复");
+    } else {
+      alert('没有获取到任何回复，请确认有浏览可快速回贴的版块的权限！否则需要手动输入回帖内容！');
+      return "错误";
+    }
   }
 }
 
@@ -562,7 +581,11 @@ function getThreads(currentHref, fid) {
       let htmlData = document.createElement('div');
       htmlData.innerHTML = data;
 
-      chooceReply(); //如果输入了值则使用用户值，如果没有则使用默认值；
+      if (chooceReply()) {
+        console.log('回帖内容失败！');
+        messageBox('回帖内容失败！');
+        return "回帖内容失败！";
+      }; //如果输入了值则使用用户值，如果没有则使用默认值；没有默认值则返回错误
       const user = getUserFromName(); //获取user对象，必须在用户输入值后面，不然取不到快速回复
 
       //帖子类名 40个a标签数组 
@@ -613,7 +636,7 @@ function getThreads(currentHref, fid) {
           for (let i = 0; i < elem.fidthreads.length; i++) {
             const element = elem.fidthreads[i];
             if (element.tid == tid) {
-              return `thread-${tid}-1-1 ：此帖子已添加到任务列表，已跳过此页，请选择其他页！`;
+              return `thread-${tid}-1-1 ：此帖子已在任务列表，已跳过此页，请选择其他页！`;
             }
           }
 
