@@ -497,26 +497,27 @@ function chooceReply() {
     inpreply.value.split('；').forEach((element) => {
       if (element) {
         user.replyMessage.push(element); // 中文分号分隔字符串
-        user.userReplyMessage.push(element); // 存储自定义回帖内容
+        user.userReplyMessage.push(element); // 存储自定义回帖内容，从头部添加
       }
     })
     GM_setValue(user.username, user); // 油猴脚本存储回帖内容
     console.log("已使用自定义回复");
     messageBox("已使用自定义回复");
+    return user.replyMessage.length;
   } else {
     if (user.fastReply.length) {
-      user.replyMessage = user.fastReply;
       GM_setValue(user.username, user); // 油猴脚本存储回帖内容
       console.log("已使用快速回复");
       messageBox("已使用快速回复");
+      return user.fastReply.length;
     } else if (user.userReplyMessage.length && confirm("是否使用历史自定义回复？")) {
-      user.replyMessage = user.userReplyMessage;
       GM_setValue(user.username, user); // 油猴脚本存储回帖内容
       console.log("已使用历史自定义回复");
       messageBox("已使用历史自定义回复");
+      return user.userReplyMessage.length;
     } else {
       alert('没有获取到任何回复，请确认有浏览可快速回贴的版块的权限！否则需要手动输入回帖内容！');
-      return "错误";
+      return -1;
     }
   }
 }
@@ -581,13 +582,14 @@ function getThreads(currentHref, fid) {
       let htmlData = document.createElement('div');
       htmlData.innerHTML = data;
 
-      if (chooceReply()) {
-        console.log('回帖内容失败！');
-        messageBox('回帖内容失败！');
-        return "回帖内容失败！";
-      }; //如果输入了值则使用用户值，如果没有则使用默认值；没有默认值则返回错误
-      const user = getUserFromName(); //获取user对象，必须在用户输入值后面，不然取不到快速回复
+      let replyLen = chooceReply(); //如果输入了值则使用用户值，如果没有则使用默认值；没有默认值则返回错误
+      if (replyLen <= 0) {
+        console.log('获取回帖内容失败！');
+        messageBox('获取回帖内容失败！');
+        return "获取回帖内容失败！";
+      };
 
+      const user = getUserFromName(); //获取user对象，必须在用户输入值后面，不然取不到快速回复
       //帖子类名 40个a标签数组 
       let hrefs = htmlData.querySelectorAll('.s');
       // 获取作者昵称和 UID
@@ -607,7 +609,7 @@ function getThreads(currentHref, fid) {
         if (user.replyThreads.length) {
           for (let i = 0; i < user.replyThreads.length; i++) {
             if (user.replyThreads[i].fid == fid) {
-              console.log(fid);
+              // console.log(fid);
               const info = addThrInfo(user.replyThreads[i]);
               user.replyThreads[i].fidTime += fidTime; // 累加时间
               GM_setValue(user.username, user);
@@ -621,6 +623,14 @@ function getThreads(currentHref, fid) {
           user.replyThreads.push(fidthreads); // 初始化threads
           newFid();
         }
+      }
+      // 回帖变量随即范围限制
+      let start = 0;
+      if (replyLen == user.fastReply.length || replyLen == user.userReplyMessage.length) { // 判断起始位置
+      } else {
+        start = user.userReplyMessage.length - replyLen; // 用户数组长-增加的数据长=起始位置；
+        replyLen = user.userReplyMessage.length; // 结束位置
+        // console.log(start, replyLen - 1, "变量范围");
       }
 
       function addThrInfo(elem) {
@@ -639,9 +649,10 @@ function getThreads(currentHref, fid) {
               return `thread-${tid}-1-1 ：此帖子已在任务列表，已跳过此页，请选择其他页！`;
             }
           }
-
+          // 感谢数据
           const thkData = 'formhash=' + user.formhash + '&tid=' + tid + '&touser=' + turnUrl(touser) + '&touseruid=' + touseruid + '&handlekey=k_thankauthor&addsubmit=true';
-          const replyIndex = rdNum(0, user.replyMessage.length - 1);
+          const replyIndex = rdNum(start, replyLen - 1); // 从返回的输入长度获取随机值
+          // console.log(start, replyLen - 1, replyIndex);
           const randomTime = rdNum(user.interval, user.differ + user.interval);
           const thread = {
             tid: tid,
@@ -649,6 +660,7 @@ function getThreads(currentHref, fid) {
             touser: touser,
             thkData: thkData,
             replyIndex: replyIndex, // 回帖随机数
+            replyLen: replyLen, // 用于判断使用的哪个数组，和确定起始位置
             // replyData: '', // 和 posttime 一起生成
             // posttime: '', // 回帖时间，发送时赋值 getTime()/1000
             randomTime: randomTime, // 回帖时间随机数
@@ -657,7 +669,7 @@ function getThreads(currentHref, fid) {
           elem.fidthreads.push(thread); // 给对象数组添加
         }
         GM_setValue(user.username, user);
-        console.log(user.replyThreads.length)
+        // console.log(user.replyThreads.length)
         messageBox('回帖列表任务添加成功！')
       }
       // 错误提示
@@ -686,18 +698,7 @@ function replyOrThk(_this, type = 'reply') { // 回帖函数
     messageBox('任务列表为空，请先添加任务！');
     console.log('任务列表为空，请先添加任务！');
     return 0; // 打断了通知消息的异步执行
-  }
-  // else if ((type == 'reply' && fidIndex == user.replyThreads.length) || (type == 'thk' && thkFidIndex == user.replyThreads.length)) {
-  //   if (type == 'thk') {
-  //     console.log(type + '：没有新的感谢任务！');
-  //     messageBox(type + '：没有新的感谢任务！');
-  //   } else if (type == 'reply') {
-  //     console.log(type + '：没有新的回复任务！');
-  //     messageBox(type + '：没有新的回复任务！');
-  //   }
-  //   return 0; // 打断了通知消息的异步执行
-  // } 
-  else if (type == 'reply') {
+  } else if (type == 'reply') {
     console.log(type, ":开始回帖...");
   } else {
     console.log(type, ":开始感谢...");
@@ -726,18 +727,24 @@ function replyOrThk(_this, type = 'reply') { // 回帖函数
               const elementThr = elementForum.fidthreads[fidRepIndex];
               const tid = elementThr.tid;
               const replyIndex = elementThr.replyIndex;
+              const replyLen = elementThr.replyLen;
               const randomTime = elementThr.randomTime;
               const replyUrl = 'https://www.jkforum.net/forum.php?mod=post&action=reply&fid=' + fid + '&tid=' +
                 tid + '&extra=page%3D1&replysubmit=yes&infloat=yes&handlekey=fastpost&inajax=1'; // 拼接回帖url
               const date = new Date();
               const posttime = parseInt(date.getTime() / 1000); // 生产时间戳
               // 拼接回帖报文
-              const replyData = 'message=' + turnUrl(user.replyMessage[replyIndex]) + '&posttime=' + posttime + '&formhash=' + user.formhash + '&usesig=1&subject=++';
+              let replyData = '';
+              if (replyLen == user.fastReply.length) {
+                replyData = 'message=' + turnUrl(user.fastReply[replyIndex]) + '&posttime=' + posttime + '&formhash=' + user.formhash + '&usesig=1&subject=++';
+              } else {
+                replyData = 'message=' + turnUrl(user.userReplyMessage[replyIndex]) + '&posttime=' + posttime + '&formhash=' + user.formhash + '&usesig=1&subject=++';
+              }
               clearInterval(_this.timer);
               _this.timer = setInterval(() => {
                 clearInterval(_this.timer);
-                postData(replyUrl, replyData, type);
-                console.log(fidRepIndex, '内容:', user.replyMessage[replyIndex], replyIndex, randomTime); //测试使用  
+                // postData(replyUrl, replyData, type);
+                console.log("版块：" + fidRepIndex, '随机序号:', replyIndex, '内容:', turnUrl(replyData, 1), '用时:', randomTime); //测试使用  
                 elementForum.fidRepIndex = ++fidRepIndex;
                 GM_setValue(user.username, user);
                 cricleReply();
@@ -747,7 +754,7 @@ function replyOrThk(_this, type = 'reply') { // 回帖函数
             case 'thk': {
               const elementThr = elementForum.fidthreads[fidThkIndex];
               const thkData = elementThr.thkData;
-              postData(thkUrl, thkData, type); //post感谢数据
+              // postData(thkUrl, thkData, type); //post感谢数据
               console.log(fidThkIndex, thkData, type); //post感谢数据
               elementForum.fidThkIndex = ++fidThkIndex;
               cricleReply();
