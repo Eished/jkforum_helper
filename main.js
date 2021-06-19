@@ -66,7 +66,7 @@ function creatUser() {
         console.log('获取快速回复失败！');
       }
       launch(); // 延迟启动，异步设置快速回复，自动签到 自动投票
-    }, 2000);
+    }, 3000);
   } else {
     launch();
   }
@@ -352,12 +352,12 @@ function chooceReply() {
     messageBox("已使用自定义回复");
     return user.replyMessage.length;
   } else {
-    if (user.fastReply.length > 1) { // 1 为错误信息
+    if (user.fastReply.length > 1 && confirm("确认使用快速回复？否则使用历史回复")) { // 1 为错误信息
       GM_setValue(user.username, user); // 油猴脚本存储回帖内容
       // console.log("已使用快速回复");
       messageBox("已使用快速回复");
       return user.fastReply.length;
-    } else if (user.userReplyMessage.length && confirm("是否使用历史自定义回复？")) {
+    } else if (user.userReplyMessage.length && confirm("确认使用历史自定义回复？")) {
       GM_setValue(user.username, user); // 油猴脚本存储回帖内容
       // console.log("已使用历史自定义回复");
       messageBox("已使用历史自定义回复");
@@ -381,7 +381,13 @@ function thankOnePage() {
     }
   } else {
     messageBox('正在添加本页...');
-    getThreads(currentHref, fid); // 获取当前页所有帖子地址
+    let replyLen = chooceReply(); //如果输入了值则使用用户值，如果没有则使用默认值；没有默认值则返回错误
+    if (replyLen <= 0) {
+      console.log('获取回帖内容失败！');
+      messageBox('获取回帖内容失败！');
+      return "获取回帖内容失败！";
+    };
+    getThreads(currentHref, fid, replyLen); // 获取当前页所有帖子地址
   }
 }
 
@@ -400,9 +406,16 @@ function thankBatch() {
     getData('https://www.jkforum.net/forum.php?mod=forumdisplay&fid=' + fid + '&forumdefstyle=yes'); //切换到列表模式，同步请求。
     messageBox('已切换到列表模式');
 
+    let replyLen = chooceReply(); //如果输入了值则使用用户值，如果没有则使用默认值；没有默认值则返回错误
+    if (replyLen <= 0) {
+      console.log('获取回帖内容失败！');
+      messageBox('获取回帖内容失败！');
+      return "获取回帖内容失败！";
+    };
+
     function sendPage() {
       let currentHrefPage = 'https://www.jkforum.net/forum-' + fid + '-' + pageFrom + '.html'; //生成帖子列表地址
-      getThreads(currentHrefPage, fid);
+      getThreads(currentHrefPage, fid, replyLen);
       console.log('当前地址：', currentHrefPage, '页码：', pageFrom);
       pageFrom++;
     };
@@ -415,7 +428,7 @@ function thankBatch() {
   }
 }
 // 获取当前页所有帖子地址
-function getThreads(currentHref, fid) {
+function getThreads(currentHref, fid, replyLen) {
   const httpRequest = new XMLHttpRequest();
   httpRequest.open('GET', currentHref, true);
   httpRequest.send();
@@ -425,13 +438,6 @@ function getThreads(currentHref, fid) {
       // 数据类型转换
       let htmlData = document.createElement('div');
       htmlData.innerHTML = data;
-
-      let replyLen = chooceReply(); //如果输入了值则使用用户值，如果没有则使用默认值；没有默认值则返回错误
-      if (replyLen <= 0) {
-        console.log('获取回帖内容失败！');
-        messageBox('获取回帖内容失败！');
-        return "获取回帖内容失败！";
-      };
 
       const user = getUserFromName(); //获取user对象，必须在用户输入值后面，不然取不到快速回复
       //帖子类名 40个a标签数组 
@@ -490,7 +496,7 @@ function getThreads(currentHref, fid) {
           for (let i = 0; i < elem.fidthreads.length; i++) {
             const element = elem.fidthreads[i];
             if (element.tid == tid) {
-              return `thread-${tid}-1-1 ：此帖子已在任务列表，已跳过此页，请选择其他页！`;
+              return `${currentHref} 中： thread-${tid}-1-1 ：此帖子已在任务列表，已跳过此页！`;
             }
           }
           // 感谢数据
@@ -514,8 +520,8 @@ function getThreads(currentHref, fid) {
         }
         GM_setValue(user.username, user);
         // console.log(user.replyThreads.length)
-        messageBox('回帖列表任务添加成功！')
-        console.log('回帖列表任务添加成功！')
+        messageBox(`${currentHref} 回帖列表任务添加成功！`)
+        console.log(`${currentHref} 回帖列表任务添加成功！`)
       }
       // 错误提示
       const info = newFid();
@@ -922,7 +928,7 @@ function genElement2(type, id) {
     b.id = id;
   }
   const user = getUserFromName();
-  if (user.page) {
+  if (user && user.page) {
     b.value = user.page;
   }
   b.placeholder = `版块-1-2`;
