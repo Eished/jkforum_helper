@@ -565,7 +565,7 @@ function replyOrThk(_this, type = 'reply') { // 回帖函数
       let fidThkIndex = elementForum.fidThkIndex; // 上次感谢位置
       if (type == 'reply') {
         console.log(fid + "-版块，当前位置：" + fidRepIndex + " ，总数：" + elementForum.fidthreads.length + "，版块总需" + (elementForum.fidTime / 1000 / 60).toFixed(1) + " 分钟时间");
-        messageBox(fid + "-版块，当前位置：" + fidRepIndex + " ，总数：" + elementForum.fidthreads.length + "，版块总需" + (elementForum.fidTime / 1000 / 60).toFixed(1) + " 分钟时间");
+        messageBox(fid + "-版块，当前位置：" + fidRepIndex + " ，总数：" + elementForum.fidthreads.length + "，版块总需" + (elementForum.fidTime / 1000 / 60).toFixed(1) + " 分钟时间", elementForum.fidTime);
       } else if (type == 'thk') {
         console.log(fid + "-版块，当前位置：" + fidThkIndex + " ，总数：" + elementForum.fidthreads.length);
         messageBox(fid + "-版块，当前位置：" + fidThkIndex + " ，总数：" + elementForum.fidthreads.length);
@@ -622,7 +622,7 @@ function replyOrThk(_this, type = 'reply') { // 回帖函数
             thkFidIndex++; // 翻页
           } else if (type == 'reply') {
             fidIndex++; // 翻页
-            messageBox(fid + "：版块感谢/回帖完成！");
+            messageBox(fid + "：版块回帖完成！");
           }
           GM_setValue(user.username, user);
           cricleReplyForum();
@@ -631,8 +631,10 @@ function replyOrThk(_this, type = 'reply') { // 回帖函数
     } else {
       if (type == 'thk') {
         messageBox("全部感谢完成！");
+        console.log("全部感谢完成！");
       } else if (type == 'reply') {
         messageBox("全部回帖完成！");
+        console.log("全部回帖完成！");
         GM_notification("全部回帖完成！");
       }
     }
@@ -687,7 +689,7 @@ function getDataAsy(url) {
           const href = htmlData.querySelector('.hp_s_c a').href; // 找到链接
           const aid = href.split('&')[2].split('=')[1]; // 纯数字// 分解链接
           const pMessage = 'formhash=' + user.formhash + '&inajax=1&handlekey=dian&sid=0&message=' + turnUrl(user.votedMessage); //post 投票报文
-          const url = 'https://www.jkforum.net/plugin/?id=voted&ac=dian&aid=' + aid + '&vid=' + vid + ' & qr = & inajax = 1 '; //拼接投票链接
+          const url = 'https://www.jkforum.net/plugin/?id=voted&ac=dian&aid=' + aid + '&vid=' + vid + '&qr=&inajax=1'; //拼接投票链接
           postData(url, pMessage, 'voted');
           break;
         }
