@@ -43,12 +43,12 @@ function creatUser() {
       user.version = GM_info.script.version; // 记录新版本
       user = copyObjVal(userMod, user); // 对newUser赋值
     }
-    if (user.fastReply.length == 1) {
-      user.fastReply = [];
-      console.log("重新获取快速回复");
-    }
     messageBox("版本更新成功！请阅读使用说明。");
     console.log("版本更新成功！");
+    if (user.fastReply.length == 1) {
+      user.fastReply = [];
+      console.log("正在重新获取快速回复...");
+    }
     GM_setValue(username, user);
     setFastReply(); // 异步设置快速回复
   }
@@ -352,7 +352,7 @@ function chooceReply() {
     messageBox("已使用自定义回复");
     return user.replyMessage.length;
   } else {
-    if (user.fastReply.length) {
+    if (user.fastReply.length > 1) { // 1 为错误信息
       GM_setValue(user.username, user); // 油猴脚本存储回帖内容
       // console.log("已使用快速回复");
       messageBox("已使用快速回复");
