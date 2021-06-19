@@ -1,19 +1,22 @@
 // ==UserScript==
 // @name         jkforum helper
 // @namespace    https://github.com/Eished/jkforum_helper
-// @version      0.4.0
+// @version      0.4.1
 // @description  捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片
 // @author       Eished
 // @license      AGPL-3.0
 // @match        *://*.jkforum.net/*
 // @exclude      *.jkforum.net/member*
 // @icon         https://www.google.com/s2/favicons?domain=jkforum.net
+// @require      https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js
+// @require      https://cdn.jsdelivr.net/npm/jszip@3.6.0/dist/jszip.min.js
+// @connect      mymypic.net
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_notification
-// @grant        GM_download
 // @grant        GM_info
 // @grant        GM_addStyle
+// @grant        GM_xmlhttpRequest
 // ==/UserScript==
 
 (function () {
@@ -148,19 +151,100 @@ function rePic() {
       for (let i = 0; i < ignore_js_ops.length; i++) { //遍历图片列表
         let img = ignore_js_ops[i].querySelector("img");
         img.setAttribute('onmouseover', null); // 去掉下载原图提示
-        if (img.src.match('.thumb.')) { // 去掉缩略图
+        if (img.src.match('.thumb.')) { // 去掉缩略图 加载部分
           console.log('thumb：', img.src);
           img.src = img.getAttribute('file').split('.thumb.')[0];
           messageBox('加载原图成功', 1000)
-        } else if (img.src.match('static/image/common/none.gif')) {
-          img.setAttribute('file', img.getAttribute('file').split('.thumb.')[0]); //网站自带forum_viewthread.js  attachimgshow(pid, onlyinpost) 从file延迟加载
-          // img.src = img.getAttribute('file').split('.thumb.')[0];// 懒加载，下载时激活
+        } else if (img.src.match('static/image/common/none.gif')) { // 懒加载部分
+          img.setAttribute('file', img.getAttribute('file').split('.thumb.')[0]); // 网站自带forum_viewthread.js  attachimgshow(pid, onlyinpost) 从file延迟加载
           console.log('none.gif:', img.src);
           messageBox('加载原图成功', 1000)
         }
       }
     }
   }
+}
+
+function downloadImgs() {
+  let ignore_js_ops = ''; //获取图片列表，附件也是ignore_js_op
+  let imgsUrl = []; // 图片下载链接
+  let imgsTitles = []; // 图片名称
+  const fileName = document.querySelector('.title-cont h1').innerHTML.trim().replace(/\.+/g, '-');
+  if (document.querySelectorAll('.t_f ignore_js_op img').length || document.querySelectorAll('.t_fsz ignore_js_op .mbn img').length) {
+    ignore_js_ops = document.querySelectorAll('.t_f ignore_js_op img').length ? document.querySelectorAll('.t_f ignore_js_op img') : ignore_js_ops = document.querySelectorAll('.t_fsz ignore_js_op .mbn img');
+    for (let i = 0; i < ignore_js_ops.length; i++) { //遍历图片列表
+      let img = ignore_js_ops[i];
+      imgsUrl.push(img.getAttribute('file').split('.thumb.')[0]); // 保存下载链接到数组
+      imgsTitles.push(img.getAttribute('title')); // 保存下载名称到数组
+    }
+  } else if (document.querySelectorAll('.t_f ignore_js_op img').length) {
+    ignore_js_ops = document.querySelectorAll('.t_f img');
+    for (let i = 0; i < ignore_js_ops.length; i++) { //遍历图片列表
+      let img = ignore_js_ops[i];
+      imgsUrl.push(img.src.split('.thumb.')[0]); // 保存下载链接到数组
+      const nameSrc = img.src.split('/');
+      imgsTitles.push(nameSrc[nameSrc.length - 1]); // 保存下载名称到数组
+    }
+    console.log(imgsTitles);
+  } else {
+    console.log('没有获取到图片');
+    messageBox('没有获取到图片');
+    return 0;
+  }
+
+  function makeGetRequest(url) {
+    return new Promise((resolve, reject) => {
+      GM_xmlhttpRequest({
+        method: "GET",
+        url: url,
+        headers: {
+          "User-Agent": "Mozilla/5.0", // If not specified, navigator.userAgent will be used.
+        },
+        responseType: "blob",
+        onload: function (response) {
+          if (!response) {
+            try {} catch (err) {
+              console.log(err);
+            }
+          }
+          resolve(response.response);
+        },
+        onerror: function (error) {
+          reject(error);
+        }
+      });
+    });
+  }
+
+  // 批量下载
+  const batchDownload = async (imgsUrl, imgsTitles) => {
+    const data = imgsUrl;
+    const zip = new JSZip();
+    const cache = {}
+    const promises = []
+    console.log(data.length + "张：开始下载...");
+    messageBox(data.length + "张：开始下载...");
+    await data.forEach((item, index) => {
+      const promise = makeGetRequest(item).then(data => { // 下载文件, 并存成ArrayBuffer对象
+        const file_name = imgsTitles[index]; // 获取文件名
+        zip.file(file_name, data, {
+          binary: true
+        }) // 逐个添加文件
+        cache[file_name] = data;
+        console.log(`第${index+1}张，文件名：${file_name}，大小：${parseInt(data.size / 1024)} Kb`);
+        messageBox(`第${index+1}张，文件名：${file_name}，大小：${parseInt(data.size / 1024)} Kb`);
+      })
+      promises.push(promise)
+    })
+    Promise.all(promises).then(() => {
+      zip.generateAsync({
+        type: "blob"
+      }).then(content => { // 生成二进制流
+        saveAs(content, `${fileName} [${data.length}P]`) // 利用file-saver保存文件
+      })
+    })
+  };
+  batchDownload(imgsUrl, imgsTitles);
 }
 
 function autoPay() {
@@ -233,6 +317,7 @@ function addBtns() {
     status_loginned.insertBefore(video, mnoutbox[1]); //添加视频到指定位置
   }
 
+
   if (window.location.href.match('/forum-')) {
     // 回帖输入框
     const input = genElement('textarea', 'inpreply', 1, 20);
@@ -256,6 +341,11 @@ function addBtns() {
     // 批量感谢/回帖
     const btn = genButton('添加任务', thankBatch); //设置名称和绑定函数
     status_loginned.insertBefore(btn, mnoutbox[1]); //添加按钮到指定位置
+  } else if (window.location.href.match('thread')) {
+    // 回帖 按钮
+    const repBtn = genButton('下载图片', downloadImgs); //设置名称和绑定函数
+    status_loginned.insertBefore(repBtn, mnoutbox[1]); //添加按钮到指定位置
+
   }
 };
 
