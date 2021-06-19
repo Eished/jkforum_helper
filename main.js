@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         jkforum helper
 // @namespace    https://github.com/Eished/jkforum_helper
-// @version      0.3.9
+// @version      0.4.0
 // @description  捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片
 // @author       Eished
 // @license      AGPL-3.0
@@ -13,6 +13,7 @@
 // @grant        GM_notification
 // @grant        GM_download
 // @grant        GM_info
+// @grant        GM_addStyle
 // ==/UserScript==
 
 (function () {
@@ -20,7 +21,6 @@
   if (document.querySelector('.listmenu li a')) {
     addBtns(); // 添加DOM
     creatUser(); // 添加用户
-    launch(); // 启动自动签到 自动投票
   }
 })();
 
@@ -30,8 +30,10 @@ function creatUser() {
   let user = getUserFromName();
   if (!user) { // 空则写入，或版本变动写入
     user = newUser(username, formhash);
+    GM_setValue(username, user);
     messageBox("添加用户成功！");
     console.log("添加用户成功！");
+    setFastReply(); // 异步设置快速回复
   } else if (user.version != GM_info.script.version) {
     const userMod = newUser(username, formhash);
     const compa = compaObjKey(userMod, user); // 比较key
@@ -41,19 +43,36 @@ function creatUser() {
       user.version = GM_info.script.version; // 记录新版本
       user = copyObjVal(userMod, user); // 对newUser赋值
     }
+    if (user.fastReply.length == 1) {
+      user.fastReply = [];
+      console.log("重新获取快速回复");
+    }
     messageBox("版本更新成功！请阅读使用说明。");
     console.log("版本更新成功！");
+    GM_setValue(username, user);
+    setFastReply(); // 异步设置快速回复
   }
-  GM_setValue(username, user);
   if (user.formhash != formhash) { //formhash 变动存储
     user.formhash = formhash;
     GM_setValue(username, user);
   }
+  if (!user.fastReply.length) { // 延迟启动，异步设置快速回复
+    setTimeout(() => {
+      const user = getUserFromName();
+      if (!user.fastReply.length) {
+        user.fastReply = ['获取快速回复失败！'];
+        GM_setValue(user.username, user);
+        messageBox('获取快速回复失败！');
+        console.log('获取快速回复失败！');
+      }
+      launch(); // 延迟启动，异步设置快速回复，自动签到 自动投票
+    }, 2000);
+  } else {
+    launch();
+  }
 }
 
 function newUser(username, formhash) {
-  const fastReplyUrl = 'https://www.jkforum.net/thread-8364615-1-1.html'; // 获取快速回复的地址
-  const fastReply = getFastReply(fastReplyUrl); // 从置顶帖子初始化快速回贴内容, 返回数组
   const user = {
     username: username,
     formhash: formhash,
@@ -73,39 +92,18 @@ function newUser(username, formhash) {
     votedMessage: '+1', //投票输入内容
     userReplyMessage: [], // 用户保存的回复，历史回帖内容
     replyMessage: [], // 用于回复的内容，临时回帖内容
-    fastReply: fastReply, // 保存的快速回复，快速回帖内容
+    fastReply: [], // 保存的快速回复，快速回帖内容
     replyThreads: [], // 回帖数据
     applyVotedUrl: 'https://www.jkforum.net/home.php?mod=task&do=apply&id=59',
+    vidUrl: '',
     votedUrl: 'https://www.jkforum.net/plugin.php?id=voted',
     taskDoneUrl: 'https://www.jkforum.net/home.php?mod=task&do=draw&id=59',
     signUrl: 'https://www.jkforum.net/plugin/?id=dsu_paulsign:sign&operation=qiandao&infloat=1&inajax=1',
     thkUrl: 'https://www.jkforum.net/plugin/?id=thankauthor:thank&inajax=1',
     payUrl: 'https://www.jkforum.net/forum.php?mod=misc&action=pay&paysubmit=yes&infloat=yes&inajax=1',
+    fastReplyUrl: ''
   }
   return user;
-}
-// 比较键
-function compaObjKey(source, target) {
-  let count = 0;
-  Object.keys(source).forEach(ea => {
-    Object.keys(target).forEach(eb => {
-      if (ea === eb) {
-        count++;
-      }
-    })
-  });
-  if (count == Object.keys(source).length) {
-    return true;
-  } else {
-    return false;
-  }
-}
-// 赋值对象的值
-function copyObjVal(target, source) {
-  Object.keys(source).forEach((key) => {
-    target[key] = source[key];
-  });
-  return target;
 }
 
 function getUserFromName() { //从用户名获取对象
@@ -113,31 +111,23 @@ function getUserFromName() { //从用户名获取对象
   return GM_getValue(username);
 }
 
-function getFastReply(url) { //获取快速回复
-  const html = getData(url);
-  const options = html.querySelectorAll('#rqcss select option');
-  let fastReply = []; //返回数组
-  options.forEach(option => {
-    if (option.outerText) { //去掉空值
-      fastReply.push(replaceHtml(option.value)); //去掉需要转义的内容
-    }
-  });
-  return fastReply;
+function setFastReply() { //设置快速回复
+  const fastReplyUrl = 'https://www.jkforum.net/thread-8364615-1-1.html'; // 获取快速回复的地址
+  const user = getUserFromName();
+  user.fastReplyUrl = fastReplyUrl; // 设置链接用于异步校验
+  GM_setValue(user.username, user);
+  getDataAsy(fastReplyUrl);
 }
 
 function launch() {
   rePic(); // 启动自动加载原图，自动感谢等；
   const user = getUserFromName();
-  // 版本更新后，today 写入空值，在此初始化。
   if (user.username) { //验证是否登录 //天变动则签到
     if (user.today != nowTime('day')) {
       user.today = nowTime('day');
-      GM_setValue(user.username, user); //保存当天日
-      const urlApply = user.applyVotedUrl;
-      // 申请任务
-      task(urlApply);
-      // 签到
-      sign();
+      getDataAsy(user.applyVotedUrl); // 申请任务
+      sign(); // 签到
+      GM_setValue(user.username, user); //保存当天日// today 初始化
     }
   } else {
     messageBox('未登录');
@@ -210,16 +200,9 @@ function thankThreadPost() {
 
 // 添加GUI
 function addBtns() {
-  // 增加 visited 样式，图片模式已阅的帖子变灰色
-  function genStlye() {
-    let b = document.createElement('style');
-    b.innerHTML = `.xw0 a:visited {color: grey;}`;
-    return b;
-  };
-  document.querySelector('body').appendChild(genStlye()); // 增加 visited 样式到 body
-
-  if (window.location.href.match('/forum-') || window.location.href.match('/type-') || window.location.href.match('mod=forum')) {
-    // 去掉高亮颜色标题
+  // 增加 visited 样式，图片模式已阅的帖子变灰色 
+  GM_addStyle(`.xw0 a:visited {color: grey;}`);
+  if (window.location.href.match('/forum-') || window.location.href.match('/type-') || window.location.href.match('mod=forum')) { // 去掉高亮颜色标题
     document.querySelectorAll('[style="color: #2B65B7"]').forEach((e) => {
       e.style = '';
     })
@@ -286,99 +269,6 @@ function thkBtn() {
   replyOrThk(this, 'thk');
 }
 
-function genButton(text, foo, id) {
-  let b = document.createElement('button'); //创建类型为button的DOM对象
-  b.textContent = text; //修改内部文本为text
-  b.style.cssText = 'margin:16px 10px 0px 0px;float:left' //添加样式（margin可以让元素间隔开一定距离）
-  b.addEventListener('click', foo); //绑定click的事件的监听器
-  if (id) {
-    b.id = id;
-  } //如果传入了id，就修改DOM对象的id
-  return b; //返回修改好的DOM对象
-}
-
-function genElement(type, id, val1, val2) {
-  let b = document.createElement(type); //创建类型为button的DOM对象
-  b.style.cssText = 'margin:16px 10px 0px 0px;float:left' //添加样式（margin可以让元素间隔开一定距离）
-  b.rows = val1;
-  b.cols = val2;
-  // 油猴脚本存储回帖内容
-  b.placeholder = '中文分号；分隔回帖内容';
-  if (id) {
-    b.id = id;
-  } //如果传入了id，就修改DOM对象的id
-  return b; //返回修改好的DOM对象
-}
-
-function genElement2(type, id) {
-  let b = document.createElement(type); //创建类型为button的DOM对象
-  b.style.cssText = 'margin:16px 10px 0px 0px;float:left;width:80px' //添加样式（margin可以让元素间隔开一定距离）
-  if (id) {
-    b.id = id;
-  }
-  const user = getUserFromName();
-  if (user.page) {
-    b.value = user.page;
-  }
-  b.placeholder = `版块-1-2`;
-  return b; //返回修改好的DOM对象
-}
-
-function genVideo() {
-  let video = document.createElement('video');
-  video.style.cssText = 'display: none; z-index: -1000;width:0;height:0;'
-  video.id = 'video1';
-  video.loop = 'true';
-  video.autoplay = 'true';
-  let source = document.createElement('source');
-  source.src = 'https://raw.githubusercontent.com/Eished/jkforum_helper/main/video/light.mp4';
-  source.type = "video/mp4"
-  video.append(source);
-  return video;
-}
-
-function nowTime(time) {
-  const date = new Date();
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  let hours = date.getHours();
-  let minutes = date.getMinutes();
-  let seconds = date.getSeconds();
-  // 补零
-  if (hours < 10) {
-    hours = `0${hours}`;
-  }
-  if (minutes < 10) {
-    minutes = `0${minutes}`;
-  }
-  if (seconds < 10) {
-    seconds = `0${seconds}`;
-  }
-  switch (time) {
-    case 'year': {
-      return year;
-    }
-    case 'month': {
-      return `${year}/${month}`;
-    }
-    case 'day': {
-      return `${year}/${month}/${day}`;
-    }
-    case 'hours': {
-      return `${year}/${month}/${day} ${hours}`;
-    }
-    case 'minutes': {
-      return `${year}/${month}/${day} ${hours}:${minutes}`;
-    }
-    case 'seconds': {
-      return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
-    }
-    default:
-      return "输入时间";
-  }
-}
-
 // 定时签到
 function timeControl() {
   const _this = this; //获取对象
@@ -425,107 +315,24 @@ function sign() {
   postData(url, pMessage, 'sign');
 }
 
-// 申请投票任务
-function task(urlApply) {
-  const httpRequest = new XMLHttpRequest(); //第一步：建立所需的对象
-  httpRequest.open('GET', urlApply, true); //第二步：打开连接
-  httpRequest.send(); //第三步：发送请求  将请求参数写在URL中
-  httpRequest.onreadystatechange = function () {
-    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-      messageBox("申请投票任务执行成功！");
-      let urlVote = getUserFromName().votedUrl;
-      // 执行获取vid
-      getVid(urlVote);
-    }
-  };
-}
-
-// 自动获取vid和aid
-function getVid(urlVote) {
-  const httpRequest = new XMLHttpRequest(); //第一步：建立所需的对象
-  httpRequest.open('GET', urlVote, true); //第二步：打开连接
-  httpRequest.send(); //第三步：发送请求  将请求参数写在URL中
-  httpRequest.onreadystatechange = function () {
-    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-      let data = httpRequest.responseText;
-      // 数据类型转换成 html
-      let htmlData = document.createElement('div');
-      htmlData.innerHTML = data;
-      // 找到链接
-      const href = htmlData.querySelector('.voted a').href;
-      // 分解链接
-      const vid = href.split('&')[2].split('=')[1]; // 纯数字
-
-      // 获取投票页 aid
-      getAid(href, vid);
-    }
-  };
-}
-
-// 获取aid
-function getAid(vidUrl, vid) {
-  const httpRequest = new XMLHttpRequest(); //第一步：建立所需的对象
-  httpRequest.open('GET', vidUrl, true); //第二步：打开连接
-  httpRequest.send(); //第三步：发送请求  将请求参数写在URL中
-  httpRequest.onreadystatechange = function () {
-    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-      const data = httpRequest.responseText;
-      // 数据类型转换成 html
-      let htmlData = document.createElement('div');
-      htmlData.innerHTML = data;
-      // 找到链接
-      const href = htmlData.querySelector('.hp_s_c a').href;
-      // 分解链接
-      const aid = href.split('&')[2].split('=')[1]; // 纯数字
-      const user = getUserFromName();
-      const pMessage = 'formhash=' + user.formhash + '&inajax=1&handlekey=dian&sid=0&message=' + turnUrl(user.votedMessage); //post 投票报文
-      const url = 'https://www.jkforum.net/plugin/?id=voted&ac=dian&aid=' + aid + '&vid=' + vid + ' & qr = & inajax = 1 '; //拼接投票链接
-      postData(url, pMessage, 'voted');
-    }
-  };
-};
-
-// 领取投票任务奖励
-function taskDone(urlDraw) {
-  const httpRequest = new XMLHttpRequest(); //第一步：建立所需的对象
-  httpRequest.open('GET', urlDraw, true); //第二步：打开连接
-  httpRequest.send(); //第三步：发送请求  将请求参数写在URL中
-  httpRequest.onreadystatechange = function () {
-    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-      messageBox("领取投票奖励执行成功！");
-    }
-  };
-}
-
 // 消息通知弹窗
-function messageBox(text, setTime) {
+function messageBox(text, setTime = 5000) {
   function genBox(text, id) {
-    let b = document.createElement('div'); //创建类型为button的DOM对象
+    let b = document.createElement('div');
     b.textContent = text; //修改内部文本为text
-    b.style.cssText = 'width:100%;background-color:#64ce83;float:left;padding:5px 10px;margin-top:10px;border-radius:10px;color:#fff;    box-shadow: 0px 0px 1px 3px #ffffff;' //添加样式（margin可以让元素间隔开一定距离）
-    // b.addEventListener('click', foo); //绑定click的事件的监听器
-    if (id) {
-      b.id = id;
-    } //如果传入了id，就修改DOM对象的id
+    b.style.cssText = 'width:100%;background-color:#64ce83;float:left;padding:5px 10px;margin-top:10px;border-radius:10px;color:#fff;    box-shadow: 0px 0px 1px 3px #ffffff;';
+    b.id = id;
     return b; //返回修改好的DOM对象
   };
-  // 生成时间 id 
-  const date = new Date();
+  const date = new Date(); // 生成时间 id 
   const timeId = 'a' + date.getTime();
-  // 初始化消息盒子
-  let textBox = genBox(text, timeId);
+  let textBox = genBox(text, timeId); // 初始化消息盒子
   let messageBox = document.querySelector('#messageBox');
-  // 显示消息
-  messageBox.appendChild(textBox);
-  // 默认5秒删掉消息，可设置时间，none一直显示
-  if (setTime && !isNaN(setTime)) {
+  messageBox.appendChild(textBox); // 显示消息
+  if (setTime && !isNaN(setTime)) { // 默认5秒删掉消息，可设置时间，none一直显示
     setTimeout(() => {
       messageBox.removeChild(document.getElementById(timeId));
     }, setTime);
-  } else if (setTime == 'none') {} else {
-    setTimeout(() => {
-      messageBox.removeChild(document.getElementById(timeId));
-    }, 5000);
   }
 }
 
@@ -565,10 +372,8 @@ function chooceReply() {
 function thankOnePage() {
   const currentHref = window.location.href; // 获取当前页地址
   const fid = currentHref.split('-')[1]; // 获取板块fid
-  // 判断当前页是否处于图片模式
-  if (document.querySelector('.showmenubox').querySelector('[class="chked"]')) {
-    // 图片模式则切换为列表模式
-    if (confirm("是否切换到列表模式并刷新页面？")) {
+  if (document.querySelector('.showmenubox').querySelector('[class="chked"]')) { // 判断当前页是否处于图片模式
+    if (confirm("是否切换到列表模式并刷新页面？")) { // 图片模式则切换为列表模式
       getData('https://www.jkforum.net/forum.php?mod=forumdisplay&fid=' + fid + '&forumdefstyle=yes');
       location.reload();
     } else {
@@ -576,8 +381,7 @@ function thankOnePage() {
     }
   } else {
     messageBox('正在添加本页...');
-    // 获取当前页所有帖子地址
-    getThreads(currentHref, fid);
+    getThreads(currentHref, fid); // 获取当前页所有帖子地址
   }
 }
 
@@ -804,6 +608,7 @@ function replyOrThk(_this, type = 'reply') { // 回帖函数
             }
 
             default:
+              console.log("参数不在范围");
               break;
           }
         } else {
@@ -847,6 +652,66 @@ function getData(url) {
   };
 };
 
+// GET数据通用异步模块，返回html
+function getDataAsy(url) {
+  const user = getUserFromName();
+  const httpRequest = new XMLHttpRequest();
+  httpRequest.open('GET', url, true);
+  httpRequest.send();
+  httpRequest.onreadystatechange = () => {
+    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+      let htmlData = document.createElement('div');
+      htmlData.innerHTML = httpRequest.responseText;
+      switch (url) {
+        case user.applyVotedUrl: { // 申请投票任务
+          messageBox("申请投票任务执行成功！");
+          console.log("申请投票任务执行成功！");
+          getDataAsy(user.votedUrl);
+          break;
+        }
+        case user.votedUrl: { // 获取投票链接
+          const href = htmlData.querySelector('.voted a').href; // 找到链接
+          user.vidUrl = href;
+          GM_setValue(user.username, user);
+          getDataAsy(href);
+          break;
+        }
+        case user.vidUrl: { // 获取vid aid
+          const vid = user.vidUrl.split('&')[2].split('=')[1]; // 纯数字// 分解链接
+          const href = htmlData.querySelector('.hp_s_c a').href; // 找到链接
+          const aid = href.split('&')[2].split('=')[1]; // 纯数字// 分解链接
+          const pMessage = 'formhash=' + user.formhash + '&inajax=1&handlekey=dian&sid=0&message=' + turnUrl(user.votedMessage); //post 投票报文
+          const url = 'https://www.jkforum.net/plugin/?id=voted&ac=dian&aid=' + aid + '&vid=' + vid + ' & qr = & inajax = 1 '; //拼接投票链接
+          postData(url, pMessage, 'voted');
+          break;
+        }
+        case user.taskDoneUrl: { // 领取投票奖励
+          messageBox('领取投票奖励成功！');
+          break;
+        }
+        case user.fastReplyUrl: { // 获取快速回复
+          const options = htmlData.querySelectorAll('#rqcss select option');
+          let fastReply = []; //返回数组
+          options.forEach(option => {
+            if (option.outerText) { //去掉空值
+              fastReply.push(replaceHtml(option.value)); //去掉需要转义的内容
+            }
+          });
+          user.fastReply = fastReply;
+          GM_setValue(user.username, user); // 储存快速回复
+          messageBox("获取快速回复成功！");
+          console.log("获取快速回复成功！");
+          break;
+        }
+
+        default:
+          console.log("参数不在范围");
+          break;
+      }
+    };
+  }
+};
+
 // POST数据通用模块,返回XML
 function postData(replyUrl, replyData, fromId, contentType = 'application/x-www-form-urlencoded') {
   const httpRequest = new XMLHttpRequest();
@@ -884,6 +749,7 @@ function postData(replyUrl, replyData, fromId, contentType = 'application/x-www-
               info = stringOrHtml.querySelector('.alert_info').innerHTML; // 解析html，返回字符串，失败警告
             } else if (stringOrHtml.querySelector('script')) {
               info = stringOrHtml.querySelector('script').innerHTML.split(`', `)[1].slice(1); // 解析html，获取字符串，成功消息
+              getDataAsy(getUserFromName().taskDoneUrl); // 执行领奖励
             } else {
               info = "投票返回HTML数据识别失败: " + stringOrHtml;
             }
@@ -891,8 +757,6 @@ function postData(replyUrl, replyData, fromId, contentType = 'application/x-www-
           } else {
             messageBox(stringOrHtml); //其它情况直接输出
           }
-          const urlDraw = getUserFromName().taskDoneUrl;
-          taskDone(urlDraw); // 执行领奖励
           break;
         }
         case 'thk': {
@@ -927,13 +791,10 @@ function postData(replyUrl, replyData, fromId, contentType = 'application/x-www-
 // POST返回 xml数据类型转换成 字符串或html 模块
 function turnCdata(xmlRepo) {
   let data = xmlRepo.getElementsByTagName("root")[0].childNodes[0].nodeValue;
-  // 如果判断去掉html是否还有文字，否则返回html
-  if (replaceHtml(data)) {
-    // 去掉html内容，返回文字
-    return replaceHtml(data);
+  if (replaceHtml(data)) { // 如果判断去掉html是否还有文字，否则返回html
+    return replaceHtml(data); // 去掉html内容，返回文字
   } else {
-    // 数据类型转换成 html
-    let htmlData = document.createElement('div');
+    let htmlData = document.createElement('div'); // 数据类型转换成 html
     htmlData.innerHTML = data;
     return htmlData;
   }
@@ -962,4 +823,121 @@ function replaceHtml(txt) {
   const reg = /<.+>/g; //去掉所有<>内内容
   // 先reg3,\n特殊符号会影响reg的匹配
   return txt.replace(reg3, '').replace(reg, '').trim();
+}
+
+function nowTime(time) {
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  let hours = date.getHours();
+  let minutes = date.getMinutes();
+  let seconds = date.getSeconds();
+  // 补零
+  if (hours < 10) {
+    hours = `0${hours}`;
+  }
+  if (minutes < 10) {
+    minutes = `0${minutes}`;
+  }
+  if (seconds < 10) {
+    seconds = `0${seconds}`;
+  }
+  switch (time) {
+    case 'year': {
+      return year;
+    }
+    case 'month': {
+      return `${year}/${month}`;
+    }
+    case 'day': {
+      return `${year}/${month}/${day}`;
+    }
+    case 'hours': {
+      return `${year}/${month}/${day} ${hours}`;
+    }
+    case 'minutes': {
+      return `${year}/${month}/${day} ${hours}:${minutes}`;
+    }
+    case 'seconds': {
+      return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
+    }
+    default:
+      return "输入时间";
+  }
+}
+
+// 比较键
+function compaObjKey(source, target) {
+  let count = 0;
+  Object.keys(source).forEach(ea => {
+    Object.keys(target).forEach(eb => {
+      if (ea === eb) {
+        count++;
+      }
+    })
+  });
+  if (count == Object.keys(source).length) {
+    return true;
+  } else {
+    return false;
+  }
+}
+// 赋值对象的值
+function copyObjVal(target, source) {
+  Object.keys(source).forEach((key) => {
+    target[key] = source[key];
+  });
+  return target;
+}
+
+function genButton(text, foo, id) {
+  let b = document.createElement('button'); //创建类型为button的DOM对象
+  b.textContent = text; //修改内部文本为text
+  b.style.cssText = 'margin:16px 10px 0px 0px;float:left' //添加样式（margin可以让元素间隔开一定距离）
+  b.addEventListener('click', foo); //绑定click的事件的监听器
+  if (id) {
+    b.id = id;
+  } //如果传入了id，就修改DOM对象的id
+  return b; //返回修改好的DOM对象
+}
+
+function genElement(type, id, val1, val2) {
+  let b = document.createElement(type); //创建类型为button的DOM对象
+  b.style.cssText = 'margin:16px 10px 0px 0px;float:left' //添加样式（margin可以让元素间隔开一定距离）
+  b.rows = val1;
+  b.cols = val2;
+  // 油猴脚本存储回帖内容
+  b.placeholder = '中文分号；分隔回帖内容';
+  if (id) {
+    b.id = id;
+  } //如果传入了id，就修改DOM对象的id
+  return b; //返回修改好的DOM对象
+}
+
+function genElement2(type, id) {
+  let b = document.createElement(type); //创建类型为button的DOM对象
+  b.style.cssText = 'margin:16px 10px 0px 0px;float:left;width:80px' //添加样式（margin可以让元素间隔开一定距离）
+  if (id) {
+    b.id = id;
+  }
+  const user = getUserFromName();
+  if (user.page) {
+    b.value = user.page;
+  }
+  b.placeholder = `版块-1-2`;
+  return b; //返回修改好的DOM对象
+}
+
+function genVideo() {
+  let video = document.createElement('video');
+  video.style.cssText = 'display: none; z-index: -1000;width:0;height:0;'
+  video.id = 'video1';
+  video.loop = 'true';
+  video.autoplay = 'true';
+  let source = document.createElement('source');
+  source.src = 'https://raw.githubusercontent.com/Eished/jkforum_helper/main/video/light.mp4';
+  source.type = "video/mp4"
+  video.append(source);
+  return video;
 }
