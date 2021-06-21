@@ -52,7 +52,7 @@ function creatUser() {
       user.fastReply = [];
       console.log("正在重新获取快速回复...");
     }
-    GM_setValue(username, user);
+    GM_setValue(username, user); // 先存储，防止异步错误
     setFastReply(); // 异步设置快速回复
   }
   if (user.formhash != formhash) { //formhash 变动存储
@@ -169,27 +169,32 @@ function downloadImgs() {
   let ignore_js_ops = ''; //获取图片列表，附件也是ignore_js_op
   let imgsUrl = []; // 图片下载链接
   let imgsTitles = []; // 图片名称
-  const fileName = document.querySelector('.title-cont h1').innerHTML.trim().replace(/\.+/g, '-');
-  if (document.querySelectorAll('.t_f ignore_js_op img').length || document.querySelectorAll('.t_fsz ignore_js_op .mbn img').length) {
-    ignore_js_ops = document.querySelectorAll('.t_f ignore_js_op img').length ? document.querySelectorAll('.t_f ignore_js_op img') : ignore_js_ops = document.querySelectorAll('.t_fsz ignore_js_op .mbn img');
-    for (let i = 0; i < ignore_js_ops.length; i++) { //遍历图片列表
-      let img = ignore_js_ops[i];
-      imgsUrl.push(img.getAttribute('file').split('.thumb.')[0]); // 保存下载链接到数组
-      imgsTitles.push(img.getAttribute('title')); // 保存下载名称到数组
+  const folderName = document.querySelector('.title-cont h1').innerHTML.trim().replace(/\.+/g, '-');
+  const tfImg = document.querySelectorAll('.t_f  img');
+  if (tfImg.length) {
+    const opImg = document.querySelectorAll('.t_f ignore_js_op img');
+    const mbnImg = document.querySelectorAll('.t_fsz ignore_js_op .mbn img');
+    if (opImg.length || mbnImg.length) {
+      ignore_js_ops = opImg.length ? opImg : mbnImg;
+      for (let i = 0; i < ignore_js_ops.length; i++) { //遍历图片列表
+        let img = ignore_js_ops[i];
+        imgsUrl.push(img.getAttribute('file').split('.thumb.')[0]); // 保存下载链接到数组
+        imgsTitles.push(img.getAttribute('title')); // 保存下载名称到数组
+      }
+    } else {
+      ignore_js_ops = tfImg;
+      for (let i = 0; i < ignore_js_ops.length; i++) { //遍历图片列表
+        let img = ignore_js_ops[i];
+        if (img.src.match('mymypic.net')) {
+          imgsUrl.push(img.src.split('.thumb.')[0]); // 保存下载链接到数组
+          const nameSrc = img.src.split('/');
+          imgsTitles.push(nameSrc[nameSrc.length - 1]); // 保存下载名称到数组
+        } else {
+          console.log('图片跨域请求超出范围，不可下载非本站图片！');
+          messageBox('图片跨域请求超出范围，不可下载非本站图片！');
+        }
+      }
     }
-  } else if (document.querySelectorAll('.t_f ignore_js_op img').length) {
-    ignore_js_ops = document.querySelectorAll('.t_f img');
-    for (let i = 0; i < ignore_js_ops.length; i++) { //遍历图片列表
-      let img = ignore_js_ops[i];
-      imgsUrl.push(img.src.split('.thumb.')[0]); // 保存下载链接到数组
-      const nameSrc = img.src.split('/');
-      imgsTitles.push(nameSrc[nameSrc.length - 1]); // 保存下载名称到数组
-    }
-    console.log(imgsTitles);
-  } else {
-    console.log('没有获取到图片');
-    messageBox('没有获取到图片');
-    return 0;
   }
 
   function makeGetRequest(url) {
@@ -197,9 +202,6 @@ function downloadImgs() {
       GM_xmlhttpRequest({
         method: "GET",
         url: url,
-        headers: {
-          "User-Agent": "Mozilla/5.0", // If not specified, navigator.userAgent will be used.
-        },
         responseType: "blob",
         onload: function (response) {
           if (!response) {
@@ -231,8 +233,8 @@ function downloadImgs() {
           binary: true
         }) // 逐个添加文件
         cache[file_name] = data;
-        console.log(`第${index+1}张，文件名：${file_name}，大小：${parseInt(data.size / 1024)} Kb`);
-        messageBox(`第${index+1}张，文件名：${file_name}，大小：${parseInt(data.size / 1024)} Kb`);
+        console.log(`第${index+1}张，文件名：${file_name}，大小：${parseInt(data.size / 1024)} Kb，下载完成！`);
+        messageBox(`第${index+1}张，文件名：${file_name}，大小：${parseInt(data.size / 1024)} Kb，下载完成！`);
       })
       promises.push(promise)
     })
@@ -240,11 +242,18 @@ function downloadImgs() {
       zip.generateAsync({
         type: "blob"
       }).then(content => { // 生成二进制流
-        saveAs(content, `${fileName} [${data.length}P]`) // 利用file-saver保存文件
+        saveAs(content, `${folderName} [${data.length}P]`) // 利用file-saver保存文件
       })
     })
   };
-  batchDownload(imgsUrl, imgsTitles);
+
+  if (imgsUrl.length && imgsTitles.length) {
+    batchDownload(imgsUrl, imgsTitles);
+  } else {
+    console.log('没有获取到图片');
+    messageBox('没有获取到图片');
+    return 0;
+  }
 }
 
 function autoPay() {
