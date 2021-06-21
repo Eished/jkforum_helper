@@ -146,10 +146,10 @@ function rePic() {
     if (user.autoPaySw) { // 自动购买当前贴开关
       autoPay(); // 自动购买当前贴
     }
-    let ignore_js_ops = document.querySelectorAll('.t_f ignore_js_op'); //获取图片列表，附件也是ignore_js_op
-    if (ignore_js_ops && user.autoRePicSw) { // 加载原图开关
-      for (let i = 0; i < ignore_js_ops.length; i++) { //遍历图片列表
-        let img = ignore_js_ops[i].querySelector("img");
+    const tfImg = document.querySelectorAll('.t_f ignore_js_op img'); //获取图片列表，附件也是ignore_js_op
+    if (tfImg && user.autoRePicSw) { // 加载原图开关
+      for (let i = 0; i < tfImg.length; i++) { //遍历图片列表
+        const img = tfImg[i]
         img.setAttribute('onmouseover', null); // 去掉下载原图提示
         if (img.src.match('.thumb.')) { // 去掉缩略图 加载部分
           console.log('thumb：', img.src);
@@ -166,95 +166,91 @@ function rePic() {
 }
 
 function downloadImgs() {
-  let ignore_js_ops = ''; //获取图片列表，附件也是ignore_js_op
   let imgsUrl = []; // 图片下载链接
   let imgsTitles = []; // 图片名称
   const folderName = document.querySelector('.title-cont h1').innerHTML.trim().replace(/\.+/g, '-');
-  const tfImg = document.querySelectorAll('.t_f  img');
-  if (tfImg.length) {
-    const opImg = document.querySelectorAll('.t_f ignore_js_op img');
-    const mbnImg = document.querySelectorAll('.t_fsz ignore_js_op .mbn img');
-    if (opImg.length || mbnImg.length) {
-      ignore_js_ops = opImg.length ? opImg : mbnImg;
-      for (let i = 0; i < ignore_js_ops.length; i++) { //遍历图片列表
-        let img = ignore_js_ops[i];
+  const pcbImg = document.querySelectorAll('.pcb img'); // 所有帖子楼层的图片，逐个过滤
+  if (pcbImg.length) {
+    for (let i = 0; i < pcbImg.length; i++) { //遍历图片列表
+      let img = pcbImg[i];
+      if (img.title && img.getAttribute('file') && img.getAttribute('file').match('mymypic.net')) {
+        imgsTitles.push(img.title); // 保存下载名称到数组
         imgsUrl.push(img.getAttribute('file').split('.thumb.')[0]); // 保存下载链接到数组
-        imgsTitles.push(img.getAttribute('title')); // 保存下载名称到数组
-      }
-    } else {
-      ignore_js_ops = tfImg;
-      for (let i = 0; i < ignore_js_ops.length; i++) { //遍历图片列表
-        let img = ignore_js_ops[i];
-        if (img.src.match('mymypic.net')) {
-          imgsUrl.push(img.src.split('.thumb.')[0]); // 保存下载链接到数组
-          const nameSrc = img.src.split('/');
-          imgsTitles.push(nameSrc[nameSrc.length - 1]); // 保存下载名称到数组
-        } else {
-          console.log('图片跨域请求超出范围，不可下载非本站图片！');
-          messageBox('图片跨域请求超出范围，不可下载非本站图片！');
-        }
+      } else if (!img.getAttribute('file') && img.src.match('mymypic.net')) {
+        const nameSrc = img.src.split('/');
+        imgsTitles.push(nameSrc[nameSrc.length - 1]); // 保存下载名称到数组
+        imgsUrl.push(img.src.split('.thumb.')[0]); // 保存下载链接到数组
+      } else {
+        // console.log(img.src, '跨域请求，不可下载外链图片！');
+        // messageBox('跨域请求，不可下载外链图片！');
       }
     }
-  }
-
-  function makeGetRequest(url) {
-    return new Promise((resolve, reject) => {
-      GM_xmlhttpRequest({
-        method: "GET",
-        url: url,
-        responseType: "blob",
-        onload: function (response) {
-          if (!response) {
-            try {} catch (err) {
-              console.log(err);
-            }
-          }
-          resolve(response.response);
-        },
-        onerror: function (error) {
-          reject(error);
-        }
-      });
-    });
-  }
-
-  // 批量下载
-  const batchDownload = async (imgsUrl, imgsTitles) => {
-    const data = imgsUrl;
-    const zip = new JSZip();
-    const cache = {}
-    const promises = []
-    console.log(data.length + "张：开始下载...");
-    messageBox(data.length + "张：开始下载...");
-    await data.forEach((item, index) => {
-      const promise = makeGetRequest(item).then(data => { // 下载文件, 并存成ArrayBuffer对象
-        const file_name = imgsTitles[index]; // 获取文件名
-        zip.file(file_name, data, {
-          binary: true
-        }) // 逐个添加文件
-        cache[file_name] = data;
-        console.log(`第${index+1}张，文件名：${file_name}，大小：${parseInt(data.size / 1024)} Kb，下载完成！`);
-        messageBox(`第${index+1}张，文件名：${file_name}，大小：${parseInt(data.size / 1024)} Kb，下载完成！`);
-      })
-      promises.push(promise)
-    })
-    Promise.all(promises).then(() => {
-      zip.generateAsync({
-        type: "blob"
-      }).then(content => { // 生成二进制流
-        saveAs(content, `${folderName} [${data.length}P]`) // 利用file-saver保存文件
-      })
-    })
-  };
-
-  if (imgsUrl.length && imgsTitles.length) {
-    batchDownload(imgsUrl, imgsTitles);
+    if (imgsUrl.length && imgsTitles.length) {
+      batchDownload(imgsUrl, imgsTitles, folderName);
+    } else {
+      console.log('没有可下载的图片！');
+      messageBox('没有可下载的图片！');
+      return 0;
+    }
   } else {
-    console.log('没有获取到图片');
-    messageBox('没有获取到图片');
+    console.log('没有图片！');
+    messageBox('没有图片！');
     return 0;
   }
 }
+// GM_xmlhttpRequest 异步通用模块
+function makeGetRequest(url, usermethod = "GET", type = "blob") {
+  return new Promise((resolve, reject) => {
+    GM_xmlhttpRequest({
+      method: usermethod,
+      url: url,
+      responseType: type,
+      onload: function (response) {
+        if (!response) {
+          try {} catch (err) {
+            console.log(err);
+          }
+        }
+        resolve(response.response);
+      },
+      onerror: function (error) {
+        console.log("网络错误");
+        messageBox("网络错误");
+        reject(error);
+      }
+    });
+  });
+}
+
+// 批量下载 顺序
+async function batchDownload(imgsUrl, imgsTitles, folderName) {
+  const data = imgsUrl;
+  const zip = new JSZip();
+  const cache = {}
+  const promises = []
+  console.log(data.length + "张：开始下载...");
+  messageBox(data.length + "张：开始下载...");
+  for (let index = 0; index < data.length; index++) {
+    const item = data[index];
+    const promise = await makeGetRequest(item).then(data => { // 下载文件, 并存成ArrayBuffer对象
+      const file_name = imgsTitles[index]; // 获取文件名
+      zip.file(file_name, data, {
+        binary: true
+      }) // 逐个添加文件
+      cache[file_name] = data;
+      console.log(`第${index+1}张，文件名：${file_name}，大小：${parseInt(data.size / 1024)} Kb，下载完成！等待压缩...`);
+      messageBox(`第${index+1}张，文件名：${file_name}，大小：${parseInt(data.size / 1024)} Kb，下载完成！等待压缩...`);
+    })
+    promises.push(promise);
+  }
+  Promise.all(promises).then(() => {
+    zip.generateAsync({
+      type: "blob"
+    }).then(content => { // 生成二进制流
+      saveAs(content, `${folderName} [${data.length}P]`) // 利用file-saver保存文件
+    })
+  })
+};
 
 function autoPay() {
   if (document.querySelector('.viewpay')) {
@@ -378,7 +374,7 @@ function timeControl() {
     const holdTime = date.getTime();
     // 1000*60*60*24
     const hold = ((1000 * 60 * 60) - holdTime % (1000 * 60 * 60)); //通知持续时间，1小时-已运行分钟
-    messageBox('防止休眠启动，请保持本页处于激活状态，勿最小化本窗口以及全屏运行其它应用！', hold);
+    messageBox('防止休眠启动，请保持本页处于激活状态，请勿遮挡、最小化本窗口以及全屏运行其它应用！', hold);
     messageBox('定时签到中，请勿退出...', hold);
   } else {
     console.log(document.querySelector('#video1'));
@@ -518,7 +514,6 @@ function thankBatch() {
       console.log('当前地址：', currentHrefPage, '页码：', pageFrom);
       pageFrom++;
     };
-    // sendPage();
     while (pageFrom <= pageEnd) {
       sendPage();
     }
@@ -531,7 +526,7 @@ function getThreads(currentHref, fid, replyLen) {
   const httpRequest = new XMLHttpRequest();
   httpRequest.open('GET', currentHref, true);
   httpRequest.send();
-  httpRequest.onreadystatechange = () => {
+  httpRequest.onload = () => {
     if (httpRequest.readyState == 4 && httpRequest.status == 200) {
       const data = httpRequest.responseText;
       // 数据类型转换
@@ -637,7 +632,7 @@ function replyOrThk(_this, type = 'reply') { // 回帖函数
   document.querySelector('body').appendChild(video); //添加视频到指定位置
   document.querySelector('#video1').play(); // 播放视频，防止休眠
   if (!document.querySelector('#video1').paused) {
-    messageBox('防止休眠启动，请保持本页处于激活状态，勿最小化本窗口以及全屏运行其它应用！', 'none');
+    messageBox('防止休眠启动，请保持本页处于激活状态，请勿遮挡、最小化本窗口以及全屏运行其它应用！', 'none');
   } else {
     console.log(document.querySelector('#video1'));
   }
@@ -765,7 +760,7 @@ function getDataAsy(url) {
   const httpRequest = new XMLHttpRequest();
   httpRequest.open('GET', url, true);
   httpRequest.send();
-  httpRequest.onreadystatechange = () => {
+  httpRequest.onload = () => {
     if (httpRequest.readyState == 4 && httpRequest.status == 200) {
       let htmlData = document.createElement('div');
       htmlData.innerHTML = httpRequest.responseText;
@@ -825,7 +820,7 @@ function postData(replyUrl, replyData, fromId, contentType = 'application/x-www-
   httpRequest.open('POST', replyUrl, true);
   httpRequest.setRequestHeader('content-Type', contentType);
   httpRequest.send(replyData); // post数据
-  httpRequest.onreadystatechange = () => {
+  httpRequest.onload = () => {
     if (httpRequest.readyState == 4 && httpRequest.status == 200) {
       const stringOrHtml = turnCdata(httpRequest.responseXML); // 提取Cdata返回html或字符串
       switch (fromId) {
