@@ -33,13 +33,14 @@
         interTime: 200, // 签到重试间隔时间
         todaysay: '簽到', // 签到输入内容
         mood: 'fd', // 签到心情
-        differ: 10000, // 回帖随机间隔时间
-        interval: 20000, // 回帖基础间隔时间
         autoPaySw: 1, // 自动支付开关
         autoThkSw: 1, // 自动感谢开关
         autoRePicSw: 1, // 自动加载原图开关
+        differ: 10000, // 回帖随机间隔时间
+        interval: 20000, // 回帖基础间隔时间
+        thkDiffer: 1000, // 批量感谢间隔时间
         page: '', // 批量回帖页码
-        votedMessage: '+1', //投票输入内容
+        votedMessage: '+1', // 投票输入内容
         userReplyMessage: [], // 用户保存的回复，历史回帖内容
         replyMessage: [], // 用于回复的内容，临时回帖内容
         fastReply: [], // 保存的快速回复，快速回帖内容
@@ -74,6 +75,8 @@
         } else { // key不同
           user.version = GM_info.script.version; // 记录新版本
           user = copyObjVal(userMod, user); // 对newUser赋值
+          messageBox("配置文件更新成功！");
+          console.log("配置文件更新成功！");
         }
         messageBox("版本更新成功！请阅读使用说明。");
         console.log("版本更新成功！");
@@ -104,9 +107,14 @@
           fastReply.push(replaceHtml(option.value)); //去掉需要转义的内容
         }
       });
-      user.fastReply = fastReply;
-      messageBox("获取快速回复成功！");
-      console.log("获取快速回复成功！");
+      if (fastReply.length) {
+        user.fastReply = fastReply;
+        messageBox("获取快速回复成功！");
+        console.log("获取快速回复成功！");
+      } else {
+        messageBox("获取快速回复失败！");
+        console.log("获取快速回复失败！");
+      }
       return user;
     }
 
@@ -385,7 +393,9 @@
     }
 
     function thkBtn() {
-      replyOrThk(this, 'thk');
+      if (!this.timer) {
+        replyOrThk(this, 'thk');
+      }
     }
 
     // 定时签到
@@ -499,39 +509,28 @@
     async function thankOnePage() {
       const currentHref = window.location.href; // 获取当前页地址
       const fid = currentHref.split('-')[1]; // 获取板块fid
-      if (document.querySelector('.showmenubox').querySelector('[class="chked"]')) { // 判断当前页是否处于图片模式
-        if (confirm("是否切换到列表模式并刷新页面？")) { // 图片模式则切换为列表模式
-          await getData('https://www.jkforum.net/forum.php?mod=forumdisplay&fid=' + fid + '&forumdefstyle=yes');
-          location.reload();
-        } else {
-          messageBox('无法在图片模式运行！')
-        }
-      } else {
-        const user = getUserFromName();
-        messageBox('正在添加本页...');
-        let replyLen = chooceReply(user); //如果输入了值则使用用户值，如果没有则使用默认值；没有默认值则返回错误
-        if (replyLen <= 0) {
-          console.log('获取回帖内容失败！');
-          messageBox('获取回帖内容失败！');
-          return "获取回帖内容失败！";
-        };
-        getThreads(currentHref, fid, replyLen); // 获取当前页所有帖子地址
-      }
+      const page = currentHref.split('-')[2].split('.')[0]; // 获取页码
+      thankBatch(`${fid}-${page}-${page}`); // 使用批量感谢
     }
 
-    async function thankBatch() {
-      const page = document.querySelector('#inp_page').value;
+    async function thankBatch(onePage) {
       const reg = new RegExp(/^\d+-\d+-\d+$/);
-      if (reg.test(page)) { //如果输入了正确地址则进行批量处理
-        messageBox('正在添加：' + page);
+      let forumPage = '';
+      if (reg.test(onePage)) { // 如果输入了正确地址单页
+        forumPage = onePage;
+      } else {
+        forumPage = document.querySelector('#inp_page').value;
+      }
+      if (reg.test(forumPage)) { // 如果输入了正确地址则进行批量处理
+        messageBox('正在添加：' + forumPage);
         const user = getUserFromName();
-        user.page = page;
+        user.page = forumPage;
         GM_setValue(user.username, user);
-        let pageFrom = parseInt(page.split('-')[1]); // 获取起点页码
-        const pageEnd = parseInt(page.split('-')[2]); // 获取终点页码
-        const fid = page.split('-')[0]; // 获取版块代码
+        let pageFrom = parseInt(forumPage.split('-')[1]); // 获取起点页码
+        const pageEnd = parseInt(forumPage.split('-')[2]); // 获取终点页码
+        const fid = forumPage.split('-')[0]; // 获取版块代码
 
-        await getData('https://www.jkforum.net/forum.php?mod=forumdisplay&fid=' + fid + '&forumdefstyle=yes'); //切换到列表模式，同步请求。
+        await getData('https://www.jkforum.net/forum.php?mod=forumdisplay&fid=' + fid + '&forumdefstyle=yes'); // 切换到列表模式，同步请求。
         messageBox('已切换到列表模式');
 
         let replyLen = chooceReply(user); //如果输入了值则使用用户值，如果没有则使用默认值；没有默认值则返回错误
@@ -541,126 +540,115 @@
           return "获取回帖内容失败！";
         };
 
-        function sendPage() {
-          let currentHrefPage = 'https://www.jkforum.net/forum-' + fid + '-' + pageFrom + '.html'; //生成帖子列表地址
-          getThreads(currentHrefPage, fid, replyLen);
-          console.log('当前地址：', currentHrefPage, '页码：', pageFrom);
-          pageFrom++;
-        };
         while (pageFrom <= pageEnd) {
-          sendPage();
+          let currentHref = 'https://www.jkforum.net/forum-' + fid + '-' + pageFrom + '.html'; //生成帖子列表地址
+          // getThreads(currentHref, fid, replyLen);
+          console.log('当前地址：', currentHref, '页码：', pageFrom);
+          const data = await getData(currentHref);
+          setThreadsTask(data, fid, replyLen); // 设置任务列表
+          pageFrom++;
         }
       } else {
         messageBox('请输入回帖列表页码，格式：版块代码-起点页-终点页 ；例如：640-1-2 ；版块代码见版块URL中间数字：forum-640-1', 10000);
       }
     }
-    // 获取当前页所有帖子地址
-    function getThreads(currentHref, fid, replyLen) {
-      const httpRequest = new XMLHttpRequest();
-      httpRequest.open('GET', currentHref, true);
-      httpRequest.send();
-      httpRequest.onload = () => {
-        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-          const data = httpRequest.responseText;
-          // 数据类型转换
-          let htmlData = document.createElement('div');
-          htmlData.innerHTML = data;
+    // 添加任务列表
+    function setThreadsTask(htmlData, fid, replyLen) {
+      const user = getUserFromName(); //获取user对象，必须在用户输入值后面，不然取不到快速回复
+      //帖子类名 40个a标签数组 
+      let hrefs = htmlData.querySelectorAll('.s');
+      // 获取作者昵称和 UID
+      let cites = htmlData.querySelectorAll('cite a');
 
-          const user = getUserFromName(); //获取user对象，必须在用户输入值后面，不然取不到快速回复
-          //帖子类名 40个a标签数组 
-          let hrefs = htmlData.querySelectorAll('.s');
-          // 获取作者昵称和 UID
-          let cites = htmlData.querySelectorAll('cite a');
+      // 以 fid 创建对象，如果fid存在则写入fid的数组的fidthreads属性的数组内；否则创建新的 fidthreads，自我调用
+      const fidthreads = {
+        fid: fid,
+        fidTime: 0,
+        fidRepIndex: 0, // 记录此版块上次回复的位置，用于解决无法遍历到后续增加的帖子；
+        fidThkIndex: 0, // 记录此版块上次感谢的位置，用于解决无法遍历到后续增加的帖子；
+        fidthreads: [],
+      }
 
-          // 以 fid 创建对象，如果fid存在则写入fid的数组的fidthreads属性的数组内；否则创建新的 fidthreads，自我调用
-          const fidthreads = {
-            fid: fid,
-            fidTime: 0,
-            fidRepIndex: 0, // 记录此版块上次回复的位置，用于解决无法遍历到后续增加的帖子；
-            fidThkIndex: 0, // 记录此版块上次感谢的位置，用于解决无法遍历到后续增加的帖子；
-            fidthreads: [],
-          }
-
-          let fidTime = 0; // 统计总时间
-          function newFid() {
-            if (user.replyThreads.length) {
-              for (let i = 0; i < user.replyThreads.length; i++) {
-                if (user.replyThreads[i].fid == fid) {
-                  // console.log(fid);
-                  const info = addThrInfo(user.replyThreads[i]);
-                  user.replyThreads[i].fidTime += fidTime; // 累加时间
-                  GM_setValue(user.username, user);
-                  return info; // 匹配到则退出循环 // 传入对应对象
-                }
-              }
-              // 如果没匹配到同样增加
-              user.replyThreads.push(fidthreads);
-              newFid();
-            } else {
-              user.replyThreads.push(fidthreads); // 初始化threads
-              newFid();
+      let fidTime = 0; // 统计总时间
+      function newFid() {
+        if (user.replyThreads.length) {
+          for (let i = 0; i < user.replyThreads.length; i++) {
+            if (user.replyThreads[i].fid == fid) {
+              // console.log(fid);
+              addThrInfo(user.replyThreads[i]);
+              user.replyThreads[i].fidTime += fidTime; // 累加时间
+              GM_setValue(user.username, user);
+              return; // 匹配到则退出循环 // 传入对应对象
             }
           }
-          // 回帖变量随即范围限制
-          let start = 0;
-          if (replyLen == user.fastReply.length || replyLen == user.userReplyMessage.length) { // 判断起始位置
-          } else {
-            start = user.userReplyMessage.length - replyLen; // 用户数组长-增加的数据长=起始位置；
-            replyLen = user.userReplyMessage.length; // 结束位置
-            // console.log(start, replyLen - 1, "变量范围");
-          }
+          // 如果没匹配到同样增加
+          user.replyThreads.push(fidthreads);
+          newFid();
+        } else {
+          user.replyThreads.push(fidthreads); // 初始化threads
+          newFid();
+        }
+      }
+      // 回帖变量随即范围限制
+      let start = 0;
+      if (replyLen == user.fastReply.length || replyLen == user.userReplyMessage.length) { // 判断起始位置
+      } else {
+        start = user.userReplyMessage.length - replyLen; // 用户数组长-增加的数据长=起始位置；
+        replyLen = user.userReplyMessage.length; // 结束位置
+        // console.log(start, replyLen - 1, "变量范围");
+      }
 
-          function addThrInfo(elem) {
-            // 遍历去除回帖用户
-            for (let i = 0; i < cites.length; i += 2) {
-              // 加入数组
-              const touser = cites[i].innerHTML;
-              const touseruid = cites[i].href.split('uid=')[1]; // href="home.php?mod=space&uid=1123445"
-              const href = hrefs[i / 2].href;
-              // 获取帖子ID
-              const tid = href.split('-')[1];
-              // 确保帖子的唯一性
-              for (let i = 0; i < elem.fidthreads.length; i++) {
-                const element = elem.fidthreads[i];
-                if (element.tid == tid) {
-                  return `${currentHref} 中： thread-${tid}-1-1 ：此帖子已在任务列表，已跳过此页！`;
-                }
-              }
-              // 感谢数据
-              var thkData = new URLSearchParams();
-              thkData.append("formhash", user.formhash);
-              thkData.append("tid", tid);
-              thkData.append("touser", touser);
-              thkData.append("touseruid", touseruid);
-              thkData.append("handlekey", "k_thankauthor");
-              thkData.append("addsubmit", "true");
-              const replyIndex = rdNum(start, replyLen - 1); // 从返回的输入长度获取随机值
-              const randomTime = rdNum(user.interval, user.differ + user.interval);
-              const thread = {
-                tid: tid,
-                touseruid: touseruid,
-                touser: touser,
-                thkData: thkData.toString(),
-                replyIndex: replyIndex, // 回帖随机数
-                replyLen: replyLen, // 用于判断使用的哪个数组，和确定起始位置
-                randomTime: randomTime, // 回帖时间随机数
-              }
-              fidTime += randomTime;
-              elem.fidthreads.push(thread); // 给对象数组添加
+      function addThrInfo(elem) {
+        // 遍历去除回帖用户
+        let count = 0;
+        for (let i = 0; i < cites.length; i += 2) {
+          // 加入数组
+          const touser = cites[i].innerHTML;
+          const touseruid = cites[i].href.split('uid=')[1]; // href="home.php?mod=space&uid=1123445"
+          const href = hrefs[i / 2].href;
+          const tid = href.split('-')[1]; // 获取帖子ID
+          let noSkip = true; // 跳过标识
+          for (let index = 0; index < elem.fidthreads.length; index++) { // 确保帖子的唯一性
+            const element = elem.fidthreads[index];
+            if (element.tid == tid) {
+              noSkip = false;
+              console.log(`${fid}：任务列表：${index}，thread-${tid}-1-1 ：已在任务列表，已跳过此贴！`);
+              messageBox(`${fid}：任务列表：${index}，thread-${tid}-1-1 ：已在任务列表，已跳过此贴！`);
+              break;
             }
-            GM_setValue(user.username, user);
-            // console.log(user.replyThreads.length)
-            messageBox(`${currentHref} 回帖列表任务添加成功！`)
-            console.log(`${currentHref} 回帖列表任务添加成功！`)
           }
-          // 错误提示
-          const info = newFid();
-          if (info) {
-            messageBox(info);
-            console.log(info);
+          if (noSkip) {
+            // 感谢数据
+            var thkData = new URLSearchParams();
+            thkData.append("formhash", user.formhash);
+            thkData.append("tid", tid);
+            thkData.append("touser", touser);
+            thkData.append("touseruid", touseruid);
+            thkData.append("handlekey", "k_thankauthor");
+            thkData.append("addsubmit", "true");
+            const replyIndex = rdNum(start, replyLen - 1); // 从返回的输入长度获取随机值
+            const randomTime = rdNum(user.interval, user.differ + user.interval);
+            const thread = {
+              tid: tid,
+              touseruid: touseruid,
+              touser: touser,
+              thkData: thkData.toString(),
+              replyIndex: replyIndex, // 回帖随机数
+              replyLen: replyLen, // 用于判断使用的哪个数组，和确定起始位置
+              randomTime: randomTime, // 回帖时间随机数
+            }
+            fidTime += randomTime;
+            elem.fidthreads.push(thread); // 给对象数组添加
+            count++;
           }
-        };
-      };
+        }
+        GM_setValue(user.username, user);
+        messageBox(`${fid}：任务列表成功添加 ${count} 贴！`, 10000);
+        console.log(`${fid}：任务列表成功添加 ${count} 贴！`);
+        // console.log(user.replyThreads.length)
+      }
+
+      newFid(); // 启动
     };
 
     async function replyOrThk(_this, type = 'reply') { // 回帖函数
@@ -679,13 +667,13 @@
       if (!user.replyThreads.length) {
         messageBox('任务列表为空，请先添加任务！');
         console.log('任务列表为空，请先添加任务！');
-        return 0; // 打断了通知消息的异步执行
       } else if (type == 'reply') {
         console.log(type, ":开始回帖...");
+        cricleReplyForum();
       } else {
         console.log(type, ":开始感谢...");
+        cricleReplyForum();
       }
-      cricleReplyForum();
 
       function cricleReplyForum() {
         if ((type == 'reply' && fidIndex < user.replyThreads.length) || (type == 'thk' && thkFidIndex < user.replyThreads.length)) { // 分别处理感谢和回帖
@@ -718,7 +706,7 @@
                   replyUrlData.append("replysubmit", "yes");
                   replyUrlData.append("infloat", "yes");
                   replyUrlData.append("inflohandlekeyat", "fastpost");
-                  replyUrlData.append("inajax", "1");
+                  replyUrlData.append("inajax", 1);
                   const date = new Date();
                   const posttime = parseInt(date.getTime() / 1000); // 生产时间戳
                   // 拼接回帖报文
@@ -731,8 +719,7 @@
                   replyData.append("posttime", posttime);
                   replyData.append("formhash", user.formhash);
                   replyData.append("usesig", 1);
-                  replyData.append("subject", "++");
-
+                  replyData.append("subject", "");
 
                   const data = await postDataAs(user.replyUrl + replyUrlData, replyData.toString());
                   if (checkHtml(data)) { // 确认html
@@ -771,7 +758,7 @@
                   _this.timer = setInterval(async () => {
                     clearInterval(_this.timer);
                     cricleReply();
-                  }, 1000) // 感谢防刷
+                  }, user.thkDiffer) // 感谢防刷
                   break;
                 }
 
@@ -801,7 +788,6 @@
           }
         }
       }
-      GM_setValue(user.username, user);
     };
 
     // n, m 范围随机整数生成 
