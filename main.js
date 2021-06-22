@@ -453,6 +453,13 @@
       }
     }
 
+    /**
+     * 生成不重复的ID
+     * @param { Number } randomLength 
+     */
+    function getUuiD(randomLength) {
+      return Number(Math.random().toString().substr(2, randomLength) + Date.now()).toString(36)
+    }
     // 消息通知弹窗
     function messageBox(text, setTime = 5000) {
       function genBox(text, id) {
@@ -462,8 +469,7 @@
         b.id = id;
         return b; //返回修改好的DOM对象
       };
-      const date = new Date(); // 生成时间 id 
-      const timeId = 'a' + date.getTime();
+      const timeId = 'a' + getUuiD(10); // 生成 id 
       let textBox = genBox(text, timeId); // 初始化消息盒子
       let messageBox = document.querySelector('#messageBox');
       messageBox.appendChild(textBox); // 显示消息
