@@ -55,7 +55,8 @@
       signUrl: 'https://www.jkforum.net/plugin/?id=dsu_paulsign:sign&operation=qiandao&infloat=1&inajax=1',
       thkUrl: 'https://www.jkforum.net/plugin/?id=thankauthor:thank&inajax=1',
       payUrl: 'https://www.jkforum.net/forum.php?mod=misc&action=pay&paysubmit=yes&infloat=yes&inajax=1',
-      fastReplyUrl: ''
+      fastReplyUrl: '',
+      replyUrl: "https://www.jkforum.net/forum.php?mod=post&action=reply&",
     }
     return user;
   }
@@ -236,56 +237,6 @@
       return 0;
     }
   }
-  // GM_xmlhttpRequest GET异步通用模块
-  function getData(url, type = "document", usermethod = "GET") {
-    return new Promise((resolve, reject) => {
-      GM_xmlhttpRequest({
-        method: usermethod,
-        url: url,
-        responseType: type,
-        onload: function (response) {
-          if (!response) {
-            try {} catch (err) {
-              console.log(err);
-            }
-          }
-          resolve(response.response);
-        },
-        onerror: function (error) {
-          console.log("网络错误");
-          messageBox("网络错误");
-          reject(error);
-        }
-      });
-    });
-  }
-  // GM_xmlhttpRequest POST异步通用模块
-  function postDataAs(url, postData, type = "document", usermethod = "POST") {
-    return new Promise((resolve, reject) => {
-      GM_xmlhttpRequest({
-        method: usermethod,
-        url: url,
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded"
-        },
-        data: postData,
-        responseType: type,
-        onload: function (response) {
-          if (!response) {
-            try {} catch (err) {
-              console.log(err);
-            }
-          }
-          resolve(turnCdata(response.response));
-        },
-        onerror: function (error) {
-          console.log("网络错误");
-          messageBox("网络错误");
-          reject(error);
-        }
-      });
-    });
-  }
 
   // 批量下载 顺序
   async function batchDownload(imgsUrl, imgsTitles, folderName) {
@@ -357,7 +308,7 @@
     searchParams.append("addsubmit", "true");
     const xmlData = await postDataAs(user.thkUrl, searchParams.toString()); //post感谢数据
     if (checkHtml(xmlData)) {
-      const info = xmlData.querySelector('.alert_info').innerHTML.split('<')[0].tirm(); //去除html，返回字符串
+      const info = xmlData.querySelector('.alert_info').innerHTML.split('<')[0].trim(); //去除html，返回字符串
       messageBox(info);
       console.log(info);
     } else {
@@ -518,9 +469,8 @@
     }
   }
 
-  function chooceReply() {
+  function chooceReply(user) {
     const inpreply = document.querySelector('#inpreply'); // 获取回复内容
-    const user = getUserFromName();
     if (inpreply && inpreply.value) {
       user.replyMessage = []; // 中文分号分隔字符串
       inpreply.value.split('；').forEach((element) => {
@@ -588,7 +538,7 @@
       await getData('https://www.jkforum.net/forum.php?mod=forumdisplay&fid=' + fid + '&forumdefstyle=yes'); //切换到列表模式，同步请求。
       messageBox('已切换到列表模式');
 
-      let replyLen = chooceReply(); //如果输入了值则使用用户值，如果没有则使用默认值；没有默认值则返回错误
+      let replyLen = chooceReply(user); //如果输入了值则使用用户值，如果没有则使用默认值；没有默认值则返回错误
       if (replyLen <= 0) {
         console.log('获取回帖内容失败！');
         messageBox('获取回帖内容失败！');
@@ -681,19 +631,22 @@
               }
             }
             // 感谢数据
-            const thkData = 'formhash=' + user.formhash + '&tid=' + tid + '&touser=' + turnUrl(touser) + '&touseruid=' + touseruid + '&handlekey=k_thankauthor&addsubmit=true';
+            var thkData = new URLSearchParams();
+            thkData.append("formhash", user.formhash);
+            thkData.append("tid", tid);
+            thkData.append("touser", touser);
+            thkData.append("touseruid", touseruid);
+            thkData.append("handlekey", "k_thankauthor");
+            thkData.append("addsubmit", "true");
             const replyIndex = rdNum(start, replyLen - 1); // 从返回的输入长度获取随机值
-            // console.log(start, replyLen - 1, replyIndex);
             const randomTime = rdNum(user.interval, user.differ + user.interval);
             const thread = {
               tid: tid,
               touseruid: touseruid,
               touser: touser,
-              thkData: thkData,
+              thkData: thkData.toString(),
               replyIndex: replyIndex, // 回帖随机数
               replyLen: replyLen, // 用于判断使用的哪个数组，和确定起始位置
-              // replyData: '', // 和 posttime 一起生成
-              // posttime: '', // 回帖时间，发送时赋值 getTime()/1000
               randomTime: randomTime, // 回帖时间随机数
             }
             fidTime += randomTime;
@@ -714,7 +667,7 @@
     };
   };
 
-  function replyOrThk(_this, type = 'reply') { // 回帖函数
+  async function replyOrThk(_this, type = 'reply') { // 回帖函数
     const video = genVideo(); //需要视频时再加载视频，提高性能
     document.querySelector('body').appendChild(video); //添加视频到指定位置
     document.querySelector('#video1').play(); // 播放视频，防止休眠
@@ -753,7 +706,7 @@
         }
         cricleReply();
 
-        function cricleReply() {
+        async function cricleReply() {
           if ((elementForum.fidthreads.length > fidRepIndex && type == 'reply') || (elementForum.fidthreads.length > fidThkIndex && type == 'thk')) { // 分别处理感谢和回帖
             switch (type) {
               case 'reply': {
@@ -762,24 +715,43 @@
                 const replyIndex = elementThr.replyIndex;
                 const replyLen = elementThr.replyLen;
                 const randomTime = elementThr.randomTime;
-                const replyUrl = 'https://www.jkforum.net/forum.php?mod=post&action=reply&fid=' + fid + '&tid=' +
-                  tid + '&extra=page%3D1&replysubmit=yes&infloat=yes&handlekey=fastpost&inajax=1'; // 拼接回帖url
+                const replyUrlData = new URLSearchParams();
+                replyUrlData.append("fid", fid);
+                replyUrlData.append("tid", tid);
+                replyUrlData.append("extra", "page%3D1");
+                replyUrlData.append("replysubmit", "yes");
+                replyUrlData.append("infloat", "yes");
+                replyUrlData.append("inflohandlekeyat", "fastpost");
+                replyUrlData.append("inajax", "1");
                 const date = new Date();
                 const posttime = parseInt(date.getTime() / 1000); // 生产时间戳
                 // 拼接回帖报文
-                let replyData = '';
+                const replyData = new URLSearchParams();
                 if (replyLen == user.fastReply.length) {
-                  replyData = 'message=' + turnUrl(user.fastReply[replyIndex]) + '&posttime=' + posttime + '&formhash=' + user.formhash + '&usesig=1&subject=++';
+                  replyData.append("message", user.fastReply[replyIndex]);
                 } else {
-                  replyData = 'message=' + turnUrl(user.userReplyMessage[replyIndex]) + '&posttime=' + posttime + '&formhash=' + user.formhash + '&usesig=1&subject=++';
+                  replyData.append("message", user.userReplyMessage[replyIndex]);
                 }
+                replyData.append("posttime", posttime);
+                replyData.append("formhash", user.formhash);
+                replyData.append("usesig", 1);
+                replyData.append("subject", "++");
+
+
+                const data = await postDataAs(user.replyUrl + replyUrlData, replyData.toString());
+                if (checkHtml(data)) { // 确认html
+                  const info = data.querySelector('script').innerHTML.split(`, `)[1];
+                  messageBox(info.split('，')[0].slice(1) + '，' + info.split('，')[1] + '！'); // 返回html成功消息
+                } else {
+                  messageBox(data, 'none'); //其它情况直接输出
+                  console.log(data);
+                }
+                console.log("序号：" + fidRepIndex, '随机号:', replyIndex, '用时:', randomTime, "帖子：", tid, '内容:', replyData.get("message")); //测试使用  
+                elementForum.fidRepIndex = ++fidRepIndex;
+                GM_setValue(user.username, user);
                 clearInterval(_this.timer);
-                _this.timer = setInterval(() => {
+                _this.timer = setInterval(async () => {
                   clearInterval(_this.timer);
-                  postData(replyUrl, replyData, type);
-                  console.log("序号：" + fidRepIndex, '随机号:', replyIndex, '内容:', turnUrl(replyData, 1), '用时:', randomTime); //测试使用  
-                  elementForum.fidRepIndex = ++fidRepIndex;
-                  GM_setValue(user.username, user);
                   cricleReply();
                 }, randomTime);
                 break;
@@ -787,10 +759,23 @@
               case 'thk': {
                 const elementThr = elementForum.fidthreads[fidThkIndex];
                 const thkData = elementThr.thkData;
-                postData(thkUrl, thkData, type); //post感谢数据
-                console.log(fidThkIndex, thkData, type); //post感谢数据
+                const data = await postDataAs(thkUrl, thkData); //post感谢数据
+                if (checkHtml(data)) {
+                  const info = data.querySelector('.alert_info').innerHTML.split('<')[0].trim(); //去除html，返回字符串
+                  messageBox(info);
+                  console.log(info);
+                } else {
+                  console.log(data);
+                  messageBox(data); //其它情况直接输出
+                }
+                console.log(fidThkIndex, thkData); //post感谢数据
                 elementForum.fidThkIndex = ++fidThkIndex;
-                cricleReply();
+                GM_setValue(user.username, user);
+                clearInterval(_this.timer);
+                _this.timer = setInterval(async () => {
+                  clearInterval(_this.timer);
+                  cricleReply();
+                }, 1000) // 感谢防刷
                 break;
               }
 
@@ -829,131 +814,56 @@
     return Math.floor(Math.random() * c + n);
   }
 
-  // GET数据通用异步模块，返回html
-  function getDataAsy(url) {
-    const user = getUserFromName();
-    const httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', url, true);
-    httpRequest.send();
-    httpRequest.onload = () => {
-      if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-        let htmlData = document.createElement('div');
-        htmlData.innerHTML = httpRequest.responseText;
-        switch (url) {
-          case user.applyVotedUrl: { // 申请投票任务
-            messageBox("申请投票任务执行成功！");
-            console.log("申请投票任务执行成功！");
-            getDataAsy(user.votedUrl);
-            break;
+  // GM_xmlhttpRequest GET异步通用模块
+  function getData(url, type = "document", usermethod = "GET") {
+    return new Promise((resolve, reject) => {
+      GM_xmlhttpRequest({
+        method: usermethod,
+        url: url,
+        responseType: type,
+        onload: function (response) {
+          if (!response) {
+            try {} catch (err) {
+              console.log(err);
+            }
           }
-          case user.votedUrl: { // 获取投票链接
-            const href = htmlData.querySelector('.voted a').href; // 找到链接
-            user.vidUrl = href;
-            GM_setValue(user.username, user);
-            getDataAsy(href);
-            break;
-          }
-          case user.vidUrl: { // 获取vid aid
-            const vid = user.vidUrl.split('&')[2].split('=')[1]; // 纯数字// 分解链接
-            const href = htmlData.querySelector('.hp_s_c a').href; // 找到链接
-            const aid = href.split('&')[2].split('=')[1]; // 纯数字// 分解链接
-            const pMessage = 'formhash=' + user.formhash + '&inajax=1&handlekey=dian&sid=0&message=' + turnUrl(user.votedMessage); //post 投票报文
-            const url = 'https://www.jkforum.net/plugin/?id=voted&ac=dian&aid=' + aid + '&vid=' + vid + '&qr=&inajax=1'; //拼接投票链接
-            postData(url, pMessage, 'voted');
-            break;
-          }
-          case user.taskDoneUrl: { // 领取投票奖励
-            messageBox('领取投票奖励成功！');
-            break;
-          }
-          case user.fastReplyUrl: { // 获取快速回复
-
-            break;
-          }
-
-          default:
-            console.log("参数不在范围");
-            break;
+          resolve(response.response);
+        },
+        onerror: function (error) {
+          console.log("网络错误");
+          messageBox("网络错误");
+          reject(error);
         }
-      };
-    }
-  };
-
-  // POST数据通用模块,返回XML
-  function postData(replyUrl, replyData, fromId, contentType = 'application/x-www-form-urlencoded') {
-    const httpRequest = new XMLHttpRequest();
-    httpRequest.open('POST', replyUrl, true);
-    httpRequest.setRequestHeader('content-Type', contentType);
-    httpRequest.send(replyData); // post数据
-    httpRequest.onload = () => {
-      if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-        const stringOrHtml = turnCdata(httpRequest.responseXML); // 提取Cdata返回html或字符串
-        switch (fromId) {
-          case 'reply': {
-            if (checkHtml(stringOrHtml)) { // 确认html
-              const info = stringOrHtml.querySelector('script').innerHTML.split(`, `)[1];
-              messageBox(info.split('，')[0].slice(1) + '，' + info.split('，')[1] + '！'); // 返回html成功消息
-            } else {
-              messageBox(stringOrHtml, 'none'); //其它情况直接输出
-              console.log(stringOrHtml);
+      });
+    });
+  }
+  // GM_xmlhttpRequest POST异步通用模块
+  function postDataAs(url, postData, type = "document", usermethod = "POST") {
+    return new Promise((resolve, reject) => {
+      GM_xmlhttpRequest({
+        method: usermethod,
+        url: url,
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        data: postData,
+        responseType: type,
+        onload: function (response) {
+          if (!response) {
+            try {} catch (err) {
+              console.log(err);
             }
-            break;
           }
-          case 'sign': {
-            if (checkHtml(stringOrHtml)) { // 确认html
-              const info = stringOrHtml.querySelector('.c').innerHTML.split('<')[0].trim(); // 解析html，返回字符串
-              messageBox(info, 10000);
-              console.log(info, 10000);
-            } else {
-              messageBox(stringOrHtml); //其它情况直接输出
-            }
-            break;
-          }
-          case 'voted': {
-            if (checkHtml(stringOrHtml)) {
-              let info = '';
-              if (stringOrHtml.querySelector('.alert_info')) {
-                info = stringOrHtml.querySelector('.alert_info').innerHTML; // 解析html，返回字符串，失败警告
-              } else if (stringOrHtml.querySelector('script')) {
-                info = stringOrHtml.querySelector('script').innerHTML.split(`', `)[1].slice(1); // 解析html，获取字符串，成功消息
-                getDataAsy(getUserFromName().taskDoneUrl); // 执行领奖励
-              } else {
-                info = "投票返回HTML数据识别失败: " + stringOrHtml;
-              }
-              messageBox(info, 10000);
-            } else {
-              messageBox(stringOrHtml); //其它情况直接输出
-            }
-            break;
-          }
-          case 'thk': {
-            if (checkHtml(stringOrHtml)) {
-              const info = replaceHtml(stringOrHtml.querySelector('.alert_info').innerHTML); //去除html，返回字符串
-              messageBox(info);
-            } else {
-              messageBox(stringOrHtml); //其它情况直接输出
-            }
-            break;
-          }
-          case 'pay': {
-            if (checkHtml(stringOrHtml)) { // 确认html
-              const info = stringOrHtml.querySelector('script').innerHTML.split(`', `)[1].slice(1);
-              messageBox(info);
-              location.reload();
-            } else {
-              messageBox(stringOrHtml); //其它情况直接输出
-            }
-            break;
-          }
-
-          default: {
-            messageBox(stringOrHtml); //其它情况直接输出
-            break;
-          }
+          resolve(turnCdata(response.response));
+        },
+        onerror: function (error) {
+          console.log("网络错误");
+          messageBox("网络错误");
+          reject(error);
         }
-      };
-    };
-  };
+      });
+    });
+  }
 
   // POST返回 xml数据类型转换成 字符串或html 模块
   function turnCdata(xmlRepo) {
