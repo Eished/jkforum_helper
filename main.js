@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         jkforum helper
 // @namespace    https://github.com/Eished/jkforum_helper
-// @version      0.4.3
+// @version      0.4.4
 // @description  捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片
 // @author       Eished
 // @license      AGPL-3.0
@@ -96,7 +96,6 @@
     async function setFastReply(user) { //设置快速回复
       const fastReplyUrl = 'https://www.jkforum.net/thread-8364615-1-1.html'; // 获取快速回复的地址
       user.fastReplyUrl = fastReplyUrl; // 设置链接用于异步校验
-      GM_setValue(user.username, user);
       const htmlData = await getData(fastReplyUrl);
       const options = htmlData.querySelectorAll('#rqcss select option');
       let fastReply = []; //返回数组
@@ -480,7 +479,7 @@
         messageBox("已使用自定义回复");
         return user.replyMessage.length;
       } else {
-        if (user.fastReply.length > 1 && confirm("确认使用快速回复？否则使用历史回复")) { // 1 为错误信息
+        if (user.fastReply.length && confirm("确认使用快速回复？否则使用历史回复")) { // 1 为错误信息
           GM_setValue(user.username, user); // 油猴脚本存储回帖内容
           // console.log("已使用快速回复");
           messageBox("已使用快速回复");
@@ -508,8 +507,9 @@
           messageBox('无法在图片模式运行！')
         }
       } else {
+        const user = getUserFromName();
         messageBox('正在添加本页...');
-        let replyLen = chooceReply(); //如果输入了值则使用用户值，如果没有则使用默认值；没有默认值则返回错误
+        let replyLen = chooceReply(user); //如果输入了值则使用用户值，如果没有则使用默认值；没有默认值则返回错误
         if (replyLen <= 0) {
           console.log('获取回帖内容失败！');
           messageBox('获取回帖内容失败！');
