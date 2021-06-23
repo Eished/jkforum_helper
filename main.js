@@ -201,6 +201,11 @@
     }
 
     function downloadImgs() {
+      if (this.timer > 0) { // 防重复点击
+        return;
+      } else {
+        this.timer = 1;
+      }
       let imgsUrl = []; // 图片下载链接
       let imgsTitles = []; // 图片名称
       const folderName = document.querySelector('.title-cont h1').innerHTML.trim().replace(/\.+/g, '-');
@@ -221,7 +226,7 @@
           }
         }
         if (imgsUrl.length && imgsTitles.length) {
-          batchDownload(imgsUrl, imgsTitles, folderName);
+          batchDownload(imgsUrl, imgsTitles, folderName, this);
         } else {
           messageBox('没有可下载的图片！');
           return 0;
@@ -233,7 +238,7 @@
     }
 
     // 批量下载 顺序
-    async function batchDownload(imgsUrl, imgsTitles, folderName) {
+    async function batchDownload(imgsUrl, imgsTitles, folderName, _this) {
       const data = imgsUrl;
       const zip = new JSZip();
       const cache = {}; // 作用未知
@@ -257,6 +262,7 @@
         }).then(content => { // 生成二进制流
           saveAs(content, `${folderName} [${data.length}P]`); // 利用file-saver保存文件
           removeMessage(mesId);
+          _this.timer = 0;
         })
       })
     };
