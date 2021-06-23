@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         jkforum helper
 // @namespace    https://github.com/Eished/jkforum_helper
-// @version      0.4.5
+// @version      0.4.6
 // @description  捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片
 // @author       Eished
 // @license      AGPL-3.0
@@ -627,21 +627,12 @@
             }
           }
           if (noSkip) {
-            // 感谢数据
-            var thkData = new URLSearchParams();
-            thkData.append("formhash", user.formhash);
-            thkData.append("tid", tid);
-            thkData.append("touser", touser);
-            thkData.append("touseruid", touseruid);
-            thkData.append("handlekey", "k_thankauthor");
-            thkData.append("addsubmit", "true");
             const replyIndex = rdNum(start, replyLen - 1); // 从返回的输入长度获取随机值
             const randomTime = rdNum(user.interval, user.differ + user.interval);
             const thread = {
               tid: tid,
               touseruid: touseruid,
               touser: touser,
-              thkData: thkData.toString(),
               replyIndex: replyIndex, // 回帖随机数
               replyLen: replyLen, // 用于判断使用的哪个数组，和确定起始位置
               randomTime: randomTime, // 回帖时间随机数
@@ -745,15 +736,21 @@
                 }
                 case 'thk': {
                   const elementThr = elementForum.fidthreads[fidThkIndex];
-                  const thkData = elementThr.thkData;
-                  const data = await postDataAs(thkUrl, thkData); //post感谢数据
+                  var thkData = new URLSearchParams();
+                  thkData.append("formhash", user.formhash);
+                  thkData.append("tid", elementThr.tid);
+                  thkData.append("touser", elementThr.touser);
+                  thkData.append("touseruid", elementThr.touseruid);
+                  thkData.append("handlekey", "k_thankauthor");
+                  thkData.append("addsubmit", "true");
+                  const data = await postDataAs(thkUrl, thkData.toString()); //post感谢数据
                   if (checkHtml(data)) {
                     const info = data.querySelector('.alert_info').innerHTML.split('<')[0].trim(); //去除html，返回字符串
                     messageBox(info);
                   } else {
                     messageBox(data); //其它情况直接输出
                   }
-                  console.log(fidThkIndex, thkData); //post感谢数据
+                  console.log(fidThkIndex, thkData.get("tid"));
                   elementForum.fidThkIndex = ++fidThkIndex;
                   GM_setValue(user.username, user);
                   clearInterval(_this.timer);
