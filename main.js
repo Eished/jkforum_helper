@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         jkforum helper
 // @namespace    https://github.com/Eished/jkforum_helper
-// @version      0.4.4
+// @version      0.4.5
 // @description  捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片
 // @author       Eished
 // @license      AGPL-3.0
@@ -17,6 +17,8 @@
 // @grant        GM_info
 // @grant        GM_addStyle
 // @grant        GM_xmlhttpRequest
+// @grant        GM_addElement
+// @grant        GM_download
 // ==/UserScript==
 
 (function () {
@@ -66,7 +68,6 @@
         user = await setFastReply(user); // 异步设置快速回复
         GM_setValue(username, user);
         messageBox("添加用户成功！");
-        console.log("添加用户成功！");
       } else if (user.version != GM_info.script.version) {
         const userMod = newUser(username, formhash);
         const compa = compaObjKey(userMod, user); // 比较key
@@ -76,10 +77,8 @@
           user.version = GM_info.script.version; // 记录新版本
           user = copyObjVal(userMod, user); // 对newUser赋值
           messageBox("配置文件更新成功！");
-          console.log("配置文件更新成功！");
         }
         messageBox("版本更新成功！请阅读使用说明。");
-        console.log("版本更新成功！");
         user = await setFastReply(user); // 异步设置快速回复
         GM_setValue(username, user); // 先存储，防止异步错误
       }
@@ -110,10 +109,8 @@
       if (fastReply.length) {
         user.fastReply = fastReply;
         messageBox("获取快速回复成功！");
-        console.log("获取快速回复成功！");
       } else {
         messageBox("获取快速回复失败！");
-        console.log("获取快速回复失败！");
       }
       return user;
     }
@@ -126,7 +123,6 @@
 
           await getData(user.applyVotedUrl); // 申请任务
           messageBox("申请投票任务执行成功！");
-          console.log("申请投票任务执行成功！");
 
           const searchParamsUrl = new URLSearchParams();
           searchParamsUrl.append("id", "voted"); // 投票请求
@@ -152,7 +148,6 @@
           searchParamsData.append("message", user.votedMessage);
 
           const votedMessage = await postDataAs(user.votedUrl + searchParamsUrl.toString(), searchParamsData.toString());
-          console.log(votedMessage);
           if (checkHtml(votedMessage)) {
             let info = '';
             if (votedMessage.querySelector('.alert_info')) {
@@ -160,10 +155,8 @@
             } else if (votedMessage.querySelector('script')) {
               info = votedMessage.querySelector('script').innerHTML.split(`', `)[1].slice(1); // 解析html，获取字符串，成功消息
               messageBox(info);
-              console.log(info);
               await getData(getUserFromName().taskDoneUrl); // 执行领奖励
               messageBox('领取投票奖励成功！');
-              console.log('领取投票奖励成功！');
             } else {
               info = "投票返回HTML数据识别失败: " + votedMessage;
             }
@@ -194,13 +187,13 @@
             const img = tfImg[i]
             img.setAttribute('onmouseover', null); // 去掉下载原图提示
             if (img.src.match('.thumb.')) { // 去掉缩略图 加载部分
-              console.log('thumb：', img.src);
               img.src = img.getAttribute('file').split('.thumb.')[0];
               messageBox('加载原图成功', 1000)
+              console.log('thumb：', img.src);
             } else if (img.src.match('static/image/common/none.gif')) { // 懒加载部分
               img.setAttribute('file', img.getAttribute('file').split('.thumb.')[0]); // 网站自带forum_viewthread.js  attachimgshow(pid, onlyinpost) 从file延迟加载
-              console.log('none.gif:', img.src);
               messageBox('加载原图成功', 1000)
+              console.log('none.gif:', img.src);
             }
           }
         }
@@ -230,12 +223,10 @@
         if (imgsUrl.length && imgsTitles.length) {
           batchDownload(imgsUrl, imgsTitles, folderName);
         } else {
-          console.log('没有可下载的图片！');
           messageBox('没有可下载的图片！');
           return 0;
         }
       } else {
-        console.log('没有图片！');
         messageBox('没有图片！');
         return 0;
       }
@@ -245,10 +236,9 @@
     async function batchDownload(imgsUrl, imgsTitles, folderName) {
       const data = imgsUrl;
       const zip = new JSZip();
-      const cache = {}
+      const cache = {}; // 作用未知
       const promises = []
-      console.log(data.length + "张：开始下载...");
-      messageBox(data.length + "张：开始下载...");
+      const mesId = messageBox(data.length + "张：开始下载...", "none");
       for (let index = 0; index < data.length; index++) {
         const item = data[index];
         const promise = await getData(item, "blob").then(data => { // 下载文件, 并存成ArrayBuffer对象
@@ -257,7 +247,6 @@
             binary: true
           }) // 逐个添加文件
           cache[file_name] = data;
-          console.log(`第${index+1}张，文件名：${file_name}，大小：${parseInt(data.size / 1024)} Kb，下载完成！等待压缩...`);
           messageBox(`第${index+1}张，文件名：${file_name}，大小：${parseInt(data.size / 1024)} Kb，下载完成！等待压缩...`);
         })
         promises.push(promise);
@@ -266,7 +255,8 @@
         zip.generateAsync({
           type: "blob"
         }).then(content => { // 生成二进制流
-          saveAs(content, `${folderName} [${data.length}P]`) // 利用file-saver保存文件
+          saveAs(content, `${folderName} [${data.length}P]`); // 利用file-saver保存文件
+          removeMessage(mesId);
         })
       })
     };
@@ -313,7 +303,6 @@
       if (checkHtml(xmlData)) {
         const info = xmlData.querySelector('.alert_info').innerHTML.split('<')[0].trim(); //去除html，返回字符串
         messageBox(info);
-        console.log(info);
       } else {
         messageBox(xmlData); //其它情况直接输出
       }
@@ -426,7 +415,6 @@
             setTimeout(() => {
               sign(user);
               messageBox('执行第' + (i + 1) + '次');
-              console.log('执行第' + (i + 1) + '次');
             }, retryTime += user.interTime) //重试间隔
           }
         } else {
@@ -447,7 +435,6 @@
       if (checkHtml(stringOrHtml)) { // 确认html
         const info = stringOrHtml.querySelector('.c').innerHTML.split('<')[0].trim(); // 解析html，返回字符串
         messageBox(info, 10000);
-        console.log(info);
       } else {
         messageBox(stringOrHtml); //其它情况直接输出
       }
@@ -461,7 +448,7 @@
       return Number(Math.random().toString().substr(2, randomLength) + Date.now()).toString(36)
     }
     // 消息通知弹窗
-    function messageBox(text, setTime = 5000) {
+    function messageBox(text, setTime = 5000, important = 1) {
       function genBox(text, id) {
         let b = document.createElement('div');
         b.textContent = text; //修改内部文本为text
@@ -470,14 +457,31 @@
         return b; //返回修改好的DOM对象
       };
       const timeId = 'a' + getUuiD(10); // 生成 id 
-      let textBox = genBox(text, timeId); // 初始化消息盒子
-      let messageBox = document.querySelector('#messageBox');
-      messageBox.appendChild(textBox); // 显示消息
+      const textBox = genBox(text, timeId); // 初始化消息盒子
+      const messageBox = document.querySelector('#messageBox');
+      if (important == 0) {
+        console.log(text);
+      } else if (important == 1) { // 通知级别，默认 1
+        messageBox.appendChild(textBox); // 显示消息
+        console.log(text);
+      } else if (important > 1) {
+        messageBox.appendChild(textBox); // 显示消息
+        console.log(text);
+        GM_notification(text);
+      } else {
+        messageBox.appendChild(textBox); // 显示消息
+      }
       if (setTime && !isNaN(setTime)) { // 默认5秒删掉消息，可设置时间，none一直显示
         setTimeout(() => {
           messageBox.removeChild(document.getElementById(timeId));
         }, setTime);
       }
+      return timeId;
+    }
+
+    function removeMessage(id) {
+      const messageBox = document.querySelector('#messageBox');
+      messageBox.removeChild(document.getElementById(id));
     }
 
     function chooceReply(user) {
@@ -491,18 +495,15 @@
           }
         })
         GM_setValue(user.username, user); // 油猴脚本存储回帖内容
-        // console.log("已使用自定义回复");
         messageBox("已使用自定义回复");
         return user.replyMessage.length;
       } else {
         if (user.fastReply.length && confirm("确认使用快速回复？否则使用历史回复")) { // 1 为错误信息
           GM_setValue(user.username, user); // 油猴脚本存储回帖内容
-          // console.log("已使用快速回复");
           messageBox("已使用快速回复");
           return user.fastReply.length;
         } else if (user.userReplyMessage.length && confirm("确认使用历史自定义回复？")) {
           GM_setValue(user.username, user); // 油猴脚本存储回帖内容
-          // console.log("已使用历史自定义回复");
           messageBox("已使用历史自定义回复");
           return user.userReplyMessage.length;
         } else {
@@ -541,7 +542,6 @@
 
         let replyLen = chooceReply(user); //如果输入了值则使用用户值，如果没有则使用默认值；没有默认值则返回错误
         if (replyLen <= 0) {
-          console.log('获取回帖内容失败！');
           messageBox('获取回帖内容失败！');
           return "获取回帖内容失败！";
         };
@@ -549,7 +549,7 @@
         while (pageFrom <= pageEnd) {
           let currentHref = 'https://www.jkforum.net/forum-' + fid + '-' + pageFrom + '.html'; //生成帖子列表地址
           // getThreads(currentHref, fid, replyLen);
-          console.log('当前地址：', currentHref, '页码：', pageFrom);
+          messageBox('当前地址：' + currentHref + '页码：' + pageFrom);
           const data = await getData(currentHref);
           setThreadsTask(data, fid, replyLen); // 设置任务列表
           pageFrom++;
@@ -580,7 +580,6 @@
         if (user.replyThreads.length) {
           for (let i = 0; i < user.replyThreads.length; i++) {
             if (user.replyThreads[i].fid == fid) {
-              // console.log(fid);
               addThrInfo(user.replyThreads[i]);
               user.replyThreads[i].fidTime += fidTime; // 累加时间
               GM_setValue(user.username, user);
@@ -601,7 +600,6 @@
       } else {
         start = user.userReplyMessage.length - replyLen; // 用户数组长-增加的数据长=起始位置；
         replyLen = user.userReplyMessage.length; // 结束位置
-        // console.log(start, replyLen - 1, "变量范围");
       }
 
       function addThrInfo(elem) {
@@ -618,7 +616,6 @@
             const element = elem.fidthreads[index];
             if (element.tid == tid) {
               noSkip = false;
-              console.log(`${fid}：任务列表：${index}，thread-${tid}-1-1 ：已在任务列表，已跳过此贴！`);
               messageBox(`${fid}：任务列表：${index}，thread-${tid}-1-1 ：已在任务列表，已跳过此贴！`);
               break;
             }
@@ -650,8 +647,6 @@
         }
         GM_setValue(user.username, user);
         messageBox(`${fid}：任务列表成功添加 ${count} 贴！`, 10000);
-        console.log(`${fid}：任务列表成功添加 ${count} 贴！`);
-        // console.log(user.replyThreads.length)
       }
 
       newFid(); // 启动
@@ -661,10 +656,11 @@
       const video = genVideo(); //需要视频时再加载视频，提高性能
       document.querySelector('body').appendChild(video); //添加视频到指定位置
       document.querySelector('#video1').play(); // 播放视频，防止休眠
+      let mesId = ''; // 清除永久消息id
       if (!document.querySelector('#video1').paused) {
-        messageBox('防止休眠启动，请保持本页处于激活状态，请勿遮挡、最小化本窗口以及全屏运行其它应用！', 'none');
+        mesId = messageBox('防止休眠启动，请保持本页处于激活状态，请勿遮挡、最小化本窗口以及全屏运行其它应用！', 'none');
       } else {
-        console.log(document.querySelector('#video1'));
+        messageBox('防止休眠启动失败');
       }
       const user = getUserFromName();
       const thkUrl = user.thkUrl;
@@ -672,12 +668,11 @@
       let thkFidIndex = 0; // 当前感谢版块序号
       if (!user.replyThreads.length) {
         messageBox('任务列表为空，请先添加任务！');
-        console.log('任务列表为空，请先添加任务！');
       } else if (type == 'reply') {
-        console.log(type, ":开始回帖...");
+        messageBox(type + "：开始回帖...");
         cricleReplyForum();
       } else {
-        console.log(type, ":开始感谢...");
+        messageBox(type + "：开始感谢...");
         cricleReplyForum();
       }
 
@@ -688,10 +683,8 @@
           let fidRepIndex = elementForum.fidRepIndex; // 上次回复位置
           let fidThkIndex = elementForum.fidThkIndex; // 上次感谢位置
           if (type == 'reply') {
-            console.log(fid + "-版块，当前位置：" + fidRepIndex + " ，总数：" + elementForum.fidthreads.length + "，版块总需" + (elementForum.fidTime / 1000 / 60).toFixed(1) + " 分钟时间");
-            messageBox(fid + "-版块，当前位置：" + fidRepIndex + " ，总数：" + elementForum.fidthreads.length + "，版块总需" + (elementForum.fidTime / 1000 / 60).toFixed(1) + " 分钟时间", elementForum.fidTime);
+            messageBox(fid + "-版块，当前位置：" + fidRepIndex + " ，总数：" + elementForum.fidthreads.length + "，总计时间：" + (elementForum.fidTime / 1000 / 60).toFixed(1) + " 分钟时间", elementForum.fidTime);
           } else if (type == 'thk') {
-            console.log(fid + "-版块，当前位置：" + fidThkIndex + " ，总数：" + elementForum.fidthreads.length);
             messageBox(fid + "-版块，当前位置：" + fidThkIndex + " ，总数：" + elementForum.fidthreads.length);
           }
           cricleReply();
@@ -733,9 +726,8 @@
                     messageBox(info.split('，')[0].slice(1) + '，' + info.split('，')[1] + '！'); // 返回html成功消息
                   } else {
                     messageBox(data, 'none'); //其它情况直接输出
-                    console.log(data);
                   }
-                  console.log("序号：" + fidRepIndex, '随机号:', replyIndex, '用时:', randomTime, "帖子：", tid, '内容:', replyData.get("message")); //测试使用  
+                  messageBox("序号：" + fidRepIndex + '，随机号：' + replyIndex + '，用时：' + randomTime + "，帖子：" + tid + '，内容：' + replyData.get("message")); //测试使用  
                   elementForum.fidRepIndex = ++fidRepIndex;
                   GM_setValue(user.username, user);
                   clearInterval(_this.timer);
@@ -752,9 +744,7 @@
                   if (checkHtml(data)) {
                     const info = data.querySelector('.alert_info').innerHTML.split('<')[0].trim(); //去除html，返回字符串
                     messageBox(info);
-                    console.log(info);
                   } else {
-                    console.log(data);
                     messageBox(data); //其它情况直接输出
                   }
                   console.log(fidThkIndex, thkData); //post感谢数据
@@ -785,13 +775,11 @@
           }
         } else {
           if (type == 'thk') {
-            messageBox("全部感谢完成！");
-            console.log("全部感谢完成！");
+            messageBox("全部感谢完成！", 10000, 2);
           } else if (type == 'reply') {
-            messageBox("全部回帖完成！");
-            console.log("全部回帖完成！");
-            GM_notification("全部回帖完成！");
+            messageBox("全部回帖完成！", 10000, 2);
           }
+          removeMessage(mesId);
         }
       }
     };
@@ -818,7 +806,6 @@
             resolve(response.response);
           },
           onerror: function (error) {
-            console.log("网络错误");
             messageBox("网络错误");
             reject(error);
           }
@@ -845,7 +832,6 @@
             resolve(turnCdata(response.response));
           },
           onerror: function (error) {
-            console.log("网络错误");
             messageBox("网络错误");
             reject(error);
           }
