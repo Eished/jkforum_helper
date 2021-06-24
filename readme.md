@@ -29,6 +29,9 @@
 
 - 登陆后脚本开始运行。
   
+  - 只兼容油猴 Tampermonkey 。
+  - 遇到不显示、加载\下载异常时**请先检查网络**。
+  
 - 【**定时签到**】按钮：
   
   - 在[签到页面](https://www.jkforum.net/plugin/?id=dsu_paulsign:sign)找到【定时签到】按钮；

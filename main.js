@@ -152,15 +152,13 @@
             let info = '';
             if (votedMessage.querySelector('.alert_info')) {
               info = votedMessage.querySelector('.alert_info').innerHTML; // 解析html，返回字符串，失败警告
+              messageBox(info);
             } else if (votedMessage.querySelector('script')) {
               info = votedMessage.querySelector('script').innerHTML.split(`', `)[1].slice(1); // 解析html，获取字符串，成功消息
               messageBox(info);
-              await getData(getUserFromName().taskDoneUrl); // 执行领奖励
+              await getData(user.taskDoneUrl); // 执行领奖励
               messageBox('领取投票奖励成功！');
-            } else {
-              info = "投票返回HTML数据识别失败: " + votedMessage;
             }
-            messageBox(info, 10000);
           } else {
             messageBox(votedMessage); //其它情况直接输出
           }
