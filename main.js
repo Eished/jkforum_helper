@@ -1,16 +1,16 @@
 // ==UserScript==
-// @name         JKForum Helper
+// @name         JKForum 助手
+// @name:en      JKForum Helper
 // @name:zh-TW   JKForum 助手
-// @name:zh-CN   JKForum 助手
-// @name:ja      JKForum アシスタント
+// @name:ja      JKForum 助手
 // @name:ko      JKForum 조수
 // @namespace    https://github.com/Eished/jkforum_helper
-// @version      0.4.7
-// @description        JKForum Assistant: auto-sign-in, timed sign-in, auto-thank you, auto-load original images, auto-pay for topic posts, auto-complete polling tasks, optimize browsing experience, one-click bulk replies/thank you, one-click packaged post images for download
+// @version      0.4.8
+// @description        捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片
+// @description:en     JKForum Assistant: auto-sign-in, timed sign-in, auto-thank you, auto-load original images, auto-pay for topic posts, auto-complete polling tasks, optimize browsing experience, one-click bulk replies/thank you, one-click packaged post images for download
 // @description:zh-TW  捷克論壇助手：自動簽到、定時簽到、自動感謝、自動加載原圖、自動支付購買主題貼、自動完成投票任務，優化瀏覽體驗，一鍵批量回帖/感謝，一鍵打包下載帖子圖片
-// @description:zh-CN  捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片
-// @description:ja     チェコ語フォーラムアシスタント：自動サインイン、時間指定サインイン、自動サンキュー、オリジナル画像の自動ロード、トピック投稿の自動支払い、投票タスクの自動完成、閲覧体験の最適化、ワンクリック一括返信/サンキュー、ワンクリックパッケージ投稿画像のダウンロード
-// @description:ko     체코 포럼 도우미 : 자동 로그인, 정기 로그인, 자동 감사, 원본 사진 자동로드, 테마 스티커 구매 자동 결제, 투표 작업 자동 완료, 최적화 된 브라우징 경험, 원 클릭 일괄 회신 / 감사, 원 클릭 포스트 사진의 패키지 다운로드 클릭다운로드하십시오.
+// @description:ja     チェコ語フォーラム助手：自動サインイン、時間指定サインイン、自動サンキュー、オリジナル画像の自動ロード、トピック投稿の自動支払い、投票タスクの自動完成、閲覧体験の最適化、ワンクリック一括返信/サンキュー、ワンクリックパッケージ投稿画像のダウンロード
+// @description:ko     체코 포럼 조수: 자동 로그인, 정기 로그인, 자동 감사, 원본 사진 자동로드, 테마 스티커 구매 자동 결제, 투표 작업 자동 완료, 최적화 된 브라우징 경험, 원 클릭 일괄 회신 / 감사, 원 클릭 포스트 사진의 패키지 다운로드 클릭다운로드하십시오.
 // @author       Eished
 // @license      AGPL-3.0
 // @match        *://*.jkforum.net/*
@@ -417,17 +417,16 @@
       const user = getUserFromName();
       const signtime = user.signtime; // 设定签到时间
 
-      function control() {
+      async function control() {
         const nowtime = nowTime('seconds').split(' ')[1]; // 获取当前时间，到秒
         if (nowtime == signtime) {
           clearInterval(_this.timer);
           messageBox('执行中....');
           let retryTime = 0;
           for (let i = 0; i < user.signNum; i++) { //重试次数
-            setTimeout(() => {
-              sign(user);
-              messageBox('执行第' + (i + 1) + '次');
-            }, retryTime += user.interTime) //重试间隔
+            sign(user);
+            messageBox('执行第' + (i + 1) + '次');
+            await waitFor(retryTime += user.interTime); //重试间隔
           }
         } else {
           console.log('时间没有到：', signtime, '目前时间：', nowTime('seconds').split(' ')[1]);
@@ -656,6 +655,18 @@
     };
 
     async function replyOrThk(_this, type = 'reply') { // 回帖函数
+      const user = getUserFromName();
+      const thkUrl = user.thkUrl;
+      let fidIndex = 0; // 当前回帖版块序号
+      let thkFidIndex = 0; // 当前感谢版块序号
+      if (!user.replyThreads.length) {
+        messageBox('任务列表为空，请先添加任务！');
+        return;
+      } else if (type == 'reply') {
+        messageBox(type + "：开始回帖...");
+      } else {
+        messageBox(type + "：开始感谢...");
+      }
       const video = genVideo(); //需要视频时再加载视频，提高性能
       document.querySelector('body').appendChild(video); //添加视频到指定位置
       document.querySelector('#video1').play(); // 播放视频，防止休眠
@@ -665,133 +676,107 @@
       } else {
         messageBox('防止休眠启动失败');
       }
-      const user = getUserFromName();
-      const thkUrl = user.thkUrl;
-      let fidIndex = 0; // 当前回帖版块序号
-      let thkFidIndex = 0; // 当前感谢版块序号
-      if (!user.replyThreads.length) {
-        messageBox('任务列表为空，请先添加任务！');
-      } else if (type == 'reply') {
-        messageBox(type + "：开始回帖...");
-        cricleReplyForum();
-      } else {
-        messageBox(type + "：开始感谢...");
-        cricleReplyForum();
-      }
-
-      function cricleReplyForum() {
-        if ((type == 'reply' && fidIndex < user.replyThreads.length) || (type == 'thk' && thkFidIndex < user.replyThreads.length)) { // 分别处理感谢和回帖
-          const elementForum = user.replyThreads[(type == 'reply') ? fidIndex : thkFidIndex]
-          const fid = elementForum.fid;
-          let fidRepIndex = elementForum.fidRepIndex; // 上次回复位置
-          let fidThkIndex = elementForum.fidThkIndex; // 上次感谢位置
-          if (type == 'reply') {
-            messageBox(fid + "-版块，当前位置：" + fidRepIndex + " ，总数：" + elementForum.fidthreads.length + "，总计时间：" + (elementForum.fidTime / 1000 / 60).toFixed(1) + " 分钟时间", elementForum.fidTime);
-          } else if (type == 'thk') {
-            messageBox(fid + "-版块，当前位置：" + fidThkIndex + " ，总数：" + elementForum.fidthreads.length);
-          }
-          cricleReply();
-
-          async function cricleReply() {
-            if ((elementForum.fidthreads.length > fidRepIndex && type == 'reply') || (elementForum.fidthreads.length > fidThkIndex && type == 'thk')) { // 分别处理感谢和回帖
-              switch (type) {
-                case 'reply': {
-                  const elementThr = elementForum.fidthreads[fidRepIndex];
-                  const tid = elementThr.tid;
-                  const replyIndex = elementThr.replyIndex;
-                  const replyLen = elementThr.replyLen;
-                  const randomTime = elementThr.randomTime;
-                  const replyUrlData = new URLSearchParams();
-                  replyUrlData.append("fid", fid);
-                  replyUrlData.append("tid", tid);
-                  replyUrlData.append("extra", "page%3D1");
-                  replyUrlData.append("replysubmit", "yes");
-                  replyUrlData.append("infloat", "yes");
-                  replyUrlData.append("inflohandlekeyat", "fastpost");
-                  replyUrlData.append("inajax", 1);
-                  const date = new Date();
-                  const posttime = parseInt(date.getTime() / 1000); // 生产时间戳
-                  // 拼接回帖报文
-                  const replyData = new URLSearchParams();
-                  if (replyLen == user.fastReply.length) {
-                    replyData.append("message", user.fastReply[replyIndex]);
-                  } else {
-                    replyData.append("message", user.userReplyMessage[replyIndex]);
-                  }
-                  replyData.append("posttime", posttime);
-                  replyData.append("formhash", user.formhash);
-                  replyData.append("usesig", 1);
-                  replyData.append("subject", "");
-
-                  const data = await postDataAs(user.replyUrl + replyUrlData, replyData.toString());
-                  if (checkHtml(data)) { // 确认html
-                    const info = data.querySelector('script').innerHTML.split(`, `)[1];
-                    messageBox(info.split('，')[0].slice(1) + '，' + info.split('，')[1] + '！'); // 返回html成功消息
-                  } else {
-                    messageBox(data, 'none'); //其它情况直接输出
-                  }
-                  messageBox("序号：" + fidRepIndex + '，随机号：' + replyIndex + '，用时：' + randomTime + "，帖子：" + tid + '，内容：' + replyData.get("message")); //测试使用  
-                  elementForum.fidRepIndex = ++fidRepIndex;
-                  GM_setValue(user.username, user);
-                  clearInterval(_this.timer);
-                  _this.timer = setInterval(async () => {
-                    clearInterval(_this.timer);
-                    cricleReply();
-                  }, randomTime);
-                  break;
-                }
-                case 'thk': {
-                  const elementThr = elementForum.fidthreads[fidThkIndex];
-                  var thkData = new URLSearchParams();
-                  thkData.append("formhash", user.formhash);
-                  thkData.append("tid", elementThr.tid);
-                  thkData.append("touser", elementThr.touser);
-                  thkData.append("touseruid", elementThr.touseruid);
-                  thkData.append("handlekey", "k_thankauthor");
-                  thkData.append("addsubmit", "true");
-                  const data = await postDataAs(thkUrl, thkData.toString()); //post感谢数据
-                  if (checkHtml(data)) {
-                    const info = data.querySelector('.alert_info').innerHTML.split('<')[0].trim(); //去除html，返回字符串
-                    messageBox(info);
-                  } else {
-                    messageBox(data); //其它情况直接输出
-                  }
-                  console.log(fidThkIndex, thkData.get("tid"));
-                  elementForum.fidThkIndex = ++fidThkIndex;
-                  GM_setValue(user.username, user);
-                  clearInterval(_this.timer);
-                  _this.timer = setInterval(async () => {
-                    clearInterval(_this.timer);
-                    cricleReply();
-                  }, user.thkDiffer) // 感谢防刷
-                  break;
-                }
-
-                default:
-                  console.log("参数不在范围");
-                  break;
-              }
-            } else {
-              if (type == 'thk') {
-                thkFidIndex++; // 翻页
-              } else if (type == 'reply') {
-                fidIndex++; // 翻页
-                messageBox(fid + "：版块回帖完成！");
-              }
-              GM_setValue(user.username, user);
-              cricleReplyForum();
-            }
-          }
-        } else {
-          if (type == 'thk') {
-            messageBox("全部感谢完成！", 10000, 2);
-          } else if (type == 'reply') {
-            messageBox("全部回帖完成！", 10000, 2);
-          }
-          removeMessage(mesId);
+      do {
+        const elementForum = user.replyThreads[(type == 'reply') ? fidIndex : thkFidIndex]
+        const fid = elementForum.fid;
+        let fidRepIndex = elementForum.fidRepIndex; // 上次回复位置
+        let fidThkIndex = elementForum.fidThkIndex; // 上次感谢位置
+        if (type == 'reply') {
+          messageBox(fid + "-版块，当前位置：" + fidRepIndex + " ，总数：" + elementForum.fidthreads.length + "，总计时间：" + (elementForum.fidTime / 1000 / 60).toFixed(1) + " 分钟时间", elementForum.fidTime);
+        } else if (type == 'thk') {
+          messageBox(fid + "-版块，当前位置：" + fidThkIndex + " ，总数：" + elementForum.fidthreads.length);
         }
+        do {
+          switch (type) {
+            case 'reply': {
+              const elementThr = elementForum.fidthreads[fidRepIndex];
+              const tid = elementThr.tid;
+              const replyIndex = elementThr.replyIndex;
+              const replyLen = elementThr.replyLen;
+              const randomTime = elementThr.randomTime;
+              const replyUrlData = new URLSearchParams();
+              replyUrlData.append("fid", fid);
+              replyUrlData.append("tid", tid);
+              replyUrlData.append("extra", "page%3D1");
+              replyUrlData.append("replysubmit", "yes");
+              replyUrlData.append("infloat", "yes");
+              replyUrlData.append("inflohandlekeyat", "fastpost");
+              replyUrlData.append("inajax", 1);
+              const date = new Date();
+              const posttime = parseInt(date.getTime() / 1000); // 生产时间戳
+              // 拼接回帖报文
+              const replyData = new URLSearchParams();
+              if (replyLen == user.fastReply.length) {
+                replyData.append("message", user.fastReply[replyIndex]);
+              } else {
+                replyData.append("message", user.userReplyMessage[replyIndex]);
+              }
+              replyData.append("posttime", posttime);
+              replyData.append("formhash", user.formhash);
+              replyData.append("usesig", 1);
+              replyData.append("subject", "");
+              const data = await postDataAs(user.replyUrl + replyUrlData, replyData.toString());
+              if (checkHtml(data)) { // 确认html
+                const info = data.querySelector('script').innerHTML.split(`, `)[1];
+                messageBox(info.split('，')[0].slice(1) + '，' + info.split('，')[1] + '！'); // 返回html成功消息
+              } else {
+                messageBox(data, 'none'); //其它情况直接输出
+              }
+              messageBox("序号：" + fidRepIndex + '，随机号：' + replyIndex + '，用时：' + randomTime + "，帖子：" + tid + '，内容：' + replyData.get("message")); //测试使用  
+              elementForum.fidRepIndex = ++fidRepIndex;
+              GM_setValue(user.username, user);
+              _this.timer = 1; // 防止重复点击
+              await waitFor(randomTime); // 等待指定时间
+              break;
+            }
+            case 'thk': {
+              const elementThr = elementForum.fidthreads[fidThkIndex];
+              var thkData = new URLSearchParams();
+              thkData.append("formhash", user.formhash);
+              thkData.append("tid", elementThr.tid);
+              thkData.append("touser", elementThr.touser);
+              thkData.append("touseruid", elementThr.touseruid);
+              thkData.append("handlekey", "k_thankauthor");
+              thkData.append("addsubmit", "true");
+              const data = await postDataAs(thkUrl, thkData.toString()); //post感谢数据
+              if (checkHtml(data)) {
+                const info = data.querySelector('.alert_info').innerHTML.split('<')[0].trim(); //去除html，返回字符串
+                messageBox(info);
+              } else {
+                messageBox(data); //其它情况直接输出
+              }
+              console.log(fidThkIndex, thkData.get("tid"));
+              elementForum.fidThkIndex = ++fidThkIndex;
+              GM_setValue(user.username, user);
+              clearInterval(_this.timer);
+              _this.timer = 1; // 防止重复点击
+              await waitFor(user.thkDiffer); // 等待指定时间
+              break;
+            }
+
+            default:
+              console.log("参数不在范围");
+              break;
+          }
+        } while ((elementForum.fidthreads.length > fidRepIndex && type == 'reply') || (elementForum.fidthreads.length > fidThkIndex && type == 'thk')); // 分别处理感谢和回帖
+        if (type == 'thk') {
+          thkFidIndex++; // 翻页
+        } else if (type == 'reply') {
+          fidIndex++; // 翻页
+          messageBox(fid + "：版块回帖完成！");
+        }
+        GM_setValue(user.username, user);
+      } while ((type == 'reply' && fidIndex < user.replyThreads.length) || (type == 'thk' && thkFidIndex < user.replyThreads.length)); // 分别处理感谢和回帖
+      if (type == 'thk') {
+        messageBox("全部感谢完成！", 10000, 2);
+      } else if (type == 'reply') {
+        messageBox("全部回帖完成！", 10000, 2);
       }
+      _this.timer = 0;
+      removeMessage(mesId);
     };
+    // promise 等待模块
+    const waitFor = (ms) => new Promise(r => setTimeout(r, ms));
 
     // n, m 范围随机整数生成 
     function rdNum(n, m) {
