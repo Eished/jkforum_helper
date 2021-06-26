@@ -401,22 +401,9 @@
 
     // 定时签到
     function timeControl() {
-      const _this = this; //获取对象
-      clearInterval(_this.timer); //清除重复定时器
-      document.querySelector('#video1').play(); // 播放视频，防止休眠
-      if (!document.querySelector('#video1').paused) {
-        const date = new Date()
-        const holdTime = date.getTime();
-        // 1000*60*60*24
-        const hold = ((1000 * 60 * 60) - holdTime % (1000 * 60 * 60)); //通知持续时间，1小时-已运行分钟
-        messageBox('防止休眠启动，请保持本页处于激活状态，请勿遮挡、最小化本窗口以及全屏运行其它应用！', hold);
-        messageBox('定时签到中，请勿退出...', hold);
-      } else {
-        console.log(document.querySelector('#video1'));
-      }
+      const _this = this;
       const user = getUserFromName();
       const signtime = user.signtime; // 设定签到时间
-
       async function control() {
         const nowtime = nowTime('seconds').split(' ')[1]; // 获取当前时间，到秒
         if (nowtime == signtime) {
@@ -432,7 +419,20 @@
           console.log('时间没有到：', signtime, '目前时间：', nowTime('seconds').split(' ')[1]);
         }
       }
-      _this.timer = setInterval(control, 500);
+      if (!this.timer) { // 防重复点击
+        document.querySelector('#video1').play(); // 播放视频，防止休眠
+        if (!document.querySelector('#video1').paused) {
+          const date = new Date()
+          const holdTime = date.getTime();
+          // 1000*60*60*24
+          const hold = ((1000 * 60 * 60) - holdTime % (1000 * 60 * 60)); //通知持续时间，1小时-已运行分钟
+          messageBox('防止休眠启动，请保持本页处于激活状态，请勿遮挡、最小化本窗口以及全屏运行其它应用！', hold);
+          messageBox('定时签到中，请勿退出...', hold);
+        } else {
+          console.log(document.querySelector('#video1'));
+        }
+        this.timer = setInterval(control, 500);
+      }
     }
 
     async function sign(user) {
@@ -676,7 +676,8 @@
       } else {
         messageBox('防止休眠启动失败');
       }
-      do {
+      while ((type == 'reply' && fidIndex < user.replyThreads.length) || (type == 'thk' && thkFidIndex < user.replyThreads.length)) // 分别处理感谢和回帖
+      {
         const elementForum = user.replyThreads[(type == 'reply') ? fidIndex : thkFidIndex]
         const fid = elementForum.fid;
         let fidRepIndex = elementForum.fidRepIndex; // 上次回复位置
@@ -686,7 +687,8 @@
         } else if (type == 'thk') {
           messageBox(fid + "-版块，当前位置：" + fidThkIndex + " ，总数：" + elementForum.fidthreads.length);
         }
-        do {
+        while ((elementForum.fidthreads.length > fidRepIndex && type == 'reply') || (elementForum.fidthreads.length > fidThkIndex && type == 'thk')) // 分别处理感谢和回帖 
+        {
           switch (type) {
             case 'reply': {
               const elementThr = elementForum.fidthreads[fidRepIndex];
@@ -758,7 +760,7 @@
               console.log("参数不在范围");
               break;
           }
-        } while ((elementForum.fidthreads.length > fidRepIndex && type == 'reply') || (elementForum.fidthreads.length > fidThkIndex && type == 'thk')); // 分别处理感谢和回帖
+        }
         if (type == 'thk') {
           thkFidIndex++; // 翻页
         } else if (type == 'reply') {
@@ -766,7 +768,7 @@
           messageBox(fid + "：版块回帖完成！");
         }
         GM_setValue(user.username, user);
-      } while ((type == 'reply' && fidIndex < user.replyThreads.length) || (type == 'thk' && thkFidIndex < user.replyThreads.length)); // 分别处理感谢和回帖
+      }
       if (type == 'thk') {
         messageBox("全部感谢完成！", 10000, 2);
       } else if (type == 'reply') {
