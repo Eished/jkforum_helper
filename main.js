@@ -7,7 +7,7 @@
 // @namespace    https://github.com/Eished/jkforum_helper
 // @version      0.4.8
 // @description        捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片
-// @description:en     JKForum Assistant: auto-sign-in, timed sign-in, auto-thank you, auto-load original images, auto-pay for topic posts, auto-complete polling tasks, optimize browsing experience, one-click bulk replies/thank you, one-click packaged post images for download
+// @description:en     JKForum Helper: auto-sign-in, timed sign-in, auto-thank you, auto-load original images, auto-pay for topic posts, auto-complete polling tasks, optimize browsing experience, one-click bulk replies/thank you, one-click packaged post images for download
 // @description:zh-TW  捷克論壇助手：自動簽到、定時簽到、自動感謝、自動加載原圖、自動支付購買主題貼、自動完成投票任務，優化瀏覽體驗，一鍵批量回帖/感謝，一鍵打包下載帖子圖片
 // @description:ja     チェコ語フォーラム助手：自動サインイン、時間指定サインイン、自動サンキュー、オリジナル画像の自動ロード、トピック投稿の自動支払い、投票タスクの自動完成、閲覧体験の最適化、ワンクリック一括返信/サンキュー、ワンクリックパッケージ投稿画像のダウンロード
 // @description:ko     체코 포럼 조수: 자동 로그인, 정기 로그인, 자동 감사, 원본 사진 자동로드, 테마 스티커 구매 자동 결제, 투표 작업 자동 완료, 최적화 된 브라우징 경험, 원 클릭 일괄 회신 / 감사, 원 클릭 포스트 사진의 패키지 다운로드 클릭다운로드하십시오.
