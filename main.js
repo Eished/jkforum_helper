@@ -5,7 +5,7 @@
 // @name:ja      JKForum 助手
 // @name:ko      JKForum 조수
 // @namespace    https://github.com/Eished/jkforum_helper
-// @version      0.4.8
+// @version      0.4.9
 // @description        捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片
 // @description:en     JKForum Helper: auto-sign-in, timed sign-in, auto-thank you, auto-load original images, auto-pay for topic posts, auto-complete polling tasks, optimize browsing experience, one-click bulk replies/thank you, one-click packaged post images for download
 // @description:zh-TW  捷克論壇助手：自動簽到、定時簽到、自動感謝、自動加載原圖、自動支付購買主題貼、自動完成投票任務，優化瀏覽體驗，一鍵批量回帖/感謝，一鍵打包下載帖子圖片
@@ -794,12 +794,11 @@
           url: url,
           responseType: type,
           onload: function (response) {
-            if (!response) {
-              try {} catch (err) {
-                console.log(err);
-              }
+            if (response.status == 200) {
+              resolve(response.response);
+            } else {
+              messageBox("请求错误：" + response.status);
             }
-            resolve(response.response);
           },
           onerror: function (error) {
             messageBox("网络错误");
@@ -821,8 +820,10 @@
           responseType: type,
           onload: function (response) {
             if (!response) {
-              try {} catch (err) {
-                console.log(err);
+              if (response.status == 200) {
+                resolve(response.response);
+              } else {
+                messageBox("请求错误：" + response.status);
               }
             }
             resolve(turnCdata(response.response));
