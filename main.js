@@ -413,7 +413,7 @@
           for (let i = 0; i < user.signNum; i++) { //重试次数
             sign(user);
             messageBox('执行第' + (i + 1) + '次');
-            await waitFor(retryTime += user.interTime); //重试间隔
+            await waitFor(retryTime = user.interTime); //重试间隔
           }
         } else {
           console.log('时间没有到：', signtime, '目前时间：', nowTime('seconds').split(' ')[1]);
@@ -798,6 +798,7 @@
               resolve(response.response);
             } else {
               messageBox("请求错误：" + response.status);
+              reject(response.status);
             }
           },
           onerror: function (error) {
@@ -824,6 +825,7 @@
                 resolve(response.response);
               } else {
                 messageBox("请求错误：" + response.status);
+                reject(response.status);
               }
             }
             resolve(turnCdata(response.response));
