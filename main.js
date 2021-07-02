@@ -5,7 +5,7 @@
 // @name:ja      JKForum 助手
 // @name:ko      JKForum 조수
 // @namespace    https://github.com/Eished/jkforum_helper
-// @version      0.4.9
+// @version      0.5.0
 // @description        捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片
 // @description:en     JKForum Helper: auto-sign-in, timed sign-in, auto-thank you, auto-load original images, auto-pay for topic posts, auto-complete polling tasks, optimize browsing experience, one-click bulk replies/thank you, one-click packaged post images for download
 // @description:zh-TW  捷克論壇助手：自動簽到、定時簽到、自動感謝、自動加載原圖、自動支付購買主題貼、自動完成投票任務，優化瀏覽體驗，一鍵批量回帖/感謝，一鍵打包下載帖子圖片
@@ -206,73 +206,6 @@
       }
     }
 
-    function downloadImgs() {
-      if (this.timer > 0) { // 防重复点击
-        return;
-      } else {
-        this.timer = 1;
-      }
-      let imgsUrl = []; // 图片下载链接
-      let imgsTitles = []; // 图片名称
-      const folderName = document.querySelector('.title-cont h1').innerHTML.trim().replace(/\.+/g, '-');
-      const pcbImg = document.querySelectorAll('.pcb img'); // 所有帖子楼层的图片，逐个过滤
-      if (pcbImg.length) {
-        for (let i = 0; i < pcbImg.length; i++) { //遍历图片列表
-          let img = pcbImg[i];
-          if (img.title && img.getAttribute('file') && img.getAttribute('file').match('mymypic.net')) {
-            imgsTitles.push(img.title); // 保存下载名称到数组
-            imgsUrl.push(img.getAttribute('file').split('.thumb.')[0]); // 保存下载链接到数组
-          } else if (!img.getAttribute('file') && img.src.match('mymypic.net')) {
-            const nameSrc = img.src.split('/');
-            imgsTitles.push(nameSrc[nameSrc.length - 1]); // 保存下载名称到数组
-            imgsUrl.push(img.src.split('.thumb.')[0]); // 保存下载链接到数组
-          } else {
-            // console.log(img.src, '跨域请求，不可下载外链图片！');
-            // messageBox('跨域请求，不可下载外链图片！');
-          }
-        }
-        if (imgsUrl.length && imgsTitles.length) {
-          batchDownload(imgsUrl, imgsTitles, folderName, this);
-        } else {
-          messageBox('没有可下载的图片！');
-          return 0;
-        }
-      } else {
-        messageBox('没有图片！');
-        return 0;
-      }
-    }
-
-    // 批量下载 顺序
-    async function batchDownload(imgsUrl, imgsTitles, folderName, _this) {
-      const data = imgsUrl;
-      const zip = new JSZip();
-      const cache = {}; // 作用未知
-      const promises = []
-      const mesId = messageBox(data.length + "张：开始下载...", "none");
-      for (let index = 0; index < data.length; index++) {
-        const item = data[index];
-        const promise = await getData(item, "blob").then(data => { // 下载文件, 并存成ArrayBuffer对象
-          const file_name = imgsTitles[index]; // 获取文件名
-          zip.file(file_name, data, {
-            binary: true
-          }) // 逐个添加文件
-          cache[file_name] = data;
-          messageBox(`第${index+1}张，文件名：${file_name}，大小：${parseInt(data.size / 1024)} Kb，下载完成！等待压缩...`);
-        })
-        promises.push(promise);
-      }
-      Promise.all(promises).then(() => {
-        zip.generateAsync({
-          type: "blob"
-        }).then(content => { // 生成二进制流
-          saveAs(content, `${folderName} [${data.length}P]`); // 利用file-saver保存文件
-          removeMessage(mesId);
-          _this.timer = 0;
-        })
-      })
-    };
-
     async function autoPay(user) {
       if (document.querySelector('.viewpay')) {
         const url = user.payUrl;
@@ -409,11 +342,10 @@
         if (nowtime == signtime) {
           clearInterval(_this.timer);
           messageBox('执行中....');
-          let retryTime = 0;
           for (let i = 0; i < user.signNum; i++) { //重试次数
             sign(user);
             messageBox('执行第' + (i + 1) + '次');
-            await waitFor(retryTime = user.interTime); //重试间隔
+            await waitFor(user.interTime); //重试间隔
           }
         } else {
           console.log('时间没有到：', signtime, '目前时间：', nowTime('seconds').split(' ')[1]);
@@ -785,6 +717,73 @@
       let c = m - n + 1;
       return Math.floor(Math.random() * c + n);
     }
+
+    function downloadImgs() {
+      if (this.timer > 0) { // 防重复点击
+        return;
+      } else {
+        this.timer = 1;
+      }
+      let imgsUrl = []; // 图片下载链接
+      let imgsTitles = []; // 图片名称
+      const folderName = document.querySelector('.title-cont h1').innerHTML.trim().replace(/\.+/g, '-');
+      const pcbImg = document.querySelectorAll('.pcb img'); // 所有帖子楼层的图片，逐个过滤
+      if (pcbImg.length) {
+        for (let i = 0; i < pcbImg.length; i++) { //遍历图片列表
+          let img = pcbImg[i];
+          if (img.title && img.getAttribute('file') && img.getAttribute('file').match('mymypic.net')) {
+            imgsTitles.push(img.title); // 保存下载名称到数组
+            imgsUrl.push(img.getAttribute('file').split('.thumb.')[0]); // 保存下载链接到数组
+          } else if (!img.getAttribute('file') && img.src.match('mymypic.net')) {
+            const nameSrc = img.src.split('/');
+            imgsTitles.push(nameSrc[nameSrc.length - 1]); // 保存下载名称到数组
+            imgsUrl.push(img.src.split('.thumb.')[0]); // 保存下载链接到数组
+          } else {
+            // console.log(img.src, '跨域请求，不可下载外链图片！');
+            // messageBox('跨域请求，不可下载外链图片！');
+          }
+        }
+        if (imgsUrl.length && imgsTitles.length) {
+          batchDownload(imgsUrl, imgsTitles, folderName, this);
+        } else {
+          messageBox('没有可下载的图片！');
+          return 0;
+        }
+      } else {
+        messageBox('没有图片！');
+        return 0;
+      }
+    }
+
+    // 批量下载 顺序
+    async function batchDownload(imgsUrl, imgsTitles, folderName, _this) {
+      const data = imgsUrl;
+      const zip = new JSZip();
+      const cache = {}; // 作用未知
+      const promises = []
+      const mesId = messageBox(data.length + "张：开始下载...", "none");
+      for (let index = 0; index < data.length; index++) {
+        const item = data[index];
+        const promise = await getData(item, "blob").then(data => { // 下载文件, 并存成ArrayBuffer对象
+          const file_name = imgsTitles[index]; // 获取文件名
+          zip.file(file_name, data, {
+            binary: true
+          }) // 逐个添加文件
+          cache[file_name] = data;
+          messageBox(`第${index+1}张，文件名：${file_name}，大小：${parseInt(data.size / 1024)} Kb，下载完成！等待压缩...`);
+        })
+        promises.push(promise);
+      }
+      Promise.all(promises).then(() => {
+        zip.generateAsync({
+          type: "blob"
+        }).then(content => { // 生成二进制流
+          saveAs(content, `${folderName} [${data.length}P]`); // 利用file-saver保存文件
+          removeMessage(mesId);
+          _this.timer = 0;
+        })
+      })
+    };
 
     // GM_xmlhttpRequest GET异步通用模块
     function getData(url, type = "document", usermethod = "GET") {
