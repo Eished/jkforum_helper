@@ -796,7 +796,7 @@
             if (response.status == 200) {
               resolve(response.response);
             } else {
-              messageBox("请求错误：" + response.status);
+              messageBox("请求错误：" + response.responseText.split('</title>')[1]);
               reject(response.status);
             }
           },
