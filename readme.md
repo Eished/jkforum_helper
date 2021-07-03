@@ -92,20 +92,20 @@
             version: GM_info.script.version,
             today: '', // 签到日期
             signtime: '23:59:59', // 签到时间
-            signNum: 10, // 签到重试次数
-            interTime: 200, // 签到重试间隔时间
+            signNum: 10, // 定时签到重试次数
+            interTime: 200, // 定时签到重试间隔时间
             todaysay: '簽到', // 签到输入内容
             mood: 'fd', // 签到心情
             autoPaySw: 1, // 自动支付开关
             autoThkSw: 1, // 自动感谢开关
             autoRePicSw: 1, // 自动加载原图开关
-            differ: 10000, // 回帖随机间隔时间
-            interval: 20000, // 回帖基础间隔时间
+            differ: 10000, // 批量回帖随机间隔时间
+            interval: 20000, // 批量回帖基础间隔时间
             thkDiffer: 1000, // 批量感谢间隔时间
             page: '', // 批量回帖页码
             votedMessage: '+1', // 投票输入内容
             userReplyMessage: [], // 用户保存的回复，历史回帖内容
-            replyMessage: [], // 用于回复的内容，临时回帖内容
+            replyMessage: [], // 缓存输入的回帖内容
             fastReply: [], // 保存的快速回复，快速回帖内容
             replyThreads: [], // 回帖数据
     ```
