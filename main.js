@@ -132,7 +132,7 @@
           user.today = nowTime('day');
 
           await getData(user.applyVotedUrl); // 申请任务
-          messageBox("申请投票任务执行成功！");
+          messageBox("申请投票任务执行成功！正在投票请勿退出页面...");
 
           const searchParamsUrl = new URLSearchParams();
           searchParamsUrl.append("id", "voted"); // 投票请求
@@ -233,7 +233,6 @@
             break;
           }
         }
-        append_parent.sw = 1;
         const imgzoom_cover = document.querySelector("#imgzoom_cover");
         const y = imgzoom.querySelector(".y");
         const imgzoom_imglink = imgzoom.querySelector("#imgzoom_imglink");
