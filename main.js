@@ -5,11 +5,12 @@
 // @name:ja      JKForum 助手
 // @name:ko      JKForum 조수
 // @namespace    https://github.com/Eished/jkforum_helper
-// @version      0.5.0
-// @description        捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片
-// @description:en     JKForum Helper: auto-sign-in, timed sign-in, auto-thank you, auto-load original images, auto-pay for topic posts, auto-complete polling tasks, optimize browsing experience, one-click bulk replies/thank you, one-click packaged post images for download
-// @description:zh-TW  捷克論壇助手：自動簽到、定時簽到、自動感謝、自動加載原圖、自動支付購買主題貼、自動完成投票任務，優化瀏覽體驗，一鍵批量回帖/感謝，一鍵打包下載帖子圖片
-// @description:ja     チェコ語フォーラム助手：自動サインイン、時間指定サインイン、自動サンキュー、オリジナル画像の自動ロード、トピック投稿の自動支払い、投票タスクの自動完成、閲覧体験の最適化、ワンクリック一括返信/サンキュー、ワンクリックパッケージ投稿画像のダウンロード
+// @version      0.5.1
+// @description        捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动播放图片、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片
+// @description:en     JKForum Helper: Auto-sign-in, timed sign-in, auto-thank you, auto-load original image, auto-play image, auto-pay to buy theme post, auto-complete voting task, optimize browsing experience, one-click bulk reply/thank you, one-click package to download post image
+// @description:zh-TW  捷克論壇助手：自動簽到、定時簽到、自動感謝、自動加載原圖、自動播放圖片、自動支付購買主題貼、自動完成投票任務，優化瀏覽體驗，一鍵批量回帖/感謝，一鍵打包下載帖子圖片
+// @description:ja     自動チェックイン、時限式チェックイン、オートサンキュー、オリジナル画像の自動読み込み、画像の自動再生、トピック投稿の自動支払い、ポールタスクの自動完了、ブラウジングエクスペリエンスの最適化、ワンクリックでの一括返信/サンキュー、ワンクリックでの投稿画像のパッケージダウンロード
+
 // @description:ko     체코 포럼 조수: 자동 로그인, 정기 로그인, 자동 감사, 원본 사진 자동로드, 테마 스티커 구매 자동 결제, 투표 작업 자동 완료, 최적화 된 브라우징 경험, 원 클릭 일괄 회신 / 감사, 원 클릭 포스트 사진의 패키지 다운로드 클릭다운로드하십시오.
 // @author       Eished
 // @license      AGPL-3.0
@@ -43,6 +44,7 @@
         interTime: 200, // 签到重试间隔时间
         todaysay: '簽到', // 签到输入内容
         mood: 'fd', // 签到心情
+        autoPlayDiff: 2000, // 自动播放间隔时间
         autoPaySw: 1, // 自动支付开关
         autoThkSw: 1, // 自动感谢开关
         autoRePicSw: 1, // 自动加载原图开关
@@ -192,6 +194,9 @@
           for (let i = 0; i < tfImg.length; i++) { //遍历图片列表
             const img = tfImg[i]
             img.setAttribute('onmouseover', null); // 去掉下载原图提示
+            img.addEventListener("click", () => {
+              autoPlay(user);
+            });
             if (img.src.match('.thumb.')) { // 去掉缩略图 加载部分
               img.src = img.getAttribute('file').split('.thumb.')[0];
               messageBox('加载原图成功', 1000)
@@ -206,6 +211,43 @@
       }
     }
 
+    async function autoPlay(user) {
+      await waitFor(500);
+      const imgzoom = document.querySelector("#imgzoom");
+      const imgzoom_cover = document.querySelector("#imgzoom_cover");
+      const y = imgzoom.querySelector(".y");
+      const imgzoom_imglink = imgzoom.querySelector("#imgzoom_imglink");
+      if (!y.querySelector("#autoplay")) {
+        const a = document.createElement("a");
+        a.id = "autoplay";
+        a.title = "自动播放/停止播放";
+        a.innerHTML = "自动播放/停止播放";
+        a.href = "javascript:void(0);";
+        a.addEventListener("click", play);
+        a.style.cssText = `background: url(../../template/yibai_city1/style/common/arw_l.gif) rgb(241, 196, 15) center no-repeat;transform: rotate(180deg);width: 60px;height: 18px;overflow: hidden;`;
+        y.insertBefore(a, imgzoom_imglink);
+        window.onblur = function () {
+          a.timer = 0; // 暂停
+        };
+        imgzoom_cover.addEventListener("click", () => {
+          a.timer = 0;
+        }); // 暂停
+        async function play() {
+          if (!a.timer) {
+            a.timer = 1;
+            while (true) {
+              await waitFor(user.autoPlayDiff);
+              if (a.timer == 0) {
+                break;
+              }
+              imgzoom.querySelector(".zimg_next").click();
+            }
+          } else {
+            a.timer = 0;
+          }
+        }
+      }
+    }
     async function autoPay(user) {
       if (document.querySelector('.viewpay')) {
         const url = user.payUrl;
