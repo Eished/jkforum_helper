@@ -5,7 +5,7 @@
 // @name:ja      JKForum 助手
 // @name:ko      JKForum 조수
 // @namespace    https://github.com/Eished/jkforum_helper
-// @version      0.5.1
+// @version      0.5.2
 // @description        捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动播放图片、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片
 // @description:en     JKForum Helper: Auto-sign-in, timed sign-in, auto-thank you, auto-load original image, auto-play image, auto-pay to buy theme post, auto-complete voting task, optimize browsing experience, one-click bulk reply/thank you, one-click package to download post image
 // @description:zh-TW  捷克論壇助手：自動簽到、定時簽到、自動感謝、自動加載原圖、自動播放圖片、自動支付購買主題貼、自動完成投票任務，優化瀏覽體驗，一鍵批量回帖/感謝，一鍵打包下載帖子圖片
@@ -194,9 +194,6 @@
           for (let i = 0; i < tfImg.length; i++) { //遍历图片列表
             const img = tfImg[i]
             img.setAttribute('onmouseover', null); // 去掉下载原图提示
-            img.addEventListener("click", () => {
-              autoPlay(user);
-            });
             if (img.src.match('.thumb.')) { // 去掉缩略图 加载部分
               img.src = img.getAttribute('file').split('.thumb.')[0];
               messageBox('加载原图成功', 1000)
@@ -208,45 +205,72 @@
             }
           }
         }
-      }
-    }
-
-    async function autoPlay(user) {
-      await waitFor(500);
-      const imgzoom = document.querySelector("#imgzoom");
-      const imgzoom_cover = document.querySelector("#imgzoom_cover");
-      const y = imgzoom.querySelector(".y");
-      const imgzoom_imglink = imgzoom.querySelector("#imgzoom_imglink");
-      if (!y.querySelector("#autoplay")) {
-        const a = document.createElement("a");
-        a.id = "autoplay";
-        a.title = "自动播放/停止播放";
-        a.innerHTML = "自动播放/停止播放";
-        a.href = "javascript:void(0);";
-        a.addEventListener("click", play);
-        a.style.cssText = `background: url(../../template/yibai_city1/style/common/arw_l.gif) rgb(241, 196, 15) center no-repeat;transform: rotate(180deg);width: 60px;height: 18px;overflow: hidden;`;
-        y.insertBefore(a, imgzoom_imglink);
-        window.onblur = function () {
-          a.timer = 0; // 暂停
-        };
-        imgzoom_cover.addEventListener("click", () => {
-          a.timer = 0;
-        }); // 暂停
-        async function play() {
-          if (!a.timer) {
-            a.timer = 1;
-            while (true) {
-              await waitFor(user.autoPlayDiff);
-              if (a.timer == 0) {
-                break;
-              }
-              imgzoom.querySelector(".zimg_next").click();
-            }
-          } else {
-            a.timer = 0;
+        const zoomimgs = document.querySelectorAll(`[zoomfile]`); //获取图片列表
+        if (zoomimgs) { // 自动播放
+          for (let i = 0; i < zoomimgs.length; i++) { //遍历图片列表
+            zoomimgs[i].addEventListener("click", autoPlay);
+          }
+        }
+        const onclickzoomimgs = document.querySelectorAll(`[onclick="zoom(this, this.src, 0, 0, 0)"]`); //获取图片列表
+        if (onclickzoomimgs) { // 自动播放
+          for (let i = 0; i < onclickzoomimgs.length; i++) { //遍历图片列表
+            onclickzoomimgs[i].addEventListener("click", autoPlay);
           }
         }
       }
+    }
+
+    async function autoPlay() {
+      if (!this.timer) { // 单图片防重复点击
+        this.timer = 1;
+        await waitFor(500);
+        let imgzoom = document.querySelector("#imgzoom");;
+        while (!imgzoom) {
+          messageBox("自动播放：没有获取到图片，正在重试...", 3000);
+          await waitFor(3000);
+          imgzoom = document.querySelector("#imgzoom");
+          if (imgzoom) {
+            break;
+          }
+        }
+        append_parent.sw = 1;
+        const imgzoom_cover = document.querySelector("#imgzoom_cover");
+        const y = imgzoom.querySelector(".y");
+        const imgzoom_imglink = imgzoom.querySelector("#imgzoom_imglink");
+        if (!y.querySelector("#autoplay")) { // 判断是否已存在
+          const user = getUserFromName();
+          const a = document.createElement("a");
+          a.id = "autoplay";
+          a.title = "自动播放/停止播放";
+          a.innerHTML = "自动播放/停止播放";
+          a.href = "javascript:void(0);";
+          a.addEventListener("click", play);
+          a.style.cssText = `background: url(../../template/yibai_city1/style/common/arw_l.gif) rgb(241, 196, 15) center no-repeat;transform: rotate(180deg);width: 60px;height: 18px;overflow: hidden;`;
+          y.insertBefore(a, imgzoom_imglink);
+          window.onblur = function () {
+            a.timer = 0; // 暂停
+          };
+          imgzoom_cover.addEventListener("click", () => {
+            a.timer = 0;
+          }); // 暂停
+          async function play() {
+            if (!a.timer) {
+              a.timer = 1;
+              while (true) {
+                await waitFor(user.autoPlayDiff);
+                if (a.timer == 0) {
+                  break;
+                }
+                imgzoom.querySelector(".zimg_next").click();
+              }
+            } else {
+              a.timer = 0;
+            }
+          }
+
+        }
+      }
+
     }
     async function autoPay(user) {
       if (document.querySelector('.viewpay')) {
