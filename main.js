@@ -10,7 +10,6 @@
 // @description:en     JKForum Helper: Auto-sign-in, timed sign-in, auto-thank you, auto-load original image, auto-play image, auto-pay to buy theme post, auto-complete voting task, optimize browsing experience, one-click bulk reply/thank you, one-click package to download post image
 // @description:zh-TW  捷克論壇助手：自動簽到、定時簽到、自動感謝、自動加載原圖、自動播放圖片、自動支付購買主題貼、自動完成投票任務，優化瀏覽體驗，一鍵批量回帖/感謝，一鍵打包下載帖子圖片
 // @description:ja     自動チェックイン、時限式チェックイン、オートサンキュー、オリジナル画像の自動読み込み、画像の自動再生、トピック投稿の自動支払い、ポールタスクの自動完了、ブラウジングエクスペリエンスの最適化、ワンクリックでの一括返信/サンキュー、ワンクリックでの投稿画像のパッケージダウンロード
-
 // @description:ko     체코 포럼 조수: 자동 로그인, 정기 로그인, 자동 감사, 원본 사진 자동로드, 테마 스티커 구매 자동 결제, 투표 작업 자동 완료, 최적화 된 브라우징 경험, 원 클릭 일괄 회신 / 감사, 원 클릭 포스트 사진의 패키지 다운로드 클릭다운로드하십시오.
 // @author       Eished
 // @license      AGPL-3.0
@@ -40,17 +39,17 @@
         version: GM_info.script.version,
         today: '', // 签到日期
         signtime: '23:59:59', // 签到时间
-        signNum: 10, // 签到重试次数
-        interTime: 200, // 签到重试间隔时间
+        signNum: 10, // 定时签到重试次数
+        interTime: 200, // 定时签到重试间隔时间ms
         todaysay: '簽到', // 签到输入内容
         mood: 'fd', // 签到心情
-        autoPlayDiff: 2000, // 自动播放间隔时间
+        autoPlayDiff: 2000, // 自动播放图片间隔时间ms
         autoPaySw: 1, // 自动支付开关
         autoThkSw: 1, // 自动感谢开关
         autoRePicSw: 1, // 自动加载原图开关
-        differ: 10000, // 回帖随机间隔时间
-        interval: 20000, // 回帖基础间隔时间
-        thkDiffer: 1000, // 批量感谢间隔时间
+        differ: 10000, // 回帖随机间隔时间ms
+        interval: 20000, // 回帖基础间隔时间ms
+        thkDiffer: 1000, // 批量感谢间隔时间ms
         page: '', // 批量回帖页码
         votedMessage: '+1', // 投票输入内容
         userReplyMessage: [], // 用户保存的回复，历史回帖内容
