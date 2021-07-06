@@ -5,7 +5,7 @@
 // @name:ja      JKForum 助手
 // @name:ko      JKForum 조수
 // @namespace    https://github.com/Eished/jkforum_helper
-// @version      0.5.2
+// @version      0.5.3
 // @description        捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动播放图片、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片
 // @description:en     JKForum Helper: Auto-sign-in, timed sign-in, auto-thank you, auto-load original image, auto-play image, auto-pay to buy theme post, auto-complete voting task, optimize browsing experience, one-click bulk reply/thank you, one-click package to download post image
 // @description:zh-TW  捷克論壇助手：自動簽到、定時簽到、自動感謝、自動加載原圖、自動播放圖片、自動支付購買主題貼、自動完成投票任務，優化瀏覽體驗，一鍵批量回帖/感謝，一鍵打包下載帖子圖片
@@ -69,36 +69,34 @@
       return user;
     }
 
-    function creatUser() {
-      return new Promise(async resolve => {
-        const formhash = document.querySelector('.listmenu li a').href.split('&')[2].split('=')[1];
-        const username = document.querySelector('.avatar_info').querySelector('a').innerHTML;
-        let user = getUserFromName();
-        if (!user) { // 空则写入，或版本变动写入
-          user = newUser(username, formhash);
-          user = await setFastReply(user); // 异步设置快速回复
-          GM_setValue(username, user);
-          messageBox("添加用户成功！");
-        } else if (user.version != GM_info.script.version) {
-          const userMod = newUser(username, formhash);
-          const compa = compaObjKey(userMod, user); // 比较key
-          if (compa) { // key相同 只改变版本
-            user.version = GM_info.script.version; // 记录新版本
-          } else { // key不同
-            user.version = GM_info.script.version; // 记录新版本
-            user = copyObjVal(userMod, user); // 对newUser赋值
-            messageBox("配置文件更新成功！");
-          }
-          messageBox("版本更新成功！请阅读使用说明。");
-          user = await setFastReply(user); // 异步设置快速回复
-          GM_setValue(username, user); // 先存储，防止异步错误
+    async function creatUser() {
+      const formhash = document.querySelector('.listmenu li a').href.split('&')[2].split('=')[1];
+      const username = document.querySelector('.avatar_info').querySelector('a').innerHTML;
+      let user = getUserFromName();
+      if (!user) { // 空则写入，或版本变动写入
+        user = newUser(username, formhash);
+        user = await setFastReply(user); // 异步设置快速回复
+        GM_setValue(username, user);
+        messageBox("添加用户成功！");
+      } else if (user.version != GM_info.script.version) {
+        const userMod = newUser(username, formhash);
+        const compa = compaObjKey(userMod, user); // 比较key
+        if (compa) { // key相同 只改变版本
+          user.version = GM_info.script.version; // 记录新版本
+        } else { // key不同
+          user.version = GM_info.script.version; // 记录新版本
+          user = copyObjVal(userMod, user); // 对newUser赋值
+          messageBox("配置文件更新成功！");
         }
-        if (user.formhash != formhash) { //formhash 变动存储
-          user.formhash = formhash;
-          GM_setValue(username, user);
-        }
-        resolve(user);
-      })
+        messageBox("版本更新成功！请阅读使用说明。");
+        user = await setFastReply(user); // 异步设置快速回复
+        GM_setValue(username, user); // 先存储，防止异步错误
+      }
+      if (user.formhash != formhash) { //formhash 变动存储
+        user.formhash = formhash;
+        GM_setValue(username, user);
+      }
+      return user;
     }
 
     function getUserFromName() { //从用户名获取对象
@@ -227,8 +225,8 @@
         await waitFor(500);
         let imgzoom = document.querySelector("#imgzoom");;
         while (!imgzoom) {
-          messageBox("自动播放：没有获取到图片，正在重试...", 2000);
-          await waitFor(2000);
+          messageBox("自动播放：没有获取到图片，正在重试...", 1000);
+          await waitFor(1000);
           imgzoom = document.querySelector("#imgzoom");
           if (imgzoom) {
             break;
@@ -288,12 +286,12 @@
       }
     }
 
-    function thankThread() {
+    async function thankThread() {
       if (document.querySelector('#thankform') && document.querySelectorAll('#k_thankauthor')[1]) { //感谢可见
-        thankThreadPost();
+        await thankThreadPost();
         location.reload();
       } else if (document.querySelector('#thankform') && document.querySelectorAll('#k_thankauthor')[0]) { //普通贴
-        thankThreadPost();
+        await thankThreadPost();
       }
     };
 
@@ -520,7 +518,7 @@
       }
     }
 
-    async function thankOnePage() {
+    function thankOnePage() {
       const currentHref = window.location.href; // 获取当前页地址
       const fid = currentHref.split('-')[1]; // 获取板块fid
       const page = currentHref.split('-')[2].split('.')[0]; // 获取页码
@@ -793,6 +791,16 @@
         for (let i = 0; i < pcbImg.length; i++) { //遍历图片列表
           let img = pcbImg[i];
           if (img.title && img.getAttribute('file') && img.getAttribute('file').match('mymypic.net')) {
+            const reg = /\./g;
+            if (!reg.test(img.title)) { // 文件格式校验
+              if (reg.test(img.alt)) { // 文件格式修复
+                img.title = img.alt;
+              } else {
+                messageBox("文件名格式错误！");
+                this.timer = 0;
+                return;
+              }
+            }
             imgsTitles.push(img.title); // 保存下载名称到数组
             imgsUrl.push(img.getAttribute('file').split('.thumb.')[0]); // 保存下载链接到数组
           } else if (!img.getAttribute('file') && img.src.match('mymypic.net')) {
@@ -832,16 +840,25 @@
           }) // 逐个添加文件
           cache[file_name] = data;
           messageBox(`第${index+1}张，文件名：${file_name}，大小：${parseInt(data.size / 1024)} Kb，下载完成！等待压缩...`);
+        }).catch((err) => { // 移除消息；
+          messageBox("请求错误：" + err.split('</title>')[1], 1000);
+          return -1;
         })
         promises.push(promise);
       }
-      Promise.all(promises).then(() => {
+      Promise.all(promises).then((err) => {
+        removeMessage(mesId);
+        _this.timer = 0;
+        for (let i = 0; i < err.length; i++) {
+          if (err[i] == -1) {
+            messageBox("下载出错！")
+            return;
+          }
+        }
         zip.generateAsync({
           type: "blob"
         }).then(content => { // 生成二进制流
           saveAs(content, `${folderName} [${data.length}P]`); // 利用file-saver保存文件
-          removeMessage(mesId);
-          _this.timer = 0;
         })
       })
     };
@@ -857,8 +874,7 @@
             if (response.status == 200) {
               resolve(response.response);
             } else {
-              messageBox("请求错误：" + response.responseText.split('</title>')[1]);
-              reject(response.status);
+              reject(response.responseText);
             }
           },
           onerror: function (error) {
