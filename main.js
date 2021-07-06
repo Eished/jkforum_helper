@@ -29,7 +29,7 @@
 // @grant        GM_download
 // ==/UserScript==
 
-(function () {
+(async function () {
   'use strict';
   if (document.querySelector('.listmenu li a')) {
     function newUser(username, formhash) {
@@ -53,9 +53,9 @@
         page: '', // 批量回帖页码
         votedMessage: '+1', // 投票输入内容
         userReplyMessage: [], // 用户保存的回复，历史回帖内容
-        replyMessage: [], // 用于回复的内容，临时回帖内容
+        replyMessage: [], // 临时回帖内容
         fastReply: [], // 保存的快速回复，快速回帖内容
-        replyThreads: [], // 回帖数据
+        replyThreads: [], // 回帖任务数据
         applyVotedUrl: 'https://www.jkforum.net/home.php?mod=task&do=apply&id=59',
         vidUrl: '',
         votedUrl: 'https://www.jkforum.net/plugin.php?',
@@ -68,35 +68,37 @@
       }
       return user;
     }
-    async function creatUser() {
-      const formhash = document.querySelector('.listmenu li a').href.split('&')[2].split('=')[1];
-      const username = document.querySelector('.avatar_info').querySelector('a').innerHTML;
-      let user = getUserFromName();
-      if (!user) { // 空则写入，或版本变动写入
-        user = newUser(username, formhash);
-        user = await setFastReply(user); // 异步设置快速回复
-        GM_setValue(username, user);
-        messageBox("添加用户成功！");
-      } else if (user.version != GM_info.script.version) {
-        const userMod = newUser(username, formhash);
-        const compa = compaObjKey(userMod, user); // 比较key
-        if (compa) { // key相同 只改变版本
-          user.version = GM_info.script.version; // 记录新版本
-        } else { // key不同
-          user.version = GM_info.script.version; // 记录新版本
-          user = copyObjVal(userMod, user); // 对newUser赋值
-          messageBox("配置文件更新成功！");
-        }
-        messageBox("版本更新成功！请阅读使用说明。");
-        user = await setFastReply(user); // 异步设置快速回复
-        GM_setValue(username, user); // 先存储，防止异步错误
-      }
-      if (user.formhash != formhash) { //formhash 变动存储
-        user.formhash = formhash;
-        GM_setValue(username, user);
-      }
 
-      launch(user); // 启动自动签到、投票
+    function creatUser() {
+      return new Promise(async resolve => {
+        const formhash = document.querySelector('.listmenu li a').href.split('&')[2].split('=')[1];
+        const username = document.querySelector('.avatar_info').querySelector('a').innerHTML;
+        let user = getUserFromName();
+        if (!user) { // 空则写入，或版本变动写入
+          user = newUser(username, formhash);
+          user = await setFastReply(user); // 异步设置快速回复
+          GM_setValue(username, user);
+          messageBox("添加用户成功！");
+        } else if (user.version != GM_info.script.version) {
+          const userMod = newUser(username, formhash);
+          const compa = compaObjKey(userMod, user); // 比较key
+          if (compa) { // key相同 只改变版本
+            user.version = GM_info.script.version; // 记录新版本
+          } else { // key不同
+            user.version = GM_info.script.version; // 记录新版本
+            user = copyObjVal(userMod, user); // 对newUser赋值
+            messageBox("配置文件更新成功！");
+          }
+          messageBox("版本更新成功！请阅读使用说明。");
+          user = await setFastReply(user); // 异步设置快速回复
+          GM_setValue(username, user); // 先存储，防止异步错误
+        }
+        if (user.formhash != formhash) { //formhash 变动存储
+          user.formhash = formhash;
+          GM_setValue(username, user);
+        }
+        resolve(user);
+      })
     }
 
     function getUserFromName() { //从用户名获取对象
@@ -104,35 +106,37 @@
       return GM_getValue(username);
     }
 
-    async function setFastReply(user) { //设置快速回复
-      const fastReplyUrl = 'https://www.jkforum.net/thread-8364615-1-1.html'; // 获取快速回复的地址
-      user.fastReplyUrl = fastReplyUrl; // 设置链接用于异步校验
-      const htmlData = await getData(fastReplyUrl);
-      const options = htmlData.querySelectorAll('#rqcss select option');
-      let fastReply = []; //返回数组
-      options.forEach(option => {
-        if (option.value) { //去掉空值
-          fastReply.push(replaceHtml(option.value)); //去掉需要转义的内容
+    function setFastReply(user) { //设置快速回复
+      return new Promise(async resolve => {
+        const fastReplyUrl = 'https://www.jkforum.net/thread-8364615-1-1.html'; // 获取快速回复的地址
+        user.fastReplyUrl = fastReplyUrl; // 设置链接用于异步校验
+        const htmlData = await getData(fastReplyUrl);
+        const options = htmlData.querySelectorAll('#rqcss select option');
+        let fastReply = []; //返回数组
+        options.forEach(option => {
+          if (option.value) { //去掉空值
+            fastReply.push(replaceHtml(option.value)); //去掉需要转义的内容
+          }
+        });
+        if (fastReply.length) {
+          user.fastReply = fastReply;
+          messageBox("获取快速回复成功！");
+        } else {
+          messageBox("获取快速回复失败！");
         }
-      });
-      if (fastReply.length) {
-        user.fastReply = fastReply;
-        messageBox("获取快速回复成功！");
-      } else {
-        messageBox("获取快速回复失败！");
-      }
-      return user;
+        resolve(user);
+      })
     }
 
-    async function launch(user) {
-      rePic(user); // 启动自动加载原图，自动感谢等；
+    async function launch() {
+      rePic(); // 启动自动加载原图，自动感谢等；
       if (user.username) { //验证是否登录 //天变动则签到
         if (user.today != nowTime('day')) {
           user.today = nowTime('day');
+          sign(); // 签到
 
           await getData(user.applyVotedUrl); // 申请任务
           messageBox("申请投票任务执行成功！正在投票请勿退出页面...");
-
           const searchParamsUrl = new URLSearchParams();
           searchParamsUrl.append("id", "voted"); // 投票请求
           const htmlData = await getData(user.votedUrl + searchParamsUrl.toString());
@@ -171,8 +175,6 @@
           } else {
             messageBox(votedMessage); //其它情况直接输出
           }
-
-          sign(user); // 签到
           GM_setValue(user.username, user); //保存当天日// today 初始化
         }
       } else {
@@ -180,13 +182,13 @@
       }
     }
 
-    function rePic(user) {
+    function rePic() {
       if (window.location.href.match('thread')) {
         if (user.autoThkSw) { // 自动感谢当前贴开关
-          thankThread(user); // 自动感谢当前贴
+          thankThread(); // 自动感谢当前贴
         }
         if (user.autoPaySw) { // 自动购买当前贴开关
-          autoPay(user); // 自动购买当前贴
+          autoPay(); // 自动购买当前贴
         }
         const tfImg = document.querySelectorAll('.t_f ignore_js_op img'); //获取图片列表，附件也是ignore_js_op
         if (tfImg && user.autoRePicSw) { // 加载原图开关
@@ -236,7 +238,6 @@
         const y = imgzoom.querySelector(".y");
         const imgzoom_imglink = imgzoom.querySelector("#imgzoom_imglink");
         if (!y.querySelector("#autoplay")) { // 判断是否已存在
-          const user = getUserFromName();
           const a = document.createElement("a");
           a.id = "autoplay";
           a.title = "自动播放/停止播放";
@@ -270,7 +271,7 @@
       }
 
     }
-    async function autoPay(user) {
+    async function autoPay() {
       if (document.querySelector('.viewpay')) {
         const url = user.payUrl;
         const referer = location.href;
@@ -287,16 +288,16 @@
       }
     }
 
-    async function thankThread(user) {
+    function thankThread() {
       if (document.querySelector('#thankform') && document.querySelectorAll('#k_thankauthor')[1]) { //感谢可见
-        await thankThreadPost(user);
+        thankThreadPost();
         location.reload();
       } else if (document.querySelector('#thankform') && document.querySelectorAll('#k_thankauthor')[0]) { //普通贴
-        await thankThreadPost(user);
+        thankThreadPost();
       }
     };
 
-    async function thankThreadPost(user) {
+    async function thankThreadPost() {
       const thankform = document.querySelector('#thankform');
       const tid = thankform.querySelector('[name=tid]').value;
       const touser = thankform.querySelector('[name=touser]').value;
@@ -399,7 +400,6 @@
     // 定时签到
     function timeControl() {
       const _this = this;
-      const user = getUserFromName();
       const signtime = user.signtime; // 设定签到时间
       async function control() {
         const nowtime = nowTime('seconds').split(' ')[1]; // 获取当前时间，到秒
@@ -407,7 +407,7 @@
           clearInterval(_this.timer);
           messageBox('执行中....');
           for (let i = 0; i < user.signNum; i++) { //重试次数
-            sign(user);
+            sign();
             messageBox('执行第' + (i + 1) + '次');
             await waitFor(user.interTime); //重试间隔
           }
@@ -431,7 +431,7 @@
       }
     }
 
-    async function sign(user) {
+    async function sign() {
       var searchParams = new URLSearchParams();
       searchParams.append("formhash", user.formhash);
       searchParams.append("qdxq", user.mood);
@@ -491,7 +491,7 @@
       messageBox.removeChild(document.getElementById(id));
     }
 
-    function chooceReply(user) {
+    function chooceReply() {
       const inpreply = document.querySelector('#inpreply'); // 获取回复内容
       if (inpreply && inpreply.value) {
         user.replyMessage = []; // 中文分号分隔字符串
@@ -537,7 +537,6 @@
       }
       if (reg.test(forumPage)) { // 如果输入了正确地址则进行批量处理
         messageBox('正在添加：' + forumPage);
-        const user = getUserFromName();
         user.page = forumPage;
         GM_setValue(user.username, user);
         let pageFrom = parseInt(forumPage.split('-')[1]); // 获取起点页码
@@ -547,7 +546,7 @@
         await getData('https://www.jkforum.net/forum.php?mod=forumdisplay&fid=' + fid + '&forumdefstyle=yes'); // 切换到列表模式，同步请求。
         messageBox('已切换到列表模式');
 
-        let replyLen = chooceReply(user); //如果输入了值则使用用户值，如果没有则使用默认值；没有默认值则返回错误
+        let replyLen = chooceReply(); //如果输入了值则使用用户值，如果没有则使用默认值；没有默认值则返回错误
         if (replyLen <= 0) {
           messageBox('获取回帖内容失败！');
           return "获取回帖内容失败！";
@@ -567,7 +566,6 @@
     }
     // 添加任务列表
     function setThreadsTask(htmlData, fid, replyLen) {
-      const user = getUserFromName(); //获取user对象，必须在用户输入值后面，不然取不到快速回复
       //帖子类名 40个a标签数组 
       let hrefs = htmlData.querySelectorAll('.s');
       // 获取作者昵称和 UID
@@ -651,7 +649,6 @@
     };
 
     async function replyOrThk(_this, type = 'reply') { // 回帖函数
-      const user = getUserFromName();
       const thkUrl = user.thkUrl;
       let fidIndex = 0; // 当前回帖版块序号
       let thkFidIndex = 0; // 当前感谢版块序号
@@ -1056,6 +1053,7 @@
     }
 
     addBtns(); // 添加DOM
-    creatUser(); // 添加用户
+    const user = await creatUser(); // 添加用户, 全局变量，每个页面只获取一次
+    launch(); // 启动自动签到、投票、加载原图等
   }
 })();
