@@ -104,26 +104,24 @@
       return GM_getValue(username);
     }
 
-    function setFastReply(user) { //设置快速回复
-      return new Promise(async resolve => {
-        const fastReplyUrl = 'https://www.jkforum.net/thread-8364615-1-1.html'; // 获取快速回复的地址
-        user.fastReplyUrl = fastReplyUrl; // 设置链接用于异步校验
-        const htmlData = await getData(fastReplyUrl);
-        const options = htmlData.querySelectorAll('#rqcss select option');
-        let fastReply = []; //返回数组
-        options.forEach(option => {
-          if (option.value) { //去掉空值
-            fastReply.push(replaceHtml(option.value)); //去掉需要转义的内容
-          }
-        });
-        if (fastReply.length) {
-          user.fastReply = fastReply;
-          messageBox("获取快速回复成功！");
-        } else {
-          messageBox("获取快速回复失败！");
+    async function setFastReply(user) { //设置快速回复
+      const fastReplyUrl = 'https://www.jkforum.net/thread-8364615-1-1.html'; // 获取快速回复的地址
+      user.fastReplyUrl = fastReplyUrl; // 设置链接用于异步校验
+      const htmlData = await getData(fastReplyUrl);
+      const options = htmlData.querySelectorAll('#rqcss select option');
+      let fastReply = []; //返回数组
+      options.forEach(option => {
+        if (option.value) { //去掉空值
+          fastReply.push(replaceHtml(option.value)); //去掉需要转义的内容
         }
-        resolve(user);
-      })
+      });
+      if (fastReply.length) {
+        user.fastReply = fastReply;
+        messageBox("获取快速回复成功！");
+      } else {
+        messageBox("获取快速回复失败！");
+      }
+      return user;
     }
 
     async function launch() {
@@ -180,13 +178,13 @@
       }
     }
 
-    function rePic() {
+    async function rePic() {
       if (window.location.href.match('thread')) {
         if (user.autoThkSw) { // 自动感谢当前贴开关
-          thankThread(); // 自动感谢当前贴
+          await thankThread(); // 自动感谢当前贴
         }
         if (user.autoPaySw) { // 自动购买当前贴开关
-          autoPay(); // 自动购买当前贴
+          await autoPay(); // 自动购买当前贴
         }
         const tfImg = document.querySelectorAll('.t_f ignore_js_op img'); //获取图片列表，附件也是ignore_js_op
         if (tfImg && user.autoRePicSw) { // 加载原图开关
@@ -264,10 +262,8 @@
               a.timer = 0;
             }
           }
-
         }
       }
-
     }
     async function autoPay() {
       if (document.querySelector('.viewpay')) {
@@ -796,7 +792,7 @@
               if (reg.test(img.alt)) { // 文件格式修复
                 img.title = img.alt;
               } else {
-                messageBox("文件名格式错误！");
+                messageBox("获取图片名失败！");
                 this.timer = 0;
                 return;
               }
