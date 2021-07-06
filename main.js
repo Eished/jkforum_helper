@@ -225,8 +225,8 @@
         await waitFor(500);
         let imgzoom = document.querySelector("#imgzoom");;
         while (!imgzoom) {
-          messageBox("自动播放：没有获取到图片，正在重试...", 3000);
-          await waitFor(3000);
+          messageBox("自动播放：没有获取到图片，正在重试...", 2000);
+          await waitFor(2000);
           imgzoom = document.querySelector("#imgzoom");
           if (imgzoom) {
             break;
