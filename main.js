@@ -195,10 +195,12 @@
               img.src = img.getAttribute('file').split('.thumb.')[0];
               messageBox('加载原图成功', 1000)
               console.log('thumb：', img.src);
-            } else if (img.src.match('static/image/common/none.gif')) { // 懒加载部分
-              img.setAttribute('file', img.getAttribute('file').split('.thumb.')[0]); // 网站自带forum_viewthread.js  attachimgshow(pid, onlyinpost) 从file延迟加载
-              messageBox('加载原图成功', 1000)
-              console.log('none.gif:', img.src);
+            } else if (img.src.match('static/image/common/none.gif') && img.getAttribute('file')) { // 懒加载部分
+              if (img.getAttribute('file').match(".thumb.")) {
+                img.setAttribute('file', img.getAttribute('file').split('.thumb.')[0]); // 网站自带forum_viewthread.js  attachimgshow(pid, onlyinpost) 从file延迟加载
+                messageBox('加载原图成功', 1000)
+                console.log('none.gif:', img.getAttribute('file'));
+              }
             }
           }
         }
@@ -322,20 +324,15 @@
         })
       }
 
-      // 生产消息盒子
+      // 消息盒子
       function genDiv() {
         let b = document.createElement('div'); //创建类型为div的DOM对象
-        b.style.cssText = 'width: 220px;float: left;position: absolute;border-radius: 10px;left: auto;right: 5%;bottom: 20px;z-index:999';
+        b.style.cssText = 'width: 220px;float: left;position: fixed;border-radius: 10px;left: auto;right: 5%;bottom: 20px;z-index:999';
         b.id = 'messageBox';
         return b; //返回修改好的DOM对象
       };
       document.querySelector('body').appendChild(genDiv()); // 消息盒子添加到body
-      const messageBox = document.querySelector('#messageBox');
-      const messageBoxBottom = parseInt(messageBox.style.bottom);
-      window.onscroll = function () { //定位在右下角
-        const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-        messageBox.style.bottom = messageBoxBottom - scrollTop + 'px';
-      }
+
       const status_loginned = document.querySelector('.status_loginned');
       const mnoutbox = document.querySelectorAll('.mnoutbox');
 
@@ -845,9 +842,22 @@
       Promise.all(promises).then((err) => {
         removeMessage(mesId);
         _this.timer = 0;
+        if (err[err.length - 1] == -1) {
+          messageBox("下载出错！")
+          return;
+        }
         for (let i = 0; i < err.length; i++) {
           if (err[i] == -1) {
-            messageBox("下载出错！")
+            messageBox("文件缺失！")
+            _this.timer = 1;
+            break;
+          }
+        }
+        if (_this.timer) {
+          if (confirm("检测到文件缺失，是否继续压缩？")) {
+            _this.timer = 0;
+          } else {
+            _this.timer = 0;
             return;
           }
         }
