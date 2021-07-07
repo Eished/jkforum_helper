@@ -834,7 +834,9 @@
           cache[file_name] = data;
           messageBox(`第${index+1}张，文件名：${file_name}，大小：${parseInt(data.size / 1024)} Kb，下载完成！等待压缩...`);
         }).catch((err) => { // 移除消息；
-          messageBox("请求错误：" + err.split('</title>')[1], 1000);
+          const domParser = new DOMParser();
+          const xmlDoc = domParser.parseFromString(err, 'text/html');
+          messageBox("请求错误：" + xmlDoc.body.innerHTML, 1000);
           return -1;
         })
         promises.push(promise);
@@ -926,9 +928,9 @@
       if (replaceHtml(data)) { // 如果判断去掉html是否还有文字，否则返回html
         return replaceHtml(data); // 去掉html内容，返回文字
       } else {
-        let htmlData = document.createElement('div'); // 数据类型转换成 html
-        htmlData.innerHTML = data;
-        return htmlData;
+        const domParser = new DOMParser();
+        const xmlDoc = domParser.parseFromString(data, 'text/html');
+        return xmlDoc;
       }
     }
 
