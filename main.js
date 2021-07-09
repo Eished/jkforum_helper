@@ -821,8 +821,7 @@
     async function batchDownload(imgsUrl, imgsTitles, folderName, _this) {
       const data = imgsUrl;
       const zip = new JSZip();
-      const cache = {}; // 作用未知
-      const promises = []
+      const promises = [];
       const mesId = messageBox(data.length + "张：开始下载...", "none");
       for (let index = 0; index < data.length; index++) {
         const item = data[index];
@@ -831,7 +830,6 @@
           zip.file(file_name, data, {
             binary: true
           }) // 逐个添加文件
-          cache[file_name] = data;
           messageBox(`第${index+1}张，文件名：${file_name}，大小：${parseInt(data.size / 1024)} Kb，下载完成！等待压缩...`);
         }).catch((err) => { // 移除消息；
           const domParser = new DOMParser();
