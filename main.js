@@ -5,7 +5,7 @@
 // @name:ja      JKForum 助手
 // @name:ko      JKForum 조수
 // @namespace    https://github.com/Eished/jkforum_helper
-// @version      0.5.4
+// @version      0.5.5
 // @description        捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动播放图片、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片
 // @description:en     JKForum Helper: Auto-sign-in, timed sign-in, auto-thank you, auto-load original image, auto-play image, auto-pay to buy theme post, auto-complete voting task, optimize browsing experience, one-click bulk reply/thank you, one-click package to download post image
 // @description:zh-TW  捷克論壇助手：自動簽到、定時簽到、自動感謝、自動加載原圖、自動播放圖片、自動支付購買主題貼、自動完成投票任務，優化瀏覽體驗，一鍵批量回帖/感謝，一鍵打包下載帖子圖片
@@ -57,13 +57,12 @@
         fastReply: [], // 保存的快速回复，快速回帖内容
         replyThreads: [], // 回帖任务数据
         applyVotedUrl: 'https://www.jkforum.net/home.php?mod=task&do=apply&id=59',
-        vidUrl: '',
         votedUrl: 'https://www.jkforum.net/plugin.php?',
         taskDoneUrl: 'https://www.jkforum.net/home.php?mod=task&do=draw&id=59',
         signUrl: 'https://www.jkforum.net/plugin/?id=dsu_paulsign:sign&operation=qiandao&infloat=1&inajax=1',
         thkUrl: 'https://www.jkforum.net/plugin/?id=thankauthor:thank&inajax=1',
         payUrl: 'https://www.jkforum.net/forum.php?mod=misc&action=pay&paysubmit=yes&infloat=yes&inajax=1',
-        fastReplyUrl: '',
+        fastReplyUrl: 'https://www.jkforum.net/thread-8364615-1-1.html',
         replyUrl: "https://www.jkforum.net/forum.php?mod=post&action=reply&",
       }
       return user;
@@ -105,9 +104,7 @@
     }
 
     async function setFastReply(user) { //设置快速回复
-      const fastReplyUrl = 'https://www.jkforum.net/thread-8364615-1-1.html'; // 获取快速回复的地址
-      user.fastReplyUrl = fastReplyUrl; // 设置链接用于异步校验
-      const htmlData = await getData(fastReplyUrl);
+      const htmlData = await getData(user.fastReplyUrl);
       const options = htmlData.querySelectorAll('#rqcss select option');
       let fastReply = []; //返回数组
       options.forEach(option => {
@@ -137,10 +134,9 @@
           searchParamsUrl.append("id", "voted"); // 投票请求
           const htmlData = await getData(user.votedUrl + searchParamsUrl.toString());
           const vidUrl = htmlData.querySelector('.voted a').href; // 找到链接
-          user.vidUrl = vidUrl;
 
           const hrefHtmlData = await getData(vidUrl);
-          const vid = user.vidUrl.split('&')[2].split('=')[1]; // 纯数字// 分解链接
+          const vid = vidUrl.split('&')[2].split('=')[1]; // 纯数字// 分解链接
           const aidUrl = hrefHtmlData.querySelector('.hp_s_c a').href; // 找到链接
           const aid = aidUrl.split('&')[2].split('=')[1]; // 纯数字// 分解链接
           // 投票请求和数据
@@ -347,7 +343,7 @@
 
       if (window.location.href.match('/forum-')) {
         // 回帖输入框
-        const input = genElement('textarea', 'inpreply', 1, 20);
+        const input = genElem('textarea', 'inpreply', 1, 20);
         status_loginned.insertBefore(input, mnoutbox[1]); //添加文本域到指定位置
         // 感谢 按钮
         const thkBtn = genButton('添加本页', thankOnePage); //设置名称和绑定函数
@@ -360,10 +356,10 @@
         const thankBtn = genButton('感谢', thkBtn); //设置名称和绑定函数
         status_loginned.insertBefore(thankBtn, mnoutbox[1]); //添加按钮到指定位置  
         // 回帖输入框
-        const input = genElement('textarea', 'inpreply', 1, 20);
+        const input = genElem('textarea', 'inpreply', 1, 20);
         status_loginned.insertBefore(input, mnoutbox[1]); //添加文本域到指定位置  
         // 页码输入框
-        const page = genElement2('input', 'inp_page');
+        const page = genInp('input', 'inp_page');
         status_loginned.insertBefore(page, mnoutbox[1]); //添加输入框到指定位置
         // 批量感谢/回帖
         const btn = genButton('添加任务', thankBatch); //设置名称和绑定函数
@@ -1001,24 +997,25 @@
 
     // 比较键
     function compaObjKey(source, target) {
-      let count = 0;
-      Object.keys(source).forEach(ea => {
-        Object.keys(target).forEach(eb => {
-          if (ea === eb) {
-            count++;
+      if (Object.keys(target).length == Object.keys(source).length) {
+        // 用户数据匹配
+        Object.keys(source).forEach(key => {
+          if (!target.hasOwnProperty(key)) {
+            return false;
           }
         })
-      });
-      if (count == Object.keys(source).length) {
         return true;
       } else {
         return false;
       }
     }
+
     // 赋值对象的值
     function copyObjVal(target, source) {
       Object.keys(source).forEach((key) => {
-        target[key] = source[key];
+        if (source[key] && target.hasOwnProperty(key)) {
+          target[key] = source[key];
+        }
       });
       return target;
     }
@@ -1034,7 +1031,7 @@
       return b; //返回修改好的DOM对象
     }
 
-    function genElement(type, id, val1, val2) {
+    function genElem(type, id, val1, val2) {
       let b = document.createElement(type); //创建类型为button的DOM对象
       b.style.cssText = 'margin:16px 10px 0px 0px;float:left' //添加样式（margin可以让元素间隔开一定距离）
       b.rows = val1;
@@ -1047,7 +1044,7 @@
       return b; //返回修改好的DOM对象
     }
 
-    function genElement2(type, id) {
+    function genInp(type, id) {
       let b = document.createElement(type); //创建类型为button的DOM对象
       b.style.cssText = 'margin:16px 10px 0px 0px;float:left;width:80px' //添加样式（margin可以让元素间隔开一定距离）
       if (id) {
