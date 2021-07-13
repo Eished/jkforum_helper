@@ -49,13 +49,13 @@
 
   - 回帖内容获取顺序：
 
-    1.用户当前输入内容；
+    1. 用户当前输入内容；
 
-    2.内置快速回复（前者为空时，弹窗提示使用）；
+    2. 内置快速回复（前者为空时，弹窗提示使用）；
 
-    3.历史自定义输入过的内容（没有获取到前两者时，弹窗提示使用）；
+    3. 历史自定义输入过的内容（没有获取到前两者时，弹窗提示使用）；
 
-  - **注意**：内置的获取快速回复，需要用户在可快速回复的版块有浏览权限，否则需要手动输入回复。每次版本更新后自动重新获取。
+    **注意**：内置的获取快速回复，需要用户在可快速回复的版块有浏览权限，否则需要手动输入回复。每次版本更新后自动重新获取。
 
 - 【**添加任务**】按钮：
    - 在首页激活；
@@ -86,20 +86,20 @@
 
    - 离开页面自动暂停播放。
 
-     ![图片_36](readme.assets/图片_36.jpg)
+     [![图片_36](https://github.com/Eished/jkforum_helper/raw/main/readme.assets/%E5%9B%BE%E7%89%87_36.jpg)](https://github.com/Eished/jkforum_helper/blob/main/readme.assets/图片_36.jpg)
 
 - **参数自定义**：
 
   - 先打开网页运行一次，就可以在脚本看到存储页面：
 
-    ![image-20210611163109214](readme.assets/image-20210611163109214.png)
+    [![image-20210611163109214](https://github.com/Eished/jkforum_helper/raw/main/readme.assets/image-20210611163109214.png)](https://github.com/Eished/jkforum_helper/blob/main/readme.assets/image-20210611163109214.png)
 
   - 可自定义的值：
 
     ```javascript
-    version: '0.5.1',
+    version: "",
     today: '', // 签到日期
-    signtime: '23:59:59', // 签到时间
+    signtime: '23:59:59', // 定时签到时间
     signNum: 10, // 定时签到重试次数
     interTime: 200, // 定时签到重试间隔时间ms
     todaysay: '簽到', // 签到输入内容
@@ -114,12 +114,11 @@
     page: '', // 批量回帖页码
     votedMessage: '+1', // 投票输入内容
     userReplyMessage: [], // 用户保存的回复，历史回帖内容
-    replyMessage: [], // 临时回帖内容
     fastReply: [], // 保存的快速回复，快速回帖内容
     replyThreads: [], // 回帖任务数据
     ```
     
-  - 如果参数改错了或出现异常，删掉 `"version": "0.3.8",` 和错误的参数行，运行脚本会自动初始化缺失的参数。
+  - 如果参数改错了或出现异常，删掉 `"version": "x.x.x",` 和错误的参数行，运行脚本会自动初始化缺失的参数。
 
 **注意：保持脚本页面前台运行，否则浏览器会休眠！建议单开一个浏览器窗口跑脚本。**
 
