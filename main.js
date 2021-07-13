@@ -38,7 +38,7 @@
         formhash: formhash,
         version: GM_info.script.version,
         today: '', // 签到日期
-        signtime: '23:59:59', // 签到时间
+        signtime: '23:59:59', // 定时签到时间
         signNum: 10, // 定时签到重试次数
         interTime: 200, // 定时签到重试间隔时间ms
         todaysay: '簽到', // 签到输入内容
@@ -53,7 +53,6 @@
         page: '', // 批量回帖页码
         votedMessage: '+1', // 投票输入内容
         userReplyMessage: [], // 用户保存的回复，历史回帖内容
-        replyMessage: [], // 临时回帖内容
         fastReply: [], // 保存的快速回复，快速回帖内容
         replyThreads: [], // 回帖任务数据
         applyVotedUrl: 'https://www.jkforum.net/home.php?mod=task&do=apply&id=59',
@@ -74,7 +73,7 @@
       let user = getUserFromName();
       if (!user) { // 空则写入，或版本变动写入
         user = newUser(username, formhash);
-        user = await setFastReply(user); // 异步设置快速回复
+        user = await setFastReply(user); // 设置快速回复
         GM_setValue(username, user);
         messageBox("添加用户成功！");
       } else if (user.version != GM_info.script.version) {
@@ -85,25 +84,25 @@
         } else { // key不同
           user.version = GM_info.script.version; // 记录新版本
           user = copyObjVal(userMod, user); // 对newUser赋值
-          messageBox("配置文件更新成功！");
+          messageBox("数据更新成功！");
         }
         messageBox("版本更新成功！请阅读使用说明。");
-        user = await setFastReply(user); // 异步设置快速回复
-        GM_setValue(username, user); // 先存储，防止异步错误
+        user = await setFastReply(user); // 设置快速回复
+        GM_setValue(username, user);
       }
-      if (user.formhash != formhash) { //formhash 变动存储
+      if (user.formhash != formhash) { // formhash 变动存储
         user.formhash = formhash;
         GM_setValue(username, user);
       }
       return user;
     }
 
-    function getUserFromName() { //从用户名获取对象
+    function getUserFromName() { // 从用户名获取对象
       const username = document.querySelector('.avatar_info').querySelector('a').innerHTML; // 用户名判断唯一用户
       return GM_getValue(username);
     }
 
-    async function setFastReply(user) { //设置快速回复
+    async function setFastReply(user) { // 设置快速回复
       const htmlData = await getData(user.fastReplyUrl);
       const options = htmlData.querySelectorAll('#rqcss select option');
       let fastReply = []; //返回数组
@@ -124,8 +123,9 @@
     async function launch() {
       rePic(); // 启动自动加载原图，自动感谢等；
       if (user.username) { //验证是否登录 //天变动则签到
-        if (user.today != nowTime('day')) {
-          user.today = nowTime('day');
+        const now = new nowTime();
+        if (user.today != now.day) {
+          user.today = now.day;
           sign(); // 签到
 
           await getData(user.applyVotedUrl); // 申请任务
@@ -389,8 +389,8 @@
       const _this = this;
       const signtime = user.signtime; // 设定签到时间
       async function control() {
-        const nowtime = nowTime('seconds').split(' ')[1]; // 获取当前时间，到秒
-        if (nowtime == signtime) {
+        const now = new nowTime(); // 获取当前时间，到秒
+        if (now.seconds == signtime) {
           clearInterval(_this.timer);
           messageBox('执行中....');
           for (let i = 0; i < user.signNum; i++) { //重试次数
@@ -399,7 +399,7 @@
             await waitFor(user.interTime); //重试间隔
           }
         } else {
-          console.log('时间没有到：', signtime, '目前时间：', nowTime('seconds').split(' ')[1]);
+          console.log('时间没有到：', signtime, '目前时间：', now.seconds);
         }
       }
       if (!this.timer) { // 防重复点击
@@ -481,16 +481,16 @@
     function chooceReply() {
       const inpreply = document.querySelector('#inpreply'); // 获取回复内容
       if (inpreply && inpreply.value) {
-        user.replyMessage = []; // 中文分号分隔字符串
-        inpreply.value.split('；').forEach((element) => {
+        let replyLen = 0; // 统计长度，用于在 user.userReplyMessage 中定位下标
+        inpreply.value.split('；').forEach((element) => { // 中文分号分隔字符串
           if (element) {
-            user.replyMessage.push(element); // 中文分号分隔字符串
-            user.userReplyMessage.push(element); // 存储自定义回帖内容，从头部添加
+            user.userReplyMessage.push(element); // 存储自定义回帖内容
+            replyLen++;
           }
         })
         GM_setValue(user.username, user); // 油猴脚本存储回帖内容
         messageBox("已使用自定义回复");
-        return user.replyMessage.length;
+        return replyLen;
       } else {
         if (user.fastReply.length && confirm("确认使用快速回复？否则使用历史回复")) { // 1 为错误信息
           GM_setValue(user.username, user); // 油猴脚本存储回帖内容
@@ -541,7 +541,6 @@
 
         while (pageFrom <= pageEnd) {
           let currentHref = 'https://www.jkforum.net/forum-' + fid + '-' + pageFrom + '.html'; //生成帖子列表地址
-          // getThreads(currentHref, fid, replyLen);
           messageBox('当前地址：' + currentHref + '页码：' + pageFrom);
           const data = await getData(currentHref);
           setThreadsTask(data, fid, replyLen); // 设置任务列表
@@ -860,7 +859,7 @@
         zip.generateAsync({
           type: "blob"
         }).then(content => { // 生成二进制流
-          saveAs(content, `${folderName} [${data.length}P]`); // 利用file-saver保存文件
+          saveAs(content, `${folderName} [${data.length}P]`); // 利用file-saver保存文件，大文件需等待很久
         })
       })
     };
@@ -953,45 +952,12 @@
       return txt.replace(reg3, '').replace(reg, '').trim();
     }
 
-    function nowTime(time) {
-      const date = new Date();
-      const year = date.getFullYear();
-      const month = date.getMonth() + 1;
-      const day = date.getDate();
-      let hours = date.getHours();
-      let minutes = date.getMinutes();
-      let seconds = date.getSeconds();
-      // 补零
-      if (hours < 10) {
-        hours = `0${hours}`;
-      }
-      if (minutes < 10) {
-        minutes = `0${minutes}`;
-      }
-      if (seconds < 10) {
-        seconds = `0${seconds}`;
-      }
-      switch (time) {
-        case 'year': {
-          return year;
-        }
-        case 'month': {
-          return `${year}/${month}`;
-        }
-        case 'day': {
-          return `${year}/${month}/${day}`;
-        }
-        case 'hours': {
-          return `${year}/${month}/${day} ${hours}`;
-        }
-        case 'minutes': {
-          return `${year}/${month}/${day} ${hours}:${minutes}`;
-        }
-        case 'seconds': {
-          return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
-        }
-        default:
-          return "输入时间";
+    class nowTime {
+      constructor() {
+        const date = new Date();
+        this.day = date.toLocaleDateString();
+        this.seconds = date.toTimeString().split(" ")[0];
+        this.date = date;
       }
     }
 
