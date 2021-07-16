@@ -123,7 +123,7 @@
     async function launch() {
       rePic(); // 启动自动加载原图，自动感谢等；
       if (user.username) { //验证是否登录 //天变动则签到
-        const now = new nowTime();
+        const now = new NowTime();
         if (user.today != now.day) {
           user.today = now.day;
           sign(); // 签到
@@ -389,7 +389,7 @@
       const _this = this;
       const signtime = user.signtime; // 设定签到时间
       async function control() {
-        const now = new nowTime(); // 获取当前时间，到秒
+        const now = new NowTime(); // 获取当前时间，到秒
         if (now.seconds == signtime) {
           clearInterval(_this.timer);
           messageBox('执行中....');
@@ -952,7 +952,7 @@
       return txt.replace(reg3, '').replace(reg, '').trim();
     }
 
-    class nowTime {
+    class NowTime {
       constructor() {
         const date = new Date();
         this.day = date.toLocaleDateString();
