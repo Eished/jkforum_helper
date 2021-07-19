@@ -231,11 +231,16 @@
     append_parent.timer = 1; // 已添加标志
 
     function callback() { // 监听元素子节点变化，然后添加节点
-      observer.disconnect(); // 断开监听
-      addAutoPlay();
+      // 按钮也是延迟加载，监听是否有 .y
+      if (imgzoom.querySelector(".y")) {
+        observer.disconnect(); // 断开监听
+        addAutoPlay(); // 添加按钮
+      } else {
+        console.log("不存在 .y 元素，正在重试...");
+      }
     }
     const observer = new MutationObserver(callback); // 建立监听器
-    observer.observe(append_parent, { // 开始监听
+    observer.observe(append_parent, { // 开始监听 append_parent
       childList: true
     })
   }
@@ -273,7 +278,7 @@
           if (imgzoom.querySelector(".zimg_next")) {
             imgzoom.querySelector(".zimg_next").click();
           } else { // 只有一张图
-            messageBox("只有一张图!");
+            messageBox("只有一张图！");
             return;
           }
         }
@@ -831,10 +836,12 @@
         batchDownload(imgsUrl, imgsTitles, folderName, this);
       } else {
         messageBox('没有可下载的图片！');
+        this.timer = 0
         return 0;
       }
     } else {
       messageBox('没有图片！');
+      this.timer = 0
       return 0;
     }
   }
