@@ -119,7 +119,7 @@
     }
     return user;
   }
-
+  // 启动
   async function launch() {
     rePic(); // 启动自动加载原图，自动感谢等；
     if (user.username) { //验证是否登录 //天变动则签到
@@ -130,29 +130,36 @@
 
         await getData(user.applyVotedUrl); // 申请任务
         messageBox("申请投票任务执行成功！正在投票请勿退出页面...");
-        const searchParamsUrl = new URLSearchParams();
-        searchParamsUrl.append("id", "voted"); // 投票请求
-        const htmlData = await getData(user.votedUrl + searchParamsUrl.toString());
+        // 投票请求链接
+        const votedUrlParams = urlSearchParams({
+          "id": "voted"
+        }).toString();
+        const htmlData = await getData(user.votedUrl + votedUrlParams);
         const vidUrl = htmlData.querySelector('.voted a').href; // 找到链接
+        const vid = vidUrl.split('&')[2].split('=')[1]; // 纯数字// 分解链接
 
         const hrefHtmlData = await getData(vidUrl);
-        const vid = vidUrl.split('&')[2].split('=')[1]; // 纯数字// 分解链接
         const aidUrl = hrefHtmlData.querySelector('.hp_s_c a').href; // 找到链接
         const aid = aidUrl.split('&')[2].split('=')[1]; // 纯数字// 分解链接
-        // 投票请求和数据
-        searchParamsUrl.append("ac", "dian");
-        searchParamsUrl.append("aid", aid);
-        searchParamsUrl.append("vid", vid);
-        searchParamsUrl.append("qr", "");
-        searchParamsUrl.append("inajax", 1);
-        const searchParamsData = new URLSearchParams();
-        searchParamsData.append("formhash", user.formhash);
-        searchParamsData.append("inajax", 1);
-        searchParamsData.append("handlekey", "dian");
-        searchParamsData.append("sid", 0);
-        searchParamsData.append("message", user.votedMessage);
-
-        const votedMessage = await postDataAs(user.votedUrl + searchParamsUrl.toString(), searchParamsData.toString());
+        // 投票请求链接数据
+        const votedParams = urlSearchParams({
+          "id": "voted",
+          "ac": "dian",
+          "aid": aid,
+          "vid": vid,
+          "qr": "",
+          "inajax": 1,
+        }).toString();
+        // Post 数据
+        const votedParamsData = urlSearchParams({
+          "formhash": user.formhash,
+          "inajax": 1,
+          "handlekey": "dian",
+          "sid": 0,
+          "message": user.votedMessage,
+        }).toString();
+        // 投票
+        const votedMessage = await postDataAs(user.votedUrl + votedParams, votedParamsData);
         if (checkHtml(votedMessage)) {
           let info = '';
           if (votedMessage.querySelector('.alert_info')) {
@@ -174,6 +181,7 @@
     }
   }
 
+  // 加载原图，启动自动感谢、自动支付、自动播放
   async function rePic() {
     if (window.location.href.match('thread')) {
       if (user.autoThkSw) { // 自动感谢当前贴开关
@@ -214,55 +222,67 @@
       }
     }
   }
-
+  // 自动播放图片
   async function autoPlay() {
-    if (!this.timer) { // 单图片防重复点击
-      this.timer = 1;
-      await waitFor(500);
-      let imgzoom = document.querySelector("#imgzoom");;
-      while (!imgzoom) {
-        messageBox("自动播放：没有获取到图片，正在重试...", 1000);
-        await waitFor(1000);
-        imgzoom = document.querySelector("#imgzoom");
-        if (imgzoom) {
-          break;
-        }
-      }
-      const imgzoom_cover = document.querySelector("#imgzoom_cover");
-      const y = imgzoom.querySelector(".y");
-      const imgzoom_imglink = imgzoom.querySelector("#imgzoom_imglink");
-      if (!y.querySelector("#autoplay")) { // 判断是否已存在
-        const a = document.createElement("a");
-        a.id = "autoplay";
-        a.title = "自动播放/停止播放";
-        a.innerHTML = "自动播放/停止播放";
-        a.href = "javascript:void(0);";
-        a.addEventListener("click", play);
-        a.style.cssText = `background: url(../../template/yibai_city1/style/common/arw_l.gif) rgb(241, 196, 15) center no-repeat;transform: rotate(180deg);width: 60px;height: 18px;overflow: hidden;`;
-        y.insertBefore(a, imgzoom_imglink);
-        window.onblur = function () {
-          a.timer = 0; // 暂停
-        };
-        imgzoom_cover.addEventListener("click", () => {
-          a.timer = 0;
-        }); // 暂停
-        async function play() {
-          if (!a.timer) {
-            a.timer = 1;
-            while (true) {
-              await waitFor(user.autoPlayDiff);
-              if (a.timer == 0) {
-                break;
-              }
-              imgzoom.querySelector(".zimg_next").click();
-            }
-          } else {
-            a.timer = 0;
+    const append_parent = document.querySelector("#append_parent"); // 监听子节点
+    if (append_parent.timer) { // 防重复点击、添加
+      return;
+    }
+    append_parent.timer = 1; // 已添加标志
+
+    function callback() { // 监听元素子节点变化，然后添加节点
+      observer.disconnect(); // 断开监听
+      addAutoPlay();
+    }
+    const observer = new MutationObserver(callback); // 建立监听器
+    observer.observe(append_parent, { // 开始监听
+      childList: true
+    })
+  }
+  // 添加播放图片按钮、事件
+  function addAutoPlay() {
+    const imgzoom = document.querySelector("#imgzoom");
+    const imgzoom_cover = document.querySelector("#imgzoom_cover");
+    const y = imgzoom.querySelector(".y");
+    const imgzoom_imglink = imgzoom.querySelector("#imgzoom_imglink");
+    const a = document.createElement("a");
+    a.id = "autoplay";
+    a.title = "自动播放/停止播放";
+    a.innerHTML = "自动播放/停止播放";
+    a.href = "javascript:void(0);";
+    a.addEventListener("click", play); // 添加监听播放事件
+    a.style.cssText = `background: url(../../template/yibai_city1/style/common/arw_l.gif) rgb(241, 196, 15) center no-repeat;transform: rotate(180deg);width: 60px;height: 18px;overflow: hidden;`;
+    y.insertBefore(a, imgzoom_imglink); // 添加按钮
+    // 遮挡暂停
+    window.onblur = function () {
+      a.timer = 0; // 暂停
+    };
+    // 点击背景层暂停
+    imgzoom_cover.addEventListener("click", () => {
+      a.timer = 0;
+    }); // 暂停
+
+    async function play() {
+      if (!a.timer) {
+        a.timer = 1;
+        while (true) {
+          await waitFor(user.autoPlayDiff);
+          if (a.timer == 0) {
+            break;
+          }
+          if (imgzoom.querySelector(".zimg_next")) {
+            imgzoom.querySelector(".zimg_next").click();
+          } else { // 只有一张图
+            messageBox("只有一张图!");
+            return;
           }
         }
+      } else {
+        a.timer = 0;
       }
     }
   }
+  // 自动支付
   async function autoPay() {
     if (document.querySelector('.viewpay')) {
       const url = user.payUrl;
@@ -279,7 +299,7 @@
       }
     }
   }
-
+  // 自动感谢
   async function thankThread() {
     if (document.querySelector('#thankform') && document.querySelectorAll('#k_thankauthor')[1]) { //感谢可见
       await thankThreadPost();
@@ -288,20 +308,21 @@
       await thankThreadPost();
     }
   };
-
+  // 发送感谢请求
   async function thankThreadPost() {
     const thankform = document.querySelector('#thankform');
     const tid = thankform.querySelector('[name=tid]').value;
     const touser = thankform.querySelector('[name=touser]').value;
     const touseruid = thankform.querySelector('[name=touseruid]').value;
-    var searchParams = new URLSearchParams();
-    searchParams.append("formhash", user.formhash);
-    searchParams.append("tid", tid);
-    searchParams.append("touser", touser);
-    searchParams.append("touseruid", touseruid);
-    searchParams.append("handlekey", "k_thankauthor");
-    searchParams.append("addsubmit", "true");
-    const xmlData = await postDataAs(user.thkUrl, searchParams.toString()); //post感谢数据
+    const thkParamsData = urlSearchParams({
+      "formhash": user.formhash,
+      "tid": tid,
+      "touser": touser,
+      "touseruid": touseruid,
+      "handlekey": "k_thankauthor",
+      "addsubmit": "true"
+    }).toString();
+    const xmlData = await postDataAs(user.thkUrl, thkParamsData); //post感谢数据
     if (checkHtml(xmlData)) {
       const info = xmlData.querySelector('.alert_info').innerHTML.split('<')[0].trim(); //去除html，返回字符串
       messageBox(info);
@@ -419,16 +440,17 @@
   }
 
   async function sign() {
-    var searchParams = new URLSearchParams();
-    searchParams.append("formhash", user.formhash);
-    searchParams.append("qdxq", user.mood);
-    searchParams.append("qdmode", 1);
-    searchParams.append("todaysay", user.todaysay);
-    searchParams.append("fastreply", 1);
-    const stringOrHtml = await postDataAs(user.signUrl, searchParams.toString()); // 直接post签到数据
+    const signParamsData = urlSearchParams({
+      "formhash": user.formhash,
+      "qdxq": user.mood,
+      "qdmode": 1,
+      "todaysay": user.todaysay,
+      "fastreply": 1,
+    }).toString();
+    const stringOrHtml = await postDataAs(user.signUrl, signParamsData); // 直接post签到数据
     if (checkHtml(stringOrHtml)) { // 确认html
       const info = stringOrHtml.querySelector('.c').innerHTML.split('<')[0].trim(); // 解析html，返回字符串
-      messageBox(info, 10000);
+      messageBox(info);
     } else {
       messageBox(stringOrHtml); //其它情况直接输出
     }
@@ -674,35 +696,40 @@
             const replyIndex = elementThr.replyIndex;
             const replyLen = elementThr.replyLen;
             const randomTime = elementThr.randomTime;
-            const replyUrlData = new URLSearchParams();
-            replyUrlData.append("fid", fid);
-            replyUrlData.append("tid", tid);
-            replyUrlData.append("extra", "page%3D1");
-            replyUrlData.append("replysubmit", "yes");
-            replyUrlData.append("infloat", "yes");
-            replyUrlData.append("inflohandlekeyat", "fastpost");
-            replyUrlData.append("inajax", 1);
+            // 回帖链接
+            const replyUrlParamsData = urlSearchParams({
+              "fid": fid,
+              "tid": tid,
+              "extra": "page%3D1",
+              "replysubmit": "yes",
+              "infloat": "yes",
+              "inflohandlekeyat": "fastpost",
+              "inajax": 1
+            });
+
+            // 拼接回帖报文
             const date = new Date();
             const posttime = parseInt(date.getTime() / 1000); // 生产时间戳
-            // 拼接回帖报文
-            const replyData = new URLSearchParams();
+            const replyParamsObj = {}; // 回帖数据对象
             if (replyLen == user.fastReply.length) {
-              replyData.append("message", user.fastReply[replyIndex]);
+              replyParamsObj.message = user.fastReply[replyIndex];
             } else {
-              replyData.append("message", user.userReplyMessage[replyIndex]);
+              replyParamsObj.message = user.userReplyMessage[replyIndex];
             }
-            replyData.append("posttime", posttime);
-            replyData.append("formhash", user.formhash);
-            replyData.append("usesig", 1);
-            replyData.append("subject", "");
-            const data = await postDataAs(user.replyUrl + replyUrlData, replyData.toString());
+            replyParamsObj.posttime = posttime;
+            replyParamsObj.formhash = user.formhash;
+            replyParamsObj.usesig = 1;
+            replyParamsObj.subject = "";
+            const replyParamsData = urlSearchParams(replyParamsObj);
+            // 发送数据
+            const data = await postDataAs(user.replyUrl + replyUrlParamsData.toString(), replyParamsData.toString());
             if (checkHtml(data)) { // 确认html
               const info = data.querySelector('script').innerHTML.split(`, `)[1];
               messageBox(info.split('，')[0].slice(1) + '，' + info.split('，')[1] + '！'); // 返回html成功消息
             } else {
               messageBox(data, 'none'); //其它情况直接输出
             }
-            messageBox("序号：" + fidRepIndex + '，随机号：' + replyIndex + '，用时：' + randomTime + "，帖子：" + tid + '，内容：' + replyData.get("message")); //测试使用  
+            messageBox("序号：" + fidRepIndex + '，随机号：' + replyIndex + '，用时：' + randomTime + "，帖子：" + tid + '，内容：' + replyParamsData.get("message")); //测试使用  
             elementForum.fidRepIndex = ++fidRepIndex;
             GM_setValue(user.username, user);
             _this.timer = 1; // 防止重复点击
@@ -711,21 +738,22 @@
           }
           case 'thk': {
             const elementThr = elementForum.fidthreads[fidThkIndex];
-            var thkData = new URLSearchParams();
-            thkData.append("formhash", user.formhash);
-            thkData.append("tid", elementThr.tid);
-            thkData.append("touser", elementThr.touser);
-            thkData.append("touseruid", elementThr.touseruid);
-            thkData.append("handlekey", "k_thankauthor");
-            thkData.append("addsubmit", "true");
-            const data = await postDataAs(user.thkUrl, thkData.toString()); //post感谢数据
+            const thkParamsData = urlSearchParams({
+              "formhash": user.formhash,
+              "tid": elementThr.tid,
+              "touser": elementThr.touser,
+              "touseruid": elementThr.touseruid,
+              "handlekey": "k_thankauthor",
+              "addsubmit": "true"
+            });
+            const data = await postDataAs(user.thkUrl, thkParamsData.toString()); //post感谢数据
             if (checkHtml(data)) {
               const info = data.querySelector('.alert_info').innerHTML.split('<')[0].trim(); //去除html，返回字符串
               messageBox(info);
             } else {
               messageBox(data); //其它情况直接输出
             }
-            console.log(fidThkIndex, thkData.get("tid"));
+            console.log(fidThkIndex, thkParamsData.get("tid"));
             elementForum.fidThkIndex = ++fidThkIndex;
             GM_setValue(user.username, user);
             clearInterval(_this.timer);
@@ -924,6 +952,15 @@
       const htmlData = domParser.parseFromString(data, 'text/html');
       return htmlData;
     }
+  }
+
+  // URL 参数添加器
+  function urlSearchParams(object) {
+    const searchParamsData = new URLSearchParams();
+    for (const key in object) {
+      searchParamsData.append(key, object[key]);
+    }
+    return searchParamsData;
   }
 
   // 编码统一资源定位符模块
