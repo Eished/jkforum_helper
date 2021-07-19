@@ -97,7 +97,7 @@
   - 可自定义的值：
 
     ```javascript
-    version: "",
+    version: '',
     today: '', // 签到日期
     signtime: '23:59:59', // 定时签到时间
     signNum: 10, // 定时签到重试次数
