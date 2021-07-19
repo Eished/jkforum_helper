@@ -231,8 +231,8 @@
     append_parent.timer = 1; // 已添加标志
 
     function callback() { // 监听元素子节点变化，然后添加节点
-      // 按钮也是延迟加载，监听是否有 .y
-      if (imgzoom.querySelector(".y")) {
+      const imgzoom = document.querySelector("#imgzoom");
+      if (imgzoom.querySelector(".y")) { // 按钮也是延迟加载，监听是否有 .y
         observer.disconnect(); // 断开监听
         addAutoPlay(); // 添加按钮
       } else {
