@@ -5,7 +5,7 @@
 // @name:ja      JKForum 助手
 // @name:ko      JKForum 조수
 // @namespace    https://github.com/Eished/jkforum_helper
-// @version      0.5.5
+// @version      0.5.6
 // @description        捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动播放图片、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片
 // @description:en     JKForum Helper: Auto-sign-in, timed sign-in, auto-thank you, auto-load original image, auto-play image, auto-pay to buy theme post, auto-complete voting task, optimize browsing experience, one-click bulk reply/thank you, one-click package to download post image
 // @description:zh-TW  捷克論壇助手：自動簽到、定時簽到、自動感謝、自動加載原圖、自動播放圖片、自動支付購買主題貼、自動完成投票任務，優化瀏覽體驗，一鍵批量回帖/感謝，一鍵打包下載帖子圖片
@@ -232,7 +232,7 @@
 
     function callback() { // 监听元素子节点变化，然后添加节点
       const imgzoom = document.querySelector("#imgzoom");
-      if (imgzoom.querySelector(".y")) { // 按钮也是延迟加载，监听是否有 .y
+      if (imgzoom && imgzoom.querySelector(".y")) { // 按钮也是延迟加载，监听是否有 .y
         observer.disconnect(); // 断开监听
         addAutoPlay(); // 添加按钮
       } else {
