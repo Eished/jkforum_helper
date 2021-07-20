@@ -648,6 +648,8 @@
         newFid();
       }
     }
+    newFid(); // 启动
+
     // 回帖变量随即范围限制
     let start = 0;
     if (replyLen == user.fastReply.length || replyLen == user.userReplyMessage.length) { // 判断起始位置
@@ -693,8 +695,6 @@
       GM_setValue(user.username, user);
       messageBox(`${fid}：任务列表成功添加 ${count} 贴！`, 10000);
     }
-
-    newFid(); // 启动
   };
 
   async function replyOrThk(_this, type = 'reply') { // 回帖函数
@@ -1119,10 +1119,10 @@
   }
 
   // 油猴菜单开关
-  GM_registerMenuCommand("加载原图开关", swRePic);
-  GM_registerMenuCommand("自动购买开关", swPay);
-  GM_registerMenuCommand("自动感谢开关", swThk);
-  GM_registerMenuCommand("检查更新", update);
+  GM_registerMenuCommand("🔎 加载原图开关", swRePic);
+  GM_registerMenuCommand("💰 自动购买开关", swPay);
+  GM_registerMenuCommand("❤ 自动感谢开关", swThk);
+  GM_registerMenuCommand("🛠 检查更新", update);
 
   function swRePic() {
     if (user.autoRePicSw === 1) {
