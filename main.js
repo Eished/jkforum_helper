@@ -581,18 +581,24 @@
       forumPage = document.querySelector('#inp_page').value;
     }
     if (reg.test(forumPage)) { // 如果输入了正确地址则进行批量处理
-      messageBox('正在添加：' + forumPage);
       user.page = forumPage;
       GM_setValue(user.username, user);
       let pageFrom = parseInt(forumPage.split('-')[1]); // 获取起点页码
       const pageEnd = parseInt(forumPage.split('-')[2]); // 获取终点页码
       const fid = forumPage.split('-')[0]; // 获取版块代码
 
+      if (pageFrom > pageEnd) {
+        messageBox("页码错误：起点页不能大于终点页！");
+        return;
+      }
+      messageBox('正在添加：' + forumPage);
+
       let replyLen = chooceReply(); //如果输入了值则使用用户值，如果没有则使用默认值；没有默认值则返回错误
       if (replyLen <= 0) {
         messageBox('获取回帖内容失败！');
         return "获取回帖内容失败！";
       };
+
 
       while (pageFrom <= pageEnd) {
         let currentHref = 'https://www.jkforum.net/forum-' + fid + '-' + pageFrom + '.html'; //生成帖子列表地址
@@ -709,7 +715,7 @@
     } else {
       messageBox(type + "：开始感谢...");
     }
-    let mesId = ''; // 清除永久消息id
+    let mesId, mesIdRep, mesIdThk; // 清除永久消息id
 
     const video = genVideo(); //需要视频时再加载视频，提高性能
     document.querySelector('body').appendChild(video); //添加视频到指定位置
@@ -727,9 +733,9 @@
       let fidRepIndex = elementForum.fidRepIndex; // 上次回复位置
       let fidThkIndex = elementForum.fidThkIndex; // 上次感谢位置
       if (type == 'reply') {
-        messageBox(fid + "-版块，当前位置：" + fidRepIndex + " ，总数：" + elementForum.fidthreads.length + "，总计时间：" + (elementForum.fidTime / 1000 / 60).toFixed(1) + " 分钟时间", elementForum.fidTime);
+        mesIdRep = messageBox(fid + "-版块，当前位置：" + fidRepIndex + " ，总数：" + elementForum.fidthreads.length + "，总计时间：" + (elementForum.fidTime / 1000 / 60).toFixed(1) + " 分钟时间", "none");
       } else if (type == 'thk') {
-        messageBox(fid + "-版块，当前位置：" + fidThkIndex + " ，总数：" + elementForum.fidthreads.length);
+        mesIdThk = messageBox(fid + "-版块，当前位置：" + fidThkIndex + " ，总数：" + elementForum.fidthreads.length, "none");
       }
       while ((elementForum.fidthreads.length > fidRepIndex && type == 'reply') || (elementForum.fidthreads.length > fidThkIndex && type == 'thk')) // 分别处理感谢和回帖 
       {
@@ -813,8 +819,10 @@
       }
       if (type == 'thk') {
         thkFidIndex++; // 翻页
+        removeMessage(mesIdThk);
       } else if (type == 'reply') {
         fidIndex++; // 翻页
+        removeMessage(mesIdRep);
         messageBox(fid + "：版块回帖完成！");
       }
       GM_setValue(user.username, user);
