@@ -19,6 +19,8 @@
 // @require      https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js
 // @require      https://cdn.jsdelivr.net/npm/jszip@3.6.0/dist/jszip.min.js
 // @connect      mymypic.net
+// @connect      greasyfork.org
+// @connect      jsdelivr.net
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_notification
@@ -26,7 +28,8 @@
 // @grant        GM_addStyle
 // @grant        GM_xmlhttpRequest
 // @grant        GM_addElement
-// @grant        GM_download
+// @grant        GM_registerMenuCommand
+// @grant        GM_openInTab
 // ==/UserScript==
 
 (async function () {
@@ -1114,6 +1117,61 @@
     video.append(source);
     return video;
   }
+
+  // 油猴菜单开关
+  GM_registerMenuCommand("加载原图开关", swRePic);
+  GM_registerMenuCommand("自动购买开关", swPay);
+  GM_registerMenuCommand("自动感谢开关", swThk);
+  GM_registerMenuCommand("检查更新", update);
+
+  function swRePic() {
+    if (user.autoRePicSw === 1) {
+      user.autoRePicSw = 0;
+      GM_setValue(user.username, user);
+      messageBox("已关闭加载原图");
+    } else {
+      user.autoRePicSw = 1;
+      GM_setValue(user.username, user);
+      messageBox("已开启加载原图");
+    }
+  }
+
+  function swPay() {
+    if (user.autoPaySw === 1) {
+      user.autoPaySw = 0;
+      GM_setValue(user.username, user);
+      messageBox("已关闭自动购买");
+    } else {
+      user.autoPaySw = 1;
+      GM_setValue(user.username, user);
+      messageBox("已开启自动购买");
+    }
+  }
+
+  function swThk() {
+    if (user.autoThkSw === 1) {
+      user.autoThkSw = 0;
+      GM_setValue(user.username, user);
+      messageBox("已关闭自动感谢");
+    } else {
+      user.autoThkSw = 1;
+      GM_setValue(user.username, user);
+      messageBox("已开启自动感谢");
+    }
+  }
+
+  async function update() {
+    messageBox("正在检查更新...")
+    const data = await getData(`https://greasyfork.org/zh-CN/scripts/427246`);
+    let version = data.getElementsByClassName("script-show-version")[1].querySelector("span").innerHTML;
+    console.log(data, version);
+    if (user.version != version) {
+      GM_openInTab(`https://greasyfork.org/scripts/427246-jkforum-%E5%8A%A9%E6%89%8B/code/JKForum%20%E5%8A%A9%E6%89%8B.user.js`);
+    } else {
+      messageBox("已是最新版本！");
+    }
+  }
+
   // 没有登录则退出
   if (!document.querySelector('.listmenu li a')) {
     return;
