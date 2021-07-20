@@ -5,7 +5,7 @@
 // @name:ja      JKForum 助手
 // @name:ko      JKForum 조수
 // @namespace    https://github.com/Eished/jkforum_helper
-// @version      0.5.6
+// @version      0.5.7
 // @description        捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动播放图片、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片
 // @description:en     JKForum Helper: Auto-sign-in, timed sign-in, auto-thank you, auto-load original image, auto-play image, auto-pay to buy theme post, auto-complete voting task, optimize browsing experience, one-click bulk reply/thank you, one-click package to download post image
 // @description:zh-TW  捷克論壇助手：自動簽到、定時簽到、自動感謝、自動加載原圖、自動播放圖片、自動支付購買主題貼、自動完成投票任務，優化瀏覽體驗，一鍵批量回帖/感謝，一鍵打包下載帖子圖片
@@ -613,6 +613,7 @@
       messageBox('请输入回帖列表页码，格式：版块代码-起点页-终点页 ；例如：640-1-2 ；版块代码见版块URL中间数字：forum-640-1', 10000);
     }
   }
+
   // 添加任务列表
   function setThreadsTask(htmlData, fid, replyLen) {
     //帖子类名 40个a标签数组 
@@ -648,19 +649,17 @@
         newFid();
       }
     }
-    newFid(); // 启动
-
-    // 回帖变量随即范围限制
-    let start = 0;
-    if (replyLen == user.fastReply.length || replyLen == user.userReplyMessage.length) { // 判断起始位置
-    } else {
-      start = user.userReplyMessage.length - replyLen; // 用户数组长-增加的数据长=起始位置；
-      replyLen = user.userReplyMessage.length; // 结束位置
-    }
 
     function addThrInfo(elem) {
+      // 回帖变量随即范围限制
+      let start = 0;
+      if (replyLen == user.fastReply.length || replyLen == user.userReplyMessage.length) { // 判断起始位置
+      } else {
+        start = user.userReplyMessage.length - replyLen; // 用户数组长-增加的数据长=起始位置；
+        replyLen = user.userReplyMessage.length; // 结束位置
+      }
+      let count = 0; // 贴数统计
       // 遍历去除回帖用户
-      let count = 0;
       for (let i = 0; i < cites.length; i += 2) {
         // 加入数组
         const touser = cites[i].innerHTML;
@@ -695,6 +694,8 @@
       GM_setValue(user.username, user);
       messageBox(`${fid}：任务列表成功添加 ${count} 贴！`, 10000);
     }
+
+    newFid(); // 启动
   };
 
   async function replyOrThk(_this, type = 'reply') { // 回帖函数
