@@ -337,15 +337,8 @@
   }
 
   // 添加GUI
-  function addBtns() {
-    // 增加 visited 样式，图片模式已阅的帖子变灰色 
-    GM_addStyle(`.xw0 a:visited {color: grey;}`);
-    if (window.location.href.match('/forum-') || window.location.href.match('/type-') || window.location.href.match('mod=forum')) { // 去掉高亮颜色标题
-      document.querySelectorAll('[style="color: #2B65B7"]').forEach((e) => {
-        e.style = '';
-      })
-    }
-
+  function addDom() {
+    const WLHerf = location.href;
     // 消息盒子
     function genDiv() {
       let b = document.createElement('div'); //创建类型为div的DOM对象
@@ -358,43 +351,75 @@
     const status_loginned = document.querySelector('.status_loginned');
     const mnoutbox = document.querySelectorAll('.mnoutbox');
 
-    // 在签到页面激活 定时签到
-    if (location.href.match(`id=dsu_paulsign:sign`)) {
-      let btn = genButton('定时签到', timeControl); //设置名称和绑定函数
-      status_loginned.insertBefore(btn, mnoutbox[1]); //添加按钮到指定位置
-      const video = genVideo();
-      status_loginned.insertBefore(video, mnoutbox[1]); //添加视频到指定位置
-    }
+    /* 
+    1. 先判断是否在帖子页，是则添加并退出
+    2. 是否在版块页，是则添加并退出
+    3. 判断是否在首页，是则添加并退出
+    */
+    const reg = /.+forum\.php$/; // 正则判断是否是首页
+    switch (true) {
+      case WLHerf.includes('thread'): {
+        // 下载 按钮
+        const repBtn = genButton('下载图片', downloadImgs); //设置名称和绑定函数
+        status_loginned.insertBefore(repBtn, mnoutbox[1]); //添加按钮到指定位置
+        break;
+      }
+      case WLHerf.includes('id=dsu_paulsign:sign'): {
+        // 定时签到按钮
+        const btn = genButton('定时签到', timeControl); //设置名称和绑定函数
+        status_loginned.insertBefore(btn, mnoutbox[1]); //添加按钮到指定位置
+        break;
+      }
+      case (WLHerf.includes('/forum-') || WLHerf.includes('/type-')): { //  || WLHerf.includes('mod=forum') 图片模式只有一个页面，不需要
+        // 增加 visited 样式，图片模式已阅的帖子变灰色 
+        GM_addStyle(`.xw0 a:visited {color: grey;}`);
+        // 去掉高亮标题
+        if (document.querySelector('[style="color: #2B65B7"]')) {
+          document.querySelectorAll('[style="color: #2B65B7"]').forEach((e) => {
+            e.style = '';
+          })
+        }
 
+        // 回帖输入框
+        const input = genElem('textarea', 'inpreply', 1, 20);
+        status_loginned.insertBefore(input, mnoutbox[1]); //添加文本域到指定位置
+        // 感谢 按钮
+        const thkBtn = genButton('添加本页', thankOnePage); //设置名称和绑定函数
+        status_loginned.insertBefore(thkBtn, mnoutbox[1]); //添加按钮到指定位置
+        break;
+      }
+      case reg.test(WLHerf): {
+        // 一次性添加，避免多次渲染
+        const div = document.createElement("div");
+        div.style.cssText = `float:left;`;
+        div.className = "mnoutbox";
 
-    if (window.location.href.match('/forum-')) {
-      // 回帖输入框
-      const input = genElem('textarea', 'inpreply', 1, 20);
-      status_loginned.insertBefore(input, mnoutbox[1]); //添加文本域到指定位置
-      // 感谢 按钮
-      const thkBtn = genButton('添加本页', thankOnePage); //设置名称和绑定函数
-      status_loginned.insertBefore(thkBtn, mnoutbox[1]); //添加按钮到指定位置
-    } else if (location.href == `https://www.jkforum.net/forum.php`) { //在首页激活批量感谢功能
-      // 回帖 按钮
-      const repBtn = genButton('回帖', replyBtn); //设置名称和绑定函数
-      status_loginned.insertBefore(repBtn, mnoutbox[1]); //添加按钮到指定位置
-      // 感谢 按钮
-      const thankBtn = genButton('感谢', thkBtn); //设置名称和绑定函数
-      status_loginned.insertBefore(thankBtn, mnoutbox[1]); //添加按钮到指定位置  
-      // 回帖输入框
-      const input = genElem('textarea', 'inpreply', 1, 20);
-      status_loginned.insertBefore(input, mnoutbox[1]); //添加文本域到指定位置  
-      // 页码输入框
-      const page = genInp('input', 'inp_page');
-      status_loginned.insertBefore(page, mnoutbox[1]); //添加输入框到指定位置
-      // 批量感谢/回帖
-      const btn = genButton('添加任务', thankBatch); //设置名称和绑定函数
-      status_loginned.insertBefore(btn, mnoutbox[1]); //添加按钮到指定位置
-    } else if (window.location.href.match('thread')) {
-      // 回帖 按钮
-      const repBtn = genButton('下载图片', downloadImgs); //设置名称和绑定函数
-      status_loginned.insertBefore(repBtn, mnoutbox[1]); //添加按钮到指定位置
+        // 回帖 按钮
+        const repBtn = genButton('回帖', replyBtn); //设置名称和绑定函数
+        div.append(repBtn);
 
+        // 感谢 按钮
+        const thankBtn = genButton('感谢', thkBtn); //设置名称和绑定函数
+        div.append(thankBtn);
+
+        // 回帖输入框
+        const input = genElem('textarea', 'inpreply', 1, 20);
+        div.append(input); //添加文本域到指定位置  
+
+        // 页码输入框
+        const page = genInp('input', 'inp_page');
+        div.append(page); //添加输入框到指定位置
+
+        // 添加任务
+        const btn = genButton('添加任务', thankBatch); //设置名称和绑定函数
+        div.append(btn);
+
+        status_loginned.insertBefore(div, mnoutbox[1]); //添加按钮到指定位置
+        break;
+      }
+
+      default:
+        break;
     }
   };
 
@@ -414,10 +439,14 @@
   function timeControl() {
     const _this = this;
     const signtime = user.signtime; // 设定签到时间
+    let msId1, msId2;
     async function control() {
       const now = new NowTime(); // 获取当前时间，到秒
       if (now.seconds == signtime) {
-        clearInterval(_this.timer);
+        clearInterval(_this.timer); // _this.timer=1 未知原因
+        _this.timer = 0;
+        removeMessage(msId1);
+        removeMessage(msId2);
         messageBox('执行中....');
         for (let i = 0; i < user.signNum; i++) { //重试次数
           sign();
@@ -425,22 +454,21 @@
           await waitFor(user.interTime); //重试间隔
         }
       } else {
-        console.log('时间没有到：', signtime, '目前时间：', now.seconds);
+        messageBox('时间没有到：' + signtime + '，目前时间：' + now.seconds, 400);
       }
     }
     if (!this.timer) { // 防重复点击
-      document.querySelector('#video1').play(); // 播放视频，防止休眠
-      if (!document.querySelector('#video1').paused) {
-        const date = new Date()
-        const holdTime = date.getTime();
-        // 1000*60*60*24
-        const hold = ((1000 * 60 * 60) - holdTime % (1000 * 60 * 60)); //通知持续时间，1小时-已运行分钟
-        messageBox('防止休眠启动，请保持本页处于激活状态，请勿遮挡、最小化本窗口以及全屏运行其它应用！', hold);
-        messageBox('定时签到中，请勿退出...', hold);
-      } else {
-        console.log(document.querySelector('#video1'));
-      }
-      this.timer = setInterval(control, 500);
+      const video = genVideo(); //需要视频时再加载视频，提高性能
+      document.querySelector('body').appendChild(video); //添加视频到指定位置
+      video.addEventListener("canplaythrough", videoPlay); // 加载完，开始播放 // 必须用此语法才能在后面移除事件
+
+      this.timer = setInterval(control, 500); // 运行自动签到
+
+      function videoPlay() { // 播放视频，防止休眠
+        video.removeEventListener("canplaythrough", videoPlay, false); // 有循环触发的bug，移除事件监听
+        msId1 = messageBox('防止休眠启动，请保持本页处于激活状态，请勿遮挡、最小化本窗口以及全屏运行其它应用！', "none");
+        msId2 = messageBox('定时签到中，请勿退出...', "none");
+      };
     }
   }
 
@@ -541,7 +569,7 @@
     thankBatch(`${fid}-${page}-${page}`); // 使用批量感谢
   }
 
-  async function thankBatch(onePage) {
+  async function thankBatch(onePage = 0) {
     const reg = new RegExp(/^\d+-\d+-\d+$/);
     let forumPage = '';
     if (reg.test(onePage)) { // 如果输入了正确地址单页
@@ -557,9 +585,6 @@
       const pageEnd = parseInt(forumPage.split('-')[2]); // 获取终点页码
       const fid = forumPage.split('-')[0]; // 获取版块代码
 
-      await getData('https://www.jkforum.net/forum.php?mod=forumdisplay&fid=' + fid + '&forumdefstyle=yes'); // 切换到列表模式，同步请求。
-      messageBox('已切换到列表模式');
-
       let replyLen = chooceReply(); //如果输入了值则使用用户值，如果没有则使用默认值；没有默认值则返回错误
       if (replyLen <= 0) {
         messageBox('获取回帖内容失败！');
@@ -569,7 +594,15 @@
       while (pageFrom <= pageEnd) {
         let currentHref = 'https://www.jkforum.net/forum-' + fid + '-' + pageFrom + '.html'; //生成帖子列表地址
         messageBox('当前地址：' + currentHref + '页码：' + pageFrom);
-        const data = await getData(currentHref);
+        let data = await getData(currentHref);
+
+        // 判断是否需要切换到列表模式。
+        while (data.querySelector(`[class="chked"]`)) {
+          await getData('https://www.jkforum.net/forum.php?mod=forumdisplay&fid=' + fid + '&forumdefstyle=yes'); // 切换到列表模式，同步请求。
+          messageBox('已切换到列表模式');
+          data = await getData(currentHref);
+        }
+        // 添加回帖任务
         setThreadsTask(data, fid, replyLen); // 设置任务列表
         pageFrom++;
       }
@@ -672,15 +705,17 @@
     } else {
       messageBox(type + "：开始感谢...");
     }
+    let mesId = ''; // 清除永久消息id
+
     const video = genVideo(); //需要视频时再加载视频，提高性能
     document.querySelector('body').appendChild(video); //添加视频到指定位置
-    document.querySelector('#video1').play(); // 播放视频，防止休眠
-    let mesId = ''; // 清除永久消息id
-    if (!document.querySelector('#video1').paused) {
+    video.addEventListener("canplaythrough", videoPlay); // 加载完，开始播放 // 必须用此语法才能在后面移除事件
+
+    function videoPlay() { // 播放视频，防止休眠
+      video.removeEventListener("canplaythrough", videoPlay, false); // 有循环触发的bug，移除事件监听
       mesId = messageBox('防止休眠启动，请保持本页处于激活状态，请勿遮挡、最小化本窗口以及全屏运行其它应用！', 'none');
-    } else {
-      messageBox('防止休眠启动失败');
-    }
+    };
+
     while ((type == 'reply' && fidIndex < user.replyThreads.length) || (type == 'thk' && thkFidIndex < user.replyThreads.length)) // 分别处理感谢和回帖
     {
       const elementForum = user.replyThreads[(type == 'reply') ? fidIndex : thkFidIndex]
@@ -1083,7 +1118,7 @@
   if (!document.querySelector('.listmenu li a')) {
     return;
   }
-  addBtns(); // 添加DOM
+  addDom(); // 添加DOM
   const user = await creatUser(); // 添加用户, 全局变量，每个页面只获取一次
   launch(); // 启动自动签到、投票、加载原图等
 })();
