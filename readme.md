@@ -17,13 +17,14 @@
    - [x] 一键添加当前页面的帖子到任务列表，自动跳过已添加贴和已回复贴；
    - [x] 输入 `版块-页码起点-页码终点`，大批量添加任务，页码存储；
    - [x] 自动启动防止浏览器降频休眠功能。
-- [x] **自动加载原图**，移除图片上的下载提示；可关闭；
-- [x] **自动感谢** `感谢可见` 的贴，自动感谢浏览过的贴；可关闭；
-- [x] **自动支付**购买主题 `购买可见` 的贴；可关闭；
-- [x] 图片模式下，移除标题高亮；**已阅的帖子，标题变成灰色**，防止重复点击。
-- [x] 版本更新时保留用户历史数据。
+- [x] **自动加载原图**，移除图片上的下载提示；
+- [x] **自动感谢** ` 感谢可见` 的贴，自动感谢浏览的贴；
+- [x] **自动支付**购买主题 `购买可见` 的贴；
+- [x] 移除标题高亮，**已阅的帖子，标题变成灰色**，防止重复点击。
+- [x] 版本更新时保留用户数据。
 - [x] **一键打包下载帖子图片**。
 - [x] **自动播放图片。**
+- [x] **油猴菜单栏**：可关闭不需要的功能。
 - [ ] 任务列表功能，用于管理批量回帖、感谢任务。
 
 ## 使用说明：
@@ -33,6 +34,14 @@
   - 只兼容油猴 Tampermonkey 。
   - 图片不显示、下载返回404时，需更换代理。
   
+- 【**油猴菜单栏**】
+
+   - 点击浏览器扩展 油猴插件图标 即可看到
+
+     ![pic_46.png](https://github.com/Eished/jkforum_helper/raw/main/readme.assets/pic_46.png)
+
+     
+
 - 【**定时签到**】按钮：
   
   - 在[签到页面](https://www.jkforum.net/plugin/?id=dsu_paulsign:sign)找到【定时签到】按钮；
@@ -86,15 +95,7 @@
 
    - 离开页面自动暂停播放。
 
-   ![图片_36](https://github.com/Eished/jkforum_helper/raw/main/readme.assets/%E5%9B%BE%E7%89%87_36.jpg)
-
-   
-
-- 【**油猴菜单栏**】
-
-   - 点击浏览器扩展 油猴插件图标 即可看到
-
-   ![pic_46.png](https://github.com/Eished/jkforum_helper/raw/main/readme.assets/pic_46.png)
+     ![图片_36](https://github.com/Eished/jkforum_helper/raw/main/readme.assets/%E5%9B%BE%E7%89%87_36.jpg)
 
    
 
@@ -102,7 +103,7 @@
 
   - 先打开网页运行一次，就可以在脚本看到存储页面：
 
-  ![image-20210611163109214](https://github.com/Eished/jkforum_helper/raw/main/readme.assets/image-20210611163109214.png)
+    ![image-20210611163109214](https://github.com/Eished/jkforum_helper/raw/main/readme.assets/image-20210611163109214.png)
 
   - 可自定义的值：
 
@@ -127,7 +128,7 @@
     fastReply: [], // 保存的快速回复，快速回帖内容
     replyThreads: [], // 回帖任务数据
     ```
-    
+  
   - 如果参数改错了或出现异常，删掉 `"version": "x.x.x",` 和错误参数右边双引号内的内容，运行脚本会自动初始化缺失的参数。
   
   
