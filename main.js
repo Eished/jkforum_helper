@@ -1136,7 +1136,7 @@
     video.loop = 'true';
     video.autoplay = 'true';
     let source = document.createElement('source');
-    source.src = 'https://raw.githubusercontent.com/Eished/jkforum_helper/main/video/light.mp4';
+    source.src = 'https://cdn.jsdelivr.net/gh/eished/jkforum_helper@0.5.8/video/light.mp4'; // cdn 加速
     source.type = "video/mp4"
     video.append(source);
     return video;
