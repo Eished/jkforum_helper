@@ -5,11 +5,11 @@
 // @name:ja      JKForum 助手
 // @name:ko      JKForum 조수
 // @namespace    https://github.com/Eished/jkforum_helper
-// @version      0.5.7
+// @version      0.5.8
 // @description        捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动播放图片、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片
 // @description:en     JKForum Helper: Auto-sign-in, timed sign-in, auto-thank you, auto-load original image, auto-play image, auto-pay to buy theme post, auto-complete voting task, optimize browsing experience, one-click bulk reply/thank you, one-click package to download post image
 // @description:zh-TW  捷克論壇助手：自動簽到、定時簽到、自動感謝、自動加載原圖、自動播放圖片、自動支付購買主題貼、自動完成投票任務，優化瀏覽體驗，一鍵批量回帖/感謝，一鍵打包下載帖子圖片
-// @description:ja     自動チェックイン、時限式チェックイン、オートサンキュー、オリジナル画像の自動読み込み、画像の自動再生、トピック投稿の自動支払い、ポールタスクの自動完了、ブラウジングエクスペリエンスの最適化、ワンクリックでの一括返信/サンキュー、ワンクリックでの投稿画像のパッケージダウンロード
+// @description:ja     チェコ語フォーラム助手：自動チェックイン、時限式チェックイン、オートサンキュー、オリジナル画像の自動読み込み、画像の自動再生、トピック投稿の自動支払い、ポールタスクの自動完了、ブラウジングエクスペリエンスの最適化、ワンクリックでの一括返信/サンキュー、ワンクリックでの投稿画像のパッケージダウンロード
 // @description:ko     체코 포럼 조수: 자동 로그인, 정기 로그인, 자동 감사, 원본 사진 자동로드, 테마 스티커 구매 자동 결제, 투표 작업 자동 완료, 최적화 된 브라우징 경험, 원 클릭 일괄 회신 / 감사, 원 클릭 포스트 사진의 패키지 다운로드 클릭다운로드하십시오.
 // @author       Eished
 // @license      AGPL-3.0
@@ -186,7 +186,7 @@
 
   // 加载原图，启动自动感谢、自动支付、自动播放
   async function rePic() {
-    if (window.location.href.match('thread')) {
+    if (location.href.includes('thread')) {
       if (user.autoThkSw) { // 自动感谢当前贴开关
         await thankThread(); // 自动感谢当前贴
       }
@@ -198,12 +198,12 @@
         for (let i = 0; i < tfImg.length; i++) { //遍历图片列表
           const img = tfImg[i]
           img.setAttribute('onmouseover', null); // 去掉下载原图提示
-          if (img.src.match('.thumb.')) { // 去掉缩略图 加载部分
+          if (img.src.includes('.thumb.')) { // 去掉缩略图 加载部分
             img.src = img.getAttribute('file').split('.thumb.')[0];
             messageBox('加载原图成功', 1000)
             console.log('thumb：', img.src);
-          } else if (img.src.match('static/image/common/none.gif') && img.getAttribute('file')) { // 懒加载部分
-            if (img.getAttribute('file').match(".thumb.")) {
+          } else if (img.src.includes('static/image/common/none.gif') && img.getAttribute('file')) { // 懒加载部分
+            if (img.getAttribute('file').includes(".thumb.")) {
               img.setAttribute('file', img.getAttribute('file').split('.thumb.')[0]); // 网站自带forum_viewthread.js  attachimgshow(pid, onlyinpost) 从file延迟加载
               messageBox('加载原图成功', 1000)
               console.log('none.gif:', img.getAttribute('file'));
@@ -295,7 +295,10 @@
     if (document.querySelector('.viewpay')) {
       const url = user.payUrl;
       const referer = location.href;
-      const tid = referer.split('-')[1];
+      let tid = referer.split('-')[1]; // 不同链接地址不同
+      if (tid == undefined) {
+        tid = new URLSearchParams(referer).get("tid"); // 用于获取分类贴链接下的 tid
+      }
       const pData = `formhash=${user.formhash}&referer=${turnUrl(referer)}&tid=${tid}&handlekey=pay`
       const stringOrHtml = await postDataAs(url, pData);
       if (checkHtml(stringOrHtml)) { // 确认html
@@ -566,13 +569,17 @@
   }
 
   function thankOnePage() {
-    const currentHref = window.location.href; // 获取当前页地址
+    const currentHref = location.href; // 获取当前页地址
     const fid = currentHref.split('-')[1]; // 获取板块fid
     const page = currentHref.split('-')[2].split('.')[0]; // 获取页码
-    thankBatch(`${fid}-${page}-${page}`); // 使用批量感谢
+    if (currentHref.includes("type-")) {
+      thankBatch(`${fid}-${page}-${page}`, "type"); // 使用批量感谢
+    } else {
+      thankBatch(`${fid}-${page}-${page}`); // 使用批量感谢
+    }
   }
 
-  async function thankBatch(onePage = 0) {
+  async function thankBatch(onePage = 0, type = null) {
     const reg = new RegExp(/^\d+-\d+-\d+$/);
     let forumPage = '';
     if (reg.test(onePage)) { // 如果输入了正确地址单页
@@ -601,7 +608,12 @@
 
 
       while (pageFrom <= pageEnd) {
-        let currentHref = 'https://www.jkforum.net/forum-' + fid + '-' + pageFrom + '.html'; //生成帖子列表地址
+        let currentHref = '';
+        if (type != null) {
+          currentHref = 'https://www.jkforum.net/' + type + '-' + fid + '-' + pageFrom + '.html'; //生成帖子列表地址
+        } else {
+          currentHref = 'https://www.jkforum.net/forum-' + fid + '-' + pageFrom + '.html'; //生成帖子列表地址
+        }
         messageBox('当前地址：' + currentHref + '页码：' + pageFrom);
         let data = await getData(currentHref);
 
@@ -671,7 +683,10 @@
         const touser = cites[i].innerHTML;
         const touseruid = cites[i].href.split('uid=')[1]; // href="home.php?mod=space&uid=1123445"
         const href = hrefs[i / 2].href;
-        const tid = href.split('-')[1]; // 获取帖子ID
+        let tid = href.split('-')[1]; // 获取帖子ID
+        if (tid == undefined) { // 分类页tid不同
+          tid = new URLSearchParams(href).get("tid"); // 用于获取分类贴链接下的 tid
+        }
         let noSkip = true; // 跳过标识
         for (let index = 0; index < elem.fidthreads.length; index++) { // 确保帖子的唯一性
           const element = elem.fidthreads[index];
@@ -857,7 +872,7 @@
     if (pcbImg.length) {
       for (let i = 0; i < pcbImg.length; i++) { //遍历图片列表
         let img = pcbImg[i];
-        if (img.title && img.getAttribute('file') && img.getAttribute('file').match('mymypic.net')) {
+        if (img.title && img.getAttribute('file') && img.getAttribute('file').includes('mymypic.net')) {
           const reg = /\./g;
           if (!reg.test(img.title)) { // 文件格式校验
             if (reg.test(img.alt)) { // 文件格式修复
@@ -870,7 +885,7 @@
           }
           imgsTitles.push(img.title); // 保存下载名称到数组
           imgsUrl.push(img.getAttribute('file').split('.thumb.')[0]); // 保存下载链接到数组
-        } else if (!img.getAttribute('file') && img.src.match('mymypic.net')) {
+        } else if (!img.getAttribute('file') && img.src.includes('mymypic.net')) {
           const nameSrc = img.src.split('/');
           imgsTitles.push(nameSrc[nameSrc.length - 1]); // 保存下载名称到数组
           imgsUrl.push(img.src.split('.thumb.')[0]); // 保存下载链接到数组
@@ -1173,7 +1188,6 @@
     messageBox("正在检查更新...")
     const data = await getData(`https://greasyfork.org/zh-CN/scripts/427246`);
     let version = data.getElementsByClassName("script-show-version")[1].querySelector("span").innerHTML;
-    console.log(data, version);
     if (user.version != version) {
       GM_openInTab(`https://greasyfork.org/scripts/427246-jkforum-%E5%8A%A9%E6%89%8B/code/JKForum%20%E5%8A%A9%E6%89%8B.user.js`);
     } else {
