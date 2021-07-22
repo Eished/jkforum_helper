@@ -501,14 +501,6 @@
     }
   }
 
-  /**
-   * 生成不重复的ID
-   * @param { Number } randomLength 
-   */
-  function getUuiD(randomLength) {
-    return Number(Math.random().toString().substr(2, randomLength) + Date.now()).toString(36)
-  }
-
   /* 
   消息通知类：
   1.传参默认值：消息，持续时间，重要性
@@ -1138,6 +1130,14 @@
     return target;
   }
 
+  /**
+   * 生成不重复的ID
+   * @param { Number } randomLength 
+   */
+  function getUuiD(randomLength) {
+    return Number(Math.random().toString().substr(2, randomLength) + Date.now()).toString(36)
+  }
+
   function genButton(text, foo, id) {
     let b = document.createElement('button'); //创建类型为button的DOM对象
     b.textContent = text; //修改内部文本为text
@@ -1190,11 +1190,9 @@
   }
 
   function genBox(text) {
-    const timeId = 'a' + getUuiD(10); // 生成 id 
     const box = document.createElement('div');
     box.textContent = text; //修改内部文本为text
     box.style.cssText = 'width:100%;background-color:#64ce83;float:left;padding:5px 10px;margin-top:10px;border-radius:10px;color:#fff;    box-shadow: 0px 0px 1px 3px #ffffff;';
-    box.id = timeId;
     return box;
   }
 

@@ -40,7 +40,7 @@
 
    - 点击浏览器扩展 油猴插件图标 即可看到
 
-     ![pic_46.png](https://github.com/Eished/jkforum_helper/raw/main/readme.assets/pic_46.png)
+     ![pic_46.png](https://cdn.jsdelivr.net/gh/eished/jkforum_helper/readme.assets/pic_46.png)
 
      
 
@@ -97,7 +97,7 @@
 
    - 离开页面自动暂停播放。
 
-     ![图片_36](https://github.com/Eished/jkforum_helper/raw/main/readme.assets/%E5%9B%BE%E7%89%87_36.jpg)
+     ![图片_36](https://cdn.jsdelivr.net/gh/eished/jkforum_helper/readme.assets/%E5%9B%BE%E7%89%87_36.jpg)
 
    
 
@@ -105,7 +105,7 @@
 
   - 先打开网页运行一次，就可以在脚本看到存储页面：
 
-    ![image-20210611163109214](https://github.com/Eished/jkforum_helper/raw/main/readme.assets/image-20210611163109214.png)
+    ![image-20210611163109214](https://cdn.jsdelivr.net/gh/eished/jkforum_helper/readme.assets/image-20210611163109214.png)
 
   - 可自定义的值：
 
