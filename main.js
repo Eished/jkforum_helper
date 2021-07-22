@@ -1142,12 +1142,6 @@
     return video;
   }
 
-  // 油猴菜单开关
-  GM_registerMenuCommand("🔎 加载原图开关", swRePic);
-  GM_registerMenuCommand("💰 自动购买开关", swPay);
-  GM_registerMenuCommand("❤ 自动感谢开关", swThk);
-  GM_registerMenuCommand("🛠 检查更新", update);
-
   function swRePic() {
     if (user.autoRePicSw === 1) {
       user.autoRePicSw = 0;
@@ -1202,4 +1196,11 @@
   addDom(); // 添加DOM
   const user = await creatUser(); // 添加用户, 全局变量，每个页面只获取一次
   launch(); // 启动自动签到、投票、加载原图等
+
+  // 油猴菜单开关  // 必须在 user 后面调用，否则 user 还没初始化就绑定函数了
+  GM_registerMenuCommand("🔎 加载原图开关", swRePic);
+  GM_registerMenuCommand("💰 自动购买开关", swPay);
+  GM_registerMenuCommand("❤ 自动感谢开关", swThk);
+  GM_registerMenuCommand("🛠 检查更新", update);
+
 })();
