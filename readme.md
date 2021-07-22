@@ -2,7 +2,7 @@
 
 ## 自动签到、自动感谢、自动加载原图、自动播放图片、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片
 
-![JKFicon](readme.assets/JKFicon.png)
+![JKFicon64oval2](readme.assets/JKFicon64oval2.png)
 
 [安装地址](https://greasyfork.org/zh-CN/scripts/427246-jkforum-helper)：`https://greasyfork.org/zh-CN/scripts/427246-jkforum-helper`
 
