@@ -660,11 +660,12 @@
         new MessageBox("页码错误：起点页不能大于终点页！");
         return;
       }
-      new MessageBox('正在添加：' + forumPage);
+      const msId = new MessageBox('正在添加：' + forumPage, "none");
 
       let replyLen = chooceReply(); //如果输入了值则使用用户值，如果没有则使用默认值；没有默认值则返回错误
       if (replyLen <= 0) {
         new MessageBox('获取回帖内容失败！');
+        msId.removeMessage();
         return "获取回帖内容失败！";
       };
 
@@ -688,6 +689,7 @@
         setThreadsTask(data, fid, replyLen); // 设置任务列表
         pageFrom++;
       }
+      msId.removeMessage();
     } else {
       new MessageBox('请输入回帖列表页码，格式：版块代码-起点页-终点页 ；例如：640-1-2 ；版块代码见版块URL中间数字：forum-640-1', 10000);
     }
@@ -1006,7 +1008,7 @@
           _this.timer++;
         }
       }
-      if (err.length - 1 == _this.timer) {
+      if (err.length == _this.timer) {
         new MessageBox("全部图片下载失败！")
         return;
       }
