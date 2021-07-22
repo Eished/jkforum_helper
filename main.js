@@ -132,7 +132,7 @@
         sign(); // 签到
 
         await getData(user.applyVotedUrl); // 申请任务
-        new messageBox("申请投票任务执行成功！正在投票请勿退出页面...");
+        const msId = new messageBox("申请投票任务执行成功！正在投票请勿退出页面...", "none");
         // 投票请求链接
         const votedUrlParams = urlSearchParams({
           "id": "voted"
@@ -177,6 +177,7 @@
         } else {
           new messageBox(votedMessage); //其它情况直接输出
         }
+        msId.removeMessage();
         GM_setValue(user.username, user); //保存当天日// today 初始化
       }
     } else {
@@ -962,9 +963,12 @@
         }) // 逐个添加文件
         new messageBox(`第${index+1}张，文件名：${file_name}，大小：${parseInt(data.size / 1024)} Kb，下载完成！等待压缩...`);
       }).catch((err) => { // 移除消息；
-        const domParser = new DOMParser();
-        const xmlDoc = domParser.parseFromString(err, 'text/html');
-        new messageBox("请求错误：" + xmlDoc.body.innerHTML, 1000);
+        _this.timer = 0;
+        if (err.responseText) {
+          const domParser = new DOMParser();
+          const xmlDoc = domParser.parseFromString(err.responseText, 'text/html');
+          new messageBox("请求错误：" + xmlDoc.body.innerHTML, 1000);
+        }
         return -1;
       })
       promises.push(promise);
@@ -972,19 +976,18 @@
     Promise.all(promises).then((err) => {
       mesId.removeMessage(); // 移除永久消息
       _this.timer = 0;
-      if (err[err.length - 1] == -1) {
-        new messageBox("下载出错！")
-        return;
-      }
+      // if (err[err.length - 1] == -1) {
+      //   new messageBox("下载出错！")
+      //   return;
+      // }
       for (let i = 0; i < err.length; i++) {
         if (err[i] == -1) {
-          new messageBox("文件缺失！")
-          _this.timer = 1;
-          break;
+          // new messageBox("文件缺失！")
+          _this.timer++;
         }
       }
       if (_this.timer) {
-        if (confirm("检测到文件缺失，是否继续压缩？")) {
+        if (confirm(`检测到文件缺失 ${_this.timer} 张，是否继续压缩？`)) {
           _this.timer = 0;
         } else {
           _this.timer = 0;
@@ -1010,7 +1013,7 @@
           if (response.status == 200) {
             resolve(response.response);
           } else {
-            reject(response.responseText);
+            reject(response);
           }
         },
         onerror: function (error) {
@@ -1032,15 +1035,12 @@
         data: postData,
         responseType: type,
         onload: function (response) {
-          if (!response) {
-            if (response.status == 200) {
-              resolve(response.response);
-            } else {
-              new messageBox("请求错误：" + response.status);
-              reject(response.status);
-            }
+          if (response.status == 200) {
+            resolve(turnCdata(response.response));
+          } else {
+            new messageBox("请求错误：" + response.status);
+            reject(response.status);
           }
-          resolve(turnCdata(response.response));
         },
         onerror: function (error) {
           new messageBox("网络错误");
