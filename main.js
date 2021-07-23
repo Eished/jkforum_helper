@@ -1020,9 +1020,11 @@
           return;
         }
       }
+      const msSave = new MessageBox("正在压缩打包，大文件请耐心等待...", "none")
       zip.generateAsync({
         type: "blob"
       }).then(content => { // 生成二进制流
+        msSave.removeMessage();
         saveAs(content, `${folderName} [${data.length}P]`); // 利用file-saver保存文件，大文件需等待很久
       })
     })
