@@ -5,7 +5,7 @@
 // @name:ja      JKForum 助手
 // @name:ko      JKForum 조수
 // @namespace    https://github.com/Eished/jkforum_helper
-// @version      0.6.0
+// @version      0.6.1
 // @description        捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动播放图片、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片
 // @description:en     JKForum Helper: Auto-sign-in, timed sign-in, auto-thank you, auto-load original image, auto-play image, auto-pay to buy theme post, auto-complete voting task, optimize browsing experience, one-click bulk reply/thank you, one-click package to download post image
 // @description:zh-TW  捷克論壇助手：自動簽到、定時簽到、自動感謝、自動加載原圖、自動播放圖片、自動支付購買主題貼、自動完成投票任務，優化瀏覽體驗，一鍵批量回帖/感謝，一鍵打包下載帖子圖片
@@ -466,6 +466,7 @@
     // 初始化永久消息通知
     const msId1 = new MessageBox();
     const msId2 = new MessageBox();
+    const msIdTime = new MessageBox();
 
     async function control() {
       const now = new NowTime(); // 获取当前时间，到秒
@@ -475,30 +476,22 @@
         // 移除永久消息通知
         msId1.removeMessage();
         msId2.removeMessage();
-        new MessageBox('执行中....');
+        msIdTime.refreshMessage('执行中....');
         for (let i = 0; i < user.signNum; i++) { //重试次数
           sign();
-          new MessageBox('执行第' + (i + 1) + '次');
+          msIdTime.refreshMessage('执行第' + (i + 1) + '次');
           await waitFor(user.interTime); //重试间隔
         }
+        msIdTime.removeMessage();
       } else {
-        new MessageBox('时间没有到：' + signtime + '，目前时间：' + now.seconds, 400);
+        msIdTime.refreshMessage('时间没有到：' + signtime + '，目前时间：' + now.seconds);
       }
     }
     if (!this.timer) { // 防重复点击
-      const video = genVideo(); //需要视频时再加载视频，提高性能
-      document.querySelector('body').appendChild(video); //添加视频到指定位置
-      video.addEventListener("canplay", videoPlay); // 加载完，开始播放 // 必须用此语法才能在后面移除事件
-
-
-      function videoPlay() { // 播放视频，防止休眠
-        video.removeEventListener("canplay", videoPlay, false); // 有循环触发的bug，移除事件监听
-        // 显示永久消息通知
-        msId2.showMessage('定时签到中，请勿退出...', "none");
-        msId1.showMessage('防止休眠启动，请保持本页处于激活状态，请勿遮挡、最小化本窗口以及全屏运行其它应用！', "none");
-
-        _this.timer = setInterval(control, 500); // 运行自动签到
-      };
+      playVideo(msId1); // 防休眠
+      msId2.showMessage('定时签到中，请勿退出...', "none");
+      msIdTime.showMessage("时间提示：", "none"); // 占位消息，给刷新用
+      _this.timer = setInterval(control, 500); // 运行自动签到
     }
   }
 
@@ -545,6 +538,10 @@
         console.error("请移除上条消息后再调用！");
         return;
       }
+      this.text = text;
+      this.setTime = setTime;
+      this.important = important;
+
       const messageBox = document.querySelector('#messageBox'); // 消息插入位置
 
       switch (important) {
@@ -577,6 +574,16 @@
         setTimeout(() => {
           this.removeMessage();
         }, setTime);
+      }
+    }
+
+    refreshMessage(text) {
+      if (isNaN(this.setTime) && this.box != null) {
+        this.box.innerHTML = text;
+        console.log(text);
+      } else {
+        console.error("只有永久消息支持刷新内容", this.setTime);
+        return;
       }
     }
 
@@ -799,15 +806,7 @@
     const mesId = new MessageBox();
     const mesIdRep = new MessageBox();
     const mesIdThk = new MessageBox();
-
-    const video = genVideo(); //需要视频时再加载视频，提高性能
-    document.querySelector('body').appendChild(video); //添加视频到指定位置
-    video.addEventListener("canplay", videoPlay); // 加载完，开始播放 // 必须用此语法才能在后面移除事件
-
-    function videoPlay() { // 播放视频，防止休眠
-      video.removeEventListener("canplay", videoPlay, false); // 有循环触发的bug，移除事件监听
-      mesId.showMessage('防止休眠启动，请保持本页处于激活状态，请勿遮挡、最小化本窗口以及全屏运行其它应用！', 'none'); // 显示永久消息
-    };
+    playVideo(mesId); // 防休眠
 
     while ((type == 'reply' && fidIndex < user.replyThreads.length) || (type == 'thk' && thkFidIndex < user.replyThreads.length)) // 分别处理感谢和回帖
     {
@@ -1010,6 +1009,7 @@
     const zip = new JSZip();
     const promises = [];
     const mesId = new MessageBox(data.length + "张：开始下载...", "none"); // 永久消息
+    const mesIdP = new MessageBox("下载进度：", "none"); // 永久消息
     for (let index = 0; index < data.length; index++) {
       const item = data[index];
       const promise = await getData(item, "blob").then(data => { // 下载文件, 并存成ArrayBuffer对象
@@ -1017,20 +1017,20 @@
         zip.file(file_name, data, {
           binary: true
         }) // 逐个添加文件
-        new MessageBox(`第${index+1}张，文件名：${file_name}，大小：${parseInt(data.size / 1024)} Kb，下载完成！等待压缩...`);
+        mesIdP.refreshMessage(`第${index+1}张，文件名：${file_name}，大小：${parseInt(data.size / 1024)} Kb，下载完成！等待压缩...`);
       }).catch((err) => { // 移除消息；
         _this.timer = 0;
         if (err.responseText) {
           const domParser = new DOMParser();
           const xmlDoc = domParser.parseFromString(err.responseText, 'text/html');
-          new MessageBox("请求错误：" + xmlDoc.body.innerHTML, 1000);
+          mesIdP.refreshMessage(`第${index+1}张，请求错误：${xmlDoc.body.innerHTML}`);
         }
         return -1;
       })
       promises.push(promise);
     }
     Promise.all(promises).then((err) => {
-      mesId.removeMessage(); // 移除永久消息
+      mesIdP.removeMessage();
       _this.timer = 0;
       for (let i = 0; i < err.length; i++) {
         if (err[i] == -1) {
@@ -1040,6 +1040,8 @@
       }
       if (err.length == _this.timer) {
         new MessageBox("全部图片下载失败！")
+        mesId.removeMessage();
+        _this.timer = 0;
         return;
       }
       if (_this.timer) {
@@ -1047,14 +1049,15 @@
           _this.timer = 0;
         } else {
           _this.timer = 0;
+          mesId.removeMessage();
           return;
         }
       }
-      const msSave = new MessageBox("正在压缩打包，大文件请耐心等待...", "none")
+      mesId.refreshMessage("正在压缩打包，大文件请耐心等待...")
       zip.generateAsync({
         type: "blob"
       }).then(content => { // 生成二进制流
-        msSave.removeMessage();
+        mesId.removeMessage();
         saveAs(content, `${folderName} [${data.length}P]`); // 利用file-saver保存文件，大文件需等待很久
       })
     })
@@ -1245,6 +1248,35 @@
     source.type = "video/mp4"
     video.append(source);
     return video;
+  }
+
+  async function playVideo(msId) {
+    let p = 0;
+    const video = genVideo(); //需要视频时再加载视频，提高性能
+    document.querySelector('body').appendChild(video); //添加视频到指定位置
+    video.addEventListener("canplay", videoPlay); // 加载完，开始播放 // 必须用此语法才能在后面移除事件
+
+    function videoPlay() { // 播放视频，防止休眠
+      video.removeEventListener("canplay", videoPlay, false); // 有循环触发的bug，移除事件监听
+      // 显示永久消息通知
+      msId.showMessage('防止休眠启动，请保持本页处于激活状态，请勿遮挡、最小化本窗口以及全屏运行其它应用！', "none");
+      p = 99;
+    };
+
+    // 重试10次
+    while (true) {
+      await waitFor(5000);
+      if (p == 99) {
+        break;
+      } else if (p == 10) {
+        new MessageBox("防休眠启动失败！");
+        break;
+      } else {
+        console.log("第" + (p + 1) + "次重启防休眠");
+      }
+      video.load();
+      p++;
+    }
   }
 
   function genBox(text) {
