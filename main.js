@@ -384,6 +384,8 @@
         // 下载 按钮
         const repBtn = genButton('下载图片', downloadImgs); //设置名称和绑定函数
         status_loginned.insertBefore(repBtn, mnoutbox[1]); //添加按钮到指定位置
+        const noDisplayBtn = genButton('屏蔽图片', noDisplayPic); //设置名称和绑定函数
+        status_loginned.insertBefore(noDisplayBtn, mnoutbox[1]); //添加按钮到指定位置
         break;
       }
       case WLHerf.includes('id=dsu_paulsign:sign'): {
@@ -925,6 +927,32 @@
     return Math.floor(Math.random() * c + n);
   }
 
+  function noDisplayPic() {
+    const pcbImg = document.querySelectorAll('.pcb img'); // 所有帖子楼层的图片，逐个过滤
+    if (pcbImg.length) {
+      for (let i = 0; i < pcbImg.length; i++) { //遍历图片列表
+        const img = pcbImg[i];
+        // 前10张
+        if (img.title && img.getAttribute('file') && img.getAttribute('file').includes('mymypic.net')) {
+          img.src = "static/image/common/none.gif";
+          // new MessageBox("屏蔽图片成功");
+          // 懒加载部分
+          function callback() { // 监听元素子节点属性变化，然后屏蔽链接
+            if (img.src != "static/image/common/none.gif") {
+              observer.disconnect(); // 断开监听
+              img.src = "static/image/common/none.gif";
+              new MessageBox("屏蔽图片成功", 1000);
+            }
+          }
+          const observer = new MutationObserver(callback); // 建立监听器
+          observer.observe(img, { // 开始监听
+            attributes: true
+          })
+        }
+      }
+    }
+  }
+
   function downloadImgs() {
     if (this.timer > 0) { // 防重复点击
       return;
@@ -937,7 +965,7 @@
     const pcbImg = document.querySelectorAll('.pcb img'); // 所有帖子楼层的图片，逐个过滤
     if (pcbImg.length) {
       for (let i = 0; i < pcbImg.length; i++) { //遍历图片列表
-        let img = pcbImg[i];
+        const img = pcbImg[i];
         if (img.title && img.getAttribute('file') && img.getAttribute('file').includes('mymypic.net')) {
           const reg = /\./g;
           if (!reg.test(img.title)) { // 文件格式校验
@@ -949,6 +977,8 @@
               return;
             }
           }
+          const imgTitles = img.title.split(".");
+          img.title = `${imgTitles[imgTitles.length-2]}-${i+1}.${imgTitles[imgTitles.length-1]}`; // 标题 +i.jpg，防重名！
           imgsTitles.push(img.title); // 保存下载名称到数组
           imgsUrl.push(img.getAttribute('file').split('.thumb.')[0]); // 保存下载链接到数组
         } else if (!img.getAttribute('file') && img.src.includes('mymypic.net')) {
