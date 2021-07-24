@@ -135,64 +135,21 @@
   // 启动
   async function launch() {
     try {
-      rePic(); // 启动自动加载原图，自动感谢等；
-      if (user.username) { //验证是否登录 //天变动则签到
-        const now = new NowTime();
-        if (user.today != now.day) {
-          user.today = now.day;
-          sign(); // 签到
-
-          await getData(user.applyVotedUrl); // 申请任务
-          const msId = new MessageBox("申请投票任务执行成功！正在投票请勿退出页面...", "none");
-          // 投票请求链接
-          const votedUrlParams = urlSearchParams({
-            "id": "voted"
-          }).toString();
-          const htmlData = await getData(user.votedUrl + votedUrlParams);
-          const vidUrl = htmlData.querySelector('.voted a').href; // 找到链接
-          const vid = vidUrl.split('&')[2].split('=')[1]; // 纯数字// 分解链接
-
-          const hrefHtmlData = await getData(vidUrl);
-          const aidUrl = hrefHtmlData.querySelector('.hp_s_c a').href; // 找到链接
-          const aid = aidUrl.split('&')[2].split('=')[1]; // 纯数字// 分解链接
-          // 投票请求链接数据
-          const votedParams = urlSearchParams({
-            "id": "voted",
-            "ac": "dian",
-            "aid": aid,
-            "vid": vid,
-            "qr": "",
-            "inajax": 1,
-          }).toString();
-          // Post 数据
-          const votedParamsData = urlSearchParams({
-            "formhash": user.formhash,
-            "inajax": 1,
-            "handlekey": "dian",
-            "sid": 0,
-            "message": user.votedMessage,
-          }).toString();
-          // 投票
-          const votedMessage = await postDataAs(user.votedUrl + votedParams, votedParamsData);
-          if (checkHtml(votedMessage)) {
-            let info = '';
-            if (votedMessage.querySelector('.alert_info')) {
-              info = votedMessage.querySelector('.alert_info').innerHTML; // 解析html，返回字符串，失败警告
-              new MessageBox(info);
-            } else if (votedMessage.querySelector('script')) {
-              info = votedMessage.querySelector('script').innerHTML.split(`', `)[1].slice(1); // 解析html，获取字符串，成功消息
-              new MessageBox(info);
-              await getData(user.taskDoneUrl); // 执行领奖励
-              new MessageBox('领取投票奖励成功！');
-            }
-          } else {
-            new MessageBox(votedMessage); //其它情况直接输出
-          }
-          msId.removeMessage();
-          GM_setValue(user.username, user); //保存当天日// today 初始化
+      if (location.href.includes('thread')) {
+        if (user.autoThkSw) { // 自动感谢当前贴开关
+          await autoThk();
         }
-      } else {
-        new MessageBox('未登录');
+        if (user.autoPaySw) { // 自动购买当前贴开关
+          await autoPay();
+        }
+        rePic(); // 启动自动加载原图；
+      }
+      // 天变动则签到\投票
+      const now = new NowTime();
+      if (user.today != now.day) {
+        user.today = now.day;
+        sign(); // 签到
+        await autoVoted();
       }
     } catch (e) {
       GM_setValue(user.username, user); //保存当天日// today 初始化
@@ -200,48 +157,91 @@
     }
   }
 
-  // 加载原图，启动自动感谢、自动支付、自动播放
+  async function autoVoted() {
+    await getData(user.applyVotedUrl); // 申请任务
+    const msId = new MessageBox("申请投票任务执行成功！正在投票请勿退出页面...", "none");
+    // 投票请求链接
+    const votedUrlParams = urlSearchParams({
+      "id": "voted"
+    }).toString();
+    const htmlData = await getData(user.votedUrl + votedUrlParams);
+    const vidUrl = htmlData.querySelector('.voted a').href; // 找到链接
+    const vid = vidUrl.split('&')[2].split('=')[1]; // 纯数字// 分解链接
+
+    const hrefHtmlData = await getData(vidUrl);
+    const aidUrl = hrefHtmlData.querySelector('.hp_s_c a').href; // 找到链接
+    const aid = aidUrl.split('&')[2].split('=')[1]; // 纯数字// 分解链接
+    // 投票请求链接数据
+    const votedParams = urlSearchParams({
+      "id": "voted",
+      "ac": "dian",
+      "aid": aid,
+      "vid": vid,
+      "qr": "",
+      "inajax": 1,
+    }).toString();
+    // Post 数据
+    const votedParamsData = urlSearchParams({
+      "formhash": user.formhash,
+      "inajax": 1,
+      "handlekey": "dian",
+      "sid": 0,
+      "message": user.votedMessage,
+    }).toString();
+    // 投票
+    const votedMessage = await postDataAs(user.votedUrl + votedParams, votedParamsData);
+    if (checkHtml(votedMessage)) {
+      let info = '';
+      if (votedMessage.querySelector('.alert_info')) {
+        info = votedMessage.querySelector('.alert_info').innerHTML; // 解析html，返回字符串，失败警告
+        new MessageBox(info);
+      } else if (votedMessage.querySelector('script')) {
+        info = votedMessage.querySelector('script').innerHTML.split(`', `)[1].slice(1); // 解析html，获取字符串，成功消息
+        new MessageBox(info);
+        await getData(user.taskDoneUrl); // 执行领奖励
+        new MessageBox('领取投票奖励成功！');
+      }
+    } else {
+      new MessageBox(votedMessage); //其它情况直接输出
+    }
+    msId.removeMessage();
+    GM_setValue(user.username, user); //保存当天日// today 初始化
+  }
+
+  // 加载原图，自动播放
   async function rePic() {
-    if (location.href.includes('thread')) {
-      if (user.autoThkSw) { // 自动感谢当前贴开关
-        await autoThk(); // 自动感谢当前贴
-      }
-      if (user.autoPaySw) { // 自动购买当前贴开关
-        await autoPay(); // 自动购买当前贴
-      }
-      const tfImg = document.querySelectorAll('.t_f ignore_js_op img'); //获取图片列表，附件也是ignore_js_op
-      if (tfImg && user.autoRePicSw) { // 加载原图开关
-        let count = 0;
-        for (let i = 0; i < tfImg.length; i++) { //遍历图片列表
-          const img = tfImg[i]
-          img.setAttribute('onmouseover', null); // 去掉下载原图提示
-          if (img.src.includes('.thumb.')) { // 去掉缩略图 加载部分
-            img.src = img.getAttribute('file').split('.thumb.')[0];
-            console.log('加载原图成功 thumb：', img.src);
+    const tfImg = document.querySelectorAll('.t_f ignore_js_op img'); //获取图片列表，附件也是ignore_js_op
+    if (tfImg && user.autoRePicSw) { // 加载原图开关
+      let count = 0;
+      for (let i = 0; i < tfImg.length; i++) { //遍历图片列表
+        const img = tfImg[i]
+        img.setAttribute('onmouseover', null); // 去掉下载原图提示
+        if (img.src.includes('.thumb.')) { // 去掉缩略图 加载部分
+          img.src = img.getAttribute('file').split('.thumb.')[0];
+          console.log('加载原图成功 thumb：', img.src);
+          count++;
+        } else if (img.src.includes('static/image/common/none.gif') && img.getAttribute('file')) { // 懒加载部分
+          if (img.getAttribute('file').includes(".thumb.")) {
+            img.setAttribute('file', img.getAttribute('file').split('.thumb.')[0]); // 网站自带forum_viewthread.js  attachimgshow(pid, onlyinpost) 从file延迟加载
+            console.log('加载原图成功 none.gif:', img.getAttribute('file'));
             count++;
-          } else if (img.src.includes('static/image/common/none.gif') && img.getAttribute('file')) { // 懒加载部分
-            if (img.getAttribute('file').includes(".thumb.")) {
-              img.setAttribute('file', img.getAttribute('file').split('.thumb.')[0]); // 网站自带forum_viewthread.js  attachimgshow(pid, onlyinpost) 从file延迟加载
-              console.log('加载原图成功 none.gif:', img.getAttribute('file'));
-              count++;
-            }
           }
         }
-        if (count) {
-          new MessageBox(`加载原图成功 ${count} 张！`);
-        }
       }
-      const zoomimgs = document.querySelectorAll(`[zoomfile]`); //获取图片列表
-      if (zoomimgs) { // 自动播放
-        for (let i = 0; i < zoomimgs.length; i++) { //遍历图片列表
-          zoomimgs[i].addEventListener("click", autoPlay);
-        }
+      if (count) {
+        new MessageBox(`加载原图成功 ${count} 张！`);
       }
-      const onclickzoomimgs = document.querySelectorAll(`[onclick="zoom(this, this.src, 0, 0, 0)"]`); //获取图片列表
-      if (onclickzoomimgs) { // 自动播放
-        for (let i = 0; i < onclickzoomimgs.length; i++) { //遍历图片列表
-          onclickzoomimgs[i].addEventListener("click", autoPlay);
-        }
+    }
+    const zoomimgs = document.querySelectorAll(`[zoomfile]`); //获取图片列表
+    if (zoomimgs) { // 自动播放
+      for (let i = 0; i < zoomimgs.length; i++) { //遍历图片列表
+        zoomimgs[i].addEventListener("click", autoPlay);
+      }
+    }
+    const onclickzoomimgs = document.querySelectorAll(`[onclick="zoom(this, this.src, 0, 0, 0)"]`); //获取图片列表
+    if (onclickzoomimgs) { // 自动播放
+      for (let i = 0; i < onclickzoomimgs.length; i++) { //遍历图片列表
+        onclickzoomimgs[i].addEventListener("click", autoPlay);
       }
     }
   }
@@ -333,14 +333,14 @@
   // 自动感谢
   async function autoThk() {
     if (document.querySelector('#thankform') && document.querySelectorAll('#k_thankauthor')[1]) { //感谢可见
-      await autoThkPost();
+      await postAutoThk();
       location.reload();
     } else if (document.querySelector('#thankform') && document.querySelectorAll('#k_thankauthor')[0]) { //普通贴
-      await autoThkPost();
+      await postAutoThk();
     }
   };
   // 发送感谢请求
-  async function autoThkPost() {
+  async function postAutoThk() {
     const thankform = document.querySelector('#thankform');
     const tid = thankform.querySelector('[name=tid]').value;
     const touser = thankform.querySelector('[name=touser]').value;
@@ -370,7 +370,7 @@
       let b = document.createElement('div'); //创建类型为div的DOM对象
       b.style.cssText = 'width: 222px;float: left;position: fixed;border-radius: 10px;left: auto;right: 5%;bottom: 20px;z-index:999';
       b.id = 'messageBox';
-      return b; //返回修改好的DOM对象
+      return b;
     };
     document.querySelector('body').appendChild(genDiv()); // 消息盒子添加到body
 
@@ -494,7 +494,7 @@
     if (!this.timer) { // 防重复点击
       playVideo(msId1); // 防休眠
       msId2.showMessage('定时签到中，请勿退出...', "none");
-      msIdTime.showMessage("时间提示：", "none"); // 占位消息，给刷新用
+      msIdTime.showMessage("...", "none"); // 占位消息，给刷新用
       _this.timer = setInterval(control, 500); // 运行自动签到
     }
   }
@@ -626,16 +626,16 @@
           replyLen++;
         }
       })
-      GM_setValue(user.username, user); // 油猴脚本存储回帖内容
+      GM_setValue(user.username, user);
       new MessageBox("已使用自定义回复");
       return replyLen;
     } else {
-      if (user.fastReply.length && confirm("确认使用快速回复？否则使用历史回复")) { // 1 为错误信息
-        GM_setValue(user.username, user); // 油猴脚本存储回帖内容
+      if (user.fastReply.length && confirm("确认使用快速回复？否则使用历史回复")) {
+        GM_setValue(user.username, user);
         new MessageBox("已使用快速回复");
         return user.fastReply.length;
       } else if (user.userReplyMessage.length && confirm("确认使用历史自定义回复？")) {
-        GM_setValue(user.username, user); // 油猴脚本存储回帖内容
+        GM_setValue(user.username, user);
         new MessageBox("已使用历史自定义回复");
         return user.userReplyMessage.length;
       } else {
@@ -650,9 +650,9 @@
     const fid = currentHref.split('-')[1]; // 获取板块fid
     const page = currentHref.split('-')[2].split('.')[0]; // 获取页码
     if (currentHref.includes("type-")) {
-      thankBatch(`${fid}-${page}-${page}`, "type"); // 使用批量感谢
+      thankBatch(`${fid}-${page}-${page}`, "type");
     } else {
-      thankBatch(`${fid}-${page}-${page}`); // 使用批量感谢
+      thankBatch(`${fid}-${page}-${page}`);
     }
   }
 
@@ -797,7 +797,8 @@
     newFid(); // 启动
   };
 
-  async function replyOrThk(_this, type = 'reply') { // 回帖函数
+  // 回帖\感谢函数
+  async function replyOrThk(_this, type = 'reply') {
     let fidIndex = 0; // 当前回帖版块序号
     let thkFidIndex = 0; // 当前感谢版块序号
     // 初始化永久消息
@@ -810,10 +811,10 @@
       new MessageBox('任务列表为空，请先添加任务！');
       return;
     } else if (type == 'reply') {
-      mesIdRep.showMessage(type + "：开始回帖...", "none");
-      mesIdRepContent.showMessage("内容：", "none");
+      mesIdRep.showMessage("开始回帖...", "none");
+      mesIdRepContent.showMessage("...", "none");
     } else {
-      mesIdThk.showMessage(type + "：开始感谢...", "none");
+      mesIdThk.showMessage("开始感谢...", "none");
     }
     playVideo(mesId); // 防休眠
 
@@ -923,14 +924,6 @@
     _this.timer = 0;
     mesId.removeMessage(); // 移除永久消息
   };
-  // promise 等待模块
-  const waitFor = (ms) => new Promise(r => setTimeout(r, ms));
-
-  // n, m 范围随机整数生成 
-  function rdNum(n, m) {
-    let c = m - n + 1;
-    return Math.floor(Math.random() * c + n);
-  }
 
   function noDisplayPic() {
     const pcbImg = document.querySelectorAll('.pcb img'); // 所有帖子楼层的图片，逐个过滤
@@ -1015,8 +1008,8 @@
     const data = imgsUrl;
     const zip = new JSZip();
     const promises = [];
-    const mesId = new MessageBox(data.length + "张：开始下载...", "none"); // 永久消息
-    const mesIdP = new MessageBox("下载进度：", "none"); // 永久消息
+    const mesId = new MessageBox(data.length + " 张：开始下载...", "none"); // 永久消息
+    const mesIdP = new MessageBox("...", "none"); // 永久消息
     for (let index = 0; index < data.length; index++) {
       const item = data[index];
       const promise = await getData(item, "blob").then(data => { // 下载文件, 并存成ArrayBuffer对象
@@ -1147,6 +1140,7 @@
       return encodeURI(data);
     }
   }
+
   // 判断html和字符串是不是html
   function checkHtml(htmlStr) {
     if (htmlStr.nodeName) {
@@ -1156,6 +1150,7 @@
       return reg.test(htmlStr);
     }
   }
+
   // 过滤html标签、前后空格、特殊符号
   function replaceHtml(txt) {
     const reg3 = /[\a|\r|\n|\b|\f|\t|\v]+/g; //去掉特殊符号
@@ -1164,6 +1159,14 @@
     return txt.replace(reg3, '').replace(reg, '').trim();
   }
 
+  // promise 等待模块
+  const waitFor = (ms) => new Promise(r => setTimeout(r, ms));
+
+  // n, m 范围随机整数生成 
+  function rdNum(n, m) {
+    let c = m - n + 1;
+    return Math.floor(Math.random() * c + n);
+  }
   class NowTime {
     constructor() {
       const date = new Date();
@@ -1207,41 +1210,34 @@
   }
 
   function genButton(text, foo, id) {
-    let b = document.createElement('button'); //创建类型为button的DOM对象
-    b.textContent = text; //修改内部文本为text
-    b.style.cssText = 'margin:16px 10px 0px 0px;float:left' //添加样式（margin可以让元素间隔开一定距离）
-    b.addEventListener('click', foo); //绑定click的事件的监听器
-    if (id) {
-      b.id = id;
-    } //如果传入了id，就修改DOM对象的id
-    return b; //返回修改好的DOM对象
+    let b = document.createElement('button');
+    b.textContent = text;
+    b.style.cssText = 'margin:16px 10px 0px 0px;float:left'
+    b.addEventListener('click', foo);
+    b.id = id;
+    return b;
   }
 
   function genElem(type, id, val1, val2) {
-    let b = document.createElement(type); //创建类型为button的DOM对象
-    b.style.cssText = 'margin:16px 10px 0px 0px;float:left' //添加样式（margin可以让元素间隔开一定距离）
+    let b = document.createElement(type);
+    b.style.cssText = 'margin:16px 10px 0px 0px;float:left'
     b.rows = val1;
     b.cols = val2;
-    // 油猴脚本存储回帖内容
     b.placeholder = '中文分号；分隔回帖内容';
-    if (id) {
-      b.id = id;
-    } //如果传入了id，就修改DOM对象的id
-    return b; //返回修改好的DOM对象
+    b.id = id;
+    return b;
   }
 
   function genInp(type, id) {
-    let b = document.createElement(type); //创建类型为button的DOM对象
-    b.style.cssText = 'margin:16px 10px 0px 0px;float:left;width:80px' //添加样式（margin可以让元素间隔开一定距离）
-    if (id) {
-      b.id = id;
-    }
+    let b = document.createElement(type);
+    b.style.cssText = 'margin:16px 10px 0px 0px;float:left;width:80px'
+    b.id = id;
     const user = getUserFromName();
     if (user && user.page) {
       b.value = user.page;
     }
     b.placeholder = `版块-1-2`;
-    return b; //返回修改好的DOM对象
+    return b;
   }
 
   function genVideo() {
@@ -1256,9 +1252,9 @@
 
   async function playVideo(msId) {
     let p = 0;
-    const video = genVideo(); //需要视频时再加载视频，提高性能
+    const video = genVideo();
     document.querySelector('body').appendChild(video); //添加视频到指定位置
-    video.addEventListener("canplay", videoPlay); // 加载完，开始播放 
+    video.addEventListener("canplay", videoPlay); // 加载完
 
     function videoPlay() { // 播放视频，防止休眠
       video.removeEventListener("canplay", videoPlay, false); // 循环触发，移除事件监听
@@ -1285,7 +1281,7 @@
 
   function genBox(text) {
     const box = document.createElement('div');
-    box.textContent = text; //修改内部文本为text
+    box.textContent = text;
     box.style.cssText = 'width:100%;background-color:#64ce83;float:left;padding:5px 10px;margin-top:10px;border-radius:10px;color:#fff;    box-shadow: 0px 0px 1px 3px #ffffff;';
     return box;
   }
