@@ -368,7 +368,7 @@
     // 消息盒子
     function genDiv() {
       let b = document.createElement('div'); //创建类型为div的DOM对象
-      b.style.cssText = 'width: 220px;float: left;position: fixed;border-radius: 10px;left: auto;right: 5%;bottom: 20px;z-index:999';
+      b.style.cssText = 'width: 222px;float: left;position: fixed;border-radius: 10px;left: auto;right: 5%;bottom: 20px;z-index:999';
       b.id = 'messageBox';
       return b; //返回修改好的DOM对象
     };
@@ -597,6 +597,8 @@
         this.box.parentNode.removeChild(this.box);
         this.box = null; // 清除标志位
       } else {
+        // 空初始化时，消息异步发送，导致先执行移除而获取不到元素，默认 setTime=5000
+        // 消息发出后，box 非空，可以移除，不会执行 setTime="none"
         if (this.timer == 4) {
           console.error("移除的元素不存在：", this.box);
           return;
@@ -689,7 +691,7 @@
         } else {
           currentHref = 'https://www.jkforum.net/forum-' + fid + '-' + pageFrom + '.html'; //生成帖子列表地址
         }
-        new MessageBox('当前地址：' + currentHref + '页码：' + pageFrom);
+        new MessageBox('当前地址：' + currentHref + '，页码：' + pageFrom);
         let data = await getData(currentHref);
 
         // 判断是否需要切换到列表模式。
@@ -1248,10 +1250,7 @@
     video.id = 'video1';
     video.loop = 'true';
     video.autoplay = 'true';
-    let source = document.createElement('source');
-    source.src = 'https://cdn.jsdelivr.net/gh/eished/jkforum_helper@0.5.8/video/light.mp4'; // cdn 加速
-    source.type = "video/mp4"
-    video.append(source);
+    video.src = 'data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pc28yYXZjMW1wNDEAAAAIZnJlZQAAAwFtZGF0AAACugYF//+23EXpvebZSLeWLNgg2SPu73gyNjQgLSBjb3JlIDE0OCByMiA3NTk5MjEwIC0gSC4yNjQvTVBFRy00IEFWQyBjb2RlYyAtIENvcHlsZWZ0IDIwMDMtMjAxNSAtIGh0dHA6Ly93d3cudmlkZW9sYW4ub3JnL3gyNjQuaHRtbCAtIG9wdGlvbnM6IGNhYmFjPTEgcmVmPTMgZGVibG9jaz0xOjA6MCBhbmFseXNlPTB4MzoweDExMyBtZT1oZXggc3VibWU9NyBwc3k9MSBwc3lfcmQ9MS4wMDowLjAwIG1peGVkX3JlZj0xIG1lX3JhbmdlPTE2IGNocm9tYV9tZT0xIHRyZWxsaXM9MSA4eDhkY3Q9MSBjcW09MCBkZWFkem9uZT0yMSwxMSBmYXN0X3Bza2lwPTEgY2hyb21hX3FwX29mZnNldD00IHRocmVhZHM9MSBsb29rYWhlYWRfdGhyZWFkcz0xIHNsaWNlZF90aHJlYWRzPTAgbnI9MCBkZWNpbWF0ZT0xIGludGVybGFjZWQ9MCBibHVyYXlfY29tcGF0PTAgY29uc3RyYWluZWRfaW50cmE9MCBiZnJhbWVzPTMgYl9weXJhbWlkPTIgYl9hZGFwdD0xIGJfYmlhcz0wIGRpcmVjdD0xIHdlaWdodGI9MSBvcGVuX2dvcD0wIHdlaWdodHA9MiBrZXlpbnQ9MjUwIGtleWludF9taW49MTAgc2NlbmVjdXQ9NDAgaW50cmFfcmVmcmVzaD0wIHJjX2xvb2thaGVhZD00MCByYz1hYnIgbWJ0cmVlPTEgYml0cmF0ZT0zMjI0IHJhdGV0b2w9MS4wIHFjb21wPTAuNjAgcXBtaW49MCBxcG1heD02OSBxcHN0ZXA9NCBpcF9yYXRpbz0xLjQwIGFxPTE6MS4wMACAAAAAN2WIhAAa//73wP8Cm7nIA/5tf/+mn7sUx/QF/H/9L//yM6MTo19P+P/2ftGrP+85P/Er/F20Jv8AAALvbW9vdgAAAGxtdmhkAAAAAAAAAAAAAAAAAAAD6AAAAGQAAQAAAQAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAhl0cmFrAAAAXHRraGQAAAADAAAAAAAAAAAAAAABAAAAAAAAAGQAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAACUAAAAlAAAAAAAkZWR0cwAAABxlbHN0AAAAAAAAAAEAAABkAAAAAAABAAAAAAGRbWRpYQAAACBtZGhkAAAAAAAAAAAAAAAAAAAoAAAABABVxAAAAAAALWhkbHIAAAAAAAAAAHZpZGUAAAAAAAAAAAAAAABWaWRlb0hhbmRsZXIAAAABPG1pbmYAAAAUdm1oZAAAAAEAAAAAAAAAAAAAACRkaW5mAAAAHGRyZWYAAAAAAAAAAQAAAAx1cmwgAAAAAQAAAPxzdGJsAAAAmHN0c2QAAAAAAAAAAQAAAIhhdmMxAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAACUAJQBIAAAASAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGP//AAAAMmF2Y0MB9AAU/+EAGWf0ABSRmym/GRkIAAADAAgAAAMAoHihTLABAAZo6+xEhEAAAAAYc3R0cwAAAAAAAAABAAAAAQAABAAAAAAcc3RzYwAAAAAAAAABAAAAAQAAAAEAAAABAAAAFHN0c3oAAAAAAAAC+QAAAAEAAAAUc3RjbwAAAAAAAAABAAAAMAAAAGJ1ZHRhAAAAWm1ldGEAAAAAAAAAIWhkbHIAAAAAAAAAAG1kaXJhcHBsAAAAAAAAAAAAAAAALWlsc3QAAAAlqXRvbwAAAB1kYXRhAAAAAQAAAABMYXZmNTcuMTkuMTAw'; // Base64 离线
     return video;
   }
 
@@ -1259,10 +1258,10 @@
     let p = 0;
     const video = genVideo(); //需要视频时再加载视频，提高性能
     document.querySelector('body').appendChild(video); //添加视频到指定位置
-    video.addEventListener("canplay", videoPlay); // 加载完，开始播放 // 必须用此语法才能在后面移除事件
+    video.addEventListener("canplay", videoPlay); // 加载完，开始播放 
 
     function videoPlay() { // 播放视频，防止休眠
-      video.removeEventListener("canplay", videoPlay, false); // 有循环触发的bug，移除事件监听
+      video.removeEventListener("canplay", videoPlay, false); // 循环触发，移除事件监听
       // 显示永久消息通知
       msId.showMessage('防止休眠启动，请保持本页处于激活状态，请勿遮挡、最小化本窗口以及全屏运行其它应用！', "none");
       p = 99;
