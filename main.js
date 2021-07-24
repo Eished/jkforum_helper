@@ -211,20 +211,24 @@
       }
       const tfImg = document.querySelectorAll('.t_f ignore_js_op img'); //获取图片列表，附件也是ignore_js_op
       if (tfImg && user.autoRePicSw) { // 加载原图开关
+        let count = 0;
         for (let i = 0; i < tfImg.length; i++) { //遍历图片列表
           const img = tfImg[i]
           img.setAttribute('onmouseover', null); // 去掉下载原图提示
           if (img.src.includes('.thumb.')) { // 去掉缩略图 加载部分
             img.src = img.getAttribute('file').split('.thumb.')[0];
-            new MessageBox('加载原图成功', 1000)
-            console.log('thumb：', img.src);
+            console.log('加载原图成功 thumb：', img.src);
+            count++;
           } else if (img.src.includes('static/image/common/none.gif') && img.getAttribute('file')) { // 懒加载部分
             if (img.getAttribute('file').includes(".thumb.")) {
               img.setAttribute('file', img.getAttribute('file').split('.thumb.')[0]); // 网站自带forum_viewthread.js  attachimgshow(pid, onlyinpost) 从file延迟加载
-              new MessageBox('加载原图成功', 1000)
-              console.log('none.gif:', img.getAttribute('file'));
+              console.log('加载原图成功 none.gif:', img.getAttribute('file'));
+              count++;
             }
           }
+        }
+        if (count) {
+          new MessageBox(`加载原图成功 ${count} 张！`);
         }
       }
       const zoomimgs = document.querySelectorAll(`[zoomfile]`); //获取图片列表
@@ -794,18 +798,21 @@
   async function replyOrThk(_this, type = 'reply') { // 回帖函数
     let fidIndex = 0; // 当前回帖版块序号
     let thkFidIndex = 0; // 当前感谢版块序号
+    // 初始化永久消息
+    const mesId = new MessageBox();
+    const mesIdRep = new MessageBox();
+    const mesIdRepContent = new MessageBox();
+    const mesIdThk = new MessageBox();
+
     if (!user.replyThreads.length) {
       new MessageBox('任务列表为空，请先添加任务！');
       return;
     } else if (type == 'reply') {
-      new MessageBox(type + "：开始回帖...");
+      mesIdRep.showMessage(type + "：开始回帖...", "none");
+      mesIdRepContent.showMessage("内容：", "none");
     } else {
-      new MessageBox(type + "：开始感谢...");
+      mesIdThk.showMessage(type + "：开始感谢...", "none");
     }
-    // 初始化永久消息
-    const mesId = new MessageBox();
-    const mesIdRep = new MessageBox();
-    const mesIdThk = new MessageBox();
     playVideo(mesId); // 防休眠
 
     while ((type == 'reply' && fidIndex < user.replyThreads.length) || (type == 'thk' && thkFidIndex < user.replyThreads.length)) // 分别处理感谢和回帖
@@ -814,15 +821,12 @@
       const fid = elementForum.fid;
       let fidRepIndex = elementForum.fidRepIndex; // 上次回复位置
       let fidThkIndex = elementForum.fidThkIndex; // 上次感谢位置
-      if (type == 'reply') {
-        mesIdRep.showMessage(fid + "-版块，当前位置：" + fidRepIndex + " ，总数：" + elementForum.fidthreads.length + "，总计时间：" + (elementForum.fidTime / 1000 / 60).toFixed(1) + " 分钟时间", "none"); // 显示永久消息
-      } else if (type == 'thk') {
-        mesIdThk.showMessage(fid + "-版块，当前位置：" + fidThkIndex + " ，总数：" + elementForum.fidthreads.length, "none"); // 显示永久消息
-      }
+
       while ((elementForum.fidthreads.length > fidRepIndex && type == 'reply') || (elementForum.fidthreads.length > fidThkIndex && type == 'thk')) // 分别处理感谢和回帖 
       {
         switch (type) {
           case 'reply': {
+            mesIdRep.refreshMessage(fid + "-版块，当前位置：" + fidRepIndex + " ，总数：" + elementForum.fidthreads.length + "，预计总耗时：" + (elementForum.fidTime / 1000 / 60).toFixed(1) + " 分钟时间", "none"); // 显示永久消息
             const elementThr = elementForum.fidthreads[fidRepIndex];
             const tid = elementThr.tid;
             const replyIndex = elementThr.replyIndex;
@@ -861,7 +865,7 @@
             } else {
               new MessageBox(data, 'none'); //其它情况直接输出
             }
-            new MessageBox("序号：" + fidRepIndex + '，随机号：' + replyIndex + '，用时：' + randomTime + "，帖子：" + tid + '，内容：' + replyParamsData.get("message")); //测试使用  
+            mesIdRepContent.refreshMessage("序号：" + fidRepIndex + '，随机号：' + replyIndex + '，用时：' + randomTime + "，帖子：" + tid + '，内容：' + replyParamsData.get("message")); //测试使用  
             elementForum.fidRepIndex = ++fidRepIndex;
             GM_setValue(user.username, user);
             _this.timer = 1; // 防止重复点击
@@ -881,11 +885,11 @@
             const data = await postDataAs(user.thkUrl, thkParamsData.toString()); //post感谢数据
             if (checkHtml(data)) {
               const info = data.querySelector('.alert_info').innerHTML.split('<')[0].trim(); //去除html，返回字符串
-              new MessageBox(info);
+              new MessageBox(info, 1000);
             } else {
-              new MessageBox(data); //其它情况直接输出
+              new MessageBox(data, 1000); //其它情况直接输出
             }
-            console.log(fidThkIndex, thkParamsData.get("tid"));
+            mesIdThk.refreshMessage(fid + "-版块，当前位置：" + fidThkIndex + " ，总数：" + elementForum.fidthreads.length + "，帖子ID：" + thkParamsData.get("tid"), "none"); // 刷新永久消息
             elementForum.fidThkIndex = ++fidThkIndex;
             GM_setValue(user.username, user);
             clearInterval(_this.timer);
@@ -901,17 +905,17 @@
       }
       if (type == 'thk') {
         thkFidIndex++; // 翻页
-        mesIdThk.removeMessage(); // 移除永久消息
       } else if (type == 'reply') {
         fidIndex++; // 翻页
-        mesIdRep.removeMessage(); // 移除永久消息
-        new MessageBox(fid + "：版块回帖完成！");
       }
       GM_setValue(user.username, user);
     }
     if (type == 'thk') {
+      mesIdThk.removeMessage(); // 移除永久消息
       new MessageBox("全部感谢完成！", 10000, 2);
     } else if (type == 'reply') {
+      mesIdRep.removeMessage(); // 移除永久消息
+      mesIdRepContent.removeMessage();
       new MessageBox("全部回帖完成！", 10000, 2);
     }
     _this.timer = 0;
@@ -933,14 +937,14 @@
         const img = pcbImg[i];
         // 前10张
         if (img.title && img.getAttribute('file') && img.getAttribute('file').includes('mymypic.net')) {
-          img.src = "static/image/common/none.gif";
+          img.src = "https://www.jkforum.net/static/image/common/none.gif";
           // new MessageBox("屏蔽图片成功");
           // 懒加载部分
           function callback() { // 监听元素子节点属性变化，然后屏蔽链接
-            if (img.src != "static/image/common/none.gif") {
+            if (img.src != "https://www.jkforum.net/static/image/common/none.gif") {
               observer.disconnect(); // 断开监听
-              img.src = "static/image/common/none.gif";
-              new MessageBox("屏蔽图片成功", 1000);
+              console.log("屏蔽图片成功：", img.src);
+              img.src = "https://www.jkforum.net/static/image/common/none.gif";
             }
           }
           const observer = new MutationObserver(callback); // 建立监听器
@@ -949,6 +953,7 @@
           })
         }
       }
+      new MessageBox("屏蔽图片完成！")
     }
   }
 
@@ -1017,13 +1022,13 @@
         zip.file(file_name, data, {
           binary: true
         }) // 逐个添加文件
-        mesIdP.refreshMessage(`第${index+1}张，文件名：${file_name}，大小：${parseInt(data.size / 1024)} Kb，下载完成！等待压缩...`);
+        mesIdP.refreshMessage(`第 ${index+1} 张，文件名：${file_name}，大小：${parseInt(data.size / 1024)} Kb，下载完成！等待压缩...`);
       }).catch((err) => { // 移除消息；
         _this.timer = 0;
         if (err.responseText) {
           const domParser = new DOMParser();
           const xmlDoc = domParser.parseFromString(err.responseText, 'text/html');
-          mesIdP.refreshMessage(`第${index+1}张，请求错误：${xmlDoc.body.innerHTML}`);
+          mesIdP.refreshMessage(`第 ${index+1} 张，请求错误：${xmlDoc.body.innerHTML}`);
         }
         return -1;
       })
