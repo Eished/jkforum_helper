@@ -5,7 +5,7 @@
 // @name:ja      JKForum 助手
 // @name:ko      JKForum 조수
 // @namespace    https://github.com/Eished/jkforum_helper
-// @version      0.6.1
+// @version      0.6.2
 // @description        捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动播放图片、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片
 // @description:en     JKForum Helper: Auto-sign-in, timed sign-in, auto-thank you, auto-load original image, auto-play image, auto-pay to buy theme post, auto-complete voting task, optimize browsing experience, one-click bulk reply/thank you, one-click package to download post image
 // @description:zh-TW  捷克論壇助手：自動簽到、定時簽到、自動感謝、自動加載原圖、自動播放圖片、自動支付購買主題貼、自動完成投票任務，優化瀏覽體驗，一鍵批量回帖/感謝，一鍵打包下載帖子圖片
@@ -258,8 +258,6 @@
       if (imgzoom && imgzoom.querySelector(".y")) { // 按钮也是延迟加载，监听是否有 .y
         observer.disconnect(); // 断开监听
         addAutoPlay(); // 添加按钮
-      } else {
-        console.log("不存在 .y 元素，正在重试...");
       }
     }
     const observer = new MutationObserver(callback); // 建立监听器
@@ -292,15 +290,16 @@
 
     async function play() {
       if (!a.timer) {
+        const zimg_next = imgzoom.querySelector(".zimg_next");
         a.timer = 1;
         while (true) {
           await waitFor(user.autoPlayDiff);
           if (a.timer == 0) {
             break;
           }
-          if (imgzoom.querySelector(".zimg_next")) {
-            imgzoom.querySelector(".zimg_next").click();
-          } else { // 只有一张图
+          if (zimg_next) {
+            zimg_next.click();
+          } else {
             new MessageBox("只有一张图！");
             return;
           }
@@ -754,6 +753,7 @@
         start = user.userReplyMessage.length - replyLen; // 用户数组长-增加的数据长=起始位置；
         replyLen = user.userReplyMessage.length; // 结束位置
       }
+      const msId = new MessageBox("...", "none");
       let count = 0; // 贴数统计
       // 遍历去除回帖用户
       for (let i = 0; i < cites.length; i += 2) {
@@ -770,7 +770,7 @@
           const element = elem.fidthreads[index];
           if (element.tid == tid) {
             noSkip = false;
-            new MessageBox(`${fid}：任务列表：${index}，thread-${tid}-1-1 ：已在任务列表，已跳过此贴！`);
+            msId.refreshMessage(`${fid}：任务列表：${index}，thread-${tid}-1-1 ：已在任务列表，已跳过此贴！`);
             break;
           }
         }
@@ -791,6 +791,7 @@
         }
       }
       GM_setValue(user.username, user);
+      msId.removeMessage();
       new MessageBox(`${fid}：任务列表成功添加 ${count} 贴！`, 10000);
     }
 
@@ -1241,9 +1242,8 @@
   }
 
   function genVideo() {
-    let video = document.createElement('video');
-    video.style.cssText = 'display: none; z-index: -1000;width:0;height:0;'
-    video.id = 'video1';
+    const video = document.createElement('video');
+    video.style.cssText = 'display:none;width:0;height:0;'
     video.loop = 'true';
     video.autoplay = 'true';
     video.src = 'data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pc28yYXZjMW1wNDEAAAAIZnJlZQAAAwFtZGF0AAACugYF//+23EXpvebZSLeWLNgg2SPu73gyNjQgLSBjb3JlIDE0OCByMiA3NTk5MjEwIC0gSC4yNjQvTVBFRy00IEFWQyBjb2RlYyAtIENvcHlsZWZ0IDIwMDMtMjAxNSAtIGh0dHA6Ly93d3cudmlkZW9sYW4ub3JnL3gyNjQuaHRtbCAtIG9wdGlvbnM6IGNhYmFjPTEgcmVmPTMgZGVibG9jaz0xOjA6MCBhbmFseXNlPTB4MzoweDExMyBtZT1oZXggc3VibWU9NyBwc3k9MSBwc3lfcmQ9MS4wMDowLjAwIG1peGVkX3JlZj0xIG1lX3JhbmdlPTE2IGNocm9tYV9tZT0xIHRyZWxsaXM9MSA4eDhkY3Q9MSBjcW09MCBkZWFkem9uZT0yMSwxMSBmYXN0X3Bza2lwPTEgY2hyb21hX3FwX29mZnNldD00IHRocmVhZHM9MSBsb29rYWhlYWRfdGhyZWFkcz0xIHNsaWNlZF90aHJlYWRzPTAgbnI9MCBkZWNpbWF0ZT0xIGludGVybGFjZWQ9MCBibHVyYXlfY29tcGF0PTAgY29uc3RyYWluZWRfaW50cmE9MCBiZnJhbWVzPTMgYl9weXJhbWlkPTIgYl9hZGFwdD0xIGJfYmlhcz0wIGRpcmVjdD0xIHdlaWdodGI9MSBvcGVuX2dvcD0wIHdlaWdodHA9MiBrZXlpbnQ9MjUwIGtleWludF9taW49MTAgc2NlbmVjdXQ9NDAgaW50cmFfcmVmcmVzaD0wIHJjX2xvb2thaGVhZD00MCByYz1hYnIgbWJ0cmVlPTEgYml0cmF0ZT0zMjI0IHJhdGV0b2w9MS4wIHFjb21wPTAuNjAgcXBtaW49MCBxcG1heD02OSBxcHN0ZXA9NCBpcF9yYXRpbz0xLjQwIGFxPTE6MS4wMACAAAAAN2WIhAAa//73wP8Cm7nIA/5tf/+mn7sUx/QF/H/9L//yM6MTo19P+P/2ftGrP+85P/Er/F20Jv8AAALvbW9vdgAAAGxtdmhkAAAAAAAAAAAAAAAAAAAD6AAAAGQAAQAAAQAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAhl0cmFrAAAAXHRraGQAAAADAAAAAAAAAAAAAAABAAAAAAAAAGQAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAACUAAAAlAAAAAAAkZWR0cwAAABxlbHN0AAAAAAAAAAEAAABkAAAAAAABAAAAAAGRbWRpYQAAACBtZGhkAAAAAAAAAAAAAAAAAAAoAAAABABVxAAAAAAALWhkbHIAAAAAAAAAAHZpZGUAAAAAAAAAAAAAAABWaWRlb0hhbmRsZXIAAAABPG1pbmYAAAAUdm1oZAAAAAEAAAAAAAAAAAAAACRkaW5mAAAAHGRyZWYAAAAAAAAAAQAAAAx1cmwgAAAAAQAAAPxzdGJsAAAAmHN0c2QAAAAAAAAAAQAAAIhhdmMxAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAACUAJQBIAAAASAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGP//AAAAMmF2Y0MB9AAU/+EAGWf0ABSRmym/GRkIAAADAAgAAAMAoHihTLABAAZo6+xEhEAAAAAYc3R0cwAAAAAAAAABAAAAAQAABAAAAAAcc3RzYwAAAAAAAAABAAAAAQAAAAEAAAABAAAAFHN0c3oAAAAAAAAC+QAAAAEAAAAUc3RjbwAAAAAAAAABAAAAMAAAAGJ1ZHRhAAAAWm1ldGEAAAAAAAAAIWhkbHIAAAAAAAAAAG1kaXJhcHBsAAAAAAAAAAAAAAAALWlsc3QAAAAlqXRvbwAAAB1kYXRhAAAAAQAAAABMYXZmNTcuMTkuMTAw'; // Base64 离线
