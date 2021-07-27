@@ -290,13 +290,13 @@
 
     async function play() {
       if (!a.timer) {
-        const zimg_next = imgzoom.querySelector(".zimg_next");
         a.timer = 1;
         while (true) {
           await waitFor(user.autoPlayDiff);
           if (a.timer == 0) {
             break;
           }
+          const zimg_next = imgzoom.querySelector(".zimg_next");
           if (zimg_next) {
             zimg_next.click();
           } else {
