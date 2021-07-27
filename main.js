@@ -524,28 +524,34 @@
     */
   class MessageBox {
     constructor(text, setTime = 5000, important = 1) {
-      this.box = null; // 永久显示标记，和元素地址
-      this.text = text;
-      this.setTime = setTime;
-      this.important = important;
-      this.timer = 0; // 计数器
+      this._box = null; // 永久显示标记，和元素地址
+      this._text = text;
+      this._setTime = setTime;
+      this._important = important;
+      this._timer = 0; // 计数器
       // 非空初始化，立即执行；
       if (text != undefined) {
         this.showMessage();
       }
     }
 
-    // 显示消息
-    showMessage(text = this.text, setTime = this.setTime, important = this.important) {
-      if (this.box != null) {
-        console.error("请移除上条消息后再调用！");
-        return;
-      }
-      this.text = text;
-      this.setTime = setTime;
-      this.important = important;
+    _genBox(text) {
+      const box = document.createElement('div');
+      box.textContent = text;
+      box.style.cssText = 'width:100%;background-color:#64ce83;float:left;padding:5px 10px;margin-top:10px;border-radius:10px;color:#fff;    box-shadow: 0px 0px 1px 3px #ffffff;';
+      return box;
+    }
 
-      const messageBox = document.querySelector('#messageBox'); // 消息插入位置
+    // 显示消息
+    showMessage(text = this._text, setTime = this._setTime, important = this._important) {
+      if (this._box != null) {
+        throw new Error("上条消息未移除！");
+      }
+      this._text = text;
+      this._setTime = setTime;
+      this._important = important;
+
+      const messageBox = document.querySelector('#message'); // 消息插入位置
 
       switch (important) {
         case 0: {
@@ -554,21 +560,21 @@
         }
         case 1: {
           console.log(text);
-          this.box = genBox(text); // 元素标记，删除用
-          messageBox.appendChild(this.box); // 显示消息
+          this._box = this._genBox(text); // 元素标记，删除用
+          messageBox.appendChild(this._box); // 显示消息
           break;
         }
         case 2: {
           console.log(text);
-          this.box = genBox(text); // 元素标记，删除用
-          messageBox.appendChild(this.box); // 显示消息
+          this._box = this._genBox(text); // 元素标记，删除用
+          messageBox.appendChild(this._box); // 显示消息
           GM_notification(text);
           break;
         }
 
         default: {
-          this.box = genBox(text); // 元素标记，删除用
-          messageBox.appendChild(this.box); // 显示消息
+          this._box = this._genBox(text); // 元素标记，删除用
+          messageBox.appendChild(this._box); // 显示消息
           break;
         }
       }
@@ -581,31 +587,49 @@
     }
 
     refreshMessage(text) {
-      if (isNaN(this.setTime) && this.box != null) {
-        this.box.innerHTML = text;
-        console.log(text);
+      if (isNaN(this._setTime) && this._box != null) {
+        switch (this._important) {
+          case 0: {
+            console.log(text);
+            break;
+          }
+          case 1: {
+            console.log(text);
+            this._box.innerHTML = text;
+            break;
+          }
+          case 2: {
+            console.log(text);
+            this._box.innerHTML = text;
+            GM_notification(text);
+            break;
+          }
+
+          default: {
+            this._box.innerHTML = text;
+            break;
+          }
+        }
       } else {
-        console.error("只有永久消息支持刷新内容", this.setTime);
-        return;
+        throw new Error("只有弹窗永久消息支持刷新内容：" + this._setTime);
       }
     }
 
     // 移除方法，没有元素则等待setTime 5秒再试5次
     removeMessage() {
-      if (this.box != null) {
-        this.box.parentNode.removeChild(this.box);
-        this.box = null; // 清除标志位
+      if (this._box != null) {
+        this._box.parentNode.removeChild(this._box);
+        this._box = null; // 清除标志位
       } else {
         // 空初始化时，消息异步发送，导致先执行移除而获取不到元素，默认 setTime=5000
         // 消息发出后，box 非空，可以移除，不会执行 setTime="none"
-        if (this.timer == 4) {
-          console.error("移除的元素不存在：", this.box);
-          return;
+        if (this._timer == 4) {
+          throw new Error("移除的元素不存在：" + this._box);
         }
-        this.timer++;
+        this._timer++;
         setTimeout(() => {
           this.removeMessage();
-        }, this.setTime);
+        }, this._setTime);
       }
     }
 
@@ -1277,13 +1301,6 @@
       video.load();
       p++;
     }
-  }
-
-  function genBox(text) {
-    const box = document.createElement('div');
-    box.textContent = text;
-    box.style.cssText = 'width:100%;background-color:#64ce83;float:left;padding:5px 10px;margin-top:10px;border-radius:10px;color:#fff;    box-shadow: 0px 0px 1px 3px #ffffff;';
-    return box;
   }
 
   function swRePic() {
