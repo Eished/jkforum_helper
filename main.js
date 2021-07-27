@@ -36,7 +36,7 @@
   'use strict';
 
   function newUser(username, formhash) {
-    const user = {
+    return {
       username: username,
       formhash: formhash,
       version: GM_info.script.version,
@@ -67,7 +67,6 @@
       fastReplyUrl: 'https://www.jkforum.net/thread-8364615-1-1.html',
       replyUrl: "https://www.jkforum.net/forum.php?mod=post&action=reply&",
     }
-    return user;
   }
 
   async function creatUser() {
@@ -271,14 +270,15 @@
     const imgzoom_cover = document.querySelector("#imgzoom_cover");
     const y = imgzoom.querySelector(".y");
     const imgzoom_imglink = imgzoom.querySelector("#imgzoom_imglink");
+
     const a = document.createElement("a");
-    a.id = "autoplay";
     a.title = "自动播放/停止播放";
     a.innerHTML = "自动播放/停止播放";
     a.href = "javascript:void(0);";
     a.addEventListener("click", play); // 添加监听播放事件
     a.style.cssText = `background: url(../../template/yibai_city1/style/common/arw_l.gif) rgb(241, 196, 15) center no-repeat;transform: rotate(180deg);width: 60px;height: 18px;overflow: hidden;`;
     y.insertBefore(a, imgzoom_imglink); // 添加按钮
+
     // 遮挡暂停
     window.onblur = function () {
       a.timer = 0; // 暂停
@@ -467,8 +467,8 @@
     const _this = this;
     const signtime = user.signtime; // 设定签到时间
     // 初始化永久消息通知
-    const msId1 = new MessageBox();
-    const msId2 = new MessageBox();
+    const msIdSlp = new MessageBox();
+    const msIdSig = new MessageBox();
     const msIdTime = new MessageBox();
 
     async function control() {
@@ -477,8 +477,8 @@
         clearInterval(_this.timer); // _this.timer=1 未知原因
         _this.timer = 0;
         // 移除永久消息通知
-        msId1.removeMessage();
-        msId2.removeMessage();
+        msIdSlp.removeMessage();
+        msIdSig.removeMessage();
         msIdTime.refreshMessage('执行中....');
         for (let i = 0; i < user.signNum; i++) { //重试次数
           sign();
@@ -491,8 +491,8 @@
       }
     }
     if (!this.timer) { // 防重复点击
-      playVideo(msId1); // 防休眠
-      msId2.showMessage('定时签到中，请勿退出...', "none");
+      playVideo(msIdSlp); // 防休眠
+      msIdSig.showMessage('定时签到中，请勿退出...', "none");
       msIdTime.showMessage("...", "none"); // 占位消息，给刷新用
       _this.timer = setInterval(control, 500); // 运行自动签到
     }
@@ -551,7 +551,7 @@
       this._setTime = setTime;
       this._important = important;
 
-      const messageBox = document.querySelector('#message'); // 消息插入位置
+      const messageBox = document.querySelector('#messageBox'); // 消息插入位置
 
       switch (important) {
         case 0: {
@@ -983,7 +983,7 @@
     } else {
       this.timer = 1;
     }
-    let imgsUrl = []; // 图片下载链接
+    let imgsUrls = []; // 图片下载链接
     let imgsTitles = []; // 图片名称
     const folderName = document.querySelector('.title-cont h1').innerHTML.trim().replace(/\.+/g, '-');
     const pcbImg = document.querySelectorAll('.pcb img'); // 所有帖子楼层的图片，逐个过滤
@@ -1004,18 +1004,18 @@
           const imgTitles = img.title.split(".");
           img.title = `${imgTitles[imgTitles.length-2]}-${i+1}.${imgTitles[imgTitles.length-1]}`; // 标题 +i.jpg，防重名！
           imgsTitles.push(img.title); // 保存下载名称到数组
-          imgsUrl.push(img.getAttribute('file').split('.thumb.')[0]); // 保存下载链接到数组
+          imgsUrls.push(img.getAttribute('file').split('.thumb.')[0]); // 保存下载链接到数组
         } else if (!img.getAttribute('file') && img.src.includes('mymypic.net')) {
           const nameSrc = img.src.split('/');
           imgsTitles.push(nameSrc[nameSrc.length - 1]); // 保存下载名称到数组
-          imgsUrl.push(img.src.split('.thumb.')[0]); // 保存下载链接到数组
+          imgsUrls.push(img.src.split('.thumb.')[0]); // 保存下载链接到数组
         } else {
           // console.log(img.src, '跨域请求，不可下载外链图片！');
           // new MessageBox('跨域请求，不可下载外链图片！');
         }
       }
-      if (imgsUrl.length && imgsTitles.length) {
-        batchDownload(imgsUrl, imgsTitles, folderName, this);
+      if (imgsUrls.length && imgsTitles.length) {
+        batchDownload(imgsUrls, imgsTitles, folderName, this);
       } else {
         new MessageBox('没有可下载的图片！');
         this.timer = 0
@@ -1029,15 +1029,14 @@
   }
 
   // 批量下载 顺序
-  async function batchDownload(imgsUrl, imgsTitles, folderName, _this) {
-    const data = imgsUrl;
+  async function batchDownload(imgsUrls, imgsTitles, folderName, _this) {
     const zip = new JSZip();
     const promises = [];
-    const mesId = new MessageBox(data.length + " 张：开始下载...", "none"); // 永久消息
+    const mesId = new MessageBox(imgsUrls.length + " 张：正在下载...", "none"); // 永久消息
     const mesIdP = new MessageBox("...", "none"); // 永久消息
-    for (let index = 0; index < data.length; index++) {
-      const item = data[index];
-      const promise = await getData(item, "blob").then(data => { // 下载文件, 并存成ArrayBuffer对象
+    for (let index = 0; index < imgsUrls.length; index++) {
+      const item = imgsUrls[index];
+      const promise = await getData(item, "blob").then(data => { // 下载文件, 并存成ArrayBuffer对象 // 去掉 await 可异步并发
         const file_name = imgsTitles[index]; // 获取文件名
         zip.file(file_name, data, {
           binary: true
@@ -1083,7 +1082,7 @@
         type: "blob"
       }).then(content => { // 生成二进制流
         mesId.removeMessage();
-        saveAs(content, `${folderName} [${data.length}P]`); // 利用file-saver保存文件，大文件需等待很久
+        saveAs(content, `${folderName} [${imgsUrls.length}P]`); // 利用file-saver保存文件，大文件需等待很久
       })
     })
   };
