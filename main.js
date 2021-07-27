@@ -1002,8 +1002,8 @@
             }
           }
           const imgTitles = img.title.split(".");
-          img.title = `${imgTitles[imgTitles.length-2]}-${i+1}.${imgTitles[imgTitles.length-1]}`; // 标题 +i.jpg，防重名！
-          imgsTitles.push(img.title); // 保存下载名称到数组
+          const title = `${imgTitles[imgTitles.length-2]}-${i+1}.${imgTitles[imgTitles.length-1]}`; // 标题 +i.jpg，防重名！
+          imgsTitles.push(title); // 保存下载名称到数组
           imgsUrls.push(img.getAttribute('file').split('.thumb.')[0]); // 保存下载链接到数组
         } else if (!img.getAttribute('file') && img.src.includes('mymypic.net')) {
           const nameSrc = img.src.split('/');
