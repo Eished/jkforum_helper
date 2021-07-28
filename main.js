@@ -267,8 +267,9 @@
   }
   // 添加播放图片按钮、事件
   function addAutoPlay() {
-    const imgzoom = document.querySelector("#imgzoom");
-    const imgzoom_cover = document.querySelector("#imgzoom_cover");
+    const append_parent = document.querySelector("#append_parent"); // 监听子节点
+    const imgzoom = append_parent.querySelector("#imgzoom");
+    const imgzoom_cover = append_parent.querySelector("#imgzoom_cover");
     const y = imgzoom.querySelector(".y");
     const imgzoom_imglink = imgzoom.querySelector("#imgzoom_imglink");
 
@@ -291,18 +292,23 @@
 
     async function play() {
       if (!a.timer) {
+        await waitFor(user.autoPlayDiff);
         a.timer = 1;
         while (true) {
-          await waitFor(user.autoPlayDiff);
           if (a.timer == 0) {
             break;
           }
           const zimg_next = imgzoom.querySelector(".zimg_next");
-          if (zimg_next) {
+          const imgzoom_waiting = append_parent.querySelector("#imgzoom_waiting").style.display;
+          if (zimg_next && imgzoom_waiting == "none") {
             zimg_next.click();
-          } else {
-            new MessageBox("只有一张图！");
+            // 更准确的延迟
+            await waitFor(user.autoPlayDiff);
+          } else if (!zimg_next) {
+            new MessageBox("只有一张图！")
             return;
+          } else {
+            await waitFor(user.autoPlayDiff);
           }
         }
       } else {
