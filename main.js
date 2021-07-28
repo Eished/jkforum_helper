@@ -5,7 +5,7 @@
 // @name:ja      JKForum 助手
 // @name:ko      JKForum 조수
 // @namespace    https://github.com/Eished/jkforum_helper
-// @version      0.6.2
+// @version      0.6.3
 // @description        捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动播放图片、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片
 // @description:en     JKForum Helper: Auto-sign-in, timed sign-in, auto-thank you, auto-load original image, auto-play image, auto-pay to buy theme post, auto-complete voting task, optimize browsing experience, one-click bulk reply/thank you, one-click package to download post image
 // @description:zh-TW  捷克論壇助手：自動簽到、定時簽到、自動感謝、自動加載原圖、自動播放圖片、自動支付購買主題貼、自動完成投票任務，優化瀏覽體驗，一鍵批量回帖/感謝，一鍵打包下載帖子圖片
@@ -371,18 +371,10 @@
   // 添加GUI
   function addDom() {
     const WLHerf = location.href;
-    // 消息盒子
-    function genDiv() {
-      let b = document.createElement('div'); //创建类型为div的DOM对象
-      b.style.cssText = 'width: 222px;float: left;position: fixed;border-radius: 10px;left: auto;right: 5%;bottom: 20px;z-index:999';
-      b.id = 'messageBox';
-      return b;
-    };
-    document.querySelector('body').appendChild(genDiv()); // 消息盒子添加到body
-
     const status_loginned = document.querySelector('.status_loginned');
     const mnoutbox = document.querySelectorAll('.mnoutbox');
-
+    // 消息盒子
+    MessageBox.genMessageBox();
     /* 
     1. 先判断是否在帖子页，是则添加并退出
     2. 是否在版块页，是则添加并退出
@@ -523,6 +515,7 @@
   }
 
   /* 
+  先调用静态方法 genMessageBox() 方法初始化消息弹出窗口
     消息通知类：
     1.传参默认值：消息，持续时间，重要性
     2.持续时间非数字时：为永久消息；
@@ -542,17 +535,27 @@
       }
     }
 
+    // 消息盒子，先调用本方法初始化消息弹出窗口
+    static genMessageBox() {
+      // 添加 genBox 样式
+      GM_addStyle(`#messageBox {width: 222px;float: left;position: fixed;border-radius: 10px;left: auto;right: 5%;bottom: 20px;z-index:999}`);
+      GM_addStyle(`#messageBox div {width:100%;background-color:#64ce83;float:left;padding:5px 10px;margin-top:10px;border-radius:10px;color:#fff;box-shadow: 0px 0px 1px 3px #ffffff;}`);
+
+      const b = document.createElement('div'); //创建类型为div的DOM对象
+      b.id = 'messageBox';
+      document.querySelector('body').appendChild(b); // 消息盒子添加到body
+    };
+
     _genBox(text) {
       const box = document.createElement('div');
       box.textContent = text;
-      box.style.cssText = 'width:100%;background-color:#64ce83;float:left;padding:5px 10px;margin-top:10px;border-radius:10px;color:#fff;    box-shadow: 0px 0px 1px 3px #ffffff;';
       return box;
     }
 
     // 显示消息
     showMessage(text = this._text, setTime = this._setTime, important = this._important) {
       if (this._box != null) {
-        throw new Error("上条消息未移除！");
+        throw new Error("先移除上条消息，才可再次添加！");
       }
       this._text = text;
       this._setTime = setTime;
