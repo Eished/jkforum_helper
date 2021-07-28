@@ -53,6 +53,7 @@
       differ: 10000, // 回帖随机间隔时间ms
       interval: 20000, // 回帖基础间隔时间ms
       thkDiffer: 1000, // 批量感谢间隔时间ms
+      limit: 2, // 并发下载图片数量限制
       page: '', // 批量回帖页码
       votedMessage: '+1', // 投票输入内容
       userReplyMessage: [], // 用户保存的回复，历史回帖内容
@@ -1029,43 +1030,56 @@
   }
 
   // 批量下载 顺序
-  async function batchDownload(imgsUrls, imgsTitles, folderName, _this) {
+  function batchDownload(imgsUrls, imgsTitles, folderName, _this) {
     const zip = new JSZip();
     const promises = [];
-    const mesId = new MessageBox(imgsUrls.length + " 张：正在下载...", "none"); // 永久消息
+    const mesIdH = new MessageBox("正在下载...", "none"); // 永久消息
     const mesIdP = new MessageBox("...", "none"); // 永久消息
     for (let index = 0; index < imgsUrls.length; index++) {
       const item = imgsUrls[index];
-      const promise = await getData(item, "blob").then(data => { // 下载文件, 并存成ArrayBuffer对象 // 去掉 await 可异步并发
-        const file_name = imgsTitles[index]; // 获取文件名
-        zip.file(file_name, data, {
-          binary: true
-        }) // 逐个添加文件
-        mesIdP.refreshMessage(`第 ${index+1} 张，文件名：${file_name}，大小：${parseInt(data.size / 1024)} Kb，下载完成！等待压缩...`);
-      }).catch((err) => { // 移除消息；
-        _this.timer = 0;
-        if (err.responseText) {
-          const domParser = new DOMParser();
-          const xmlDoc = domParser.parseFromString(err.responseText, 'text/html');
-          mesIdP.refreshMessage(`第 ${index+1} 张，请求错误：${xmlDoc.body.innerHTML}`);
-        }
-        return -1;
-      })
+      // 包装成 promise
+      const promise = () => {
+        return new Promise(async (resolve) => {
+          const file_name = imgsTitles[index]; // 获取文件名
+          mesIdH.refreshMessage(`${imgsUrls.length} 张，正在下载：第 ${index+1} 张，文件名：${file_name}`);
+
+          await getData(item, "blob").then(data => { // 下载文件, 并存成ArrayBuffer对象 
+            zip.file(file_name, data, {
+              binary: true
+            }) // 逐个添加文件
+            mesIdP.refreshMessage(`第 ${index+1} 张，文件名：${file_name}，大小：${parseInt(data.size / 1024)} Kb，下载完成！等待压缩...`);
+            resolve();
+
+          }).catch((err) => { // 移除消息；
+            if (err.responseText) {
+              const domParser = new DOMParser();
+              const xmlDoc = domParser.parseFromString(err.responseText, 'text/html');
+              mesIdP.refreshMessage(`第 ${index+1} 张，请求错误：${xmlDoc.body.innerHTML}`);
+            } else if (err.status) {
+              console.error(err.status);
+            } else {
+              console.error(err);
+            }
+            resolve(-1); // 错误处理, 标记错误并返回
+          })
+        })
+      }
       promises.push(promise);
     }
-    Promise.all(promises).then((err) => {
-      mesIdP.removeMessage();
+    const pool = new ConcurrencyPromisePool(user.limit);
+    pool.all(promises).then(results => {
+      mesIdH.removeMessage();
       _this.timer = 0;
-      for (let i = 0; i < err.length; i++) {
-        if (err[i] == -1) {
+      for (let i = 0; i < results.length; i++) {
+        if (results[i] == -1) {
           // new MessageBox("文件缺失！")
           _this.timer++;
         }
       }
-      if (err.length == _this.timer) {
+      if (results.length == _this.timer) {
         new MessageBox("全部图片下载失败！")
-        mesId.removeMessage();
         _this.timer = 0;
+        mesIdP.removeMessage();
         return;
       }
       if (_this.timer) {
@@ -1073,19 +1087,68 @@
           _this.timer = 0;
         } else {
           _this.timer = 0;
-          mesId.removeMessage();
+          mesIdP.removeMessage();
           return;
         }
       }
-      mesId.refreshMessage("正在压缩打包，大文件请耐心等待...")
+      mesIdP.refreshMessage("正在压缩打包，大文件请耐心等待...")
       zip.generateAsync({
         type: "blob"
       }).then(content => { // 生成二进制流
-        mesId.removeMessage();
+        mesIdP.removeMessage();
         saveAs(content, `${folderName} [${imgsUrls.length}P]`); // 利用file-saver保存文件，大文件需等待很久
       })
     })
   };
+
+  /*   
+    NodeJS Promise并发控制 
+    https://xin-tan.com/2020-09-13-bing-fa-kong-zhi/
+  */
+  class ConcurrencyPromisePool {
+    constructor(limit) {
+      this.limit = limit;
+      this.runningNum = 0;
+      this.queue = [];
+      this.results = [];
+    }
+
+    all(promises = []) {
+      return new Promise((resolve, reject) => {
+        for (const promise of promises) {
+          // 发送所有 promise
+          this._run(promise, resolve, reject);
+        }
+      });
+    }
+
+    _run(promise, resolve, reject) {
+      // 超出限制的 promise 入队
+      if (this.runningNum >= this.limit) {
+        // console.log(">>> 达到上限，入队：", promise);
+        this.queue.push(promise);
+        return;
+      }
+      // 正在运行的 promise
+      ++this.runningNum;
+      promise()
+        .then(res => {
+          this.results.push(res);
+          --this.runningNum;
+
+          // 运行结束条件：队列长度 && 正在运行的数量
+          if (this.queue.length === 0 && this.runningNum === 0) {
+            // promise返回结果, 然后递归结束; 
+            return resolve(this.results);
+          }
+          // 队列还有则，出队，然后递归调用
+          if (this.queue.length) {
+            this._run(this.queue.shift(), resolve, reject);
+          }
+        })
+        .catch(reject);
+    }
+  }
 
   // GM_xmlhttpRequest GET异步通用模块
   function getData(url, type = "document", usermethod = "GET") {
