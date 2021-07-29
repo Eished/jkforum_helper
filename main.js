@@ -89,9 +89,9 @@
         user = copyObjVal(userMod, user); // 对newUser赋值
         new MessageBox("数据更新成功！");
       }
-      new MessageBox("版本更新成功！请阅读使用说明。");
       user = await setFastReply(user); // 设置快速回复
       GM_setValue(username, user);
+      new MessageBox("版本更新成功！请阅读使用说明。");
     }
     if (user.formhash != formhash) { // formhash 变动存储
       user.formhash = formhash;
@@ -368,99 +368,6 @@
     }
   }
 
-  // 添加GUI
-  function addDom() {
-    const WLHerf = location.href;
-    const status_loginned = document.querySelector('.status_loginned');
-    const mnoutbox = document.querySelectorAll('.mnoutbox');
-    // 消息盒子
-    MessageBox.genMessageBox();
-    /* 
-    1. 先判断是否在帖子页，是则添加并退出
-    2. 是否在版块页，是则添加并退出
-    3. 判断是否在首页，是则添加并退出
-    */
-    const reg = /.+forum\.php$/; // 正则判断是否是首页
-    switch (true) {
-      case WLHerf.includes('thread'): {
-        // 下载 按钮
-        const repBtn = genButton('下载图片', downloadImgs); //设置名称和绑定函数
-        status_loginned.insertBefore(repBtn, mnoutbox[1]); //添加按钮到指定位置
-        const noDisplayBtn = genButton('屏蔽图片', noDisplayPic); //设置名称和绑定函数
-        status_loginned.insertBefore(noDisplayBtn, mnoutbox[1]); //添加按钮到指定位置
-        break;
-      }
-      case WLHerf.includes('id=dsu_paulsign:sign'): {
-        // 定时签到按钮
-        const btn = genButton('定时签到', timeControl); //设置名称和绑定函数
-        status_loginned.insertBefore(btn, mnoutbox[1]); //添加按钮到指定位置
-        break;
-      }
-      case (WLHerf.includes('/forum-') || WLHerf.includes('/type-')): { //  || WLHerf.includes('mod=forum') 图片模式只有一个页面，不需要
-        // 增加 visited 样式，图片模式已阅的帖子变灰色 
-        GM_addStyle(`.xw0 a:visited {color: grey;}`);
-        // 去掉高亮标题
-        if (document.querySelector('[style="color: #2B65B7"]')) {
-          document.querySelectorAll('[style="color: #2B65B7"]').forEach((e) => {
-            e.style = '';
-          })
-        }
-
-        // 回帖输入框
-        const input = genElem('textarea', 'inpreply', 1, 20);
-        status_loginned.insertBefore(input, mnoutbox[1]); //添加文本域到指定位置
-        // 感谢 按钮
-        const thkBtn = genButton('添加本页', thankOnePage); //设置名称和绑定函数
-        status_loginned.insertBefore(thkBtn, mnoutbox[1]); //添加按钮到指定位置
-        break;
-      }
-      case reg.test(WLHerf): {
-        // 一次性添加，避免多次渲染
-        const div = document.createElement("div");
-        div.style.cssText = `float:left;`;
-        div.className = "mnoutbox";
-
-        // 回帖 按钮
-        const repBtn = genButton('回帖', replyBtn); //设置名称和绑定函数
-        div.append(repBtn);
-
-        // 感谢 按钮
-        const thankBtn = genButton('感谢', thkBtn); //设置名称和绑定函数
-        div.append(thankBtn);
-
-        // 回帖输入框
-        const input = genElem('textarea', 'inpreply', 1, 20);
-        div.append(input); //添加文本域到指定位置  
-
-        // 页码输入框
-        const page = genInp('input', 'inp_page');
-        div.append(page); //添加输入框到指定位置
-
-        // 添加任务
-        const btn = genButton('添加任务', thankBatch); //设置名称和绑定函数
-        div.append(btn);
-
-        status_loginned.insertBefore(div, mnoutbox[1]); //添加按钮到指定位置
-        break;
-      }
-
-      default:
-        break;
-    }
-  };
-
-  function replyBtn() {
-    if (!this.timer) {
-      replyOrThk(this, 'reply');
-    }
-  }
-
-  function thkBtn() {
-    if (!this.timer) {
-      replyOrThk(this, 'thk');
-    }
-  }
-
   // 定时签到
   function timeControl() {
     const _this = this;
@@ -514,6 +421,92 @@
     }
   }
 
+  // 添加GUI
+  function addDom() {
+    const WLHerf = location.href;
+    const status_loginned = document.querySelector('.status_loginned');
+    const mnoutbox = document.querySelectorAll('.mnoutbox');
+    // 消息盒子
+    MessageBox.genMessageBox();
+    /* 
+    1. 先判断是否在帖子页，是则添加并退出
+    2. 是否在版块页，是则添加并退出
+    3. 判断是否在首页，是则添加并退出
+    */
+    const reg = /.+forum\.php$/; // 正则判断是否是首页
+    switch (true) {
+      case WLHerf.includes('thread'): {
+        // 下载按钮
+        const repBtn = genButton('下载图片', downloadImgs);
+        status_loginned.insertBefore(repBtn, mnoutbox[1]);
+        // 屏蔽图片按钮
+        const noDisplayBtn = genButton('屏蔽图片', noDisplayPic);
+        status_loginned.insertBefore(noDisplayBtn, mnoutbox[1]);
+        break;
+      }
+      case WLHerf.includes('id=dsu_paulsign:sign'): {
+        // 定时签到按钮
+        const btn = genButton('定时签到', timeControl);
+        status_loginned.insertBefore(btn, mnoutbox[1]);
+        break;
+      }
+      case (WLHerf.includes('/forum-') || WLHerf.includes('/type-')): { //  || WLHerf.includes('mod=forum') 图片模式只有一个页面，不需要
+        // 增加 visited 样式，图片模式已阅的帖子变灰色 
+        GM_addStyle(`.xw0 a:visited {color: grey;}`);
+        // 去掉高亮标题
+        if (document.querySelector('[style="color: #2B65B7"]')) {
+          document.querySelectorAll('[style="color: #2B65B7"]').forEach((e) => {
+            e.style = '';
+          })
+        }
+        // 回帖输入框
+        const input = genElem('textarea', 'inpreply', 1, 20);
+        status_loginned.insertBefore(input, mnoutbox[1]);
+        // 感谢 按钮
+        const thkBtn = genButton('添加本页', thankOnePage);
+        status_loginned.insertBefore(thkBtn, mnoutbox[1]);
+        break;
+      }
+      case reg.test(WLHerf): {
+        // 一次性添加，避免多次渲染
+        const div = document.createElement("div");
+        div.style.cssText = `float:left;`;
+        div.className = "mnoutbox";
+        // 回帖 按钮
+        const repBtn = genButton('回帖', replyBtn);
+        div.append(repBtn);
+        // 感谢 按钮
+        const thankBtn = genButton('感谢', thkBtn);
+        div.append(thankBtn);
+        // 回帖输入框
+        const input = genElem('textarea', 'inpreply', 1, 20);
+        div.append(input);
+        // 页码输入框
+        const page = genInp('input', 'inp_page');
+        div.append(page);
+        // 添加任务按钮
+        const btn = genButton('添加任务', thankBatch);
+        div.append(btn);
+        status_loginned.insertBefore(div, mnoutbox[1]);
+        break;
+      }
+      default:
+        break;
+    }
+  };
+
+  function replyBtn() {
+    if (!this.timer) {
+      replyOrThk(this, 'reply');
+    }
+  }
+
+  function thkBtn() {
+    if (!this.timer) {
+      replyOrThk(this, 'thk');
+    }
+  }
+
   /* 
   先调用静态方法 genMessageBox() 方法初始化消息弹出窗口
     消息通知类：
@@ -538,12 +531,12 @@
     // 消息盒子，先调用本方法初始化消息弹出窗口
     static genMessageBox() {
       // 添加 genBox 样式
-      GM_addStyle(`#messageBox {width: 222px;float: left;position: fixed;border-radius: 10px;left: auto;right: 5%;bottom: 20px;z-index:999}`);
+      GM_addStyle(`#messageBox {width: 222px;position:fixed;right: 5%;bottom: 20px;z-index:999}`);
       GM_addStyle(`#messageBox div {width:100%;background-color:#64ce83;float:left;padding:5px 10px;margin-top:10px;border-radius:10px;color:#fff;box-shadow: 0px 0px 1px 3px #ffffff;}`);
 
-      const b = document.createElement('div'); //创建类型为div的DOM对象
-      b.id = 'messageBox';
-      document.querySelector('body').appendChild(b); // 消息盒子添加到body
+      const div = document.createElement('div'); //创建类型为div的DOM对象
+      div.id = 'messageBox';
+      document.querySelector('body').appendChild(div); // 消息盒子添加到body
     };
 
     _genBox(text) {
