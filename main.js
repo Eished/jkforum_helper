@@ -1159,6 +1159,7 @@
         method: usermethod,
         url: url,
         responseType: type,
+        timeout: 5 * 60 * 1000,
         onload: function (response) {
           if (response.status == 200) {
             resolve(response.response);
@@ -1169,6 +1170,10 @@
         onerror: function (error) {
           new MessageBox("网络错误");
           reject(error);
+        },
+        ontimeout: () => {
+          new MessageBox("网络超时");
+          reject("timeout");
         }
       });
     });
@@ -1301,9 +1306,13 @@
   function genButton(text, foo, id) {
     let b = document.createElement('button');
     b.textContent = text;
-    b.style.cssText = 'margin:16px 10px 0px 0px;float:left'
-    b.addEventListener('click', foo);
-    b.id = id;
+    b.style.cssText = 'margin:16px 10px 0px 0px;float:left';
+    if (foo) {
+      b.addEventListener('click', foo);
+    }
+    if (id) {
+      b.id = id;
+    }
     return b;
   }
 
