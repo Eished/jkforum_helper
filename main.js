@@ -283,34 +283,51 @@
 
     // 遮挡暂停
     window.onblur = function () {
-      a.timer = 0; // 暂停
+      a.timer = 0;
     };
     // 点击背景层暂停
     imgzoom_cover.addEventListener("click", () => {
       a.timer = 0;
-    }); // 暂停
+    });
+    // 关闭按钮暂停
+    y.querySelector(".imgclose").addEventListener("click", () => {
+      a.timer = 0;
+    })
 
     async function play() {
-      if (!a.timer) {
-        await waitFor(user.autoPlayDiff);
+      if (!a.timer && !a.observer) { // 再次点击暂停，只运行一个监听器
         a.timer = 1;
-        while (true) {
-          if (a.timer == 0) {
-            break;
-          }
-          const zimg_next = imgzoom.querySelector(".zimg_next");
-          const imgzoom_waiting = append_parent.querySelector("#imgzoom_waiting").style.display;
-          if (zimg_next && imgzoom_waiting == "none") {
+        const imgzoom_waiting = append_parent.querySelector("#imgzoom_waiting");
+        const zimg_next = imgzoom.querySelector(".zimg_next"); // 是否有下一张
+        if (!zimg_next) {
+          a.timer = 0;
+          new MessageBox("只有一张图！")
+          return;
+        }
+
+        a.observer = new MutationObserver(callback);
+        a.observer.observe(imgzoom_waiting, {
+          attributes: true
+        })
+
+        async function callback() {
+          const display = imgzoom_waiting.style.display;
+          if (display == "none") {
+            await waitFor(user.autoPlayDiff); // 延迟，然后判断是否停止
+            if (a.timer == 0) {
+              a.observer.disconnect();
+              a.observer = null; // disconnect()并没有清空监听器
+              return;
+            }
+            const zimg_next = imgzoom.querySelector(".zimg_next");
             zimg_next.click();
-            // 更准确的延迟
-            await waitFor(user.autoPlayDiff);
-          } else if (!zimg_next) {
-            new MessageBox("只有一张图！")
-            return;
           } else {
-            await waitFor(user.autoPlayDiff);
+            console.log(display);
           }
         }
+        // 开始点击下一张
+        await waitFor(user.autoPlayDiff);
+        zimg_next.click();
       } else {
         a.timer = 0;
       }
