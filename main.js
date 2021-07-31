@@ -6,11 +6,11 @@
 // @name:ko      JKForum 조수
 // @namespace    https://github.com/Eished/jkforum_helper
 // @version      0.6.3
-// @description        捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动播放图片、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片
-// @description:en     JKForum Helper: Auto-sign-in, timed sign-in, auto-thank you, auto-load original image, auto-play image, auto-pay to buy theme post, auto-complete voting task, optimize browsing experience, one-click bulk reply/thank you, one-click package to download post image
-// @description:zh-TW  捷克論壇助手：自動簽到、定時簽到、自動感謝、自動加載原圖、自動播放圖片、自動支付購買主題貼、自動完成投票任務，優化瀏覽體驗，一鍵批量回帖/感謝，一鍵打包下載帖子圖片
-// @description:ja     チェコ語フォーラム助手：自動チェックイン、時限式チェックイン、オートサンキュー、オリジナル画像の自動読み込み、画像の自動再生、トピック投稿の自動支払い、ポールタスクの自動完了、ブラウジングエクスペリエンスの最適化、ワンクリックでの一括返信/サンキュー、ワンクリックでの投稿画像のパッケージダウンロード
-// @description:ko     체코 포럼 조수: 자동 로그인, 정기 로그인, 자동 감사, 원본 사진 자동로드, 테마 스티커 구매 자동 결제, 투표 작업 자동 완료, 최적화 된 브라우징 경험, 원 클릭 일괄 회신 / 감사, 원 클릭 포스트 사진의 패키지 다운로드 클릭다운로드하십시오.
+// @description        JKF 捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动播放图片、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片
+// @description:en     JKF JKForum Helper: Auto-sign-in, timed sign-in, auto-thank you, auto-load original image, auto-play image, auto-pay to buy theme post, auto-complete voting task, optimize browsing experience, one-click bulk reply/thank you, one-click package to download post image
+// @description:zh-TW  JKF 捷克論壇助手：自動簽到、定時簽到、自動感謝、自動加載原圖、自動播放圖片、自動支付購買主題貼、自動完成投票任務，優化瀏覽體驗，一鍵批量回帖/感謝，一鍵打包下載帖子圖片
+// @description:ja     JKF チェコ語フォーラム助手：自動チェックイン、時限式チェックイン、オートサンキュー、オリジナル画像の自動読み込み、画像の自動再生、トピック投稿の自動支払い、ポールタスクの自動完了、ブラウジングエクスペリエンスの最適化、ワンクリックでの一括返信/サンキュー、ワンクリックでの投稿画像のパッケージダウンロード
+// @description:ko     JKF 체코 포럼 조수: 자동 로그인, 정기 로그인, 자동 감사, 원본 사진 자동로드, 테마 스티커 구매 자동 결제, 투표 작업 자동 완료, 최적화 된 브라우징 경험, 원 클릭 일괄 회신 / 감사, 원 클릭 포스트 사진의 패키지 다운로드 클릭다운로드하십시오.
 // @author       Eished
 // @license      AGPL-3.0
 // @match        *://*.jkforum.net/*
@@ -321,8 +321,6 @@
             }
             const zimg_next = imgzoom.querySelector(".zimg_next");
             zimg_next.click();
-          } else {
-            console.log(display);
           }
         }
         // 开始点击下一张
@@ -525,13 +523,13 @@
   }
 
   /* 
-  先调用静态方法 genMessageBox() 方法初始化消息弹出窗口
     消息通知类：
+    0.先调用静态方法 genMessageBox() 方法初始化消息弹出窗口
     1.传参默认值：消息，持续时间，重要性
-    2.持续时间非数字时：为永久消息；
-    3.初始化用 new MessageBox() 参数为空时，调用 showMessage() 传参显示消息；用于增大作用域。
-    4.重要性：0 = log；1 = log+自定义弹窗；2 = log+自定义弹窗+GM；默认 = 自定义弹窗；
-    */
+    2.持续时间非数字时为永久消息，需手动移除 removeMessage() ；
+    3.初始化用 new MessageBox() 参数为空时，调用 showMessage() 传参显示消息；用于增大作用域。refreshMessage() 刷新永久消息；
+    4.重要性：1 = log + 自定义弹窗；2 = log + 自定义弹窗 + GM；默认 = 自定义弹窗；
+  */
   class MessageBox {
     constructor(text, setTime = 5000, important = 1) {
       this._box = null; // 永久显示标记，和元素地址
@@ -570,14 +568,9 @@
       this._text = text;
       this._setTime = setTime;
       this._important = important;
-
       const messageBox = document.querySelector('#messageBox'); // 消息插入位置
 
       switch (important) {
-        case 0: {
-          console.log(text);
-          break;
-        }
         case 1: {
           console.log(text);
           this._box = this._genBox(text); // 元素标记，删除用
@@ -599,7 +592,7 @@
         }
       }
 
-      if (setTime && !isNaN(setTime) && important != 0) { // 默认5秒删掉消息，可设置时间，none一直显示
+      if (setTime && !isNaN(setTime)) { // 默认5秒删掉消息，可设置时间，none一直显示
         setTimeout(() => {
           this.removeMessage();
         }, setTime);
@@ -609,10 +602,6 @@
     refreshMessage(text) {
       if (isNaN(this._setTime) && this._box != null) {
         switch (this._important) {
-          case 0: {
-            console.log(text);
-            break;
-          }
           case 1: {
             console.log(text);
             this._box.innerHTML = text;
