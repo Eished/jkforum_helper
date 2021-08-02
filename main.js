@@ -5,7 +5,7 @@
 // @name:ja      JKForum 助手
 // @name:ko      JKForum 조수
 // @namespace    https://github.com/Eished/jkforum_helper
-// @version      0.6.3
+// @version      0.6.4
 // @description        JKF 捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动播放图片、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片
 // @description:en     JKF JKForum Helper: Auto-sign-in, timed sign-in, auto-thank you, auto-load original image, auto-play image, auto-pay to buy theme post, auto-complete voting task, optimize browsing experience, one-click bulk reply/thank you, one-click package to download post image
 // @description:zh-TW  JKF 捷克論壇助手：自動簽到、定時簽到、自動感謝、自動加載原圖、自動播放圖片、自動支付購買主題貼、自動完成投票任務，優化瀏覽體驗，一鍵批量回帖/感謝，一鍵打包下載帖子圖片
@@ -532,7 +532,7 @@
   */
   class MessageBox {
     constructor(text, setTime = 5000, important = 1) {
-      this._box = null; // 永久显示标记，和元素地址
+      this._msg = null; // 永久显示标记，和元素地址
       this._text = text;
       this._setTime = setTime;
       this._important = important;
@@ -543,51 +543,46 @@
       }
     }
 
-    // 消息盒子，先调用本方法初始化消息弹出窗口
+    // 静态属性，消息盒子
+    static _msgBox;
+    // 静态方法，初始化消息盒子，先调用本方法初始化消息弹出窗口
     static genMessageBox() {
-      // 添加 genBox 样式
+      // 添加样式
       GM_addStyle(`#messageBox {width: 222px;position:fixed;right: 5%;bottom: 20px;z-index:999}`);
       GM_addStyle(`#messageBox div {width:100%;background-color:#64ce83;float:left;padding:5px 10px;margin-top:10px;border-radius:10px;color:#fff;box-shadow: 0px 0px 1px 3px #ffffff;}`);
 
-      const div = document.createElement('div'); //创建类型为div的DOM对象
-      div.id = 'messageBox';
-      document.querySelector('body').appendChild(div); // 消息盒子添加到body
+      this._msgBox = document.createElement('div'); // 创建类型为div的DOM对象
+      this._msgBox.id = "messageBox";
+      document.body.append(this._msgBox); // 消息盒子添加到body
     };
-
-    _genBox(text) {
-      const box = document.createElement('div');
-      box.textContent = text;
-      return box;
-    }
 
     // 显示消息
     showMessage(text = this._text, setTime = this._setTime, important = this._important) {
-      if (this._box != null) {
+      if (this._msg != null) {
         throw new Error("先移除上条消息，才可再次添加！");
       }
       this._text = text;
       this._setTime = setTime;
       this._important = important;
-      const messageBox = document.querySelector('#messageBox'); // 消息插入位置
+
+      this._msg = document.createElement('div');
+      this._msg.textContent = text;
 
       switch (important) {
         case 1: {
           console.log(text);
-          this._box = this._genBox(text); // 元素标记，删除用
-          messageBox.appendChild(this._box); // 显示消息
+          MessageBox._msgBox.append(this._msg); // 显示消息
           break;
         }
         case 2: {
           console.log(text);
-          this._box = this._genBox(text); // 元素标记，删除用
-          messageBox.appendChild(this._box); // 显示消息
+          MessageBox._msgBox.append(this._msg); // 显示消息
           GM_notification(text);
           break;
         }
 
         default: {
-          this._box = this._genBox(text); // 元素标记，删除用
-          messageBox.appendChild(this._box); // 显示消息
+          MessageBox._msgBox.append(this._msg); // 显示消息
           break;
         }
       }
@@ -600,22 +595,22 @@
     }
 
     refreshMessage(text) {
-      if (isNaN(this._setTime) && this._box != null) {
+      if (isNaN(this._setTime) && this._msg != null) {
         switch (this._important) {
           case 1: {
             console.log(text);
-            this._box.innerHTML = text;
+            this._msg.innerHTML = text;
             break;
           }
           case 2: {
             console.log(text);
-            this._box.innerHTML = text;
+            this._msg.innerHTML = text;
             GM_notification(text);
             break;
           }
 
           default: {
-            this._box.innerHTML = text;
+            this._msg.innerHTML = text;
             break;
           }
         }
@@ -626,14 +621,14 @@
 
     // 移除方法，没有元素则等待setTime 5秒再试5次
     removeMessage() {
-      if (this._box != null) {
-        this._box.parentNode.removeChild(this._box);
-        this._box = null; // 清除标志位
+      if (this._msg != null) {
+        this._msg.parentNode.removeChild(this._msg);
+        this._msg = null; // 清除标志位
       } else {
         // 空初始化时，消息异步发送，导致先执行移除而获取不到元素，默认 setTime=5000
         // 消息发出后，box 非空，可以移除，不会执行 setTime="none"
         if (this._timer == 4) {
-          throw new Error("移除的元素不存在：" + this._box);
+          throw new Error("移除的元素不存在：" + this._msg);
         }
         this._timer++;
         setTimeout(() => {
@@ -1049,7 +1044,7 @@
       const promise = () => {
         return new Promise(async (resolve) => {
           const file_name = imgsTitles[index]; // 获取文件名
-          mesIdH.refreshMessage(`${imgsUrls.length} 张，正在下载：第 ${index+1} 张，文件名：${file_name}`);
+          mesIdH.refreshMessage(`正在下载：第 ${index+1} 张，文件名：${file_name}，共 ${imgsUrls.length} 张`);
 
           await getData(item, "blob").then(data => { // 下载文件, 并存成ArrayBuffer对象 
             zip.file(file_name, data, {
@@ -1356,7 +1351,7 @@
   async function playVideo(msId) {
     let p = 0;
     const video = genVideo();
-    document.querySelector('body').appendChild(video); //添加视频到指定位置
+    document.body.append(video); //添加视频到指定位置
     video.addEventListener("canplay", videoPlay); // 加载完
 
     function videoPlay() { // 播放视频，防止休眠

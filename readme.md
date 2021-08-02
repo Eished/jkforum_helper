@@ -40,7 +40,9 @@
   
 - 【**油猴菜单栏**】
 
-   - 点击浏览器扩展 油猴插件图标 即可看到
+   - 点击浏览器扩展 油猴插件图标 即可看到。
+
+   - 建议开启加载原图以提高图片加载速度，因网站经常反向压缩（画质降低，体积反而增大很多）。
 
      ![pic_46.png](https://cdn.jsdelivr.net/gh/eished/jkforum_helper/readme.assets/pic_46.png)
 
