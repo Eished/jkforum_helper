@@ -232,13 +232,13 @@
         new MessageBox(`加载原图成功 ${count} 张！`);
       }
     }
-    const zoomimgs = document.querySelectorAll(`[zoomfile]`); //获取图片列表
+    const zoomimgs = document.querySelectorAll(`img[zoomfile]`); //获取图片列表
     if (zoomimgs) { // 自动播放
       for (let i = 0; i < zoomimgs.length; i++) { //遍历图片列表
         zoomimgs[i].addEventListener("click", autoPlay);
       }
     }
-    const onclickzoomimgs = document.querySelectorAll(`[onclick="zoom(this, this.src, 0, 0, 0)"]`); //获取图片列表
+    const onclickzoomimgs = document.querySelectorAll(`img[onclick="zoom(this, this.src, 0, 0, 0)"]`); //获取图片列表
     if (onclickzoomimgs) { // 自动播放
       for (let i = 0; i < onclickzoomimgs.length; i++) { //遍历图片列表
         onclickzoomimgs[i].addEventListener("click", autoPlay);
@@ -254,8 +254,8 @@
     append_parent.timer = 1; // 已添加标志
 
     function callback() { // 监听元素子节点变化，然后添加节点
-      const imgzoom = document.querySelector("#imgzoom");
-      if (imgzoom && imgzoom.querySelector(".y")) { // 按钮也是延迟加载，监听是否有 .y
+      const imgzoom_y = document.querySelector("#imgzoom .y");
+      if (imgzoom_y) { // 按钮也是延迟加载，监听是否有 .y
         observer.disconnect(); // 断开监听
         addAutoPlay(); // 添加按钮
       }
@@ -319,8 +319,7 @@
               a.observer = null; // disconnect()并没有清空监听器
               return;
             }
-            const zimg_next = imgzoom.querySelector(".zimg_next");
-            zimg_next.click();
+            imgzoom.querySelector(".zimg_next").click(); // 刷新NodeList
           }
         }
         // 开始点击下一张
@@ -353,10 +352,14 @@
   }
   // 自动感谢
   async function autoThk() {
-    if (document.querySelector('#thankform') && document.querySelectorAll('#k_thankauthor')[1]) { //感谢可见
+    if (!document.querySelector('#thankform')) {
+      // 没有感谢
+      return;
+    }
+    if (document.querySelectorAll('#k_thankauthor').length == 2) { //感谢可见
       await postAutoThk();
       location.reload();
-    } else if (document.querySelector('#thankform') && document.querySelectorAll('#k_thankauthor')[0]) { //普通贴
+    } else { //普通贴
       await postAutoThk();
     }
   };
@@ -440,7 +443,7 @@
   function addDom() {
     const WLHerf = location.href;
     const status_loginned = document.querySelector('.status_loginned');
-    const mnoutbox = document.querySelectorAll('.mnoutbox');
+    const mnoutbox = status_loginned.firstElementChild;
     // 消息盒子
     MessageBox.genMessageBox();
     /* 
@@ -453,16 +456,16 @@
       case WLHerf.includes('thread'): {
         // 下载按钮
         const repBtn = genButton('下载图片', downloadImgs);
-        status_loginned.insertBefore(repBtn, mnoutbox[1]);
+        status_loginned.insertBefore(repBtn, mnoutbox);
         // 屏蔽图片按钮
         const noDisplayBtn = genButton('屏蔽图片', noDisplayPic);
-        status_loginned.insertBefore(noDisplayBtn, mnoutbox[1]);
+        status_loginned.insertBefore(noDisplayBtn, mnoutbox);
         break;
       }
       case WLHerf.includes('id=dsu_paulsign:sign'): {
         // 定时签到按钮
         const btn = genButton('定时签到', timeControl);
-        status_loginned.insertBefore(btn, mnoutbox[1]);
+        status_loginned.insertBefore(btn, mnoutbox);
         break;
       }
       case (WLHerf.includes('/forum-') || WLHerf.includes('/type-')): { //  || WLHerf.includes('mod=forum') 图片模式只有一个页面，不需要
@@ -476,10 +479,10 @@
         }
         // 回帖输入框
         const input = genElem('textarea', 'inpreply', 1, 20);
-        status_loginned.insertBefore(input, mnoutbox[1]);
+        status_loginned.insertBefore(input, mnoutbox);
         // 感谢 按钮
         const thkBtn = genButton('添加本页', thankOnePage);
-        status_loginned.insertBefore(thkBtn, mnoutbox[1]);
+        status_loginned.insertBefore(thkBtn, mnoutbox);
         break;
       }
       case reg.test(WLHerf): {
@@ -502,7 +505,7 @@
         // 添加任务按钮
         const btn = genButton('添加任务', thankBatch);
         div.append(btn);
-        status_loginned.insertBefore(div, mnoutbox[1]);
+        status_loginned.insertBefore(div, mnoutbox);
         break;
       }
       default:
@@ -567,22 +570,20 @@
 
       this._msg = document.createElement('div');
       this._msg.textContent = text;
+      MessageBox._msgBox.append(this._msg); // 显示消息
 
       switch (important) {
         case 1: {
           console.log(text);
-          MessageBox._msgBox.append(this._msg); // 显示消息
           break;
         }
         case 2: {
           console.log(text);
-          MessageBox._msgBox.append(this._msg); // 显示消息
           GM_notification(text);
           break;
         }
 
         default: {
-          MessageBox._msgBox.append(this._msg); // 显示消息
           break;
         }
       }
@@ -596,21 +597,19 @@
 
     refreshMessage(text) {
       if (isNaN(this._setTime) && this._msg != null) {
+        this._msg.innerHTML = text;
         switch (this._important) {
           case 1: {
             console.log(text);
-            this._msg.innerHTML = text;
             break;
           }
           case 2: {
             console.log(text);
-            this._msg.innerHTML = text;
             GM_notification(text);
             break;
           }
 
           default: {
-            this._msg.innerHTML = text;
             break;
           }
         }
