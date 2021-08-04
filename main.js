@@ -235,13 +235,17 @@
     const zoomimgs = document.querySelectorAll(`img[zoomfile]`); //获取图片列表
     if (zoomimgs) { // 自动播放
       for (let i = 0; i < zoomimgs.length; i++) { //遍历图片列表
-        zoomimgs[i].addEventListener("click", autoPlay);
+        zoomimgs[i].addEventListener("click", autoPlay, {
+          once: true
+        });
       }
     }
     const onclickzoomimgs = document.querySelectorAll(`img[onclick="zoom(this, this.src, 0, 0, 0)"]`); //获取图片列表
     if (onclickzoomimgs) { // 自动播放
       for (let i = 0; i < onclickzoomimgs.length; i++) { //遍历图片列表
-        onclickzoomimgs[i].addEventListener("click", autoPlay);
+        onclickzoomimgs[i].addEventListener("click", autoPlay, {
+          once: true
+        });
       }
     }
   }
@@ -271,7 +275,6 @@
     const imgzoom = append_parent.querySelector("#imgzoom");
     const imgzoom_cover = append_parent.querySelector("#imgzoom_cover");
     const y = imgzoom.querySelector(".y");
-    const imgzoom_imglink = imgzoom.querySelector("#imgzoom_imglink");
 
     const a = document.createElement("a");
     a.title = "自动播放/停止播放";
@@ -279,7 +282,7 @@
     a.href = "javascript:void(0);";
     a.addEventListener("click", play); // 添加监听播放事件
     a.style.cssText = `background: url(../../template/yibai_city1/style/common/arw_l.gif) rgb(241, 196, 15) center no-repeat;transform: rotate(180deg);width: 60px;height: 18px;overflow: hidden;`;
-    y.insertBefore(a, imgzoom_imglink); // 添加按钮
+    y.prepend(a); // 添加按钮
 
     // 遮挡暂停
     window.onblur = function () {
@@ -443,7 +446,6 @@
   function addDom() {
     const WLHerf = location.href;
     const status_loginned = document.querySelector('.status_loginned');
-    const mnoutbox = status_loginned.firstElementChild;
     // 消息盒子
     MessageBox.genMessageBox();
     /* 
@@ -456,16 +458,16 @@
       case WLHerf.includes('thread'): {
         // 下载按钮
         const repBtn = genButton('下载图片', downloadImgs);
-        status_loginned.insertBefore(repBtn, mnoutbox);
+        status_loginned.prepend(repBtn);
         // 屏蔽图片按钮
         const noDisplayBtn = genButton('屏蔽图片', noDisplayPic);
-        status_loginned.insertBefore(noDisplayBtn, mnoutbox);
+        status_loginned.prepend(noDisplayBtn);
         break;
       }
       case WLHerf.includes('id=dsu_paulsign:sign'): {
         // 定时签到按钮
         const btn = genButton('定时签到', timeControl);
-        status_loginned.insertBefore(btn, mnoutbox);
+        status_loginned.prepend(btn);
         break;
       }
       case (WLHerf.includes('/forum-') || WLHerf.includes('/type-')): { //  || WLHerf.includes('mod=forum') 图片模式只有一个页面，不需要
@@ -479,33 +481,31 @@
         }
         // 回帖输入框
         const input = genElem('textarea', 'inpreply', 1, 20);
-        status_loginned.insertBefore(input, mnoutbox);
+        status_loginned.prepend(input);
         // 感谢 按钮
         const thkBtn = genButton('添加本页', thankOnePage);
-        status_loginned.insertBefore(thkBtn, mnoutbox);
+        status_loginned.prepend(thkBtn);
         break;
       }
       case reg.test(WLHerf): {
         // 一次性添加，避免多次渲染
-        const div = document.createElement("div");
-        div.style.cssText = `float:left;`;
-        div.className = "mnoutbox";
+        const fragment = new DocumentFragment();
         // 回帖 按钮
         const repBtn = genButton('回帖', replyBtn);
-        div.append(repBtn);
+        fragment.append(repBtn);
         // 感谢 按钮
         const thankBtn = genButton('感谢', thkBtn);
-        div.append(thankBtn);
+        fragment.append(thankBtn);
         // 回帖输入框
         const input = genElem('textarea', 'inpreply', 1, 20);
-        div.append(input);
+        fragment.append(input);
         // 页码输入框
         const page = genInp('input', 'inp_page');
-        div.append(page);
+        fragment.append(page);
         // 添加任务按钮
         const btn = genButton('添加任务', thankBatch);
-        div.append(btn);
-        status_loginned.insertBefore(div, mnoutbox);
+        fragment.append(btn);
+        status_loginned.prepend(fragment);
         break;
       }
       default:
@@ -597,7 +597,7 @@
 
     refreshMessage(text) {
       if (isNaN(this._setTime) && this._msg != null) {
-        this._msg.innerHTML = text;
+        this._msg.textContent = text;
         switch (this._important) {
           case 1: {
             console.log(text);
@@ -621,7 +621,7 @@
     // 移除方法，没有元素则等待setTime 5秒再试5次
     removeMessage() {
       if (this._msg != null) {
-        this._msg.parentNode.removeChild(this._msg);
+        this._msg.remove();
         this._msg = null; // 清除标志位
       } else {
         // 空初始化时，消息异步发送，导致先执行移除而获取不到元素，默认 setTime=5000
@@ -1348,13 +1348,19 @@
   }
 
   async function playVideo(msId) {
+    if (document.querySelector("body > video")) {
+      msId.showMessage('防止休眠启动，请保持本页处于激活状态，请勿遮挡、最小化本窗口以及全屏运行其它应用！', "none");
+      return;
+    }
     let p = 0;
     const video = genVideo();
     document.body.append(video); //添加视频到指定位置
-    video.addEventListener("canplay", videoPlay); // 加载完
+    video.addEventListener("canplay", videoPlay, {
+      once: true
+    }); // 加载完
 
     function videoPlay() { // 播放视频，防止休眠
-      video.removeEventListener("canplay", videoPlay, false); // 循环触发，移除事件监听
+      // video.removeEventListener("canplay", videoPlay, false); // 循环触发，移除事件监听
       // 显示永久消息通知
       msId.showMessage('防止休眠启动，请保持本页处于激活状态，请勿遮挡、最小化本窗口以及全屏运行其它应用！', "none");
       p = 99;
