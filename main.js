@@ -355,28 +355,25 @@
   }
   // 自动感谢
   async function autoThk() {
-    if (!document.querySelector('#thankform')) {
+    const thankform = document.forms.thankform
+    if (!thankform) {
       // 没有感谢
       return;
     }
     if (document.querySelectorAll('#k_thankauthor').length == 2) { //感谢可见
-      await postAutoThk();
+      await postAutoThk(thankform);
       location.reload();
     } else { //普通贴
-      await postAutoThk();
+      await postAutoThk(thankform);
     }
   };
   // 发送感谢请求
-  async function postAutoThk() {
-    const thankform = document.querySelector('#thankform');
-    const tid = thankform.querySelector('[name=tid]').value;
-    const touser = thankform.querySelector('[name=touser]').value;
-    const touseruid = thankform.querySelector('[name=touseruid]').value;
+  async function postAutoThk(thankform) {
     const thkParamsData = urlSearchParams({
       "formhash": user.formhash,
-      "tid": tid,
-      "touser": touser,
-      "touseruid": touseruid,
+      "tid": thankform.tid.value,
+      "touser": thankform.touser.value,
+      "touseruid": thankform.touseruid.value,
       "handlekey": "k_thankauthor",
       "addsubmit": "true"
     }).toString();
