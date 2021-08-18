@@ -1,0 +1,23 @@
+{
+  "name": "jkf",
+  "version": "1.0.0",
+  "description": "![JKFicon64oval2](https://cdn.jsdelivr.net/gh/eished/jkforum_helper/readme.assets/JKFicon64oval2.png)",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Eished/jkforum_helper.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Eished/jkforum_helper/issues"
+  },
+  "homepage": "https://github.com/Eished/jkforum_helper#readme",
+  "devDependencies": {
+    "eslint": "^7.32.0"
+  }
+}

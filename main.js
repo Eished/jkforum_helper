@@ -66,65 +66,72 @@
       thkUrl: 'https://www.jkforum.net/plugin/?id=thankauthor:thank&inajax=1',
       payUrl: 'https://www.jkforum.net/forum.php?mod=misc&action=pay&paysubmit=yes&infloat=yes&inajax=1',
       fastReplyUrl: 'https://www.jkforum.net/thread-8364615-1-1.html',
-      replyUrl: "https://www.jkforum.net/forum.php?mod=post&action=reply&",
-    }
+      replyUrl: 'https://www.jkforum.net/forum.php?mod=post&action=reply&',
+    };
   }
 
   async function creatUser() {
     const formhash = document.querySelector('.listmenu li a').href.split('&')[2].split('=')[1];
     const username = document.querySelector('.avatar_info').querySelector('a').innerHTML;
     let user = getUserFromName();
-    if (!user) { // 空则写入，或版本变动写入
+    if (!user) {
+      // 空则写入，或版本变动写入
       user = newUser(username, formhash);
       user = await setFastReply(user); // 设置快速回复
       GM_setValue(username, user);
-      new MessageBox("添加用户成功！");
+      new MessageBox('添加用户成功！');
     } else if (user.version != GM_info.script.version) {
       const userMod = newUser(username, formhash);
       const compa = compaObjKey(userMod, user); // 比较key
-      if (compa) { // key相同 只改变版本
+      if (compa) {
+        // key相同 只改变版本
         user.version = GM_info.script.version; // 记录新版本
-      } else { // key不同
+      } else {
+        // key不同
         user.version = GM_info.script.version; // 记录新版本
         user = copyObjVal(userMod, user); // 对newUser赋值
-        new MessageBox("数据更新成功！");
+        new MessageBox('数据更新成功！');
       }
       user = await setFastReply(user); // 设置快速回复
       GM_setValue(username, user);
-      new MessageBox("版本更新成功！请阅读使用说明。");
+      new MessageBox('版本更新成功！请阅读使用说明。');
     }
-    if (user.formhash != formhash) { // formhash 变动存储
+    if (user.formhash != formhash) {
+      // formhash 变动存储
       user.formhash = formhash;
       GM_setValue(username, user);
     }
     return user;
   }
 
-  function getUserFromName() { // 从用户名获取对象
+  function getUserFromName() {
+    // 从用户名获取对象
     const username = document.querySelector('.avatar_info').querySelector('a').innerHTML; // 用户名判断唯一用户
     return GM_getValue(username);
   }
 
-  async function setFastReply(user) { // 设置快速回复
+  async function setFastReply(user) {
+    // 设置快速回复
     try {
       const htmlData = await getData(user.fastReplyUrl);
       const options = htmlData.querySelectorAll('#rqcss select option');
       let fastReply = []; //返回数组
       if (options.length) {
-        options.forEach(option => {
-          if (option.value) { //去掉空值
+        options.forEach((option) => {
+          if (option.value) {
+            //去掉空值
             fastReply.push(replaceHtml(option.value)); //去掉需要转义的内容
           }
         });
       } else {
-        new MessageBox("获取快速回复失败！");
+        new MessageBox('获取快速回复失败！');
         return user;
       }
       if (fastReply.length) {
         user.fastReply = fastReply;
-        new MessageBox("获取快速回复成功！");
+        new MessageBox('获取快速回复成功！');
       } else {
-        new MessageBox("获取快速回复失败！");
+        new MessageBox('获取快速回复失败！');
       }
       return user;
     } catch (e) {
@@ -136,10 +143,12 @@
   async function launch() {
     try {
       if (location.href.includes('thread')) {
-        if (user.autoThkSw) { // 自动感谢当前贴开关
+        if (user.autoThkSw) {
+          // 自动感谢当前贴开关
           await autoThk();
         }
-        if (user.autoPaySw) { // 自动购买当前贴开关
+        if (user.autoPaySw) {
+          // 自动购买当前贴开关
           await autoPay();
         }
         rePic(); // 启动自动加载原图；
@@ -159,10 +168,10 @@
 
   async function autoVoted() {
     await getData(user.applyVotedUrl); // 申请任务
-    const msId = new MessageBox("申请投票任务执行成功！正在投票请勿退出页面...", "none");
+    const msId = new MessageBox('申请投票任务执行成功！正在投票请勿退出页面...', 'none');
     // 投票请求链接
     const votedUrlParams = urlSearchParams({
-      "id": "voted"
+      id: 'voted',
     }).toString();
     const htmlData = await getData(user.votedUrl + votedUrlParams);
     const vidUrl = htmlData.querySelector('.voted a').href; // 找到链接
@@ -173,20 +182,20 @@
     const aid = aidUrl.split('&')[2].split('=')[1]; // 纯数字// 分解链接
     // 投票请求链接数据
     const votedParams = urlSearchParams({
-      "id": "voted",
-      "ac": "dian",
-      "aid": aid,
-      "vid": vid,
-      "qr": "",
-      "inajax": 1,
+      id: 'voted',
+      ac: 'dian',
+      aid: aid,
+      vid: vid,
+      qr: '',
+      inajax: 1,
     }).toString();
     // Post 数据
     const votedParamsData = urlSearchParams({
-      "formhash": user.formhash,
-      "inajax": 1,
-      "handlekey": "dian",
-      "sid": 0,
-      "message": user.votedMessage,
+      formhash: user.formhash,
+      inajax: 1,
+      handlekey: 'dian',
+      sid: 0,
+      message: user.votedMessage,
     }).toString();
     // 投票
     const votedMessage = await postDataAs(user.votedUrl + votedParams, votedParamsData);
@@ -211,17 +220,21 @@
   // 加载原图，自动播放
   async function rePic() {
     const tfImg = document.querySelectorAll('.t_f ignore_js_op img'); //获取图片列表，附件也是ignore_js_op
-    if (tfImg && user.autoRePicSw) { // 加载原图开关
+    if (tfImg && user.autoRePicSw) {
+      // 加载原图开关
       let count = 0;
-      for (let i = 0; i < tfImg.length; i++) { //遍历图片列表
-        const img = tfImg[i]
+      for (let i = 0; i < tfImg.length; i++) {
+        //遍历图片列表
+        const img = tfImg[i];
         img.setAttribute('onmouseover', null); // 去掉下载原图提示
-        if (img.src.includes('.thumb.')) { // 去掉缩略图 加载部分
+        if (img.src.includes('.thumb.')) {
+          // 去掉缩略图 加载部分
           img.src = img.getAttribute('file').split('.thumb.')[0];
           console.log('加载原图成功 thumb：', img.src);
           count++;
-        } else if (img.src.includes('static/image/common/none.gif') && img.getAttribute('file')) { // 懒加载部分
-          if (img.getAttribute('file').includes(".thumb.")) {
+        } else if (img.src.includes('static/image/common/none.gif') && img.getAttribute('file')) {
+          // 懒加载部分
+          if (img.getAttribute('file').includes('.thumb.')) {
             img.setAttribute('file', img.getAttribute('file').split('.thumb.')[0]); // 网站自带forum_viewthread.js  attachimgshow(pid, onlyinpost) 从file延迟加载
             console.log('加载原图成功 none.gif:', img.getAttribute('file'));
             count++;
@@ -233,54 +246,62 @@
       }
     }
     const zoomimgs = document.querySelectorAll(`img[zoomfile]`); //获取图片列表
-    if (zoomimgs) { // 自动播放
-      for (let i = 0; i < zoomimgs.length; i++) { //遍历图片列表
-        zoomimgs[i].addEventListener("click", autoPlay, {
-          once: true
+    if (zoomimgs) {
+      // 自动播放
+      for (let i = 0; i < zoomimgs.length; i++) {
+        //遍历图片列表
+        zoomimgs[i].addEventListener('click', autoPlay, {
+          once: true,
         });
       }
     }
     const onclickzoomimgs = document.querySelectorAll(`img[onclick="zoom(this, this.src, 0, 0, 0)"]`); //获取图片列表
-    if (onclickzoomimgs) { // 自动播放
-      for (let i = 0; i < onclickzoomimgs.length; i++) { //遍历图片列表
-        onclickzoomimgs[i].addEventListener("click", autoPlay, {
-          once: true
+    if (onclickzoomimgs) {
+      // 自动播放
+      for (let i = 0; i < onclickzoomimgs.length; i++) {
+        //遍历图片列表
+        onclickzoomimgs[i].addEventListener('click', autoPlay, {
+          once: true,
         });
       }
     }
   }
   // 自动播放图片
   async function autoPlay() {
-    const append_parent = document.querySelector("#append_parent"); // 监听子节点
-    if (append_parent.timer) { // 防重复点击、添加
+    const append_parent = document.querySelector('#append_parent'); // 监听子节点
+    if (append_parent.timer) {
+      // 防重复点击、添加
       return;
     }
     append_parent.timer = 1; // 已添加标志
 
-    function callback() { // 监听元素子节点变化，然后添加节点
-      const imgzoom_y = document.querySelector("#imgzoom .y");
-      if (imgzoom_y) { // 按钮也是延迟加载，监听是否有 .y
+    function callback() {
+      // 监听元素子节点变化，然后添加节点
+      const imgzoom_y = document.querySelector('#imgzoom .y');
+      if (imgzoom_y) {
+        // 按钮也是延迟加载，监听是否有 .y
         observer.disconnect(); // 断开监听
         addAutoPlay(); // 添加按钮
       }
     }
     const observer = new MutationObserver(callback); // 建立监听器
-    observer.observe(append_parent, { // 开始监听 append_parent
-      childList: true
-    })
+    observer.observe(append_parent, {
+      // 开始监听 append_parent
+      childList: true,
+    });
   }
   // 添加播放图片按钮、事件
   function addAutoPlay() {
-    const append_parent = document.querySelector("#append_parent"); // 监听子节点
-    const imgzoom = append_parent.querySelector("#imgzoom");
-    const imgzoom_cover = append_parent.querySelector("#imgzoom_cover");
-    const y = imgzoom.querySelector(".y");
+    const append_parent = document.querySelector('#append_parent'); // 监听子节点
+    const imgzoom = append_parent.querySelector('#imgzoom');
+    const imgzoom_cover = append_parent.querySelector('#imgzoom_cover');
+    const y = imgzoom.querySelector('.y');
 
-    const a = document.createElement("a");
-    a.title = "自动播放/停止播放";
-    a.innerHTML = "自动播放/停止播放";
-    a.href = "javascript:void(0);";
-    a.addEventListener("click", play); // 添加监听播放事件
+    const a = document.createElement('a');
+    a.title = '自动播放/停止播放';
+    a.innerHTML = '自动播放/停止播放';
+    a.href = 'javascript:void(0);';
+    a.addEventListener('click', play); // 添加监听播放事件
     a.style.cssText = `background: url(../../template/yibai_city1/style/common/arw_l.gif) rgb(241, 196, 15) center no-repeat;transform: rotate(180deg);width: 60px;height: 18px;overflow: hidden;`;
     y.prepend(a); // 添加按钮
 
@@ -289,40 +310,41 @@
       a.timer = 0;
     };
     // 点击背景层暂停
-    imgzoom_cover.addEventListener("click", () => {
+    imgzoom_cover.addEventListener('click', () => {
       a.timer = 0;
     });
     // 关闭按钮暂停
-    y.querySelector(".imgclose").addEventListener("click", () => {
+    y.querySelector('.imgclose').addEventListener('click', () => {
       a.timer = 0;
-    })
+    });
 
     async function play() {
-      if (!a.timer && !a.observer) { // 再次点击暂停，只运行一个监听器
+      if (!a.timer && !a.observer) {
+        // 再次点击暂停，只运行一个监听器
         a.timer = 1;
-        const imgzoom_waiting = append_parent.querySelector("#imgzoom_waiting");
-        const zimg_next = imgzoom.querySelector(".zimg_next"); // 是否有下一张
+        const imgzoom_waiting = append_parent.querySelector('#imgzoom_waiting');
+        const zimg_next = imgzoom.querySelector('.zimg_next'); // 是否有下一张
         if (!zimg_next) {
           a.timer = 0;
-          new MessageBox("只有一张图！")
+          new MessageBox('只有一张图！');
           return;
         }
 
         a.observer = new MutationObserver(callback);
         a.observer.observe(imgzoom_waiting, {
-          attributes: true
-        })
+          attributes: true,
+        });
 
         async function callback() {
           const display = imgzoom_waiting.style.display;
-          if (display == "none") {
+          if (display == 'none') {
             await waitFor(user.autoPlayDiff); // 延迟，然后判断是否停止
             if (a.timer == 0) {
               a.observer.disconnect();
               a.observer = null; // disconnect()并没有清空监听器
               return;
             }
-            imgzoom.querySelector(".zimg_next").click(); // 刷新NodeList
+            imgzoom.querySelector('.zimg_next').click(); // 刷新NodeList
           }
         }
         // 开始点击下一张
@@ -340,11 +362,12 @@
       const referer = location.href;
       let tid = referer.split('-')[1]; // 不同链接地址不同
       if (tid == undefined) {
-        tid = new URLSearchParams(referer).get("tid"); // 用于获取分类贴链接下的 tid
+        tid = new URLSearchParams(referer).get('tid'); // 用于获取分类贴链接下的 tid
       }
-      const pData = `formhash=${user.formhash}&referer=${turnUrl(referer)}&tid=${tid}&handlekey=pay`
+      const pData = `formhash=${user.formhash}&referer=${turnUrl(referer)}&tid=${tid}&handlekey=pay`;
       const stringOrHtml = await postDataAs(url, pData);
-      if (checkHtml(stringOrHtml)) { // 确认html
+      if (checkHtml(stringOrHtml)) {
+        // 确认html
         const info = stringOrHtml.querySelector('script').innerHTML.split(`', `)[1].slice(1);
         new MessageBox(info);
         location.reload();
@@ -355,27 +378,29 @@
   }
   // 自动感谢
   async function autoThk() {
-    const thankform = document.forms.thankform
+    const thankform = document.forms.thankform;
     if (!thankform) {
       // 没有感谢
       return;
     }
-    if (document.querySelectorAll('#k_thankauthor').length == 2) { //感谢可见
+    if (document.querySelectorAll('#k_thankauthor').length == 2) {
+      //感谢可见
       await postAutoThk(thankform);
       location.reload();
-    } else { //普通贴
+    } else {
+      //普通贴
       await postAutoThk(thankform);
     }
-  };
+  }
   // 发送感谢请求
   async function postAutoThk(thankform) {
     const thkParamsData = urlSearchParams({
-      "formhash": user.formhash,
-      "tid": thankform.tid.value,
-      "touser": thankform.touser.value,
-      "touseruid": thankform.touseruid.value,
-      "handlekey": "k_thankauthor",
-      "addsubmit": "true"
+      formhash: user.formhash,
+      tid: thankform.tid.value,
+      touser: thankform.touser.value,
+      touseruid: thankform.touseruid.value,
+      handlekey: 'k_thankauthor',
+      addsubmit: 'true',
     }).toString();
     const xmlData = await postDataAs(user.thkUrl, thkParamsData); //post感谢数据
     if (checkHtml(xmlData)) {
@@ -404,7 +429,8 @@
         msIdSlp.removeMessage();
         msIdSig.removeMessage();
         msIdTime.refreshMessage('执行中....');
-        for (let i = 0; i < user.signNum; i++) { //重试次数
+        for (let i = 0; i < user.signNum; i++) {
+          //重试次数
           sign();
           msIdTime.refreshMessage('执行第' + (i + 1) + '次');
           await waitFor(user.interTime); //重试间隔
@@ -414,24 +440,26 @@
         msIdTime.refreshMessage('时间没有到：' + signtime + '，目前时间：' + now.seconds);
       }
     }
-    if (!this.timer) { // 防重复点击
+    if (!this.timer) {
+      // 防重复点击
       playVideo(msIdSlp); // 防休眠
-      msIdSig.showMessage('定时签到中，请勿退出...', "none");
-      msIdTime.showMessage("...", "none"); // 占位消息，给刷新用
+      msIdSig.showMessage('定时签到中，请勿退出...', 'none');
+      msIdTime.showMessage('...', 'none'); // 占位消息，给刷新用
       _this.timer = setInterval(control, 500); // 运行自动签到
     }
   }
 
   async function sign() {
     const signParamsData = urlSearchParams({
-      "formhash": user.formhash,
-      "qdxq": user.mood,
-      "qdmode": 1,
-      "todaysay": user.todaysay,
-      "fastreply": 1,
+      formhash: user.formhash,
+      qdxq: user.mood,
+      qdmode: 1,
+      todaysay: user.todaysay,
+      fastreply: 1,
     }).toString();
     const stringOrHtml = await postDataAs(user.signUrl, signParamsData); // 直接post签到数据
-    if (checkHtml(stringOrHtml)) { // 确认html
+    if (checkHtml(stringOrHtml)) {
+      // 确认html
       const info = stringOrHtml.querySelector('.c').innerHTML.split('<')[0].trim(); // 解析html，返回字符串
       new MessageBox(info);
     } else {
@@ -467,14 +495,15 @@
         status_loginned.prepend(btn);
         break;
       }
-      case (WLHerf.includes('/forum-') || WLHerf.includes('/type-')): { //  || WLHerf.includes('mod=forum') 图片模式只有一个页面，不需要
-        // 增加 visited 样式，图片模式已阅的帖子变灰色 
+      case WLHerf.includes('/forum-') || WLHerf.includes('/type-'): {
+        //  || WLHerf.includes('mod=forum') 图片模式只有一个页面，不需要
+        // 增加 visited 样式，图片模式已阅的帖子变灰色
         GM_addStyle(`.xw0 a:visited {color: grey;}`);
         // 去掉高亮标题
         if (document.querySelector('[style="color: #2B65B7"]')) {
           document.querySelectorAll('[style="color: #2B65B7"]').forEach((e) => {
             e.style = '';
-          })
+          });
         }
         // 回帖输入框
         const input = genElem('textarea', 'inpreply', 1, 20);
@@ -508,7 +537,7 @@
       default:
         break;
     }
-  };
+  }
 
   function replyBtn() {
     if (!this.timer) {
@@ -549,17 +578,19 @@
     static genMessageBox() {
       // 添加样式
       GM_addStyle(`#messageBox {width: 222px;position:fixed;right: 5%;bottom: 20px;z-index:999}`);
-      GM_addStyle(`#messageBox div {width:100%;background-color:#64ce83;float:left;padding:5px 10px;margin-top:10px;border-radius:10px;color:#fff;box-shadow: 0px 0px 1px 3px #ffffff;}`);
+      GM_addStyle(
+        `#messageBox div {width:100%;background-color:#64ce83;float:left;padding:5px 10px;margin-top:10px;border-radius:10px;color:#fff;box-shadow: 0px 0px 1px 3px #ffffff;}`
+      );
 
       this._msgBox = document.createElement('div'); // 创建类型为div的DOM对象
-      this._msgBox.id = "messageBox";
+      this._msgBox.id = 'messageBox';
       document.body.append(this._msgBox); // 消息盒子添加到body
-    };
+    }
 
     // 显示消息
     showMessage(text = this._text, setTime = this._setTime, important = this._important) {
       if (this._msg != null) {
-        throw new Error("先移除上条消息，才可再次添加！");
+        throw new Error('先移除上条消息，才可再次添加！');
       }
       this._text = text;
       this._setTime = setTime;
@@ -585,7 +616,8 @@
         }
       }
 
-      if (setTime && !isNaN(setTime)) { // 默认5秒删掉消息，可设置时间，none一直显示
+      if (setTime && !isNaN(setTime)) {
+        // 默认5秒删掉消息，可设置时间，none一直显示
         setTimeout(() => {
           this.removeMessage();
         }, setTime);
@@ -611,7 +643,7 @@
           }
         }
       } else {
-        throw new Error("只有弹窗永久消息支持刷新内容：" + this._setTime);
+        throw new Error('只有弹窗永久消息支持刷新内容：' + this._setTime);
       }
     }
 
@@ -624,7 +656,7 @@
         // 空初始化时，消息异步发送，导致先执行移除而获取不到元素，默认 setTime=5000
         // 消息发出后，box 非空，可以移除，不会执行 setTime="none"
         if (this._timer == 4) {
-          throw new Error("移除的元素不存在：" + this._msg);
+          throw new Error('移除的元素不存在：' + this._msg);
         }
         this._timer++;
         setTimeout(() => {
@@ -635,7 +667,7 @@
 
     // 危险操作
     cleanMessage() {
-      document.querySelector('#messageBox').innerHTML = "";
+      document.querySelector('#messageBox').innerHTML = '';
     }
   }
 
@@ -643,23 +675,24 @@
     const inpreply = document.querySelector('#inpreply'); // 获取回复内容
     if (inpreply && inpreply.value) {
       let replyLen = 0; // 统计长度，用于在 user.userReplyMessage 中定位下标
-      inpreply.value.split('；').forEach((element) => { // 中文分号分隔字符串
+      inpreply.value.split('；').forEach((element) => {
+        // 中文分号分隔字符串
         if (element) {
           user.userReplyMessage.push(element); // 存储自定义回帖内容
           replyLen++;
         }
-      })
+      });
       GM_setValue(user.username, user);
-      new MessageBox("已使用自定义回复");
+      new MessageBox('已使用自定义回复');
       return replyLen;
     } else {
-      if (user.fastReply.length && confirm("确认使用快速回复？否则使用历史回复")) {
+      if (user.fastReply.length && confirm('确认使用快速回复？否则使用历史回复')) {
         GM_setValue(user.username, user);
-        new MessageBox("已使用快速回复");
+        new MessageBox('已使用快速回复');
         return user.fastReply.length;
-      } else if (user.userReplyMessage.length && confirm("确认使用历史自定义回复？")) {
+      } else if (user.userReplyMessage.length && confirm('确认使用历史自定义回复？')) {
         GM_setValue(user.username, user);
-        new MessageBox("已使用历史自定义回复");
+        new MessageBox('已使用历史自定义回复');
         return user.userReplyMessage.length;
       } else {
         alert('没有获取到任何回复，请确认有浏览可快速回贴的版块的权限！否则需要手动输入回帖内容！');
@@ -672,8 +705,8 @@
     const currentHref = location.href; // 获取当前页地址
     const fid = currentHref.split('-')[1]; // 获取板块fid
     const page = currentHref.split('-')[2].split('.')[0]; // 获取页码
-    if (currentHref.includes("type-")) {
-      thankBatch(`${fid}-${page}-${page}`, "type");
+    if (currentHref.includes('type-')) {
+      thankBatch(`${fid}-${page}-${page}`, 'type');
     } else {
       thankBatch(`${fid}-${page}-${page}`);
     }
@@ -682,12 +715,14 @@
   async function thankBatch(onePage = 0, type = null) {
     const reg = new RegExp(/^\d+-\d+-\d+$/);
     let forumPage = '';
-    if (reg.test(onePage)) { // 如果输入了正确地址单页
+    if (reg.test(onePage)) {
+      // 如果输入了正确地址单页
       forumPage = onePage;
     } else {
       forumPage = document.querySelector('#inp_page').value;
     }
-    if (reg.test(forumPage)) { // 如果输入了正确地址则进行批量处理
+    if (reg.test(forumPage)) {
+      // 如果输入了正确地址则进行批量处理
       user.page = forumPage;
       GM_setValue(user.username, user);
       let pageFrom = parseInt(forumPage.split('-')[1]); // 获取起点页码
@@ -695,17 +730,17 @@
       const fid = forumPage.split('-')[0]; // 获取版块代码
 
       if (pageFrom > pageEnd) {
-        new MessageBox("页码错误：起点页不能大于终点页！");
+        new MessageBox('页码错误：起点页不能大于终点页！');
         return;
       }
-      const msId = new MessageBox('正在添加：' + forumPage, "none");
+      const msId = new MessageBox('正在添加：' + forumPage, 'none');
 
       let replyLen = chooceReply(); //如果输入了值则使用用户值，如果没有则使用默认值；没有默认值则返回错误
       if (replyLen <= 0) {
         new MessageBox('获取回帖内容失败！');
         msId.removeMessage();
-        return "获取回帖内容失败！";
-      };
+        return '获取回帖内容失败！';
+      }
 
       while (pageFrom <= pageEnd) {
         let currentHref = '';
@@ -729,13 +764,16 @@
       }
       msId.removeMessage();
     } else {
-      new MessageBox('请输入回帖列表页码，格式：版块代码-起点页-终点页 ；例如：640-1-2 ；版块代码见版块URL中间数字：forum-640-1', 10000);
+      new MessageBox(
+        '请输入回帖列表页码，格式：版块代码-起点页-终点页 ；例如：640-1-2 ；版块代码见版块URL中间数字：forum-640-1',
+        10000
+      );
     }
   }
 
   // 添加任务列表
   function setThreadsTask(htmlData, fid, replyLen) {
-    //帖子类名 40个a标签数组 
+    //帖子类名 40个a标签数组
     let hrefs = htmlData.querySelectorAll('.s');
     // 获取作者昵称和 UID
     let cites = htmlData.querySelectorAll('cite a');
@@ -747,7 +785,7 @@
       fidRepIndex: 0, // 记录此版块上次回复的位置，用于解决无法遍历到后续增加的帖子；
       fidThkIndex: 0, // 记录此版块上次感谢的位置，用于解决无法遍历到后续增加的帖子；
       fidthreads: [],
-    }
+    };
 
     let fidTime = 0; // 统计总时间
     function newFid() {
@@ -772,12 +810,13 @@
     function addThrInfo(elem) {
       // 回帖变量随即范围限制
       let start = 0;
-      if (replyLen == user.fastReply.length || replyLen == user.userReplyMessage.length) { // 判断起始位置
+      if (replyLen == user.fastReply.length || replyLen == user.userReplyMessage.length) {
+        // 判断起始位置
       } else {
         start = user.userReplyMessage.length - replyLen; // 用户数组长-增加的数据长=起始位置；
         replyLen = user.userReplyMessage.length; // 结束位置
       }
-      const msId = new MessageBox("...", "none");
+      const msId = new MessageBox('...', 'none');
       let count = 0; // 贴数统计
       // 遍历去除回帖用户
       for (let i = 0; i < cites.length; i += 2) {
@@ -786,11 +825,13 @@
         const touseruid = cites[i].href.split('uid=')[1]; // href="home.php?mod=space&uid=1123445"
         const href = hrefs[i / 2].href;
         let tid = href.split('-')[1]; // 获取帖子ID
-        if (tid == undefined) { // 分类页tid不同
-          tid = new URLSearchParams(href).get("tid"); // 用于获取分类贴链接下的 tid
+        if (tid == undefined) {
+          // 分类页tid不同
+          tid = new URLSearchParams(href).get('tid'); // 用于获取分类贴链接下的 tid
         }
         let noSkip = true; // 跳过标识
-        for (let index = 0; index < elem.fidthreads.length; index++) { // 确保帖子的唯一性
+        for (let index = 0; index < elem.fidthreads.length; index++) {
+          // 确保帖子的唯一性
           const element = elem.fidthreads[index];
           if (element.tid == tid) {
             noSkip = false;
@@ -808,7 +849,7 @@
             replyIndex: replyIndex, // 回帖随机数
             replyLen: replyLen, // 用于判断使用的哪个数组，和确定起始位置
             randomTime: randomTime, // 回帖时间随机数
-          }
+          };
           fidTime += randomTime;
           elem.fidthreads.push(thread); // 给对象数组添加
           count++;
@@ -820,7 +861,7 @@
     }
 
     newFid(); // 启动
-  };
+  }
 
   // 回帖\感谢函数
   async function replyOrThk(_this, type = 'reply') {
@@ -836,25 +877,41 @@
       new MessageBox('任务列表为空，请先添加任务！');
       return;
     } else if (type == 'reply') {
-      mesIdRep.showMessage("开始回帖...", "none");
-      mesIdRepContent.showMessage("...", "none");
+      mesIdRep.showMessage('开始回帖...', 'none');
+      mesIdRepContent.showMessage('...', 'none');
     } else {
-      mesIdThk.showMessage("开始感谢...", "none");
+      mesIdThk.showMessage('开始感谢...', 'none');
     }
     playVideo(mesId); // 防休眠
 
-    while ((type == 'reply' && fidIndex < user.replyThreads.length) || (type == 'thk' && thkFidIndex < user.replyThreads.length)) // 分别处理感谢和回帖
-    {
-      const elementForum = user.replyThreads[(type == 'reply') ? fidIndex : thkFidIndex]
+    while (
+      (type == 'reply' && fidIndex < user.replyThreads.length) ||
+      (type == 'thk' && thkFidIndex < user.replyThreads.length)
+    ) {
+      // 分别处理感谢和回帖
+      const elementForum = user.replyThreads[type == 'reply' ? fidIndex : thkFidIndex];
       const fid = elementForum.fid;
       let fidRepIndex = elementForum.fidRepIndex; // 上次回复位置
       let fidThkIndex = elementForum.fidThkIndex; // 上次感谢位置
 
-      while ((elementForum.fidthreads.length > fidRepIndex && type == 'reply') || (elementForum.fidthreads.length > fidThkIndex && type == 'thk')) // 分别处理感谢和回帖 
-      {
+      while (
+        (elementForum.fidthreads.length > fidRepIndex && type == 'reply') ||
+        (elementForum.fidthreads.length > fidThkIndex && type == 'thk')
+      ) {
+        // 分别处理感谢和回帖
         switch (type) {
           case 'reply': {
-            mesIdRep.refreshMessage(fid + "-版块，当前位置：" + fidRepIndex + " ，总数：" + elementForum.fidthreads.length + "，预计总耗时：" + (elementForum.fidTime / 1000 / 60).toFixed(1) + " 分钟时间", "none"); // 显示永久消息
+            mesIdRep.refreshMessage(
+              fid +
+                '-版块，当前位置：' +
+                fidRepIndex +
+                ' ，总数：' +
+                elementForum.fidthreads.length +
+                '，预计总耗时：' +
+                (elementForum.fidTime / 1000 / 60).toFixed(1) +
+                ' 分钟时间',
+              'none'
+            ); // 显示永久消息
             const elementThr = elementForum.fidthreads[fidRepIndex];
             const tid = elementThr.tid;
             const replyIndex = elementThr.replyIndex;
@@ -862,13 +919,13 @@
             const randomTime = elementThr.randomTime;
             // 回帖链接
             const replyUrlParamsData = urlSearchParams({
-              "fid": fid,
-              "tid": tid,
-              "extra": "page%3D1",
-              "replysubmit": "yes",
-              "infloat": "yes",
-              "inflohandlekeyat": "fastpost",
-              "inajax": 1
+              fid: fid,
+              tid: tid,
+              extra: 'page%3D1',
+              replysubmit: 'yes',
+              infloat: 'yes',
+              inflohandlekeyat: 'fastpost',
+              inajax: 1,
             });
 
             // 拼接回帖报文
@@ -883,17 +940,29 @@
             replyParamsObj.posttime = posttime;
             replyParamsObj.formhash = user.formhash;
             replyParamsObj.usesig = 1;
-            replyParamsObj.subject = "";
+            replyParamsObj.subject = '';
             const replyParamsData = urlSearchParams(replyParamsObj);
             // 发送数据
             const data = await postDataAs(user.replyUrl + replyUrlParamsData.toString(), replyParamsData.toString());
-            if (checkHtml(data)) { // 确认html
+            if (checkHtml(data)) {
+              // 确认html
               const info = data.querySelector('script').innerHTML.split(`, `)[1];
               new MessageBox(info.split('，')[0].slice(1) + '，' + info.split('，')[1] + '！'); // 返回html成功消息
             } else {
               new MessageBox(data, 'none'); //其它情况直接输出
             }
-            mesIdRepContent.refreshMessage("序号：" + fidRepIndex + '，随机号：' + replyIndex + '，用时：' + randomTime + "，帖子：" + tid + '，内容：' + replyParamsData.get("message")); //测试使用  
+            mesIdRepContent.refreshMessage(
+              '序号：' +
+                fidRepIndex +
+                '，随机号：' +
+                replyIndex +
+                '，用时：' +
+                randomTime +
+                '，帖子：' +
+                tid +
+                '，内容：' +
+                replyParamsData.get('message')
+            ); //测试使用
             elementForum.fidRepIndex = ++fidRepIndex;
             GM_setValue(user.username, user);
             _this.timer = 1; // 防止重复点击
@@ -903,12 +972,12 @@
           case 'thk': {
             const elementThr = elementForum.fidthreads[fidThkIndex];
             const thkParamsData = urlSearchParams({
-              "formhash": user.formhash,
-              "tid": elementThr.tid,
-              "touser": elementThr.touser,
-              "touseruid": elementThr.touseruid,
-              "handlekey": "k_thankauthor",
-              "addsubmit": "true"
+              formhash: user.formhash,
+              tid: elementThr.tid,
+              touser: elementThr.touser,
+              touseruid: elementThr.touseruid,
+              handlekey: 'k_thankauthor',
+              addsubmit: 'true',
             });
             const data = await postDataAs(user.thkUrl, thkParamsData.toString()); //post感谢数据
             if (checkHtml(data)) {
@@ -917,7 +986,16 @@
             } else {
               new MessageBox(data, 1000); //其它情况直接输出
             }
-            mesIdThk.refreshMessage(fid + "-版块，当前位置：" + fidThkIndex + " ，总数：" + elementForum.fidthreads.length + "，帖子ID：" + thkParamsData.get("tid"), "none"); // 刷新永久消息
+            mesIdThk.refreshMessage(
+              fid +
+                '-版块，当前位置：' +
+                fidThkIndex +
+                ' ，总数：' +
+                elementForum.fidthreads.length +
+                '，帖子ID：' +
+                thkParamsData.get('tid'),
+              'none'
+            ); // 刷新永久消息
             elementForum.fidThkIndex = ++fidThkIndex;
             GM_setValue(user.username, user);
             clearInterval(_this.timer);
@@ -927,7 +1005,7 @@
           }
 
           default:
-            console.log("参数不在范围");
+            console.log('参数不在范围');
             break;
         }
       }
@@ -940,45 +1018,49 @@
     }
     if (type == 'thk') {
       mesIdThk.removeMessage(); // 移除永久消息
-      new MessageBox("全部感谢完成！", 10000, 2);
+      new MessageBox('全部感谢完成！', 10000, 2);
     } else if (type == 'reply') {
       mesIdRep.removeMessage(); // 移除永久消息
       mesIdRepContent.removeMessage();
-      new MessageBox("全部回帖完成！", 10000, 2);
+      new MessageBox('全部回帖完成！', 10000, 2);
     }
     _this.timer = 0;
     mesId.removeMessage(); // 移除永久消息
-  };
+  }
 
   function noDisplayPic() {
     const pcbImg = document.querySelectorAll('.pcb img'); // 所有帖子楼层的图片，逐个过滤
     if (pcbImg.length) {
-      for (let i = 0; i < pcbImg.length; i++) { //遍历图片列表
+      for (let i = 0; i < pcbImg.length; i++) {
+        //遍历图片列表
         const img = pcbImg[i];
         // 前10张
         if (img.title && img.getAttribute('file') && img.getAttribute('file').includes('mymypic.net')) {
-          img.src = "https://www.jkforum.net/static/image/common/none.gif";
+          img.src = 'https://www.jkforum.net/static/image/common/none.gif';
           // new MessageBox("屏蔽图片成功");
           // 懒加载部分
-          function callback() { // 监听元素子节点属性变化，然后屏蔽链接
-            if (img.src != "https://www.jkforum.net/static/image/common/none.gif") {
+          function callback() {
+            // 监听元素子节点属性变化，然后屏蔽链接
+            if (img.src != 'https://www.jkforum.net/static/image/common/none.gif') {
               observer.disconnect(); // 断开监听
-              console.log("屏蔽图片成功：", img.src);
-              img.src = "https://www.jkforum.net/static/image/common/none.gif";
+              console.log('屏蔽图片成功：', img.src);
+              img.src = 'https://www.jkforum.net/static/image/common/none.gif';
             }
           }
           const observer = new MutationObserver(callback); // 建立监听器
-          observer.observe(img, { // 开始监听
-            attributes: true
-          })
+          observer.observe(img, {
+            // 开始监听
+            attributes: true,
+          });
         }
       }
-      new MessageBox("屏蔽图片完成！")
+      new MessageBox('屏蔽图片完成！');
     }
   }
 
   function downloadImgs() {
-    if (this.timer > 0) { // 防重复点击
+    if (this.timer > 0) {
+      // 防重复点击
       return;
     } else {
       this.timer = 1;
@@ -988,21 +1070,24 @@
     const folderName = document.querySelector('.title-cont h1').innerHTML.trim().replace(/\.+/g, '-');
     const pcbImg = document.querySelectorAll('.pcb img'); // 所有帖子楼层的图片，逐个过滤
     if (pcbImg.length) {
-      for (let i = 0; i < pcbImg.length; i++) { //遍历图片列表
+      for (let i = 0; i < pcbImg.length; i++) {
+        //遍历图片列表
         const img = pcbImg[i];
         if (img.title && img.getAttribute('file') && img.getAttribute('file').includes('mymypic.net')) {
           const reg = /\./g;
-          if (!reg.test(img.title)) { // 文件格式校验
-            if (reg.test(img.alt)) { // 文件格式修复
+          if (!reg.test(img.title)) {
+            // 文件格式校验
+            if (reg.test(img.alt)) {
+              // 文件格式修复
               img.title = img.alt;
             } else {
-              new MessageBox("获取图片名失败！");
+              new MessageBox('获取图片名失败！');
               this.timer = 0;
               return;
             }
           }
-          const imgTitles = img.title.split(".");
-          const title = `${imgTitles[imgTitles.length-2]}-${i+1}.${imgTitles[imgTitles.length-1]}`; // 标题 +i.jpg，防重名！
+          const imgTitles = img.title.split('.');
+          const title = `${imgTitles[imgTitles.length - 2]}-${i + 1}.${imgTitles[imgTitles.length - 1]}`; // 标题 +i.jpg，防重名！
           imgsTitles.push(title); // 保存下载名称到数组
           imgsUrls.push(img.getAttribute('file').split('.thumb.')[0]); // 保存下载链接到数组
         } else if (!img.getAttribute('file') && img.src.includes('mymypic.net')) {
@@ -1018,12 +1103,12 @@
         batchDownload(imgsUrls, imgsTitles, folderName, this);
       } else {
         new MessageBox('没有可下载的图片！');
-        this.timer = 0
+        this.timer = 0;
         return 0;
       }
     } else {
       new MessageBox('没有图片！');
-      this.timer = 0
+      this.timer = 0;
       return 0;
     }
   }
@@ -1032,41 +1117,48 @@
   function batchDownload(imgsUrls, imgsTitles, folderName, _this) {
     const zip = new JSZip();
     const promises = [];
-    const mesIdH = new MessageBox("正在下载...", "none"); // 永久消息
-    const mesIdP = new MessageBox("...", "none"); // 永久消息
+    const mesIdH = new MessageBox('正在下载...', 'none'); // 永久消息
+    const mesIdP = new MessageBox('...', 'none'); // 永久消息
     for (let index = 0; index < imgsUrls.length; index++) {
       const item = imgsUrls[index];
       // 包装成 promise
       const promise = () => {
         return new Promise(async (resolve) => {
           const file_name = imgsTitles[index]; // 获取文件名
-          mesIdH.refreshMessage(`正在下载：第 ${index+1} 张，文件名：${file_name}，共 ${imgsUrls.length} 张`);
+          mesIdH.refreshMessage(`正在下载：第 ${index + 1} / ${imgsUrls.length} 张，文件名：${file_name}`);
 
-          await getData(item, "blob").then(data => { // 下载文件, 并存成ArrayBuffer对象 
-            zip.file(file_name, data, {
-              binary: true
-            }) // 逐个添加文件
-            mesIdP.refreshMessage(`第 ${index+1} 张，文件名：${file_name}，大小：${parseInt(data.size / 1024)} Kb，下载完成！等待压缩...`);
-            resolve();
-
-          }).catch((err) => { // 移除消息；
-            if (err.responseText) {
-              const domParser = new DOMParser();
-              const xmlDoc = domParser.parseFromString(err.responseText, 'text/html');
-              mesIdP.refreshMessage(`第 ${index+1} 张，请求错误：${xmlDoc.body.innerHTML}`);
-            } else if (err.status) {
-              console.error(err.status);
-            } else {
-              console.error(err);
-            }
-            resolve(-1); // 错误处理, 标记错误并返回
-          })
-        })
-      }
+          await getData(item, 'blob')
+            .then((data) => {
+              // 下载文件, 并存成ArrayBuffer对象
+              zip.file(file_name, data, {
+                binary: true,
+              }); // 逐个添加文件
+              mesIdP.refreshMessage(
+                `第 ${index + 1} 张，文件名：${file_name}，大小：${parseInt(
+                  data.size / 1024
+                )} Kb，下载完成！等待压缩...`
+              );
+              resolve();
+            })
+            .catch((err) => {
+              // 移除消息；
+              if (err.responseText) {
+                const domParser = new DOMParser();
+                const xmlDoc = domParser.parseFromString(err.responseText, 'text/html');
+                mesIdP.refreshMessage(`第 ${index + 1} 张，请求错误：${xmlDoc.body.innerHTML}`);
+              } else if (err.status) {
+                console.error(err.status);
+              } else {
+                console.error(err);
+              }
+              resolve(-1); // 错误处理, 标记错误并返回
+            });
+        });
+      };
       promises.push(promise);
     }
     const pool = new ConcurrencyPromisePool(user.limit);
-    pool.all(promises).then(results => {
+    pool.all(promises).then((results) => {
       mesIdH.removeMessage();
       _this.timer = 0;
       for (let i = 0; i < results.length; i++) {
@@ -1076,7 +1168,7 @@
         }
       }
       if (results.length == _this.timer) {
-        new MessageBox("全部图片下载失败！")
+        new MessageBox('全部图片下载失败！');
         _this.timer = 0;
         mesIdP.removeMessage();
         return;
@@ -1090,15 +1182,18 @@
           return;
         }
       }
-      mesIdP.refreshMessage("正在压缩打包，大文件请耐心等待...")
-      zip.generateAsync({
-        type: "blob"
-      }).then(content => { // 生成二进制流
-        mesIdP.removeMessage();
-        saveAs(content, `${folderName} [${imgsUrls.length}P]`); // 利用file-saver保存文件，大文件需等待很久
-      })
-    })
-  };
+      mesIdP.refreshMessage('正在压缩打包，大文件请耐心等待...');
+      zip
+        .generateAsync({
+          type: 'blob',
+        })
+        .then((content) => {
+          // 生成二进制流
+          mesIdP.removeMessage();
+          saveAs(content, `${folderName} [${imgsUrls.length}P]`); // 利用file-saver保存文件，大文件需等待很久
+        });
+    });
+  }
 
   /*   
     NodeJS Promise并发控制 
@@ -1131,13 +1226,13 @@
       // 正在运行的 promise
       ++this.runningNum;
       promise()
-        .then(res => {
+        .then((res) => {
           this.results.push(res);
           --this.runningNum;
 
           // 运行结束条件：队列长度 && 正在运行的数量
           if (this.queue.length === 0 && this.runningNum === 0) {
-            // promise返回结果, 然后递归结束; 
+            // promise返回结果, 然后递归结束;
             return resolve(this.results);
           }
           // 队列还有则，出队，然后递归调用
@@ -1150,7 +1245,7 @@
   }
 
   // GM_xmlhttpRequest GET异步通用模块
-  function getData(url, type = "document", usermethod = "GET") {
+  function getData(url, type = 'document', usermethod = 'GET') {
     return new Promise((resolve, reject) => {
       GM_xmlhttpRequest({
         method: usermethod,
@@ -1165,24 +1260,24 @@
           }
         },
         onerror: function (error) {
-          new MessageBox("网络错误");
+          new MessageBox('网络错误');
           reject(error);
         },
         ontimeout: () => {
-          new MessageBox("网络超时");
-          reject("timeout");
-        }
+          new MessageBox('网络超时');
+          reject('timeout');
+        },
       });
     });
   }
   // GM_xmlhttpRequest POST异步通用模块
-  function postDataAs(url, postData, type = "document", usermethod = "POST") {
+  function postDataAs(url, postData, type = 'document', usermethod = 'POST') {
     return new Promise((resolve, reject) => {
       GM_xmlhttpRequest({
         method: usermethod,
         url: url,
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded"
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
         data: postData,
         responseType: type,
@@ -1190,22 +1285,23 @@
           if (response.status == 200) {
             resolve(turnCdata(response.response));
           } else {
-            new MessageBox("请求错误：" + response.status);
+            new MessageBox('请求错误：' + response.status);
             reject(response.status);
           }
         },
         onerror: function (error) {
-          new MessageBox("网络错误");
+          new MessageBox('网络错误');
           reject(error);
-        }
+        },
       });
     });
   }
 
   // POST返回 xml数据类型转换成 字符串或html 模块
   function turnCdata(xmlRepo) {
-    let data = xmlRepo.getElementsByTagName("root")[0].childNodes[0].nodeValue;
-    if (replaceHtml(data)) { // 如果判断去掉html是否还有文字，否则返回html
+    let data = xmlRepo.getElementsByTagName('root')[0].childNodes[0].nodeValue;
+    if (replaceHtml(data)) {
+      // 如果判断去掉html是否还有文字，否则返回html
       return replaceHtml(data); // 去掉html内容，返回文字
     } else {
       const domParser = new DOMParser();
@@ -1251,9 +1347,9 @@
   }
 
   // promise 等待模块
-  const waitFor = (ms) => new Promise(r => setTimeout(r, ms));
+  const waitFor = (ms) => new Promise((r) => setTimeout(r, ms));
 
-  // n, m 范围随机整数生成 
+  // n, m 范围随机整数生成
   function rdNum(n, m) {
     let c = m - n + 1;
     return Math.floor(Math.random() * c + n);
@@ -1262,7 +1358,7 @@
     constructor() {
       const date = new Date();
       this.day = date.toLocaleDateString();
-      this.seconds = date.toTimeString().split(" ")[0];
+      this.seconds = date.toTimeString().split(' ')[0];
       this.date = date;
     }
   }
@@ -1271,11 +1367,11 @@
   function compaObjKey(source, target) {
     if (Object.keys(target).length == Object.keys(source).length) {
       // 用户数据匹配
-      Object.keys(source).forEach(key => {
+      Object.keys(source).forEach((key) => {
         if (!target.hasOwnProperty(key)) {
           return false;
         }
-      })
+      });
       return true;
     } else {
       return false;
@@ -1294,10 +1390,10 @@
 
   /**
    * 生成不重复的ID
-   * @param { Number } randomLength 
+   * @param { Number } randomLength
    */
   function getUuiD(randomLength) {
-    return Number(Math.random().toString().substr(2, randomLength) + Date.now()).toString(36)
+    return Number(Math.random().toString().substr(2, randomLength) + Date.now()).toString(36);
   }
 
   function genButton(text, foo, id) {
@@ -1315,7 +1411,7 @@
 
   function genElem(type, id, val1, val2) {
     let b = document.createElement(type);
-    b.style.cssText = 'margin:16px 10px 0px 0px;float:left'
+    b.style.cssText = 'margin:16px 10px 0px 0px;float:left';
     b.rows = val1;
     b.cols = val2;
     b.placeholder = '中文分号；分隔回帖内容';
@@ -1325,7 +1421,7 @@
 
   function genInp(type, id) {
     let b = document.createElement(type);
-    b.style.cssText = 'margin:16px 10px 0px 0px;float:left;width:80px'
+    b.style.cssText = 'margin:16px 10px 0px 0px;float:left;width:80px';
     b.id = id;
     const user = getUserFromName();
     if (user && user.page) {
@@ -1337,31 +1433,33 @@
 
   function genVideo() {
     const video = document.createElement('video');
-    video.style.cssText = 'display:none;width:0;height:0;'
+    video.style.cssText = 'display:none;width:0;height:0;';
     video.loop = 'true';
     video.autoplay = 'true';
-    video.src = 'data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pc28yYXZjMW1wNDEAAAAIZnJlZQAAAwFtZGF0AAACugYF//+23EXpvebZSLeWLNgg2SPu73gyNjQgLSBjb3JlIDE0OCByMiA3NTk5MjEwIC0gSC4yNjQvTVBFRy00IEFWQyBjb2RlYyAtIENvcHlsZWZ0IDIwMDMtMjAxNSAtIGh0dHA6Ly93d3cudmlkZW9sYW4ub3JnL3gyNjQuaHRtbCAtIG9wdGlvbnM6IGNhYmFjPTEgcmVmPTMgZGVibG9jaz0xOjA6MCBhbmFseXNlPTB4MzoweDExMyBtZT1oZXggc3VibWU9NyBwc3k9MSBwc3lfcmQ9MS4wMDowLjAwIG1peGVkX3JlZj0xIG1lX3JhbmdlPTE2IGNocm9tYV9tZT0xIHRyZWxsaXM9MSA4eDhkY3Q9MSBjcW09MCBkZWFkem9uZT0yMSwxMSBmYXN0X3Bza2lwPTEgY2hyb21hX3FwX29mZnNldD00IHRocmVhZHM9MSBsb29rYWhlYWRfdGhyZWFkcz0xIHNsaWNlZF90aHJlYWRzPTAgbnI9MCBkZWNpbWF0ZT0xIGludGVybGFjZWQ9MCBibHVyYXlfY29tcGF0PTAgY29uc3RyYWluZWRfaW50cmE9MCBiZnJhbWVzPTMgYl9weXJhbWlkPTIgYl9hZGFwdD0xIGJfYmlhcz0wIGRpcmVjdD0xIHdlaWdodGI9MSBvcGVuX2dvcD0wIHdlaWdodHA9MiBrZXlpbnQ9MjUwIGtleWludF9taW49MTAgc2NlbmVjdXQ9NDAgaW50cmFfcmVmcmVzaD0wIHJjX2xvb2thaGVhZD00MCByYz1hYnIgbWJ0cmVlPTEgYml0cmF0ZT0zMjI0IHJhdGV0b2w9MS4wIHFjb21wPTAuNjAgcXBtaW49MCBxcG1heD02OSBxcHN0ZXA9NCBpcF9yYXRpbz0xLjQwIGFxPTE6MS4wMACAAAAAN2WIhAAa//73wP8Cm7nIA/5tf/+mn7sUx/QF/H/9L//yM6MTo19P+P/2ftGrP+85P/Er/F20Jv8AAALvbW9vdgAAAGxtdmhkAAAAAAAAAAAAAAAAAAAD6AAAAGQAAQAAAQAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAhl0cmFrAAAAXHRraGQAAAADAAAAAAAAAAAAAAABAAAAAAAAAGQAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAACUAAAAlAAAAAAAkZWR0cwAAABxlbHN0AAAAAAAAAAEAAABkAAAAAAABAAAAAAGRbWRpYQAAACBtZGhkAAAAAAAAAAAAAAAAAAAoAAAABABVxAAAAAAALWhkbHIAAAAAAAAAAHZpZGUAAAAAAAAAAAAAAABWaWRlb0hhbmRsZXIAAAABPG1pbmYAAAAUdm1oZAAAAAEAAAAAAAAAAAAAACRkaW5mAAAAHGRyZWYAAAAAAAAAAQAAAAx1cmwgAAAAAQAAAPxzdGJsAAAAmHN0c2QAAAAAAAAAAQAAAIhhdmMxAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAACUAJQBIAAAASAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGP//AAAAMmF2Y0MB9AAU/+EAGWf0ABSRmym/GRkIAAADAAgAAAMAoHihTLABAAZo6+xEhEAAAAAYc3R0cwAAAAAAAAABAAAAAQAABAAAAAAcc3RzYwAAAAAAAAABAAAAAQAAAAEAAAABAAAAFHN0c3oAAAAAAAAC+QAAAAEAAAAUc3RjbwAAAAAAAAABAAAAMAAAAGJ1ZHRhAAAAWm1ldGEAAAAAAAAAIWhkbHIAAAAAAAAAAG1kaXJhcHBsAAAAAAAAAAAAAAAALWlsc3QAAAAlqXRvbwAAAB1kYXRhAAAAAQAAAABMYXZmNTcuMTkuMTAw'; // Base64 离线
+    video.src =
+      'data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pc28yYXZjMW1wNDEAAAAIZnJlZQAAAwFtZGF0AAACugYF//+23EXpvebZSLeWLNgg2SPu73gyNjQgLSBjb3JlIDE0OCByMiA3NTk5MjEwIC0gSC4yNjQvTVBFRy00IEFWQyBjb2RlYyAtIENvcHlsZWZ0IDIwMDMtMjAxNSAtIGh0dHA6Ly93d3cudmlkZW9sYW4ub3JnL3gyNjQuaHRtbCAtIG9wdGlvbnM6IGNhYmFjPTEgcmVmPTMgZGVibG9jaz0xOjA6MCBhbmFseXNlPTB4MzoweDExMyBtZT1oZXggc3VibWU9NyBwc3k9MSBwc3lfcmQ9MS4wMDowLjAwIG1peGVkX3JlZj0xIG1lX3JhbmdlPTE2IGNocm9tYV9tZT0xIHRyZWxsaXM9MSA4eDhkY3Q9MSBjcW09MCBkZWFkem9uZT0yMSwxMSBmYXN0X3Bza2lwPTEgY2hyb21hX3FwX29mZnNldD00IHRocmVhZHM9MSBsb29rYWhlYWRfdGhyZWFkcz0xIHNsaWNlZF90aHJlYWRzPTAgbnI9MCBkZWNpbWF0ZT0xIGludGVybGFjZWQ9MCBibHVyYXlfY29tcGF0PTAgY29uc3RyYWluZWRfaW50cmE9MCBiZnJhbWVzPTMgYl9weXJhbWlkPTIgYl9hZGFwdD0xIGJfYmlhcz0wIGRpcmVjdD0xIHdlaWdodGI9MSBvcGVuX2dvcD0wIHdlaWdodHA9MiBrZXlpbnQ9MjUwIGtleWludF9taW49MTAgc2NlbmVjdXQ9NDAgaW50cmFfcmVmcmVzaD0wIHJjX2xvb2thaGVhZD00MCByYz1hYnIgbWJ0cmVlPTEgYml0cmF0ZT0zMjI0IHJhdGV0b2w9MS4wIHFjb21wPTAuNjAgcXBtaW49MCBxcG1heD02OSBxcHN0ZXA9NCBpcF9yYXRpbz0xLjQwIGFxPTE6MS4wMACAAAAAN2WIhAAa//73wP8Cm7nIA/5tf/+mn7sUx/QF/H/9L//yM6MTo19P+P/2ftGrP+85P/Er/F20Jv8AAALvbW9vdgAAAGxtdmhkAAAAAAAAAAAAAAAAAAAD6AAAAGQAAQAAAQAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAhl0cmFrAAAAXHRraGQAAAADAAAAAAAAAAAAAAABAAAAAAAAAGQAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAACUAAAAlAAAAAAAkZWR0cwAAABxlbHN0AAAAAAAAAAEAAABkAAAAAAABAAAAAAGRbWRpYQAAACBtZGhkAAAAAAAAAAAAAAAAAAAoAAAABABVxAAAAAAALWhkbHIAAAAAAAAAAHZpZGUAAAAAAAAAAAAAAABWaWRlb0hhbmRsZXIAAAABPG1pbmYAAAAUdm1oZAAAAAEAAAAAAAAAAAAAACRkaW5mAAAAHGRyZWYAAAAAAAAAAQAAAAx1cmwgAAAAAQAAAPxzdGJsAAAAmHN0c2QAAAAAAAAAAQAAAIhhdmMxAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAACUAJQBIAAAASAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGP//AAAAMmF2Y0MB9AAU/+EAGWf0ABSRmym/GRkIAAADAAgAAAMAoHihTLABAAZo6+xEhEAAAAAYc3R0cwAAAAAAAAABAAAAAQAABAAAAAAcc3RzYwAAAAAAAAABAAAAAQAAAAEAAAABAAAAFHN0c3oAAAAAAAAC+QAAAAEAAAAUc3RjbwAAAAAAAAABAAAAMAAAAGJ1ZHRhAAAAWm1ldGEAAAAAAAAAIWhkbHIAAAAAAAAAAG1kaXJhcHBsAAAAAAAAAAAAAAAALWlsc3QAAAAlqXRvbwAAAB1kYXRhAAAAAQAAAABMYXZmNTcuMTkuMTAw'; // Base64 离线
     return video;
   }
 
   async function playVideo(msId) {
-    if (document.querySelector("body > video")) {
-      msId.showMessage('防止休眠启动，请保持本页处于激活状态，请勿遮挡、最小化本窗口以及全屏运行其它应用！', "none");
+    if (document.querySelector('body > video')) {
+      msId.showMessage('防止休眠启动，请保持本页处于激活状态，请勿遮挡、最小化本窗口以及全屏运行其它应用！', 'none');
       return;
     }
     let p = 0;
     const video = genVideo();
     document.body.append(video); //添加视频到指定位置
-    video.addEventListener("canplay", videoPlay, {
-      once: true
+    video.addEventListener('canplay', videoPlay, {
+      once: true,
     }); // 加载完
 
-    function videoPlay() { // 播放视频，防止休眠
+    function videoPlay() {
+      // 播放视频，防止休眠
       // video.removeEventListener("canplay", videoPlay, false); // 循环触发，移除事件监听
       // 显示永久消息通知
-      msId.showMessage('防止休眠启动，请保持本页处于激活状态，请勿遮挡、最小化本窗口以及全屏运行其它应用！', "none");
+      msId.showMessage('防止休眠启动，请保持本页处于激活状态，请勿遮挡、最小化本窗口以及全屏运行其它应用！', 'none');
       p = 99;
-    };
+    }
 
     // 重试10次
     while (true) {
@@ -1369,10 +1467,10 @@
       if (p == 99) {
         break;
       } else if (p == 10) {
-        new MessageBox("防休眠启动失败！");
+        new MessageBox('防休眠启动失败！');
         break;
       } else {
-        console.log("第" + (p + 1) + "次重启防休眠");
+        console.log('第' + (p + 1) + '次重启防休眠');
       }
       video.load();
       p++;
@@ -1383,11 +1481,11 @@
     if (user.autoRePicSw === 1) {
       user.autoRePicSw = 0;
       GM_setValue(user.username, user);
-      new MessageBox("已关闭加载原图");
+      new MessageBox('已关闭加载原图');
     } else {
       user.autoRePicSw = 1;
       GM_setValue(user.username, user);
-      new MessageBox("已开启加载原图");
+      new MessageBox('已开启加载原图');
     }
   }
 
@@ -1395,11 +1493,11 @@
     if (user.autoPaySw === 1) {
       user.autoPaySw = 0;
       GM_setValue(user.username, user);
-      new MessageBox("已关闭自动购买");
+      new MessageBox('已关闭自动购买');
     } else {
       user.autoPaySw = 1;
       GM_setValue(user.username, user);
-      new MessageBox("已开启自动购买");
+      new MessageBox('已开启自动购买');
     }
   }
 
@@ -1407,22 +1505,24 @@
     if (user.autoThkSw === 1) {
       user.autoThkSw = 0;
       GM_setValue(user.username, user);
-      new MessageBox("已关闭自动感谢");
+      new MessageBox('已关闭自动感谢');
     } else {
       user.autoThkSw = 1;
       GM_setValue(user.username, user);
-      new MessageBox("已开启自动感谢");
+      new MessageBox('已开启自动感谢');
     }
   }
 
   async function update() {
-    new MessageBox("正在检查更新...")
+    new MessageBox('正在检查更新...');
     const data = await getData(`https://greasyfork.org/zh-CN/scripts/427246`);
-    let version = data.getElementsByClassName("script-show-version")[1].querySelector("span").innerHTML;
+    let version = data.getElementsByClassName('script-show-version')[1].querySelector('span').innerHTML;
     if (user.version != version) {
-      GM_openInTab(`https://greasyfork.org/scripts/427246-jkforum-%E5%8A%A9%E6%89%8B/code/JKForum%20%E5%8A%A9%E6%89%8B.user.js`);
+      GM_openInTab(
+        `https://greasyfork.org/scripts/427246-jkforum-%E5%8A%A9%E6%89%8B/code/JKForum%20%E5%8A%A9%E6%89%8B.user.js`
+      );
     } else {
-      new MessageBox("已是最新版本！");
+      new MessageBox('已是最新版本！');
     }
   }
 
@@ -1435,9 +1535,8 @@
   launch(); // 启动自动签到、投票、加载原图等
 
   // 油猴菜单开关  // 必须在 user 后面调用，否则 user 还没初始化就绑定函数了
-  GM_registerMenuCommand("🔎 加载原图开关", swRePic);
-  GM_registerMenuCommand("💰 自动购买开关", swPay);
-  GM_registerMenuCommand("❤ 自动感谢开关", swThk);
-  GM_registerMenuCommand("🛠 检查更新", update);
-
+  GM_registerMenuCommand('🔎 加载原图开关', swRePic);
+  GM_registerMenuCommand('💰 自动购买开关', swPay);
+  GM_registerMenuCommand('❤ 自动感谢开关', swThk);
+  GM_registerMenuCommand('🛠 检查更新', update);
 })();
