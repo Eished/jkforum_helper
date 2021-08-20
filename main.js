@@ -1264,7 +1264,7 @@
           reject(error);
         },
         ontimeout: () => {
-          new MessageBox('网络超时');
+          new MessageBox('网络超时', 'none', 2);
           reject('timeout');
         },
       });
@@ -1281,6 +1281,7 @@
         },
         data: postData,
         responseType: type,
+        timeout: 1 * 60 * 1000,
         onload: function (response) {
           if (response.status == 200) {
             resolve(turnCdata(response.response));
@@ -1292,6 +1293,10 @@
         onerror: function (error) {
           new MessageBox('网络错误');
           reject(error);
+        },
+        ontimeout: () => {
+          new MessageBox('网络超时', 'none', 2);
+          reject('timeout');
         },
       });
     });
