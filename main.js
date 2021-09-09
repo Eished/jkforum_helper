@@ -72,7 +72,7 @@
 
   async function creatUser() {
     const formhash = document.querySelector('.listmenu li a').href.split('&')[2].split('=')[1];
-    const username = document.querySelector('.avatar_info').querySelector('a').innerHTML;
+    const username = document.querySelector('.avatar_info a').innerHTML;
     let user = getUserFromName();
     if (!user) {
       // 空则写入，或版本变动写入
@@ -106,7 +106,7 @@
 
   function getUserFromName() {
     // 从用户名获取对象
-    const username = document.querySelector('.avatar_info').querySelector('a').innerHTML; // 用户名判断唯一用户
+    const username = document.querySelector('.avatar_info a').innerHTML; // 用户名判断唯一用户
     return GM_getValue(username);
   }
 
@@ -515,7 +515,7 @@
       }
       case reg.test(WLHerf): {
         // 一次性添加，避免多次渲染
-        const fragment = new DocumentFragment();
+        const fragment = document.createDocumentFragment();
         // 回帖 按钮
         const repBtn = genButton('回帖', replyBtn);
         fragment.append(repBtn);
@@ -1521,7 +1521,7 @@
   async function update() {
     new MessageBox('正在检查更新...');
     const data = await getData(`https://greasyfork.org/zh-CN/scripts/427246`);
-    let version = data.getElementsByClassName('script-show-version')[1].querySelector('span').innerHTML;
+    let version = data.querySelectorAll('.script-show-version span')[1].innerHTML;
     if (user.version != version) {
       GM_openInTab(
         `https://greasyfork.org/scripts/427246-jkforum-%E5%8A%A9%E6%89%8B/code/JKForum%20%E5%8A%A9%E6%89%8B.user.js`
