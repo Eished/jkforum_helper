@@ -5,10 +5,10 @@
 // @name:ja      JKForum 助手
 // @name:ko      JKForum 조수
 // @namespace    https://github.com/Eished/jkforum_helper
-// @version      0.6.4
-// @description        JKF 捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动播放图片、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片
+// @version      0.6.5
+// @description        JKF 捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动播放图片、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片，自动识别验证码，自动'现在有空'
 // @description:en     JKF JKForum Helper: Auto-sign-in, timed sign-in, auto-thank you, auto-load original image, auto-play image, auto-pay to buy theme post, auto-complete voting task, optimize browsing experience, one-click bulk reply/thank you, one-click package to download post image
-// @description:zh-TW  JKF 捷克論壇助手：自動簽到、定時簽到、自動感謝、自動加載原圖、自動播放圖片、自動支付購買主題貼、自動完成投票任務，優化瀏覽體驗，一鍵批量回帖/感謝，一鍵打包下載帖子圖片
+// @description:zh-TW  JKF 捷克論壇助手：自動簽到、定時簽到、自動感謝、自動加載原圖、自動播放圖片、自動支付購買主題貼、自動完成投票任務，優化瀏覽體驗，一鍵批量回帖/感謝，一鍵打包下載帖子圖片，自動識別驗證碼，自動'現在有空'
 // @description:ja     JKF チェコ語フォーラム助手：自動チェックイン、時限式チェックイン、オートサンキュー、オリジナル画像の自動読み込み、画像の自動再生、トピック投稿の自動支払い、ポールタスクの自動完了、ブラウジングエクスペリエンスの最適化、ワンクリックでの一括返信/サンキュー、ワンクリックでの投稿画像のパッケージダウンロード
 // @description:ko     JKF 체코 포럼 조수: 자동 로그인, 정기 로그인, 자동 감사, 원본 사진 자동로드, 테마 스티커 구매 자동 결제, 투표 작업 자동 완료, 최적화 된 브라우징 경험, 원 클릭 일괄 회신 / 감사, 원 클릭 포스트 사진의 패키지 다운로드 클릭다운로드하십시오.
 // @author       Eished
@@ -21,6 +21,7 @@
 // @connect      mymypic.net
 // @connect      greasyfork.org
 // @connect      jsdelivr.net
+// @connect      aip.baidubce.com
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_notification
@@ -33,7 +34,7 @@
 // ==/UserScript==
 
 (async function () {
-  'use strict';
+  ('use strict');
 
   function newUser(username, formhash) {
     return {
@@ -55,6 +56,8 @@
       thkDiffer: 1000, // 批量感谢间隔时间ms
       limit: 2, // 并发下载图片数量限制
       page: '', // 批量回帖页码
+      token: '',
+      freeTime: 3610000,
       votedMessage: '+1', // 投票输入内容
       userReplyMessage: [], // 用户保存的回复，历史回帖内容
       fastReply: [], // 保存的快速回复，快速回帖内容
@@ -1482,6 +1485,165 @@
     }
   }
 
+  /**
+   * 百度AI ORC
+   */
+  async function captcha() {
+    return new Promise(async (resolve, reject) => {
+      const type = 'application/x-www-form-urlencoded';
+      const url =
+        'https://www.jkforum.net/plugin/?id=topthreads:setstatus&tid=10944080&handlekey=k_setstatus&infloat=1&freeon=yes&inajax=1';
+
+      const captchaPage = await postData(url, urlSearchParams({captcha_input: ''}).toString(), type)
+        .then((res) => turnCdata(res.responseXML))
+        .catch((e) => {
+          console.log(e);
+        });
+
+      if (!captchaPage) {
+        captcha();
+      }
+
+      var image = captchaPage.querySelector('#captcha');
+      document.body.append(image);
+      image.onload = async function () {
+        //文件的Base64字符串
+        var base64 = getBase64Image(image);
+
+        const ma = await readImage(base64).catch((e) => {
+          console.log(e);
+        });
+        const user = getUserFromName();
+        if (ma.includes('Access token invalid or no longer valid')) {
+          new MessageBox(
+            'Access token invalid or no longer valid. 令牌无效（需要令牌请私聊 or 发送邮件到 kished@outlook.com ）',
+            user.freeTime
+          );
+          resolve(ma);
+          return;
+        }
+
+        const result = await postData(url, urlSearchParams({captcha_input: ma}).toString(), type)
+          .then((res) => turnCdata(res.responseXML))
+          .catch((e) => {
+            console.log(e);
+          });
+        if (result === '更新完成！若狀態仍沒更新，請嘗試刷新頁面') {
+          new MessageBox('更新完成！自動‘現在有空’中，請不要刷新頁面！', user.freeTime);
+          resolve(result);
+        } else {
+          new MessageBox('验证失败，正在重试...');
+          reject(result);
+        }
+      };
+    });
+  }
+
+  /**
+   * 图像转Base64
+   */
+  function getBase64Image(img) {
+    var canvas = document.createElement('canvas');
+    canvas.width = img.width;
+    canvas.height = img.height;
+    var ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0, img.width, img.height);
+    var ext = img.src.substring(img.src.lastIndexOf('.') + 1).toLowerCase();
+    var dataURL = canvas.toDataURL('image/' + ext);
+    return dataURL;
+  }
+
+  /**
+   *Base64字符串转二进制
+   */
+  function dataURLtoBlob(dataurl) {
+    var arr = dataurl.split(','),
+      mime = arr[0].match(/:(.*?);/)[1],
+      bstr = atob(arr[1]),
+      n = bstr.length,
+      u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new Blob([u8arr], {
+      type: mime,
+    });
+  }
+
+  async function readImage(base64) {
+    const user = getUserFromName();
+    const url = `https://aip.baidubce.com/rest/2.0/ocr/v1/accurate_basic?access_token=${user.token}&Content-Type=application/x-www-form-urlencoded`;
+    const body = urlSearchParams({image: base64}).toString();
+    return postData(url, body)
+      .then((res) => {
+        const code = JSON.parse(res.responseText);
+        if (code?.words_result) {
+          return code.words_result[0].words;
+        }
+        return code.error_msg;
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }
+
+  function postData(url, postData, type = 'document', usermethod = 'POST') {
+    return new Promise((resolve, reject) => {
+      GM_xmlhttpRequest({
+        method: usermethod,
+        url: url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        data: postData,
+        responseType: type,
+        timeout: 1 * 60 * 1000,
+        onload: function (response) {
+          if (response.status == 200) {
+            resolve(response);
+          } else {
+            reject(response.status);
+          }
+        },
+        onerror: function (error) {
+          reject(error);
+        },
+        ontimeout: () => {
+          reject('timeout');
+        },
+      });
+    });
+  }
+
+  async function autoCompleteCaptcha() {
+    // input token
+    const user = getUserFromName();
+    if (!user.token) {
+      user.token = prompt('请输入验证码识别的 api 令牌（需要令牌请私聊 or 发送邮件到 kished@outlook.com ）：');
+      const reg = /.*\..*\..*\..*/g;
+      if (reg.test(user.token)) {
+        // token 时效计算
+        GM_setValue(user.username, user); //保存当天日// today 初始化
+      } else {
+        new MessageBox('无效的令牌');
+        return;
+      }
+    }
+    captcha()
+      .then((res) => {
+        const msId = new MessageBox();
+        playVideo(msId);
+        setTimeout(() => {
+          msId.removeMessage();
+          autoCompleteCaptcha();
+        }, user.freeTime);
+      })
+      .catch((e) => {
+        // console.log(e);
+        autoCompleteCaptcha();
+      });
+  }
+
   function swRePic() {
     if (user.autoRePicSw === 1) {
       user.autoRePicSw = 0;
@@ -1543,5 +1705,6 @@
   GM_registerMenuCommand('🔎 加载原图开关', swRePic);
   GM_registerMenuCommand('💰 自动购买开关', swPay);
   GM_registerMenuCommand('❤ 自动感谢开关', swThk);
+  GM_registerMenuCommand('💡 自动现在有空', autoCompleteCaptcha);
   GM_registerMenuCommand('🛠 检查更新', update);
 })();
