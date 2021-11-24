@@ -1486,7 +1486,7 @@
   }
 
   /**
-   * 百度AI ORC
+   * ORC
    */
   async function captcha() {
     return new Promise(async (resolve, reject) => {
@@ -1519,9 +1519,11 @@
         if (ma.includes('Access token invalid or no longer valid')) {
           new MessageBox(
             'Access token invalid or no longer valid. 令牌无效（需要令牌请私聊 or 发送邮件到 kished@outlook.com ）',
-            user.freeTime
+            10000
           );
-          resolve(ma);
+          user.token = '';
+          GM_setValue(user.username, user);
+          reject(ma);
           return;
         }
 
@@ -1618,14 +1620,12 @@
   }
 
   async function autoCompleteCaptcha() {
-    // input token
     const user = getUserFromName();
     if (!user.token) {
       user.token = prompt('请输入验证码识别的 api 令牌（需要令牌请私聊 or 发送邮件到 kished@outlook.com ）：');
       const reg = /.*\..*\..*\..*/g;
       if (reg.test(user.token)) {
-        // token 时效计算
-        GM_setValue(user.username, user); //保存当天日// today 初始化
+        GM_setValue(user.username, user);
       } else {
         new MessageBox('无效的令牌');
         return;
