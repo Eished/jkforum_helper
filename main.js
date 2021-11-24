@@ -1502,13 +1502,15 @@
 
       if (!captchaPage) {
         captcha();
+      } else if (captchaPage === 'Access denied.') {
+        new MessageBox(captchaPage);
+        return;
       }
-
-      var image = captchaPage.querySelector('#captcha');
+      const image = captchaPage.querySelector('#captcha');
       document.body.append(image);
       image.onload = async function () {
         //文件的Base64字符串
-        var base64 = getBase64Image(image);
+        const base64 = getBase64Image(image);
 
         const ma = await readImage(base64).catch((e) => {
           console.log(e);
@@ -1543,13 +1545,13 @@
    * 图像转Base64
    */
   function getBase64Image(img) {
-    var canvas = document.createElement('canvas');
+    const canvas = document.createElement('canvas');
     canvas.width = img.width;
     canvas.height = img.height;
-    var ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d');
     ctx.drawImage(img, 0, 0, img.width, img.height);
-    var ext = img.src.substring(img.src.lastIndexOf('.') + 1).toLowerCase();
-    var dataURL = canvas.toDataURL('image/' + ext);
+    const ext = img.src.substring(img.src.lastIndexOf('.') + 1).toLowerCase();
+    const dataURL = canvas.toDataURL('image/' + ext);
     return dataURL;
   }
 
@@ -1557,7 +1559,7 @@
    *Base64字符串转二进制
    */
   function dataURLtoBlob(dataurl) {
-    var arr = dataurl.split(','),
+    const arr = dataurl.split(','),
       mime = arr[0].match(/:(.*?);/)[1],
       bstr = atob(arr[1]),
       n = bstr.length,
