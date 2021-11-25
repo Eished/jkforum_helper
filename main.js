@@ -5,7 +5,7 @@
 // @name:ja      JKForum 助手
 // @name:ko      JKForum 조수
 // @namespace    https://github.com/Eished/jkforum_helper
-// @version      0.6.5
+// @version      0.6.6
 // @description        JKF 捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动播放图片、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片，自动识别验证码，自动'现在有空'
 // @description:en     JKF JKForum Helper: Auto-sign-in, timed sign-in, auto-thank you, auto-load original image, auto-play image, auto-pay to buy theme post, auto-complete voting task, optimize browsing experience, one-click bulk reply/thank you, one-click package to download post image
 // @description:zh-TW  JKF 捷克論壇助手：自動簽到、定時簽到、自動感謝、自動加載原圖、自動播放圖片、自動支付購買主題貼、自動完成投票任務，優化瀏覽體驗，一鍵批量回帖/感謝，一鍵打包下載帖子圖片，自動識別驗證碼，自動'現在有空'
@@ -57,13 +57,15 @@
       limit: 2, // 并发下载图片数量限制
       page: '', // 批量回帖页码
       token: '',
-      freeTime: 3610000,
+      freeTime: 3600000,
+      freeTid: '',
       votedMessage: '+1', // 投票输入内容
       userReplyMessage: [], // 用户保存的回复，历史回帖内容
       fastReply: [], // 保存的快速回复，快速回帖内容
       replyThreads: [], // 回帖任务数据
-      applyVotedUrl: 'https://www.jkforum.net/home.php?mod=task&do=apply&id=59',
+      orcUrl: 'https://aip.baidubce.com/rest/2.0/ocr/v1/accurate_basic?',
       votedUrl: 'https://www.jkforum.net/plugin.php?',
+      applyVotedUrl: 'https://www.jkforum.net/home.php?mod=task&do=apply&id=59',
       taskDoneUrl: 'https://www.jkforum.net/home.php?mod=task&do=draw&id=59',
       signUrl: 'https://www.jkforum.net/plugin/?id=dsu_paulsign:sign&operation=qiandao&infloat=1&inajax=1',
       thkUrl: 'https://www.jkforum.net/plugin/?id=thankauthor:thank&inajax=1',
@@ -1490,9 +1492,9 @@
    */
   async function captcha() {
     return new Promise(async (resolve, reject) => {
+      const user = getUserFromName();
       const type = 'application/x-www-form-urlencoded';
-      const url =
-        'https://www.jkforum.net/plugin/?id=topthreads:setstatus&tid=10944080&handlekey=k_setstatus&infloat=1&freeon=yes&inajax=1';
+      const url = `${user.votedUrl}id=topthreads:setstatus&tid=${user.freeTid}&handlekey=k_setstatus&infloat=1&freeon=yes&inajax=1`;
 
       const captchaPage = await postData(url, urlSearchParams({captcha_input: ''}).toString(), type)
         .then((res) => turnCdata(res.responseXML))
@@ -1501,9 +1503,15 @@
         });
 
       if (!captchaPage) {
-        captcha();
+        new MessageBox('访问失败，正在重试...');
+        reject();
+        return;
       } else if (captchaPage === 'Access denied.') {
         new MessageBox(captchaPage);
+        return;
+      } else if (typeof captchaPage !== 'object') {
+        new MessageBox('访问失败，正在重试...');
+        reject();
         return;
       }
       const image = captchaPage.querySelector('#captcha');
@@ -1515,7 +1523,6 @@
         const ma = await readImage(base64).catch((e) => {
           console.log(e);
         });
-        const user = getUserFromName();
         if (ma.includes('Access token invalid or no longer valid')) {
           new MessageBox(
             'Access token invalid or no longer valid. 令牌无效（需要令牌请私聊 or 发送邮件到 kished@outlook.com ）',
@@ -1576,7 +1583,7 @@
 
   async function readImage(base64) {
     const user = getUserFromName();
-    const url = `https://aip.baidubce.com/rest/2.0/ocr/v1/accurate_basic?access_token=${user.token}&Content-Type=application/x-www-form-urlencoded`;
+    const url = `${user.orcUrl}access_token=${user.token}&Content-Type=application/x-www-form-urlencoded`;
     const body = urlSearchParams({image: base64}).toString();
     return postData(url, body)
       .then((res) => {
@@ -1631,6 +1638,23 @@
         return;
       }
     }
+
+    if (!user.freeTid) {
+      const status = document.querySelector('#topthread_status');
+      if (status) {
+        let tid = location.href.split('-')[1]; // 不同链接地址不同
+        if (!tid) {
+          tid = new URLSearchParams(location.href).get('tid'); // 用于获取分类贴链接下的 tid
+        }
+        console.log(tid);
+        user.freeTid = tid;
+        GM_setValue(user.username, user);
+      } else {
+        new MessageBox('找不到指定页面元素！请先打开自己的帖子再试');
+        return;
+      }
+    }
+
     captcha()
       .then((res) => {
         const msId = new MessageBox();
