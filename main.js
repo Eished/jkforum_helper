@@ -5,7 +5,7 @@
 // @name:ja      JKForum 助手
 // @name:ko      JKForum 조수
 // @namespace    https://github.com/Eished/jkforum_helper
-// @version      0.6.6
+// @version      0.6.7
 // @description        JKF 捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动播放图片、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片，自动识别验证码，自动'现在有空'
 // @description:en     JKF JKForum Helper: Auto-sign-in, timed sign-in, auto-thank you, auto-load original image, auto-play image, auto-pay to buy theme post, auto-complete voting task, optimize browsing experience, one-click bulk reply/thank you, one-click package to download post image
 // @description:zh-TW  JKF 捷克論壇助手：自動簽到、定時簽到、自動感謝、自動加載原圖、自動播放圖片、自動支付購買主題貼、自動完成投票任務，優化瀏覽體驗，一鍵批量回帖/感謝，一鍵打包下載帖子圖片，自動識別驗證碼，自動'現在有空'
@@ -56,14 +56,14 @@
       thkDiffer: 1000, // 批量感谢间隔时间ms
       limit: 2, // 并发下载图片数量限制
       page: '', // 批量回帖页码
-      token: '',
-      freeTime: 3600000,
-      freeTid: '',
+      token: '', // ORC token
+      freeTime: 3600000, // 现在有空间隔
+      freeTid: '', // 自动现在有空 帖子ID，一个账号一个贴子
       votedMessage: '+1', // 投票输入内容
       userReplyMessage: [], // 用户保存的回复，历史回帖内容
       fastReply: [], // 保存的快速回复，快速回帖内容
       replyThreads: [], // 回帖任务数据
-      orcUrl: 'https://aip.baidubce.com/rest/2.0/ocr/v1/accurate_basic?',
+      orcUrl: 'https://aip.baidubce.com/rest/2.0/ocr/v1/accurate_basic?', // general_basic 精准或普通 api
       votedUrl: 'https://www.jkforum.net/plugin.php?',
       applyVotedUrl: 'https://www.jkforum.net/home.php?mod=task&do=apply&id=59',
       taskDoneUrl: 'https://www.jkforum.net/home.php?mod=task&do=draw&id=59',
@@ -1500,34 +1500,26 @@
         .then((res) => turnCdata(res.responseXML))
         .catch((e) => {
           console.log(e);
+          return 'retry';
         });
 
-      if (!captchaPage) {
-        new MessageBox('访问失败，正在重试...');
-        reject();
-        return;
-      } else if (captchaPage === 'Access denied.') {
+      if (captchaPage === 'Access denied.') {
         new MessageBox(captchaPage);
+        reject('Access denied.');
         return;
       } else if (typeof captchaPage !== 'object') {
-        new MessageBox('访问失败，正在重试...');
-        reject();
+        new MessageBox('验证码图片访问失败，正在重试...');
+        reject('retry');
         return;
       }
       const image = captchaPage.querySelector('#captcha');
       document.body.append(image);
       image.onload = async function () {
-        //文件的Base64字符串
-        const base64 = getBase64Image(image);
-
-        const ma = await readImage(base64).catch((e) => {
-          console.log(e);
-        });
-        if (ma.includes('Access token invalid or no longer valid')) {
-          new MessageBox(
-            'Access token invalid or no longer valid. 令牌无效（需要令牌请私聊 or 发送邮件到 kished@outlook.com ）',
-            10000
-          );
+        //文件的Base64字符串获取验证码
+        const ma = await readImage(getBase64Image(image));
+        if (ma.includes(' ')) {
+          // 令牌错误不重试，使用空格通配
+          new MessageBox(ma + ' 令牌错误，需要令牌请私聊 or 发送邮件到 kished@outlook.com ', 10000);
           user.token = '';
           GM_setValue(user.username, user);
           reject(ma);
@@ -1538,13 +1530,21 @@
           .then((res) => turnCdata(res.responseXML))
           .catch((e) => {
             console.log(e);
+            return 'retry';
           });
+        if (result === 'retry') {
+          new MessageBox('验证码图片访问失败，正在重试...');
+          reject('retry');
+          return;
+        }
         if (result === '更新完成！若狀態仍沒更新，請嘗試刷新頁面') {
           new MessageBox('更新完成！自動‘現在有空’中，請不要刷新頁面！', user.freeTime);
           resolve(result);
+          return;
         } else {
-          new MessageBox('验证失败，正在重试...');
-          reject(result);
+          new MessageBox('验证码错误，正在重试...');
+          reject('retry');
+          return;
         }
       };
     });
@@ -1585,17 +1585,13 @@
     const user = getUserFromName();
     const url = `${user.orcUrl}access_token=${user.token}&Content-Type=application/x-www-form-urlencoded`;
     const body = urlSearchParams({image: base64}).toString();
-    return postData(url, body)
-      .then((res) => {
-        const code = JSON.parse(res.responseText);
-        if (code?.words_result) {
-          return code.words_result[0].words;
-        }
-        return code.error_msg;
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+    return postData(url, body).then((res) => {
+      const code = JSON.parse(res.responseText);
+      if (code?.words_result) {
+        return code.words_result[0].words;
+      }
+      return code.error_msg + ' '; // 空格作为错误标志
+    });
   }
 
   function postData(url, postData, type = 'document', usermethod = 'POST') {
@@ -1665,8 +1661,13 @@
         }, user.freeTime);
       })
       .catch((e) => {
-        // console.log(e);
-        autoCompleteCaptcha();
+        if (e === 'retry') {
+          setTimeout(() => {
+            autoCompleteCaptcha();
+          }, 5000); // 重试频率限制
+        } else {
+          new MessageBox(e);
+        }
       });
   }
 

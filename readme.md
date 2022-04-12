@@ -47,6 +47,7 @@
   - 点击浏览器扩展 油猴插件图标 即可看到。
 
   - 建议开启加载原图，提高图片加载速度，网站经常反向压缩（画质降低，体积增大）。
+  - 自动现在有空按钮，ORC 令牌免費提供，有效期 30 天，所有人共享调用 1000 次每月，节约使用，收到申请邮件后会回复令牌。
 
     ![pic_46.png](https://cdn.jsdelivr.net/gh/eished/jkforum_helper/readme.assets/pic_46.png)
 
@@ -122,26 +123,31 @@
   - 可自定义的值：
 
     ```javascript
-    version: '',
-    today: '', // 签到日期
-    signtime: '23:59:59', // 定时签到时间
-    signNum: 10, // 定时签到重试次数
-    interTime: 200, // 定时签到重试间隔时间ms
-    todaysay: '簽到', // 签到输入内容
-    mood: 'fd', // 签到心情
-    autoPlayDiff: 2000, // 自动播放图片间隔时间ms
-    autoPaySw: 1, // 自动支付开关
-    autoThkSw: 1, // 自动感谢开关
-    autoRePicSw: 1, // 自动加载原图开关
-    differ: 10000, // 回帖随机间隔时间范围ms
-    interval: 20000, // 回帖基础间隔时间ms
-    thkDiffer: 1000, // 批量感谢间隔时间ms
-    limit: 2, // 并发下载图片数量限制
-    page: '', // 批量回帖页码
-    votedMessage: '+1', // 投票输入内容
-    userReplyMessage: [], // 用户保存的回复，历史回帖内容
-    fastReply: [], // 保存的快速回复，快速回帖内容
-    replyThreads: [], // 回帖任务数据，管理回帖任务
+    {
+      version: '',
+      today: '', // 签到日期
+      signtime: '23:59:59', // 定时签到时间
+      signNum: 10, // 定时签到重试次数
+      interTime: 200, // 定时签到重试间隔时间ms
+      todaysay: '簽到', // 签到输入内容
+      mood: 'fd', // 签到心情
+      autoPlayDiff: 2000, // 自动播放图片间隔时间ms
+      autoPaySw: 1, // 自动支付开关
+      autoThkSw: 1, // 自动感谢开关
+      autoRePicSw: 1, // 自动加载原图开关
+      differ: 10000, // 回帖随机间隔时间范围ms
+      interval: 20000, // 回帖基础间隔时间ms
+      thkDiffer: 1000, // 批量感谢间隔时间ms
+      limit: 2, // 并发下载图片数量限制
+      page: '', // 批量回帖页码
+      token: '', // ORC token
+      freeTime: 3600000, // 现在有空间隔
+      freeTid: '', // 自动现在有空 帖子ID，一个账号一个贴子
+      votedMessage: '+1', // 投票输入内容
+      userReplyMessage: [], // 用户保存的回复，历史回帖内容
+      fastReply: [], // 保存的快速回复，快速回帖内容
+      replyThreads: [], // 回帖任务数据，管理回帖任务
+    }
     ```
 
   - 如果参数改错了或出现异常，删掉 `"version": "x.x.x",` 右边双引号内的内容和错误参数右边双引号内的内容（或整行），运行脚本会自动初始化缺失的参数。
