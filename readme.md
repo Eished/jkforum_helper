@@ -38,7 +38,7 @@
 
 - 登录后脚本开始运行。
 
-  - 支持多账号，数据独立存储。
+  - 支持多账号，数据独立存储。或 [利用 Chrome 同时登录网站的多个账号](https://roro4ever.github.io/2019/11/28/%E5%88%A9%E7%94%A8Chrome%E5%90%8C%E6%97%B6%E7%99%BB%E5%BD%95%E7%BD%91%E7%AB%99%E7%9A%84%E5%A4%9A%E4%B8%AA%E8%B4%A6%E5%8F%B7/%E5%88%A9%E7%94%A8chrome%E5%90%8C%E6%97%B6%E7%99%BB%E5%BD%95%E7%BD%91%E7%AB%99%E7%9A%84%E5%A4%9A%E4%B8%AA%E8%B4%A6%E5%8F%B7/)
   - 仅测试油猴 Tampermonkey + Chrome。
   - 图片不显示、下载返回 404 时，需更换代理。
 
