@@ -30,6 +30,11 @@ module.exports = (env) => {
       filename: 'jkforum.user.js',
       publicPath: '/',
     },
+    externals: {
+      jquery: 'jQuery',
+      react: 'React',
+      'react-dom': 'react-dom',
+    },
     module: {
       rules: [
         {
