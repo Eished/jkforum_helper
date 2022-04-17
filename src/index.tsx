@@ -1,5 +1,5 @@
 import React from 'react';
-// import $ from 'jquery';
+import $ from 'jquery';
 import { render } from 'react-dom';
 
 const tailwindStyles = require('./output.css');
@@ -7,7 +7,7 @@ GM_addStyle(tailwindStyles);
 
 import App from '@/app';
 
-$('body').append(`<div id="jkforum-helper"/>`);
+$('body').prepend(`<div id="jkforum-helper"/>`);
 render(<App />, document.getElementById('jkforum-helper'));
 
 // const rootDiv = document.createElement('div');

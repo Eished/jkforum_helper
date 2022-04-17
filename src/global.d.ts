@@ -10,9 +10,9 @@ declare global {
 
   // const lodash: LoDashStatic
   // const Vue: typeof import('vue/types/umd');
-  const React: ReactTypes;
-  const ReactDOM: ReactDomTypes;
-  const $: JQueryTypes;
+  // const React: ReactTypes;
+  // const ReactDOM: ReactDomTypes;
+  // const $: JQueryTypes;
 
   interface CompilationInfo {
     commitHash: string;

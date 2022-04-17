@@ -33,8 +33,8 @@ module.exports = (env) => {
     },
     externals: {
       // jquery: 'jQuery',
-      react: 'React',
-      'react-dom': 'react-dom',
+      // react: 'React',
+      // 'react-dom': 'react-dom',
     },
     module: {
       rules: [
