@@ -1,9 +1,10 @@
-const {resolve} = require('path');
+const { resolve } = require('path');
 const path = require('path');
 const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
 
 const commonMeta = require('./src/common.meta.json');
+const { cssStyleLoaders, sassStyleLoaders } = require('./webpack/style-loaders');
 
 const year = new Date().getFullYear();
 const getBanner = (meta) => `// ==UserScript==\n${Object.entries(Object.assign(meta, commonMeta))
@@ -24,7 +25,7 @@ const src = relativePath('src');
 module.exports = (env) => {
   console.log(env);
   return {
-    entry: ['./index.js'],
+    entry: ['./src/index.tsx'],
     output: {
       path: resolve(__dirname, 'dist'),
       filename: 'jkforum.user.js',
@@ -67,15 +68,24 @@ module.exports = (env) => {
           exclude: /node_modules/,
           include: [src],
         },
-        // {
-        //   test: /\.css$/,
-        //   oneOf: [
-        //     {
-        //       use: ['to-string-loader', 'css-loader'],
-        //     },
-        //   ],
-        //   include: [src],
-        // },
+        {
+          test: /\.css$/,
+          use: ['style-loader', ...cssStyleLoaders],
+          include: /node_modules/,
+        },
+        {
+          test: /\.css$/,
+          oneOf: [
+            {
+              resourceQuery: /vue/,
+              use: ['style-loader', ...cssStyleLoaders],
+            },
+            {
+              use: ['to-string-loader', ...cssStyleLoaders],
+            },
+          ],
+          include: [src],
+        },
         // {
         //   test: /\.css$/,
         //   // 使用哪些 loader 进行处理
@@ -134,7 +144,7 @@ module.exports = (env) => {
     // devtool: 'source-map',
     plugins: [
       new webpack.BannerPlugin({
-        banner: getBanner({name: env.production ? 'JKForum 助手' : 'JKForum 助手-dev'}),
+        banner: getBanner({ name: env.production ? 'JKForum 助手' : 'JKForum 助手-dev' }),
         raw: true,
         entryOnly: true,
       }),

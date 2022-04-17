@@ -4,8 +4,9 @@
   "description": "![JKFicon64oval2](https://cdn.jsdelivr.net/gh/eished/jkforum_helper/readme.assets/JKFicon64oval2.png)",
   "main": "/dist/jkforum.user.js",
   "scripts": {
-    "start": "webpack --watch",
-    "build": "webpack --env production"
+    "dev": "webpack --watch",
+    "build": "webpack --env production",
+    "style": "npx tailwindcss -i ./src/input.css -o ./src/output.css --watch"
   },
   "repository": {
     "type": "git",
@@ -25,10 +26,21 @@
     "@types/jquery": "^3.5.14",
     "@types/react": "^18.0.5",
     "@types/react-dom": "^18.0.1",
+    "@typescript-eslint/eslint-plugin": "^5.19.0",
+    "@typescript-eslint/parser": "^5.19.0",
+    "autoprefixer": "^10.4.4",
     "babel-loader": "^8.2.4",
     "css-loader": "^6.7.1",
     "eslint": "^8.13.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.29.4",
+    "eslint-plugin-react-hooks": "^4.4.0",
+    "postcss": "^8.4.12",
+    "postcss-loader": "^6.2.1",
+    "postcss-preset-env": "^7.4.3",
     "style-loader": "^3.3.1",
+    "tailwindcss": "^3.0.24",
     "to-string-loader": "^1.2.0",
     "ts-loader": "^9.2.8",
     "tsc": "^2.0.4",
