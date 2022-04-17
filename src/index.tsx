@@ -1,10 +1,7 @@
 // import React from 'react';
 // import $ from 'jquery';
 // import { render } from 'react-dom';
-const myStyles = require('./app.css');
 const tailwindStyles = require('./output.css');
-
-GM_addStyle(myStyles);
 GM_addStyle(tailwindStyles);
 
 import App from '@/app';
