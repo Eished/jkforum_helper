@@ -60,7 +60,7 @@ declare global {
     binary?: boolean;
     timeout?: number;
     context?: any;
-    responseType?: 'arraybuffer' | 'blob' | 'json' | 'text';
+    responseType?: 'arraybuffer' | 'blob' | 'json' | 'text' | 'document';
     overrideMimeType?: string;
     anonymous?: boolean;
     fetch?: boolean;
@@ -135,4 +135,6 @@ declare global {
   function GM_getResourceURL(name: string): string;
   function GM_addStyle(name: string): string;
   function GM_addElement(name: string): string;
+  function GM_notification(name: string): string;
+  function GM_openInTab(name: string): string;
 }

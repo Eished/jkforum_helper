@@ -35,10 +35,11 @@ import React, { useState } from 'react';
 interface ToggleProps {
   text: string;
   callback: (selected: boolean) => void;
+  checked: boolean;
 }
 
-export const Toggle = ({ text, callback }: ToggleProps) => {
-  const [selected, setSelected] = useState(false);
+export const Toggle = ({ text, checked, callback }: ToggleProps) => {
+  const [selected, setSelected] = useState(checked);
 
   return (
     <>

@@ -1,4 +1,6 @@
-import React, { MouseEventHandler, useRef } from 'react';
+import { swPay, swThk, swRePic } from '@/lib/menuCommand';
+import { creatUser, getUserName, IUser } from '@/lib/user';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button } from './Button/Button';
 import { Input } from './Input/Input';
 import { Panel } from './Panel/Panel';
@@ -6,10 +8,16 @@ import { Toggle } from './Toggle/Toggle';
 
 interface HomeProps {
   setShowHome: () => void;
+  user: IUser;
 }
-export const Home = ({ setShowHome }: HomeProps) => {
+export const Home: React.FC<HomeProps> = ({ user, setShowHome }) => {
   const mask = useRef<HTMLDivElement>(null);
-
+  // 油猴菜单开关  // 必须在 user 后面调用，否则 user 还没初始化就绑定函数了
+  // GM_registerMenuCommand('🔎 加载原图开关', swRePic);
+  // GM_registerMenuCommand('💰 自动购买开关', swPay);
+  // GM_registerMenuCommand('❤ 自动感谢开关', swThk);
+  // GM_registerMenuCommand('💡 自动现在有空', autoCompleteCaptcha);
+  // GM_registerMenuCommand('🛠 检查更新', update);
   return (
     <div
       ref={mask}
@@ -24,11 +32,29 @@ export const Home = ({ setShowHome }: HomeProps) => {
 
         <Panel title="日常任务">
           <>
-            <Toggle text={'自动签到'} callback={() => {}} />
-            <Toggle text={'自动投票'} callback={() => {}} />
-            <Toggle text={'自动购买'} callback={() => {}} />
-            <Toggle text={'加载原图'} callback={() => {}} />
-            <Toggle text={'悬浮球靠右'} callback={() => {}} />
+            {/* <Toggle text={'自动签到'} callback={} /> */}
+            <Toggle
+              text={'自动感谢'}
+              callback={() => {
+                swPay(user);
+              }}
+              checked={!!user.autoThkSw}
+            />
+            <Toggle
+              text={'自动购买'}
+              callback={() => {
+                swThk(user);
+              }}
+              checked={!!user.autoPaySw}
+            />
+            <Toggle
+              text={'加载原图'}
+              callback={() => {
+                swRePic(user);
+              }}
+              checked={!!user.autoRePicSw}
+            />
+            {/* <Toggle text={'悬浮球靠右'} callback={() => {}} /> */}
           </>
         </Panel>
 
