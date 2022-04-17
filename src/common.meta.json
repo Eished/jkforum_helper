@@ -46,7 +46,7 @@
   "require": [
     "https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js",
     "https://cdn.jsdelivr.net/npm/jszip@3.6.0/dist/jszip.min.js",
-    " https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js",
+    "https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js",
     "https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js",
     "https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"
   ],

@@ -1,3 +1,6 @@
+import React from 'react';
+import { useState } from 'react';
+
 export const ToggleA = () => {
   return (
     <div className="flex items-center justify-center w-full">
@@ -27,5 +30,26 @@ export const ToggleB = () => {
         <div className="ml-3 text-gray-700 font-medium">Toggle Me!</div>
       </label>
     </div>
+  );
+};
+export const ToggleC = () => {
+  const [selected, setSelected] = useState(false);
+
+  return (
+    <>
+      <label htmlFor="toggle-example-checked" className="flex items-center cursor-pointer relative">
+        <input
+          type="checkbox"
+          id="toggle-example-checked"
+          className="sr-only"
+          checked={selected}
+          onClick={() => {
+            setSelected(!selected);
+          }}
+        />
+        <div className="toggle-bg bg-gray-200 border-2 border-gray-200 h-6 w-11 rounded-full"></div>
+        <span className="ml-3 text-gray-900 text-sm font-medium">Toggle me (checked)</span>
+      </label>
+    </>
   );
 };

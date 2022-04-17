@@ -32,7 +32,7 @@ module.exports = (env) => {
       publicPath: '/',
     },
     externals: {
-      jquery: 'jQuery',
+      // jquery: 'jQuery',
       react: 'React',
       'react-dom': 'react-dom',
     },
