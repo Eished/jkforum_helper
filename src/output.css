@@ -1307,17 +1307,17 @@ select {
 
 /* Toggle A */
 
-input:checked ~ .dot {
+/* input:checked ~ .dot {
   transform: translateX(100%);
   background-color: #48bb78;
-}
+} */
 
 /* Toggle B */
 
-input:checked ~ .dot {
+/* input:checked ~ .dot {
   transform: translateX(100%);
   background-color: #48bb78;
-}
+} */
 
 .toggle-bg:after {
   content: '';
@@ -1353,6 +1353,10 @@ input:checked + .toggle-bg {
   border-color: rgb(37 99 235 / var(--tw-border-opacity));
   --tw-bg-opacity: 1;
   background-color: rgb(37 99 235 / var(--tw-bg-opacity));
+}
+
+.border-b {
+  border-bottom: 1px solid lightgray;
 }
 
 .hover\:translate-x-5:hover {

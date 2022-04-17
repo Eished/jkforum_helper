@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Home } from './components/Home';
 
 const App = () => {
-  console.log('Hello world!');
   const [showHome, setShowHome] = useState(false);
 
   return (
@@ -25,7 +24,6 @@ const App = () => {
           }}
         />
       )}
-      ;
     </div>
   );
 };
