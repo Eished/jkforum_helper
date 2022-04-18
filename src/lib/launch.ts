@@ -2,7 +2,7 @@ import { Counter } from '@/commonType';
 import { NowTime } from '@/utils/tools';
 import { autoPay } from './pay';
 import { addPlayEvent } from './play';
-import { rePic } from './rePic';
+import { loadOriginImage } from './originImage';
 import { sign } from './sign';
 import { autoThk } from './thank';
 import { IUser } from './user';
@@ -25,7 +25,7 @@ async function launch(user: IUser, counter: Counter) {
       }
       if (user.autoRePicSw) {
         // 自动加载原图；
-        rePic();
+        loadOriginImage();
       }
       // 自动播放图片
       addPlayEvent(counter, user);

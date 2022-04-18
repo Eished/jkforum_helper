@@ -39,11 +39,13 @@ async function autoVoted(user: IUser) {
   if (checkHtml(votedMessage)) {
     const votedDom = votedMessage as Document;
     let info: string | undefined = '';
-    if (votedDom.querySelector('.alert_info')) {
-      info = votedDom.querySelector('.alert_info')?.innerHTML; // 解析html，返回字符串，失败警告
+    const alertInfo = votedDom.querySelector('.alert_info');
+    const script = votedDom.querySelector('script');
+    if (alertInfo) {
+      info = alertInfo.innerHTML; // 解析html，返回字符串，失败警告
       new MessageBox(info);
-    } else if (votedDom.querySelector('script')) {
-      info = votedDom.querySelector('script')?.innerHTML.split(`', `)[1].slice(1); // 解析html，获取字符串，成功消息
+    } else if (script) {
+      info = script.innerHTML.split(`', `)[1].slice(1); // 解析html，获取字符串，成功消息
       new MessageBox(info);
       await getData(user.taskDoneUrl); // 执行领奖励
       new MessageBox('领取投票奖励成功！');

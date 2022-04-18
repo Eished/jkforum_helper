@@ -35,7 +35,7 @@ function turnUrl(data: string, type?: boolean) {
 
 // 判断html和字符串是不是html
 function checkHtml(htmlStr: string | Document) {
-  if (typeof htmlStr !== 'string') {
+  if (htmlStr instanceof Document) {
     return true;
   } else {
     let reg = /<[^>]+>/g;

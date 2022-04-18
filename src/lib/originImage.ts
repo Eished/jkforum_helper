@@ -1,7 +1,7 @@
 import { MessageBox } from './message';
 
 // 加载原图，自动播放
-async function rePic() {
+async function loadOriginImage() {
   const tfImg: NodeListOf<HTMLImageElement> = document.querySelectorAll('.t_f ignore_js_op img'); //获取图片列表，附件也是ignore_js_op
   if (tfImg) {
     // 加载原图开关
@@ -31,4 +31,4 @@ async function rePic() {
   }
 }
 
-export { rePic };
+export { loadOriginImage };

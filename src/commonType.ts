@@ -20,4 +20,10 @@ const enum XhrResponseType {
   form = 'application/x-www-form-urlencoded',
 }
 
-export { Counter, XhrMethod, XhrResponseType };
+type XhrOptions = {
+  responseType: XhrResponseType;
+  usermethod: XhrMethod;
+  contentType: XhrResponseType;
+};
+
+export { Counter, XhrMethod, XhrResponseType, XhrOptions };

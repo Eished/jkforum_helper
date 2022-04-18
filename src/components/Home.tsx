@@ -1,5 +1,6 @@
 import { Counter } from '@/commonType';
 import { downloadImgs, noDisplayPic } from '@/lib/downloadPicture';
+import { setFastReply } from '@/lib/fastReply';
 import { swPay, swThk, swRePic, update } from '@/lib/menuCommand';
 import { autoCompleteCaptcha } from '@/lib/orc';
 import { timeControl } from '@/lib/sign';
@@ -58,11 +59,16 @@ export const Home: React.FC<HomeProps> = ({ user, setShowHome, counter, setCount
         </Panel>
 
         <Panel title="批处理">
-          <Input text={'输入回复:'} />
-          <Input text={'页码: 板块号-起始页-终止页'} />
+          <Input text={'输入回复:'} placeholder={'中文分号；分隔回帖内容'} />
+          <Input text={'输入页码:'} placeholder={'板块号-起始页-终止页'} />
           <Button text={'添加当前页'} onClick={() => {}} />
-          <Button text={'添加指定页码页'} onClick={() => {}} />
-          <Button text={'获取快速回复'} onClick={() => {}} />
+          <Button text={'添加输入页码页'} onClick={() => {}} />
+          <Button
+            text={'获取快速回复'}
+            onClick={() => {
+              setFastReply(user);
+            }}
+          />
           <Button text={'一键回帖'} onClick={() => {}} />
           <Button text={'一键感谢'} onClick={() => {}} />
         </Panel>

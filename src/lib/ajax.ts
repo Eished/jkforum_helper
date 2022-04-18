@@ -1,4 +1,4 @@
-import { XhrResponseType, XhrMethod } from '@/commonType';
+import { XhrResponseType, XhrMethod, XhrOptions } from '@/commonType';
 import { turnCdata } from '@/utils/tools';
 import { MessageBox } from './message';
 
@@ -32,22 +32,25 @@ function getData(
     });
   });
 }
+
 // GM_xmlhttpRequest POST异步通用模块
+// todo: Content-Type:document
 function postDataCdata(
   url: string,
   postData: string,
-  type: XhrResponseType = XhrResponseType.document,
-  usermethod: XhrMethod = XhrMethod.POST
+  responseType: XhrResponseType = XhrResponseType.document,
+  usermethod: XhrMethod = XhrMethod.POST,
+  contentType: XhrResponseType = XhrResponseType.form
 ): Promise<Document | string> {
   return new Promise((resolve, reject) => {
     GM_xmlhttpRequest({
       method: usermethod,
       url: url,
       headers: {
-        'Content-Type': type,
+        'Content-Type': contentType,
       },
       data: postData,
-      responseType: type,
+      responseType: responseType,
       timeout: 1 * 60 * 1000,
       onload: function (response) {
         if (response.status >= 200 && response.status < 400) {
@@ -69,21 +72,29 @@ function postDataCdata(
   });
 }
 
+// 正常的post
 function postData(
   url: string,
   postData: string,
-  type: XhrResponseType = XhrResponseType.form,
-  usermethod: XhrMethod = XhrMethod.POST
+  {
+    responseType = XhrResponseType.form,
+    usermethod = XhrMethod.POST,
+    contentType = XhrResponseType.form,
+  }: XhrOptions = {
+    responseType: XhrResponseType.form,
+    usermethod: XhrMethod.POST,
+    contentType: XhrResponseType.form,
+  }
 ): Promise<MonkeyXhrResponse> {
   return new Promise((resolve, reject) => {
     GM_xmlhttpRequest({
       method: usermethod,
       url: url,
       headers: {
-        'Content-Type': type,
+        'Content-Type': contentType,
       },
       data: postData,
-      responseType: type,
+      responseType: responseType,
       timeout: 1 * 60 * 1000,
       onload: function (response) {
         if (response.status >= 200 && response.status < 400) {
