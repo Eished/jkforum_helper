@@ -10,9 +10,9 @@ const year = new Date().getFullYear();
 const getBanner = (meta) => `// ==UserScript==\n${Object.entries(Object.assign(meta, commonMeta))
   .map(([key, value]) => {
     if (Array.isArray(value)) {
-      return value.map((item) => `// @${key.padEnd(16, ' ')}${item}`).join('\n');
+      return value.map((item) => `// @${key.padEnd(20, ' ')}${item}`).join('\n');
     }
-    return `// @${key.padEnd(16, ' ')}${value.replace(/\[year\]/g, year)}`;
+    return `// @${key.padEnd(20, ' ')}${value.replace(/\[year\]/g, year)}`;
   })
   .join('\n')}
 // ==/UserScript==
