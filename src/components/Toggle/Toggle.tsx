@@ -53,6 +53,7 @@ export const Toggle = ({ text, checked, callback }: ToggleProps) => {
             callback(!selected);
             setSelected(!selected);
           }}
+          onChange={() => {}}
         />
         <div className="toggle-bg bg-gray-300 border-2 border-gray-200 h-4 w-7 rounded-full"></div>
         <span className="ml-1 text-gray-900 text-xs">{text}</span>

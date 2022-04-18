@@ -719,8 +719,8 @@ select {
   top: 0.25rem;
 }
 
-.z-10 {
-  z-index: 10;
+.z-50 {
+  z-index: 50;
 }
 
 .m-2 {
@@ -1378,6 +1378,12 @@ input:checked + .toggle-bg {
   border-radius: 10px;
   color: #fff;
   box-shadow: 0px 0px 1px 3px #ffffff;
+}
+
+/* 增加 visited 样式，图片模式已阅的帖子变灰色 */
+
+.xw0 a:visited {
+  color: grey;
 }
 
 .hover\:translate-x-5:hover {

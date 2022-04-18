@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
 
 interface Panel {
-  children: ReactElement;
+  children: ReactElement[];
   title?: string;
 }
 export const Panel = ({ title, children }: Panel) => {

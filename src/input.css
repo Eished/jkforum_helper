@@ -51,3 +51,8 @@ input:checked + .toggle-bg {
   color: #fff;
   box-shadow: 0px 0px 1px 3px #ffffff;
 }
+
+/* 增加 visited 样式，图片模式已阅的帖子变灰色 */
+.xw0 a:visited {
+  color: grey;
+}

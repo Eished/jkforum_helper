@@ -2,7 +2,6 @@
 // import { CoreApis, ExternalApis } from './core/core-apis'
 import ReactTypes from '@types/react';
 import ReactDomTypes from '@types/react-dom';
-import JQueryTypes from '@types/jquery';
 
 declare global {
   /** @deprecated Use window.lodash instead. */

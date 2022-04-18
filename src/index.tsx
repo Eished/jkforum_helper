@@ -1,30 +1,16 @@
 import React from 'react';
-// import $ from 'jquery';
-import { render } from 'react-dom';
-
-const tailwindStyles = require('./output.css');
-// delete css bug
-GM_addStyle(
-  tailwindStyles
-    .replace(/\nimg,\nvideo {\n  max-width: 100%;\n  height: auto;\n}\n/, '')
-    .replace(
-      /\*,\n::before,\n::after \{\n  box-sizing: border-box;\n  \/\* 1 \*\/\n  border-width: 0;\n  \/\* 2 \*\/\n  border-style: solid;\n  \/\* 2 \*\/\n  border-color: #e5e7eb;\n  \/\* 2 \*\/\n}/,
-      ''
-    )
-    .replace(/background-color: transparent;/g, '')
-    .replace(/background-image: none;/g, '')
-    .replace(/display: block;\n  \/\* 1 \*\//, '')
-    .replace(/padding-top: 0.5rem;\n  padding-right: 0.75rem;\n  padding-bottom: 0.5rem;\n  padding-left: 0.75rem;/, '')
-);
-// .replace(/ /, ''));
-
+import { createRoot } from 'react-dom/client';
+import '@/lib/loadStyle';
 import App from '@/app';
+import { MessageBox } from './lib/message';
 
-// $('body').prepend(`<div id="jkforum-helper"/>`);
-// render(<App />, document.getElementById('jkforum-helper'));
+// 初始化消息盒子
+MessageBox.genMessageBox();
 
+// 添加根元素
 const rootDiv = document.createElement('div');
 rootDiv.id = 'jkforum-helper';
-document.body.append(rootDiv);
+document.body.prepend(rootDiv);
 
-render(<App />, rootDiv);
+const root = createRoot(rootDiv); // createRoot(container!) if you use TypeScript
+root.render(<App />);

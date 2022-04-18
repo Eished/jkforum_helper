@@ -3,11 +3,9 @@ import { Home } from './components/Home';
 import { creatUser, getUserName, IUser } from '@/lib/user';
 import { MessageBox } from './lib/message';
 import { launch } from './lib/launch';
+import { Counter } from './commonType';
 
 const App = () => {
-  // 初始化消息盒子
-  MessageBox.genMessageBox();
-
   // 没有登录则退出
   const username = getUserName();
   if (!username) {
@@ -24,16 +22,17 @@ const App = () => {
         return user;
       })
       .then((user) => {
-        launch(user); // 启动自动签到、投票、加载原图等
-      }); // 添加用户, 全局变量，每个页面只获取一次
+        launch(user, counter); // 启动自动签到、投票、加载原图等
+      });
 
     return () => {};
   }, []);
 
   const [showHome, setShowHome] = useState(false);
+  const [counter, setCounter] = useState<Counter>({ signBtn: 0, playBtn: 0, playSign: 0 }); // 防止按钮重复点击
 
   return (
-    <div className="fixed z-10">
+    <div className="fixed z-50">
       {showHome ? (
         ''
       ) : (
@@ -55,6 +54,8 @@ const App = () => {
             setShowHome(!showHome);
           }}
           user={user}
+          counter={counter}
+          setCounter={setCounter}
         />
       )}
     </div>

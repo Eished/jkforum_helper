@@ -37,6 +37,7 @@ interface IUser {
   payUrl: string;
   fastReplyUrl: string;
   replyUrl: string;
+  greasyforkUrl: string;
 }
 
 class User implements IUser {
@@ -74,6 +75,7 @@ class User implements IUser {
   payUrl: string;
   fastReplyUrl: string;
   replyUrl: string;
+  greasyforkUrl: string;
   constructor(username: string, formhash: string) {
     this.username = username;
     this.formhash = formhash;
@@ -109,6 +111,7 @@ class User implements IUser {
     this.payUrl = 'https://www.jkforum.net/forum.php?mod=misc&action=pay&paysubmit=yes&infloat=yes&inajax=1';
     this.fastReplyUrl = 'https://www.jkforum.net/thread-8364615-1-1.html';
     this.replyUrl = 'https://www.jkforum.net/forum.php?mod=post&action=reply&';
+    this.greasyforkUrl = 'https://greasyfork.org/zh-CN/scripts/427246';
   }
 }
 

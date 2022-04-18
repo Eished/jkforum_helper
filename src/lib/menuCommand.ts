@@ -1,4 +1,4 @@
-import { turnCdata, urlSearchParams } from '@/utils/tools';
+import { getTid, getVersionNum, turnCdata, urlSearchParams } from '@/utils/tools';
 import { getData, postData } from './ajax';
 import { MessageBox } from './message';
 import { getUserFromName, IUser } from './user';
@@ -125,15 +125,8 @@ async function autoCompleteCaptcha(user: IUser) {
   if (!user.freeTid) {
     const status = document.querySelector('#topthread_status');
     if (status) {
-      let tid: string | null = location.href.split('-')[1]; // 不同链接地址不同
-      if (!tid) {
-        tid = new URLSearchParams(location.href).get('tid'); // 用于获取分类贴链接下的 tid
-      }
-      console.log(tid);
-      if (tid) {
-        user.freeTid = tid;
-        GM_setValue(user.username, user);
-      }
+      user.freeTid = getTid(location.href);
+      GM_setValue(user.username, user);
     } else {
       new MessageBox('找不到指定页面元素！请先打开自己的帖子再试');
       return;
@@ -198,12 +191,10 @@ function swThk(user: IUser) {
 
 async function update(user: IUser) {
   new MessageBox('正在检查更新...');
-  const data = (await getData(`https://greasyfork.org/zh-CN/scripts/427246`)) as HTMLBodyElement;
+  const data = await getData(user.greasyforkUrl);
   let version = data.querySelectorAll('.script-show-version span')[1].innerHTML;
-  if (user.version != version) {
-    GM_openInTab(
-      `https://greasyfork.org/scripts/427246-jkforum-%E5%8A%A9%E6%89%8B/code/JKForum%20%E5%8A%A9%E6%89%8B.user.js`
-    );
+  if (getVersionNum(user.version) < getVersionNum(version)) {
+    GM_openInTab(`${user.greasyforkUrl}-jkforum-%E5%8A%A9%E6%89%8B/code/JKForum%20%E5%8A%A9%E6%89%8B.user.js`);
   } else {
     new MessageBox('已是最新版本！');
   }

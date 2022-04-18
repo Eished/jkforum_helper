@@ -1,3 +1,4 @@
+import { MessageBox } from '@/lib/message';
 import { User, IUser } from '@/lib/user';
 
 // POST返回 xml数据类型转换成 字符串或html 模块
@@ -14,16 +15,16 @@ function turnCdata(xmlRepo: { getElementsByTagName: (arg0: string) => { childNod
 }
 
 // URL 参数添加器
-function urlSearchParams(object: { [x: string]: string }) {
+function urlSearchParams(object: { [x: string]: string | number }) {
   const searchParamsData = new URLSearchParams();
   for (const key in object) {
-    searchParamsData.append(key, object[key]);
+    searchParamsData.append(key, String(object[key]));
   }
   return searchParamsData;
 }
 
 // 编码统一资源定位符模块
-function turnUrl(data: string, type: any) {
+function turnUrl(data: string, type?: boolean) {
   if (type) {
     return decodeURI(data);
   } else {
@@ -32,7 +33,7 @@ function turnUrl(data: string, type: any) {
 }
 
 // 判断html和字符串是不是html
-function checkHtml(htmlStr: string | Element) {
+function checkHtml(htmlStr: string | Document) {
   if (typeof htmlStr !== 'string') {
     return true;
   } else {
@@ -106,6 +107,22 @@ function getUuiD(randomLength: number) {
   return Number(Math.random().toString().substr(2, randomLength) + Date.now()).toString(36);
 }
 
+const getVersionNum = (ver: string): number => {
+  return Number(ver.replace(/\./g, ''));
+};
+
+const getTid = (url: string) => {
+  let tid: string | null = url.split('-')[1];
+  if (!tid) {
+    tid = new URLSearchParams(location.href).get('tid'); // 用于获取分类贴链接下的 tid
+    if (!tid) {
+      new MessageBox('没有找到Tid');
+      throw new Error('没有找到Tid');
+    }
+  }
+  return tid;
+};
+
 export {
   turnCdata,
   urlSearchParams,
@@ -119,4 +136,6 @@ export {
   copyObjVal,
   getUuiD,
   GenericObject,
+  getVersionNum,
+  getTid,
 };

@@ -1,5 +1,7 @@
-import { swPay, swThk, swRePic } from '@/lib/menuCommand';
-import { creatUser, getUserName, IUser } from '@/lib/user';
+import { Counter } from '@/commonType';
+import { swPay, swThk, swRePic, autoCompleteCaptcha, update } from '@/lib/menuCommand';
+import { sign, timeControl } from '@/lib/sign';
+import { IUser } from '@/lib/user';
 import React, { useEffect, useRef, useState } from 'react';
 import { Button } from './Button/Button';
 import { Input } from './Input/Input';
@@ -9,13 +11,12 @@ import { Toggle } from './Toggle/Toggle';
 interface HomeProps {
   setShowHome: () => void;
   user: IUser;
+  setCounter: (num: Counter) => void;
+  counter: Counter;
 }
-export const Home: React.FC<HomeProps> = ({ user, setShowHome }) => {
+export const Home: React.FC<HomeProps> = ({ user, setShowHome, counter, setCounter }) => {
   const mask = useRef<HTMLDivElement>(null);
-  // 油猴菜单开关  // 必须在 user 后面调用，否则 user 还没初始化就绑定函数了
-  // GM_registerMenuCommand('🔎 加载原图开关', swRePic);
-  // GM_registerMenuCommand('💰 自动购买开关', swPay);
-  // GM_registerMenuCommand('❤ 自动感谢开关', swThk);
+
   // GM_registerMenuCommand('💡 自动现在有空', autoCompleteCaptcha);
   // GM_registerMenuCommand('🛠 检查更新', update);
   return (
@@ -31,52 +32,62 @@ export const Home: React.FC<HomeProps> = ({ user, setShowHome }) => {
         <h3 className="text-sm text-center font-bold border-b">JKForum Helper</h3>
 
         <Panel title="日常任务">
-          <>
-            {/* <Toggle text={'自动签到'} callback={} /> */}
-            <Toggle
-              text={'自动感谢'}
-              callback={() => {
-                swPay(user);
-              }}
-              checked={!!user.autoThkSw}
-            />
-            <Toggle
-              text={'自动购买'}
-              callback={() => {
-                swThk(user);
-              }}
-              checked={!!user.autoPaySw}
-            />
-            <Toggle
-              text={'加载原图'}
-              callback={() => {
-                swRePic(user);
-              }}
-              checked={!!user.autoRePicSw}
-            />
-            {/* <Toggle text={'悬浮球靠右'} callback={() => {}} /> */}
-          </>
+          <Toggle
+            text={'自动感谢'}
+            callback={() => {
+              swPay(user);
+            }}
+            checked={!!user.autoThkSw}
+          />
+          <Toggle
+            text={'自动购买'}
+            callback={() => {
+              swThk(user);
+            }}
+            checked={!!user.autoPaySw}
+          />
+          <Toggle
+            text={'加载原图'}
+            callback={() => {
+              swRePic(user);
+            }}
+            checked={!!user.autoRePicSw}
+          />
+          {/* <Toggle text={'自动签到'} callback={} /> */}
+          {/* <Toggle text={'悬浮球靠右'} callback={() => {}} /> */}
         </Panel>
 
         <Panel title="批处理">
-          <>
-            <Input text={'输入回复'} />
-            <Input text={'页码：板块号-起始页-终止页'} />
-            <Button text={'添加当前页'} setShowHome={setShowHome} />
-            <Button text={'添加指定页码页'} setShowHome={setShowHome} />
-            <Button text={'获取快速回复'} setShowHome={setShowHome} />
-            <Button text={'一键回帖'} setShowHome={setShowHome} />
-            <Button text={'一键感谢'} setShowHome={setShowHome} />
-          </>
+          <Input text={'输入回复:'} />
+          <Input text={'页码: 板块号-起始页-终止页'} />
+          <Button text={'添加当前页'} setShowHome={() => {}} />
+          <Button text={'添加指定页码页'} setShowHome={() => {}} />
+          <Button text={'获取快速回复'} setShowHome={() => {}} />
+          <Button text={'一键回帖'} setShowHome={() => {}} />
+          <Button text={'一键感谢'} setShowHome={() => {}} />
         </Panel>
+
         <Panel title="高级功能">
-          <>
-            <Button text={'定时签到'} setShowHome={setShowHome} />
-            <Button text={'下载图片'} setShowHome={setShowHome} />
-            <Button text={'屏蔽图片'} setShowHome={setShowHome} />
-            <Button text={'自动现在有空'} setShowHome={setShowHome} />
-            <Button text={'检查更新'} setShowHome={setShowHome} />
-          </>
+          <Button
+            text={'定时签到'}
+            setShowHome={() => {
+              timeControl(counter, setCounter, user);
+            }}
+          />
+          <Button text={'下载图片'} setShowHome={() => {}} />
+          <Button text={'屏蔽图片'} setShowHome={() => {}} />
+          <Button
+            text={'自动现在有空'}
+            setShowHome={() => {
+              autoCompleteCaptcha(user);
+            }}
+          />
+          <Button
+            text={'检查更新'}
+            setShowHome={() => {
+              update(user);
+            }}
+          />
         </Panel>
 
         <br />

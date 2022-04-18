@@ -15,7 +15,11 @@ const enum ResponseType {
 }
 
 // GM_xmlhttpRequest GET异步通用模块
-function getData(url: string, type: ResponseType = ResponseType.document, usermethod: Method = Method.GET) {
+function getData(
+  url: string,
+  type: ResponseType = ResponseType.document,
+  usermethod: Method = Method.GET
+): Promise<Document> {
   return new Promise((resolve, reject) => {
     GM_xmlhttpRequest({
       method: usermethod,
@@ -23,7 +27,7 @@ function getData(url: string, type: ResponseType = ResponseType.document, userme
       responseType: type,
       timeout: 5 * 60 * 1000,
       onload: function (response) {
-        if (response.status == 200) {
+        if (response.status >= 200 && response.status < 400) {
           resolve(response.response);
         } else {
           reject(response);
@@ -46,7 +50,7 @@ function postDataCdata(
   postData: string,
   type: ResponseType = ResponseType.document,
   usermethod: Method = Method.POST
-) {
+): Promise<Document | string> {
   return new Promise((resolve, reject) => {
     GM_xmlhttpRequest({
       method: usermethod,
@@ -58,7 +62,7 @@ function postDataCdata(
       responseType: type,
       timeout: 1 * 60 * 1000,
       onload: function (response) {
-        if (response.status == 200) {
+        if (response.status >= 200 && response.status < 400) {
           resolve(turnCdata(response.response));
         } else {
           new MessageBox('请求错误：' + response.status);
@@ -82,7 +86,7 @@ function postData(
   postData: string,
   type: ResponseType = ResponseType.document,
   usermethod: Method = Method.POST
-) {
+): Promise<MonkeyXhrResponse> {
   return new Promise((resolve, reject) => {
     GM_xmlhttpRequest({
       method: usermethod,
@@ -94,7 +98,7 @@ function postData(
       responseType: type,
       timeout: 1 * 60 * 1000,
       onload: function (response) {
-        if (response.status == 200) {
+        if (response.status >= 200 && response.status < 400) {
           resolve(response);
         } else {
           new MessageBox('请求错误：' + response.status);

@@ -3,7 +3,11 @@
     https://xin-tan.com/2020-09-13-bing-fa-kong-zhi/
   */
 class ConcurrencyPromisePool {
-  constructor(limit) {
+  limit: any;
+  runningNum: number;
+  queue: Promise<unknown>[];
+  results: Promise<unknown>[];
+  constructor(limit: any) {
     this.limit = limit;
     this.runningNum = 0;
     this.queue = [];
@@ -19,7 +23,7 @@ class ConcurrencyPromisePool {
     });
   }
 
-  _run(promise, resolve, reject) {
+  _run(promise: Promise<any>, resolve: { (value: unknown): void; (arg0: any): any }, reject: (reason?: any) => void) {
     // 超出限制的 promise 入队
     if (this.runningNum >= this.limit) {
       // console.log(">>> 达到上限，入队：", promise);
@@ -29,7 +33,7 @@ class ConcurrencyPromisePool {
     // 正在运行的 promise
     ++this.runningNum;
     promise()
-      .then((res) => {
+      .then((res: any) => {
         this.results.push(res);
         --this.runningNum;
 

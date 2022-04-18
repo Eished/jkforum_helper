@@ -6,7 +6,7 @@ import { IUser } from './user';
 async function setFastReply(user: IUser) {
   // 设置快速回复
   try {
-    const htmlData = (await getData(user.fastReplyUrl)) as HTMLBodyElement;
+    const htmlData = await getData(user.fastReplyUrl);
     const options = htmlData.querySelectorAll('#rqcss select option') as NodeListOf<HTMLOptionElement>;
     let fastReply: string[] = []; //返回数组
     if (options.length) {

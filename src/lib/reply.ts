@@ -1,3 +1,5 @@
+import { getTid, rdNum } from '@/utils/tools';
+
 function replyBtn() {
   if (!this.timer) {
     replyOrThk(this, 'reply');
@@ -163,11 +165,7 @@ function setThreadsTask(htmlData, fid, replyLen) {
       const touser = cites[i].innerHTML;
       const touseruid = cites[i].href.split('uid=')[1]; // href="home.php?mod=space&uid=1123445"
       const href = hrefs[i / 2].href;
-      let tid = href.split('-')[1]; // 获取帖子ID
-      if (tid == undefined) {
-        // 分类页tid不同
-        tid = new URLSearchParams(href).get('tid'); // 用于获取分类贴链接下的 tid
-      }
+      const tid = getTid(href);
       let noSkip = true; // 跳过标识
       for (let index = 0; index < elem.fidthreads.length; index++) {
         // 确保帖子的唯一性

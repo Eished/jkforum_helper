@@ -98,7 +98,7 @@ class MessageBox {
 
   // 移除方法，没有元素则等待setTime 5秒再试5次
   removeMessage() {
-    if (this._msg != null) {
+    if (this._msg) {
       this._msg.remove();
       this._msg = null; // 清除标志位
     } else {
