@@ -56,3 +56,7 @@ input:checked + .toggle-bg {
 .xw0 a:visited {
   color: grey;
 }
+
+#jkforum-helper button {
+  border: unset;
+}

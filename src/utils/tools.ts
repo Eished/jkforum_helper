@@ -115,10 +115,10 @@ const getVersionNum = (ver: string): number => {
 const getTid = (url: string) => {
   let tid: string | null = url.split('-')[1];
   if (!tid) {
-    tid = new URLSearchParams(location.href).get('tid'); // 用于获取分类贴链接下的 tid
+    tid = new URLSearchParams(url).get('tid'); // 用于获取分类贴链接下的 tid
     if (!tid) {
-      new MessageBox('没有找到Tid');
-      throw new Error('没有找到Tid');
+      new MessageBox('没有找到Tid: ' + url);
+      throw new Error('没有找到Tid: ' + url);
     }
   }
   return tid;

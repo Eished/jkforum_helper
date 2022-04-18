@@ -1,7 +1,7 @@
 import { getVersionNum } from '@/utils/tools';
 import { getData } from './ajax';
 import { MessageBox } from './message';
-import { IUser } from './user';
+import { IUser } from '@/commonType';
 
 function swRePic(user: IUser) {
   if (user.autoRePicSw === 1) {

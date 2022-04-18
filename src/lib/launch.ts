@@ -1,11 +1,10 @@
-import { Counter } from '@/commonType';
+import { Counter, IUser } from '@/commonType';
 import { NowTime } from '@/utils/tools';
 import { autoPay } from './pay';
 import { addPlayEvent } from './play';
 import { loadOriginImage } from './originImage';
 import { sign } from './sign';
 import { autoThk } from './thank';
-import { IUser } from './user';
 import { autoVoted } from './vote';
 
 // 启动

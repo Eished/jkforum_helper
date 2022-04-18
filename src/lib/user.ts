@@ -1,44 +1,7 @@
+import { IUser } from '@/commonType';
 import { compaObjKey, copyObjVal } from '@/utils/tools';
 import { setFastReply } from './fastReply';
 import { MessageBox } from './message';
-
-interface IUser {
-  username: string;
-  formhash: string;
-  version: string;
-  today: string;
-  signtime: string;
-  signNum: number;
-  interTime: number;
-  todaysay: string;
-  mood: string;
-  autoPlayDiff: number;
-  autoPaySw: number;
-  autoThkSw: number;
-  autoRePicSw: number;
-  differ: number;
-  interval: number;
-  thkDiffer: number;
-  limit: number;
-  page: string;
-  token: string;
-  freeTime: number;
-  freeTid: string;
-  votedMessage: string;
-  userReplyMessage: string[];
-  fastReply: string[];
-  replyThreads: string[];
-  orcUrl: string;
-  votedUrl: string;
-  applyVotedUrl: string;
-  taskDoneUrl: string;
-  signUrl: string;
-  thkUrl: string;
-  payUrl: string;
-  fastReplyUrl: string;
-  replyUrl: string;
-  greasyforkUrl: string;
-}
 
 class User implements IUser {
   username: string;
@@ -63,9 +26,6 @@ class User implements IUser {
   freeTime: number;
   freeTid: string;
   votedMessage: string;
-  userReplyMessage: never[];
-  fastReply: never[];
-  replyThreads: never[];
   orcUrl: string;
   votedUrl: string;
   applyVotedUrl: string;
@@ -76,6 +36,9 @@ class User implements IUser {
   fastReplyUrl: string;
   replyUrl: string;
   greasyforkUrl: string;
+  userReplyMessage: never[];
+  fastReply: never[];
+  replyThreads: never[];
   constructor(username: string, formhash: string) {
     this.username = username;
     this.formhash = formhash;
@@ -99,9 +62,6 @@ class User implements IUser {
     this.freeTime = 3600000; // 现在有空间隔
     this.freeTid = ''; // 自动现在有空 帖子ID，一个账号一个贴子
     this.votedMessage = '+1'; // 投票输入内容
-    this.userReplyMessage = []; // 用户保存的回复，历史回帖内容
-    this.fastReply = []; // 保存的快速回复，快速回帖内容
-    this.replyThreads = []; // 回帖任务数据
     this.orcUrl = 'https://aip.baidubce.com/rest/2.0/ocr/v1/accurate_basic?'; // general_basic 精准或普通 api
     this.votedUrl = 'https://www.jkforum.net/plugin.php?';
     this.applyVotedUrl = 'https://www.jkforum.net/home.php?mod=task&do=apply&id=59';
@@ -112,6 +72,9 @@ class User implements IUser {
     this.fastReplyUrl = 'https://www.jkforum.net/thread-8364615-1-1.html';
     this.replyUrl = 'https://www.jkforum.net/forum.php?mod=post&action=reply&';
     this.greasyforkUrl = 'https://greasyfork.org/zh-CN/scripts/427246';
+    this.userReplyMessage = []; // 用户保存的回复，历史回帖内容
+    this.fastReply = []; // 保存的快速回复，快速回帖内容
+    this.replyThreads = []; // 回帖任务数据
   }
 }
 

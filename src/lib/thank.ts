@@ -1,7 +1,7 @@
 import { checkHtml, GenericObject, urlSearchParams } from '@/utils/tools';
 import { postDataCdata } from './ajax';
 import { MessageBox } from './message';
-import { IUser } from './user';
+import { IUser } from '@/commonType';
 
 // 自动感谢
 async function autoThk(user: IUser) {

@@ -1,22 +1,14 @@
-import { getTid, rdNum } from '@/utils/tools';
+import { Counter, ForumThreads, ReplyOrThank, ReplyParams, Thread } from '@/commonType';
+import { checkHtml, getTid, rdNum, urlSearchParams, waitFor } from '@/utils/tools';
+import { getData, postDataCdata } from './ajax';
+import { MessageBox } from './message';
+import { playVideo } from './noSleep';
+import { IUser } from '@/commonType';
 
-function replyBtn() {
-  if (!this.timer) {
-    replyOrThk(this, 'reply');
-  }
-}
-
-function thkBtn() {
-  if (!this.timer) {
-    replyOrThk(this, 'thk');
-  }
-}
-
-function chooceReply() {
-  const inpreply = document.querySelector('#inpreply'); // 获取回复内容
-  if (inpreply && inpreply.value) {
+function chooceReply(user: IUser, value?: string) {
+  if (value) {
     let replyLen = 0; // 统计长度，用于在 user.userReplyMessage 中定位下标
-    inpreply.value.split('；').forEach((element) => {
+    value.split('；').forEach((element) => {
       // 中文分号分隔字符串
       if (element) {
         user.userReplyMessage.push(element); // 存储自定义回帖内容
@@ -42,25 +34,33 @@ function chooceReply() {
   }
 }
 
-function thankOnePage() {
+function addOnePage(user: IUser, inputValue?: string) {
   const currentHref = location.href; // 获取当前页地址
+  const reg = /(type-)|(forum-)/;
+  // const reg = /(forum-)/;
+  if (!reg.test(currentHref)) {
+    new MessageBox('不支持的页面，仅支持在地址为 forum-x-x 和 type-x-x 的板块页面使用');
+    return;
+  }
   const fid = currentHref.split('-')[1]; // 获取板块fid
   const page = currentHref.split('-')[2].split('.')[0]; // 获取页码
   if (currentHref.includes('type-')) {
-    thankBatch(`${fid}-${page}-${page}`, 'type');
+    addPageBatch(user, `${fid}-${page}-${page}`, inputValue, 'type');
+    new MessageBox('type-x-x 地址板块仅支持添加第一页');
   } else {
-    thankBatch(`${fid}-${page}-${page}`);
+    addPageBatch(user, `${fid}-${page}-${page}`, inputValue);
   }
 }
 
-async function thankBatch(onePage = 0, type = null) {
+async function addPageBatch(user: IUser, pageCode: string, inputValue?: string, type: string | null = null) {
   const reg = new RegExp(/^\d+-\d+-\d+$/);
   let forumPage = '';
-  if (reg.test(onePage)) {
+  if (reg.test(pageCode)) {
     // 如果输入了正确地址单页
-    forumPage = onePage;
+    forumPage = pageCode;
   } else {
-    forumPage = document.querySelector('#inp_page').value;
+    new MessageBox('未获取到页码');
+    return;
   }
   if (reg.test(forumPage)) {
     // 如果输入了正确地址则进行批量处理
@@ -76,7 +76,7 @@ async function thankBatch(onePage = 0, type = null) {
     }
     const msId = new MessageBox('正在添加：' + forumPage, 'none');
 
-    let replyLen = chooceReply(); //如果输入了值则使用用户值，如果没有则使用默认值；没有默认值则返回错误
+    let replyLen = chooceReply(user, inputValue); //如果输入了值则使用用户值，如果没有则使用默认值；没有默认值则返回错误
     if (replyLen <= 0) {
       new MessageBox('获取回帖内容失败！');
       msId.removeMessage();
@@ -100,7 +100,7 @@ async function thankBatch(onePage = 0, type = null) {
         data = await getData(currentHref);
       }
       // 添加回帖任务
-      setThreadsTask(data, fid, replyLen); // 设置任务列表
+      setThreadsTask(user, data, fid, replyLen); // 设置任务列表
       pageFrom++;
     }
     msId.removeMessage();
@@ -113,14 +113,14 @@ async function thankBatch(onePage = 0, type = null) {
 }
 
 // 添加任务列表
-function setThreadsTask(htmlData, fid, replyLen) {
+function setThreadsTask(user: IUser, htmlData: Document, fid: string, replyLen: number) {
   //帖子类名 40个a标签数组
-  let hrefs = htmlData.querySelectorAll('.s');
+  let hrefs = htmlData.querySelectorAll('.s') as NodeListOf<HTMLAnchorElement>;
   // 获取作者昵称和 UID
-  let cites = htmlData.querySelectorAll('cite a');
+  let cites = htmlData.querySelectorAll('cite a') as NodeListOf<HTMLAnchorElement>;
 
   // 以 fid 创建对象，如果fid存在则写入fid的数组的fidthreads属性的数组内；否则创建新的 fidthreads，自我调用
-  const fidthreads = {
+  const fidthreads: ForumThreads = {
     fid: fid,
     fidTime: 0,
     fidRepIndex: 0, // 记录此版块上次回复的位置，用于解决无法遍历到后续增加的帖子；
@@ -148,7 +148,13 @@ function setThreadsTask(htmlData, fid, replyLen) {
     }
   }
 
-  function addThrInfo(elem) {
+  function addThrInfo(elem: {
+    fid?: string;
+    fidTime?: number;
+    fidRepIndex?: number;
+    fidThkIndex?: number;
+    fidthreads: any;
+  }) {
     // 回帖变量随即范围限制
     let start = 0;
     if (replyLen == user.fastReply.length || replyLen == user.userReplyMessage.length) {
@@ -179,7 +185,8 @@ function setThreadsTask(htmlData, fid, replyLen) {
       if (noSkip) {
         const replyIndex = rdNum(start, replyLen - 1); // 从返回的输入长度获取随机值
         const randomTime = rdNum(user.interval, user.differ + user.interval);
-        const thread = {
+
+        const thread: Thread = {
           tid: tid,
           touseruid: touseruid,
           touser: touser,
@@ -201,7 +208,7 @@ function setThreadsTask(htmlData, fid, replyLen) {
 }
 
 // 回帖\感谢函数
-async function replyOrThk(_this, type = 'reply') {
+async function replyOrThk(counter: Counter, user: IUser, type: ReplyOrThank = ReplyOrThank.reply) {
   let fidIndex = 0; // 当前回帖版块序号
   let thkFidIndex = 0; // 当前感谢版块序号
   // 初始化永久消息
@@ -213,31 +220,39 @@ async function replyOrThk(_this, type = 'reply') {
   if (!user.replyThreads.length) {
     new MessageBox('任务列表为空，请先添加任务！');
     return;
-  } else if (type == 'reply') {
+  } else if (type == ReplyOrThank.reply) {
+    if (counter.replyBtn) {
+      return;
+    }
+    counter.replyBtn = 1; // 防止重复点击
     mesIdRep.showMessage('开始回帖...', 'none');
     mesIdRepContent.showMessage('...', 'none');
   } else {
+    if (counter.thkBtn) {
+      return;
+    }
+    counter.thkBtn = 1; // 防止重复点击
     mesIdThk.showMessage('开始感谢...', 'none');
   }
   playVideo(mesId); // 防休眠
 
   while (
-    (type == 'reply' && fidIndex < user.replyThreads.length) ||
-    (type == 'thk' && thkFidIndex < user.replyThreads.length)
+    (type == ReplyOrThank.reply && fidIndex < user.replyThreads.length) ||
+    (type == ReplyOrThank.thank && thkFidIndex < user.replyThreads.length)
   ) {
     // 分别处理感谢和回帖
-    const elementForum = user.replyThreads[type == 'reply' ? fidIndex : thkFidIndex];
+    const elementForum = user.replyThreads[type == ReplyOrThank.reply ? fidIndex : thkFidIndex];
     const fid = elementForum.fid;
     let fidRepIndex = elementForum.fidRepIndex; // 上次回复位置
     let fidThkIndex = elementForum.fidThkIndex; // 上次感谢位置
 
     while (
-      (elementForum.fidthreads.length > fidRepIndex && type == 'reply') ||
-      (elementForum.fidthreads.length > fidThkIndex && type == 'thk')
+      (elementForum.fidthreads.length > fidRepIndex && type == ReplyOrThank.reply) ||
+      (elementForum.fidthreads.length > fidThkIndex && type == ReplyOrThank.thank)
     ) {
       // 分别处理感谢和回帖
       switch (type) {
-        case 'reply': {
+        case ReplyOrThank.reply: {
           mesIdRep.refreshMessage(
             fid +
               '-版块，当前位置：' +
@@ -246,8 +261,7 @@ async function replyOrThk(_this, type = 'reply') {
               elementForum.fidthreads.length +
               '，预计总耗时：' +
               (elementForum.fidTime / 1000 / 60).toFixed(1) +
-              ' 分钟时间',
-            'none'
+              ' 分钟时间'
           ); // 显示永久消息
           const elementThr = elementForum.fidthreads[fidRepIndex];
           const tid = elementThr.tid;
@@ -267,26 +281,35 @@ async function replyOrThk(_this, type = 'reply') {
 
           // 拼接回帖报文
           const date = new Date();
-          const posttime = parseInt(date.getTime() / 1000); // 生产时间戳
-          const replyParamsObj = {}; // 回帖数据对象
+          const posttime = (date.getTime() / 1000).toFixed(0); // 生产时间戳
+
+          const replyParamsObj: ReplyParams = {
+            message: '',
+            posttime: posttime,
+            formhash: user.formhash,
+            usesig: 1,
+            subject: '',
+          }; // 回帖数据对象
           if (replyLen == user.fastReply.length) {
             replyParamsObj.message = user.fastReply[replyIndex];
-          } else {
+          } else if (replyLen <= user.userReplyMessage.length + 1) {
             replyParamsObj.message = user.userReplyMessage[replyIndex];
+          } else {
+            new MessageBox('回帖数据错误，请重置回帖数据', 'none');
+            return;
           }
-          replyParamsObj.posttime = posttime;
-          replyParamsObj.formhash = user.formhash;
-          replyParamsObj.usesig = 1;
-          replyParamsObj.subject = '';
           const replyParamsData = urlSearchParams(replyParamsObj);
           // 发送数据
           const data = await postDataCdata(user.replyUrl + replyUrlParamsData.toString(), replyParamsData.toString());
           if (checkHtml(data)) {
             // 确认html
-            const info = data.querySelector('script').innerHTML.split(`, `)[1];
+            const info = (data as Document).querySelector('script')?.innerHTML.split(`, `)[1];
+            if (!info) {
+              throw new Error("querySelector('script') 错误：" + info);
+            }
             new MessageBox(info.split('，')[0].slice(1) + '，' + info.split('，')[1] + '！'); // 返回html成功消息
           } else {
-            new MessageBox(data, 'none'); //其它情况直接输出
+            new MessageBox(data as string, 'none'); //其它情况直接输出
           }
           mesIdRepContent.refreshMessage(
             '序号：' +
@@ -302,11 +325,10 @@ async function replyOrThk(_this, type = 'reply') {
           ); //测试使用
           elementForum.fidRepIndex = ++fidRepIndex;
           GM_setValue(user.username, user);
-          _this.timer = 1; // 防止重复点击
           await waitFor(randomTime); // 等待指定时间
           break;
         }
-        case 'thk': {
+        case ReplyOrThank.thank: {
           const elementThr = elementForum.fidthreads[fidThkIndex];
           const thkParamsData = urlSearchParams({
             formhash: user.formhash,
@@ -318,10 +340,10 @@ async function replyOrThk(_this, type = 'reply') {
           });
           const data = await postDataCdata(user.thkUrl, thkParamsData.toString()); //post感谢数据
           if (checkHtml(data)) {
-            const info = data.querySelector('.alert_info').innerHTML.split('<')[0].trim(); //去除html，返回字符串
+            const info = (data as Document).querySelector('.alert_info')?.innerHTML.split('<')[0].trim(); //去除html，返回字符串
             new MessageBox(info, 1000);
           } else {
-            new MessageBox(data, 1000); //其它情况直接输出
+            new MessageBox(data as string, 1000); //其它情况直接输出
           }
           mesIdThk.refreshMessage(
             fid +
@@ -330,13 +352,11 @@ async function replyOrThk(_this, type = 'reply') {
               ' ，总数：' +
               elementForum.fidthreads.length +
               '，帖子ID：' +
-              thkParamsData.get('tid'),
-            'none'
+              thkParamsData.get('tid')
           ); // 刷新永久消息
           elementForum.fidThkIndex = ++fidThkIndex;
           GM_setValue(user.username, user);
-          clearInterval(_this.timer);
-          _this.timer = 1; // 防止重复点击
+          // clearInterval(counter.thkBtn); // ??
           await waitFor(user.thkDiffer); // 等待指定时间
           break;
         }
@@ -346,21 +366,24 @@ async function replyOrThk(_this, type = 'reply') {
           break;
       }
     }
-    if (type == 'thk') {
+    if (type == ReplyOrThank.thank) {
       thkFidIndex++; // 翻页
-    } else if (type == 'reply') {
+    } else if (type == ReplyOrThank.reply) {
       fidIndex++; // 翻页
     }
     GM_setValue(user.username, user);
   }
-  if (type == 'thk') {
+  if (type == ReplyOrThank.thank) {
     mesIdThk.removeMessage(); // 移除永久消息
     new MessageBox('全部感谢完成！', 10000, 2);
-  } else if (type == 'reply') {
+    counter.thkBtn = 0;
+  } else if (type == ReplyOrThank.reply) {
     mesIdRep.removeMessage(); // 移除永久消息
     mesIdRepContent.removeMessage();
     new MessageBox('全部回帖完成！', 10000, 2);
+    counter.replyBtn = 0;
   }
-  _this.timer = 0;
   mesId.removeMessage(); // 移除永久消息
 }
+
+export { replyOrThk, addPageBatch, addOnePage };

@@ -1,7 +1,7 @@
 import { replaceHtml } from '@/utils/tools';
 import { getData } from './ajax';
 import { MessageBox } from './message';
-import { IUser } from './user';
+import { IUser } from '@/commonType';
 
 async function setFastReply(user: IUser) {
   // 设置快速回复

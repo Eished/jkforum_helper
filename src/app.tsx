@@ -6,7 +6,6 @@ import { launch } from './lib/launch';
 import { Counter } from './commonType';
 
 const App = () => {
-  // 没有登录则退出
   const username = getUserName();
   if (!username) {
     return <></>;
@@ -28,7 +27,14 @@ const App = () => {
   }, []);
 
   const [showHome, setShowHome] = useState(false);
-  const [counter, setCounter] = useState<Counter>({ signBtn: 0, playBtn: 0, playSign: 0, downloadBtn: 0 }); // 防止按钮重复点击
+  const [counter, setCounter] = useState<Counter>({
+    signBtn: 0,
+    playBtn: 0,
+    playFlag: 0,
+    downloadBtn: 0,
+    replyBtn: 0,
+    thkBtn: 0,
+  }); // 防止按钮重复点击
 
   return (
     <div className="fixed z-50">

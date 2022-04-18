@@ -1386,6 +1386,10 @@ input:checked + .toggle-bg {
   color: grey;
 }
 
+#jkforum-helper button {
+  border: unset;
+}
+
 .hover\:translate-x-5:hover {
   --tw-translate-x: 1.25rem;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
@@ -1469,9 +1473,9 @@ input:checked + .toggle-bg {
   --tw-ring-offset-width: 2px;
 }
 
-.active\:bg-blue-800:active {
+.active\:bg-indigo-800:active {
   --tw-bg-opacity: 1;
-  background-color: rgb(30 64 175 / var(--tw-bg-opacity));
+  background-color: rgb(55 48 163 / var(--tw-bg-opacity));
 }
 
 .active\:shadow-lg:active {

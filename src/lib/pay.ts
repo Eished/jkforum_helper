@@ -1,7 +1,7 @@
 import { turnUrl, checkHtml, getTid } from '@/utils/tools';
 import { postDataCdata } from './ajax';
 import { MessageBox } from './message';
-import { IUser } from './user';
+import { IUser } from '@/commonType';
 
 // 自动支付
 async function autoPay(user: IUser) {

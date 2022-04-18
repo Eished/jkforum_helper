@@ -1,7 +1,6 @@
-import { Counter } from '@/commonType';
+import { Counter, IUser } from '@/commonType';
 import { waitFor } from '@/utils/tools';
 import { MessageBox } from './message';
-import { IUser } from './user';
 
 const addPlayEvent = (counter: Counter, user: IUser) => {
   const zoomimgs = document.querySelectorAll(`img[zoomfile]`); //获取图片列表
@@ -82,25 +81,25 @@ function addAutoPlay(counter: Counter, user: IUser) {
 
   // 遮挡暂停
   window.onblur = function () {
-    counter.playSign = 0;
+    counter.playFlag = 0;
   };
   // 点击背景层暂停
   imgzoom_cover?.addEventListener('click', () => {
-    counter.playSign = 0;
+    counter.playFlag = 0;
   });
   // 关闭按钮暂停
   y.querySelector('.imgclose')?.addEventListener('click', () => {
-    counter.playSign = 0;
+    counter.playFlag = 0;
   });
 
   async function play() {
-    if (!counter.playSign && !counter.playObserver) {
+    if (!counter.playFlag && !counter.playObserver) {
       // 再次点击暂停，只运行一个监听器
-      counter.playSign = 1;
+      counter.playFlag = 1;
       const imgzoom_waiting = append_parent?.querySelector('#imgzoom_waiting') as HTMLDivElement;
       const zimg_next = imgzoom?.querySelector('.zimg_next'); // 是否有下一张
       if (!zimg_next || !imgzoom_waiting) {
-        counter.playSign = 0;
+        counter.playFlag = 0;
         new MessageBox('只有一张图！');
         return;
       }
@@ -114,7 +113,7 @@ function addAutoPlay(counter: Counter, user: IUser) {
         const display = imgzoom_waiting.style.display;
         if (display == 'none') {
           await waitFor(user.autoPlayDiff); // 延迟，然后判断是否停止
-          if (counter.playSign == 0 && counter.playObserver) {
+          if (counter.playFlag == 0 && counter.playObserver) {
             counter.playObserver.disconnect();
             counter.playObserver = undefined; // disconnect()并没有清空监听器
             return;
@@ -126,7 +125,7 @@ function addAutoPlay(counter: Counter, user: IUser) {
       await waitFor(user.autoPlayDiff);
       (zimg_next as HTMLDivElement).click();
     } else {
-      counter.playSign = 0;
+      counter.playFlag = 0;
     }
   }
 }

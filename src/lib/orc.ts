@@ -2,7 +2,7 @@ import { urlSearchParams, turnCdata, getTid } from '@/utils/tools';
 import { postData } from './ajax';
 import { MessageBox } from './message';
 import { playVideo } from './noSleep';
-import { IUser } from './user';
+import { IUser } from '@/commonType';
 
 /**
  * ORC

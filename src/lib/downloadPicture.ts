@@ -2,8 +2,7 @@ import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import { getData } from './ajax';
 import { MessageBox } from './message';
-import { Counter, XhrResponseType } from '@/commonType';
-import { IUser } from './user';
+import { Counter, XhrResponseType, IUser } from '@/commonType';
 import { ConcurrencyPromisePool } from '@/utils/ConcurrencyPromisePool';
 
 function downloadImgs(user: IUser, counter: Counter) {
