@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Toggle A */
+/* input:checked ~ .dot {
+  transform: translateX(100%);
+  background-color: #48bb78;
+} */
+
+/* Toggle B */
+/* input:checked ~ .dot {
+  transform: translateX(100%);
+  background-color: #48bb78;
+} */
+
+#jkforum-helper .toggle-bg:after {
+  content: '';
+  @apply absolute top-0.5 left-0.5 bg-white border border-gray-300 rounded-full h-3 w-3 transition shadow-sm;
+}
+
+#jkforum-helper input:checked + .toggle-bg:after {
+  transform: translateX(100%);
+  @apply border-white;
+}
+
+#jkforum-helper input:checked + .toggle-bg {
+  @apply bg-blue-600 border-blue-600;
+}
+
+.border-b {
+  border-bottom: 1px solid lightgray;
+}
+
+/* 消息提示框样式 */
+#messageBox {
+  width: 222px;
+  position: fixed;
+  right: 5%;
+  bottom: 20px;
+  z-index: 999;
+}
+
+#messageBox div {
+  width: 100%;
+  background-color: #64ce83;
+  float: left;
+  padding: 5px 10px;
+  margin-top: 10px;
+  border-radius: 10px;
+  color: #fff;
+  box-shadow: 0px 0px 1px 3px #ffffff;
+}
+
+/* 增加 visited 样式，图片模式已阅的帖子变灰色 */
+.xw0 a:visited {
+  color: grey;
+}
+
+#jkforum-helper button {
+  border: unset;
+}
