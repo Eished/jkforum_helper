@@ -4,6 +4,7 @@ import { creatUser, getUserName, IUser } from '@/lib/user';
 import { MessageBox } from './lib/message';
 import { launch } from './lib/launch';
 import { Counter } from './commonType';
+const commonMeta = require('@/common.meta.json');
 
 const App = () => {
   const username = getUserName();
@@ -42,7 +43,8 @@ const App = () => {
         ''
       ) : (
         <button
-          className="h-10 w-10 fixed -left-5 top-1/2 block rounded-full shadow-md text-white vertical transition ease-in-out delay-150 bg-indigo-600 hover:translate-x-5 hover:scale-110 hover:bg-indigo-500 duration-300"
+          className="h-12 w-12 fixed -left-8 top-1/2 block text-white bg-transparent vertical transition ease-in-out delay-150 hover:translate-x-9 hover:scale-110 duration-300 bg-cover bg-center hover:rotate-[360deg]"
+          style={{ backgroundImage: `url(${commonMeta.icon})` }}
           onClick={() => {
             if (user) {
               setShowHome(!showHome);
@@ -50,7 +52,7 @@ const App = () => {
               new MessageBox('未获取到用户，请稍后再试');
             }
           }}>
-          JKFH
+          {/* JKFH */}
         </button>
       )}
       {showHome && user && (

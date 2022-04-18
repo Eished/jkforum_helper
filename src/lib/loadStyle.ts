@@ -7,8 +7,11 @@ GM_addStyle(
       /\*,\n::before,\n::after \{\n  box-sizing: border-box;\n  \/\* 1 \*\/\n  border-width: 0;\n  \/\* 2 \*\/\n  border-style: solid;\n  \/\* 2 \*\/\n  border-color: #e5e7eb;\n  \/\* 2 \*\/\n}/,
       ''
     )
-    .replace(/background-color: transparent;/g, '')
-    .replace(/background-image: none;/g, '')
+    .replace(
+      /-webkit-appearance: button;\n  \/\* 1 \*\/\n  background-color: transparent;\n  \/\* 2 \*\/\n  background-image: none;\n  \/\* 2 \*\//,
+      ''
+    )
+    // .replace(//g, '')
     .replace(/display: block;\n  \/\* 1 \*\//, '')
     .replace(/padding-top: 0.5rem;\n  padding-right: 0.75rem;\n  padding-bottom: 0.5rem;\n  padding-left: 0.75rem;/, '')
 );
