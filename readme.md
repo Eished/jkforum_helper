@@ -10,7 +10,7 @@
 
 ## 使用说明：
 
-![20220419013050](readme.assets/20220419013050.png)
+![20220419013050](https://cdn.jsdelivr.net/gh/eished/jkforum_helper@0.7.0/readme.assets/20220419013050.png)
 
 1. 登录后脚本开始运行。
 2. 鼠标点击**页面左侧黄色【F】**按钮，即可看到控制面板。
@@ -33,7 +33,6 @@
 - 在帖子页面浏览大图时激活，图片右上角黄色长方形播放按钮；
 - 可设置播放间隔时间；
 - 离开页面自动暂停播放。
-
 
 ![图片_36](https://cdn.jsdelivr.net/gh/eished/jkforum_helper/readme.assets/%E5%9B%BE%E7%89%87_36.jpg)
 
