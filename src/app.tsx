@@ -15,7 +15,6 @@ const App = () => {
   const [user, setUser] = useState<IUser>();
 
   useEffect(() => {
-    // addDom(); // 添加DOM
     creatUser(username)
       .then((user) => {
         setUser(user);
@@ -29,7 +28,7 @@ const App = () => {
   }, []);
 
   const [showHome, setShowHome] = useState(false);
-  const [counter, setCounter] = useState<Counter>({ signBtn: 0, playBtn: 0, playSign: 0 }); // 防止按钮重复点击
+  const [counter, setCounter] = useState<Counter>({ signBtn: 0, playBtn: 0, playSign: 0, downloadBtn: 0 }); // 防止按钮重复点击
 
   return (
     <div className="fixed z-50">

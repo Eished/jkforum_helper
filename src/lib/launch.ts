@@ -6,6 +6,7 @@ import { rePic } from './rePic';
 import { sign } from './sign';
 import { autoThk } from './thank';
 import { IUser } from './user';
+import { autoVoted } from './vote';
 
 // 启动
 async function launch(user: IUser, counter: Counter) {
@@ -47,7 +48,7 @@ async function launch(user: IUser, counter: Counter) {
     if (user.today != now.day) {
       user.today = now.day;
       sign(user); // 签到
-      await autoVoted();
+      await autoVoted(user);
     }
   } catch (e) {
     GM_setValue(user.username, user); //保存当天日// today 初始化

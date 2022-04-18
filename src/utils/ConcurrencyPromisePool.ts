@@ -2,10 +2,11 @@
     NodeJS Promise并发控制 
     https://xin-tan.com/2020-09-13-bing-fa-kong-zhi/
   */
+
 class ConcurrencyPromisePool {
-  limit: any;
+  limit: number;
   runningNum: number;
-  queue: Promise<unknown>[];
+  queue: any[];
   results: Promise<unknown>[];
   constructor(limit: any) {
     this.limit = limit;
@@ -14,7 +15,7 @@ class ConcurrencyPromisePool {
     this.results = [];
   }
 
-  all(promises = []) {
+  all(promises: any[] = []): Promise<[]> {
     return new Promise((resolve, reject) => {
       for (const promise of promises) {
         // 发送所有 promise
@@ -23,7 +24,7 @@ class ConcurrencyPromisePool {
     });
   }
 
-  _run(promise: Promise<any>, resolve: { (value: unknown): void; (arg0: any): any }, reject: (reason?: any) => void) {
+  _run(promise: () => Promise<unknown>, resolve: (res: any) => void, reject: (reason?: any) => void) {
     // 超出限制的 promise 入队
     if (this.runningNum >= this.limit) {
       // console.log(">>> 达到上限，入队：", promise);
@@ -50,3 +51,5 @@ class ConcurrencyPromisePool {
       .catch(reject);
   }
 }
+
+export { ConcurrencyPromisePool };

@@ -1,24 +1,12 @@
+import { XhrResponseType, XhrMethod } from '@/commonType';
 import { turnCdata } from '@/utils/tools';
 import { MessageBox } from './message';
-
-const enum Method {
-  POST = 'POST',
-  GET = 'GET',
-}
-
-const enum ResponseType {
-  arraybuffer = 'arraybuffer',
-  blob = 'blob',
-  json = 'json',
-  text = 'text',
-  document = 'document',
-}
 
 // GM_xmlhttpRequest GET异步通用模块
 function getData(
   url: string,
-  type: ResponseType = ResponseType.document,
-  usermethod: Method = Method.GET
+  type: XhrResponseType = XhrResponseType.document,
+  usermethod: XhrMethod = XhrMethod.GET
 ): Promise<Document> {
   return new Promise((resolve, reject) => {
     GM_xmlhttpRequest({
@@ -48,15 +36,15 @@ function getData(
 function postDataCdata(
   url: string,
   postData: string,
-  type: ResponseType = ResponseType.document,
-  usermethod: Method = Method.POST
+  type: XhrResponseType = XhrResponseType.document,
+  usermethod: XhrMethod = XhrMethod.POST
 ): Promise<Document | string> {
   return new Promise((resolve, reject) => {
     GM_xmlhttpRequest({
       method: usermethod,
       url: url,
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': type,
       },
       data: postData,
       responseType: type,
@@ -84,15 +72,15 @@ function postDataCdata(
 function postData(
   url: string,
   postData: string,
-  type: ResponseType = ResponseType.document,
-  usermethod: Method = Method.POST
+  type: XhrResponseType = XhrResponseType.form,
+  usermethod: XhrMethod = XhrMethod.POST
 ): Promise<MonkeyXhrResponse> {
   return new Promise((resolve, reject) => {
     GM_xmlhttpRequest({
       method: usermethod,
       url: url,
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': type,
       },
       data: postData,
       responseType: type,

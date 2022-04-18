@@ -1,9 +1,10 @@
 import { MessageBox } from '@/lib/message';
-import { User, IUser } from '@/lib/user';
+import { IUser } from '@/lib/user';
 
 // POST返回 xml数据类型转换成 字符串或html 模块
-function turnCdata(xmlRepo: { getElementsByTagName: (arg0: string) => { childNodes: { nodeValue: any }[] }[] }) {
+function turnCdata(xmlRepo: XMLDocument) {
   let data = xmlRepo.getElementsByTagName('root')[0].childNodes[0].nodeValue;
+  if (!data) return '';
   if (replaceHtml(data)) {
     // 如果判断去掉html是否还有文字，否则返回html
     return replaceHtml(data); // 去掉html内容，返回文字

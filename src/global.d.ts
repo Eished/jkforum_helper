@@ -1,18 +1,7 @@
-// import { LoDashStatic } from 'lodash'
-// import { CoreApis, ExternalApis } from './core/core-apis'
-import ReactTypes from '@types/react';
-import ReactDomTypes from '@types/react-dom';
+const JSZipTypes = require('@types/jszip');
+import { XhrResponseType } from '@/commonType';
 
 declare global {
-  /** @deprecated Use window.lodash instead. */
-  // const _: LoDashStatic
-
-  // const lodash: LoDashStatic
-  // const Vue: typeof import('vue/types/umd');
-  // const React: ReactTypes;
-  // const ReactDOM: ReactDomTypes;
-  // const $: JQueryTypes;
-
   interface CompilationInfo {
     commitHash: string;
     branch: string;
@@ -59,7 +48,7 @@ declare global {
     binary?: boolean;
     timeout?: number;
     context?: any;
-    responseType?: 'arraybuffer' | 'blob' | 'json' | 'text' | 'document';
+    responseType?: XhrResponseType;
     overrideMimeType?: string;
     anonymous?: boolean;
     fetch?: boolean;
