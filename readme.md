@@ -8,6 +8,8 @@
 
 项目地址：[`https://github.com/Eished/jkforum_helper`](https://github.com/Eished/jkforum_helper)
 
+参与开发：[开发文档](https://github.com/Eished/jkforum_helper/blob/main/doc)
+
 ## 使用说明：
 
 ![20220419013050](https://cdn.jsdelivr.net/gh/eished/jkforum_helper@0.7.0/readme.assets/20220419013050.png)

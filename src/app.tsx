@@ -40,7 +40,16 @@ const App = () => {
   return (
     <div className="fixed z-50">
       {showHome ? (
-        ''
+        user && (
+          <Home
+            setShowHome={() => {
+              setShowHome(!showHome);
+            }}
+            user={user}
+            counter={counter}
+            setCounter={setCounter}
+          />
+        )
       ) : (
         <button
           className="h-12 w-12 fixed -left-8 top-1/2 block text-white bg-transparent vertical transition ease-in-out delay-150 hover:translate-x-9 hover:scale-110 duration-300 bg-cover bg-center hover:rotate-[360deg]"
@@ -54,16 +63,6 @@ const App = () => {
           }}>
           {/* JKFH */}
         </button>
-      )}
-      {showHome && user && (
-        <Home
-          setShowHome={() => {
-            setShowHome(!showHome);
-          }}
-          user={user}
-          counter={counter}
-          setCounter={setCounter}
-        />
       )}
     </div>
   );

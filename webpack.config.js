@@ -27,8 +27,8 @@ module.exports = (env) => {
   return {
     entry: ['./src/index.tsx'],
     output: {
-      path: resolve(__dirname, 'dist'),
-      filename: 'jkforum.user.js',
+      path: resolve(__dirname, 'build'),
+      filename: env.production ? 'jkforum.user.js' : 'jkforum.dev.user.js',
       publicPath: '/',
     },
     externals: {
