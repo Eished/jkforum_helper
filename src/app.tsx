@@ -5,6 +5,7 @@ import { MessageBox } from './lib/message';
 import { launch } from './lib/launch';
 import { Counter } from './commonType';
 const commonMeta = require('@/common.meta.json');
+import './app.less';
 
 const App = () => {
   const username = getUserName();

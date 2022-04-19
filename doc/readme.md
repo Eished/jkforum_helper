@@ -17,14 +17,14 @@ VSCode Task See https://go.microsoft.com/fwlink/?LinkId=733558
 在浏览器油猴插件新建脚本，`jkforum.dev.user.js` 复制油猴头文件并加入一行：
 
 ```javascript
-// @require       file://<你的文件路径>/jkforum_helper\build\jkforum.dev.user.js
+// @require       file://<你的文件路径>/jkforum_helper\dist\jkforum.dev.user.js
 ```
 
 ## 发布项目
 
 `yarn build` Or `ctrl shift B` 选择 `npm:build`
 
-生成文件文件：`jkforum_helper\build\jkforum.user.js`
+生成文件文件：`jkforum_helper\dist\jkforum.user.js`
 
 ## 适应其它网站
 

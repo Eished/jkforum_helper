@@ -2,11 +2,11 @@
   "name": "jkforum-helper",
   "version": "1.0.0",
   "description": "![JKFicon64oval2](https://cdn.jsdelivr.net/gh/eished/jkforum_helper/readme.assets/JKFicon64oval2.png)",
-  "main": "/build/jkforum.user.js",
+  "main": "/dist/jkforum.user.js",
   "scripts": {
     "dev": "webpack --watch",
     "build": "webpack --env production",
-    "style": "npx tailwindcss -i ./src/input.css -o ./src/output.css --watch"
+    "style": "npx tailwindcss -i ./src/input.css -o ./dist/output.css --watch"
   },
   "repository": {
     "type": "git",
@@ -36,6 +36,9 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.29.4",
     "eslint-plugin-react-hooks": "^4.4.0",
+    "html-webpack-plugin": "^5.5.0",
+    "less": "^4.1.2",
+    "less-loader": "^10.2.0",
     "postcss": "^8.4.12",
     "postcss-loader": "^6.2.1",
     "postcss-preset-env": "^7.4.3",

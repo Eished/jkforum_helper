@@ -2,6 +2,7 @@ const { resolve } = require('path');
 const path = require('path');
 const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const commonMeta = require('./src/common.meta.json');
 const { cssStyleLoaders, sassStyleLoaders } = require('./webpack/style-loaders');
@@ -25,10 +26,18 @@ const src = relativePath('src');
 module.exports = (env) => {
   console.log(env);
   return {
-    entry: ['./src/index.tsx'],
+    entry: './src/index.tsx',
+    // {
+    //   app: './src/index.tsx',
+    //   vendor: [
+    //     // 将react和react-dom这些单独打包出来，减小打包文件体积
+    //     'react',
+    //     'react-dom',
+    //   ],
+    // },
     output: {
-      path: resolve(__dirname, 'build'),
-      filename: env.production ? 'jkforum.user.js' : 'jkforum.dev.user.js',
+      path: resolve(__dirname, 'dist'),
+      filename: env.production ? '[name].jkforum.user.js' : '[name].jkforum.dev.user.js',
       publicPath: '/',
     },
     externals: {
@@ -36,6 +45,7 @@ module.exports = (env) => {
       // react: 'React',
       // 'react-dom': 'react-dom',
     },
+
     module: {
       rules: [
         {
@@ -69,53 +79,9 @@ module.exports = (env) => {
           include: [src],
         },
         {
-          test: /\.css$/,
-          use: ['style-loader', ...cssStyleLoaders],
-          include: /node_modules/,
+          test: /\.(less|css)$/,
+          use: ['style-loader', 'css-loader', 'less-loader'],
         },
-        {
-          test: /\.css$/,
-          oneOf: [
-            {
-              resourceQuery: /vue/,
-              use: ['style-loader', ...cssStyleLoaders],
-            },
-            {
-              use: ['to-string-loader', ...cssStyleLoaders],
-            },
-          ],
-          include: [src],
-        },
-        // {
-        //   test: /\.css$/,
-        //   // 使用哪些 loader 进行处理
-        //   use: [
-        //     // use 数组中 loader 执行顺序：从右到左，从下到上 依次执行
-        //     // 创建 style 标签，将 js 中的样式资源插入进行，添加到 head 中生效
-        //     'style-loader',
-        //     // 将 css 文件变成 commonjs 模块加载 js 中，里面内容是样式字符串
-        //     'css-loader',
-        //   ],
-        // },
-        // {
-        //   test: /\.less$/,
-        //   // 使用哪些 loader 进行处理
-        //   use: [
-        //     // use 数组中 loader 执行顺序：从右到左，从下到上 依次执行
-        //     // 创建 style 标签，将 js 中的样式资源插入进行，添加到 head 中生效
-        //     'style-loader',
-        //     // 将 css 文件变成 commonjs 模块加载 js 中，里面内容是样式字符串
-        //     'css-loader',
-        //     {
-        //       loader: 'less-loader',
-        //       options: {
-        //         lessOptions: {
-        //           javascriptEnabled: true,
-        //         },
-        //       },
-        //     },
-        //   ],
-        // },
       ],
     },
     optimization: {
@@ -130,6 +96,16 @@ module.exports = (env) => {
           extractComments: false,
         }),
       ],
+      // 单独打包react 和 react-dom file-saver jszip
+      splitChunks: {
+        cacheGroups: {
+          vendor: {
+            test: /[\\/]node_modules[\\/](react|react-dom|file-saver|jszip)[\\/]/,
+            name: 'vendor',
+            chunks: 'all',
+          },
+        },
+      },
     },
     watchOptions: {
       ignored: /node_modules/,
@@ -147,6 +123,9 @@ module.exports = (env) => {
         banner: getBanner({ name: env.production ? 'JKForum 助手' : 'JKForum 助手-dev' }),
         raw: true,
         entryOnly: true,
+      }),
+      new HtmlWebpackPlugin({
+        template: './public/index.html',
       }),
     ],
   };
