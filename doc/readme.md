@@ -20,11 +20,37 @@ VSCode Task See https://go.microsoft.com/fwlink/?LinkId=733558
 // @require       file://<你的文件路径>/jkforum_helper\build\jkforum.dev.user.js
 ```
 
+### 文件导入无法显示样式
+
+实际粘贴代码后样式可以正常显示，文件导入导致的问题
+标签导入则可以正常显示，但刷新比文件导入慢
+
+```javascript
+(function () {
+  'use strict';
+  if (location.href === 'http://localhost:8080/') return;
+  var script = document.createElement('script');
+  script.src = 'http://localhost:8081/jkforum.dev.user.js';
+  document.body.appendChild(script);
+})();
+```
+
+### TailwindCSS 样式与源网站冲突
+
+使用 loadStyle 函数手动过滤掉冲突的样式，再用 GM_addStyle 手动插入样式
+
+这样顺便解决了文件导入无法显示样式问题
+
 ## 发布项目
 
 `yarn build` Or `ctrl shift B` 选择 `npm:build`
 
 生成文件文件：`jkforum_helper\build\jkforum.user.js`
+
+### splitchunks 拆包，减小发布体积
+
+参考 `splitchunks` 分支
+生成主文件发布，生成的 module 文件使用 `@require` 从自己代码库的 CDN 导入
 
 ## 适应其它网站
 
