@@ -9,6 +9,7 @@ import './app.less';
 
 const App = () => {
   const username = getUserName();
+  console.log('test username', username, GM_getValue('a'), 'hello');
   if (!username) {
     return <></>;
   }

@@ -4,9 +4,10 @@
   "description": "![JKFicon64oval2](https://cdn.jsdelivr.net/gh/eished/jkforum_helper/readme.assets/JKFicon64oval2.png)",
   "main": "/dist/jkforum.user.js",
   "scripts": {
+    "start": "webpack serve",
     "dev": "webpack --watch",
     "build": "webpack --env production",
-    "style": "npx tailwindcss -i ./src/input.css -o ./dist/output.css --watch"
+    "style": "npx tailwindcss -i ./src/input.css -o ./src/output.css --watch"
   },
   "repository": {
     "type": "git",

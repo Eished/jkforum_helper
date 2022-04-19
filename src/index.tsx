@@ -1,10 +1,9 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 // import '@/lib/loadStyle';
-import './input.css';
+import './output.css';
 import App from '@/app';
 import { MessageBox } from './lib/message';
-console.log('test');
 
 // 初始化消息盒子
 MessageBox.genMessageBox();
