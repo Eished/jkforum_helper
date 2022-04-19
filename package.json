@@ -2,7 +2,7 @@
   "name": "jkforum-helper",
   "version": "1.0.0",
   "description": "![JKFicon64oval2](https://cdn.jsdelivr.net/gh/eished/jkforum_helper/readme.assets/JKFicon64oval2.png)",
-  "main": "/build/jkforum.user.js",
+  "main": "/dist/jkforum.user.js",
   "scripts": {
     "dev": "webpack --watch",
     "build": "webpack --env production",

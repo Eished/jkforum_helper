@@ -4,7 +4,6 @@ const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
 
 const commonMeta = require('./src/common.meta.json');
-const { cssStyleLoaders, sassStyleLoaders } = require('./webpack/style-loaders');
 
 const year = new Date().getFullYear();
 const getBanner = (meta) => `// ==UserScript==\n${Object.entries(Object.assign(meta, commonMeta))
@@ -27,15 +26,11 @@ module.exports = (env) => {
   return {
     entry: ['./src/index.tsx'],
     output: {
-      path: resolve(__dirname, 'build'),
+      path: resolve(__dirname, 'dist'),
       filename: env.production ? 'jkforum.user.js' : 'jkforum.dev.user.js',
       publicPath: '/',
     },
-    externals: {
-      // jquery: 'jQuery',
-      // react: 'React',
-      // 'react-dom': 'react-dom',
-    },
+    externals: {},
     module: {
       rules: [
         {
@@ -70,52 +65,48 @@ module.exports = (env) => {
         },
         {
           test: /\.css$/,
-          use: ['style-loader', ...cssStyleLoaders],
+          use: ['style-loader', 'css-loader'],
           include: /node_modules/,
         },
         {
           test: /\.css$/,
-          oneOf: [
+          // 使用哪些 loader 进行处理
+          use: [
+            // use 数组中 loader 执行顺序：从右到左，从下到上 依次执行
+            // 创建 style 标签，将 js 中的样式资源插入进行，添加到 head 中生效
+            // GM_addStyle 不需要 style-loader
+            // 'style-loader',
+            'to-string-loader',
+            // 将 css 文件变成 commonjs 模块加载 js 中，里面内容是样式字符串
+            // esModule: false 可以 toString()
             {
-              resourceQuery: /vue/,
-              use: ['style-loader', ...cssStyleLoaders],
-            },
-            {
-              use: ['to-string-loader', ...cssStyleLoaders],
+              loader: 'css-loader',
+              options: {
+                esModule: false,
+              },
             },
           ],
           include: [src],
         },
-        // {
-        //   test: /\.css$/,
-        //   // 使用哪些 loader 进行处理
-        //   use: [
-        //     // use 数组中 loader 执行顺序：从右到左，从下到上 依次执行
-        //     // 创建 style 标签，将 js 中的样式资源插入进行，添加到 head 中生效
-        //     'style-loader',
-        //     // 将 css 文件变成 commonjs 模块加载 js 中，里面内容是样式字符串
-        //     'css-loader',
-        //   ],
-        // },
-        // {
-        //   test: /\.less$/,
-        //   // 使用哪些 loader 进行处理
-        //   use: [
-        //     // use 数组中 loader 执行顺序：从右到左，从下到上 依次执行
-        //     // 创建 style 标签，将 js 中的样式资源插入进行，添加到 head 中生效
-        //     'style-loader',
-        //     // 将 css 文件变成 commonjs 模块加载 js 中，里面内容是样式字符串
-        //     'css-loader',
-        //     {
-        //       loader: 'less-loader',
-        //       options: {
-        //         lessOptions: {
-        //           javascriptEnabled: true,
-        //         },
-        //       },
-        //     },
-        //   ],
-        // },
+        {
+          test: /\.less$/,
+          // 使用哪些 loader 进行处理
+          use: [
+            // use 数组中 loader 执行顺序：从右到左，从下到上 依次执行
+            // 创建 style 标签，将 js 中的样式资源插入进行，添加到 head 中生效
+            'style-loader',
+            // 将 css 文件变成 commonjs 模块加载 js 中，里面内容是样式字符串
+            'css-loader',
+            {
+              loader: 'less-loader',
+              options: {
+                lessOptions: {
+                  javascriptEnabled: true,
+                },
+              },
+            },
+          ],
+        },
       ],
     },
     optimization: {
