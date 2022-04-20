@@ -20,21 +20,6 @@ VSCode Task See https://go.microsoft.com/fwlink/?LinkId=733558
 // @require       file://<你的文件路径>/jkforum_helper\dist\jkforum.dev.user.js
 ```
 
-### 文件导入无法显示样式
-
-实际粘贴代码后样式可以正常显示，文件导入导致的问题
-标签导入则可以正常显示，但刷新比文件导入慢
-
-```javascript
-(function () {
-  'use strict';
-  if (location.href === 'http://localhost:8080/') return;
-  var script = document.createElement('script');
-  script.src = 'http://localhost:8081/jkforum.dev.user.js';
-  document.body.appendChild(script);
-})();
-```
-
 ### TailwindCSS 样式与源网站冲突
 
 使用 loadStyle 函数过滤掉冲突的样式，再用 GM_addStyle 插入样式
