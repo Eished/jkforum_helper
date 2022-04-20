@@ -37,9 +37,7 @@ VSCode Task See https://go.microsoft.com/fwlink/?LinkId=733558
 
 ### TailwindCSS 样式与源网站冲突
 
-使用 loadStyle 函数手动过滤掉冲突的样式，再用 GM_addStyle 手动插入样式
-
-这样顺便解决了文件导入无法显示样式问题
+使用 loadStyle 函数过滤掉冲突的样式，再用 GM_addStyle 插入样式
 
 ## 发布项目
 

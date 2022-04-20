@@ -5,7 +5,6 @@ const TerserPlugin = require('terser-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const commonMeta = require('./src/common.meta.json');
-const { cssStyleLoaders, sassStyleLoaders } = require('./webpack/style-loaders');
 
 const year = new Date().getFullYear();
 const getBanner = (meta) => `// ==UserScript==\n${Object.entries(Object.assign(meta, commonMeta))
@@ -27,25 +26,12 @@ module.exports = (env) => {
   console.log(env);
   return {
     entry: './src/index.tsx',
-    // {
-    //   app: './src/index.tsx',
-    //   vendor: [
-    //     // 将react和react-dom这些单独打包出来，减小打包文件体积
-    //     'react',
-    //     'react-dom',
-    //   ],
-    // },
     output: {
       path: resolve(__dirname, 'dist'),
       filename: env.production ? '[name].jkforum.user.js' : '[name].jkforum.dev.user.js',
       publicPath: '/',
     },
-    externals: {
-      // jquery: 'jQuery',
-      // react: 'React',
-      // 'react-dom': 'react-dom',
-    },
-
+    externals: {},
     module: {
       rules: [
         {

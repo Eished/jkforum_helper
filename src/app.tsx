@@ -4,6 +4,7 @@ import { creatUser, getUserName, IUser } from '@/lib/user';
 import { MessageBox } from './lib/message';
 import { launch } from './lib/launch';
 import { Counter } from './commonType';
+// import './app.less';
 const commonMeta = require('@/common.meta.json');
 import './app.less';
 
