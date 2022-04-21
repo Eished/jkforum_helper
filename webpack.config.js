@@ -128,7 +128,7 @@ module.exports = (env) => {
     resolve: {
       extensions: ['.tsx', '.ts', '.js', '.jsx', '.json'],
       alias: {
-        '@': relativePath('src'),
+        '@': src,
       },
     },
     mode: env.production ? 'production' : 'development',
