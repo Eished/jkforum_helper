@@ -1,11 +1,12 @@
-/* 
-    消息通知类：
-    0.先调用静态方法 genMessageBox() 方法初始化消息弹出窗口
-    1.传参默认值：消息，持续时间，重要性
-    2.持续时间非数字时为永久消息，需手动移除 removeMessage() ；
-    3.初始化用 new MessageBox() 参数为空时，调用 showMessage() 传参显示消息；用于增大作用域。refreshMessage() 刷新永久消息；
-    4.重要性：1 = log + 自定义弹窗；2 = log + 自定义弹窗 + GM；默认 = 自定义弹窗；
-  */
+/**
+ * 消息通知类：
+ * 0.先调用静态方法 genMessageBox() 方法初始化消息弹出窗口
+ * 1.传参默认值：消息，持续时间，重要性
+ * 2.持续时间非数字时为永久消息，需手动移除 removeMessage() ；
+ * 3.初始化用 new MessageBox() 参数为空时，调用 showMessage() 传参显示消息；用于增大作用域。refreshMessage() 刷新永久消息；
+ * 4.重要性：1 = log + 自定义弹窗；2 = log + 自定义弹窗 + GM；默认 = 自定义弹窗；
+ */
+
 class MessageBox {
   _msg: undefined | null | HTMLDivElement;
   _text: string | undefined;

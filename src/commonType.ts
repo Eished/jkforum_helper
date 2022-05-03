@@ -96,4 +96,19 @@ type ReplyParams = {
   subject: string;
 };
 
-export { Counter, XhrMethod, XhrResponseType, XhrOptions, ReplyOrThank, Thread, ForumThreads, IUser, ReplyParams };
+interface GenericObject {
+  [key: string]: any;
+}
+
+export {
+  Counter,
+  XhrMethod,
+  XhrResponseType,
+  XhrOptions,
+  ReplyOrThank,
+  Thread,
+  ForumThreads,
+  IUser,
+  ReplyParams,
+  GenericObject,
+};

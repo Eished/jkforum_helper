@@ -6,7 +6,7 @@ interface InputProps {
   onChange: (value: string) => void;
   value: string;
 }
-export const Input = ({ text, placeholder, onChange, value }: InputProps) => {
+export const Input: React.FC<InputProps> = ({ text, placeholder, onChange, value }) => {
   return (
     <>
       <label htmlFor={'input' + text} className="block m-1 text-xs font-medium text-gray-900 dark:text-gray-300">

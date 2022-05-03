@@ -38,7 +38,7 @@ interface ToggleProps {
   checked: boolean;
 }
 
-export const Toggle = ({ text, checked, onClick }: ToggleProps) => {
+export const Toggle: React.FC<ToggleProps> = ({ text, checked, onClick }) => {
   const [selected, setSelected] = useState(checked);
 
   return (

@@ -1,3 +1,4 @@
+import { GenericObject } from '@/commonType';
 import { MessageBox } from '@/lib/message';
 import { IUser } from '@/lib/user';
 
@@ -84,10 +85,6 @@ function compaObjKey(source: IUser, target: IUser) {
   } else {
     return false;
   }
-}
-
-interface GenericObject {
-  [key: string]: any;
 }
 
 // 赋值对象的值

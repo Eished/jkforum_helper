@@ -7,7 +7,7 @@ import { Counter } from './commonType';
 // import './app.less';
 const commonMeta = require('@/common.meta.json');
 
-const App = () => {
+const App: React.FC = () => {
   const username = getUserName();
   if (!username) {
     return <></>;
