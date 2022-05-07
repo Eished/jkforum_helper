@@ -146,13 +146,7 @@ function setThreadsTask(user: IUser, htmlData: Document, fid: string, replyLen: 
     }
   }
 
-  function addThrInfo(elem: {
-    fid?: string;
-    fidTime?: number;
-    fidRepIndex?: number;
-    fidThkIndex?: number;
-    fidthreads: any;
-  }) {
+  function addThrInfo(elem: ForumThreads) {
     // 回帖变量随即范围限制
     let start = 0;
     if (replyLen == user.fastReply.length || replyLen == user.userReplyMessage.length) {

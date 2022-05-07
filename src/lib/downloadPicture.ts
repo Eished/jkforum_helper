@@ -13,7 +13,9 @@ function downloadImgs(user: IUser, counter: Counter) {
   }
   const imgsUrls: string[] = []; // 图片下载链接
   const imgsTitles = []; // 图片名称
-  const folderName = document.querySelector('.title-cont h1')?.innerHTML.trim().replace(/\.+/g, '-');
+  const foName = document.querySelector('.title-cont h1');
+  if (!foName) return;
+  const folderName = foName.innerHTML.trim().replace(/\.+/g, '-');
   const pcbImg = document.querySelectorAll('.pcb img'); // 所有帖子楼层的图片，逐个过滤
   if (pcbImg.length) {
     for (let i = 0; i < pcbImg.length; i++) {
@@ -47,7 +49,7 @@ function downloadImgs(user: IUser, counter: Counter) {
       }
     }
     if (imgsUrls.length && imgsTitles.length) {
-      batchDownload(imgsUrls, imgsTitles, folderName!, user, counter);
+      batchDownload(imgsUrls, imgsTitles, folderName, user, counter);
     } else {
       new MessageBox('没有可下载的图片！');
       counter.downloadBtn = 0;
@@ -63,7 +65,7 @@ function downloadImgs(user: IUser, counter: Counter) {
 // 批量下载 顺序
 function batchDownload(imgsUrls: string[], imgsTitles: string[], folderName: string, user: IUser, counter: Counter) {
   const zip = new JSZip();
-  const promises: any[] = [];
+  const promises: (() => Promise<number | void>)[] = [];
   const mesIdH = new MessageBox('正在下载...', 'none'); // 永久消息
   const mesIdP = new MessageBox('...', 'none'); // 永久消息
   for (let index = 0; index < imgsUrls.length; index++) {

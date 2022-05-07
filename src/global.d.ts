@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { XhrResponseType } from '@/commonType';
 
 declare global {
@@ -20,7 +21,6 @@ declare global {
     cid: string | undefined;
     pageno: string | number | undefined;
     // bilibiliEvolved: ExternalApis
-    [key: string]: any;
   }
   const unsafeWindow: Window & typeof globalThis;
   // const coreApis: CoreApis

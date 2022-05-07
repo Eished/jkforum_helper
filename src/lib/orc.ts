@@ -62,7 +62,7 @@ function getBase64Image(img: HTMLImageElement) {
   canvas.width = img.width;
   canvas.height = img.height;
   const ctx = canvas.getContext('2d');
-  ctx!.drawImage(img, 0, 0, img.width, img.height);
+  ctx && ctx.drawImage(img, 0, 0, img.width, img.height);
   const ext = img.src.substring(img.src.lastIndexOf('.') + 1).toLowerCase();
   const dataURL = canvas.toDataURL('image/' + ext);
   return dataURL;
@@ -71,24 +71,24 @@ function getBase64Image(img: HTMLImageElement) {
 /**
  *Base64字符串转二进制
  */
-function dataURLtoBlob(dataurl: string) {
-  const arr = dataurl.split(',');
-  if (!arr.length) return;
-  let mime = arr[0];
-  if (!mime) return;
-  const mimeTemp = mime.match(/:(.*?);/);
-  if (!mimeTemp) return;
-  mime = mimeTemp[1];
-  const bstr = atob(arr[1]);
-  let n = bstr.length;
-  const u8arr = new Uint8Array(n);
-  while (n--) {
-    u8arr[n] = bstr.charCodeAt(n);
-  }
-  return new Blob([u8arr], {
-    type: mime,
-  });
-}
+// function dataURLtoBlob(dataurl: string) {
+//   const arr = dataurl.split(',');
+//   if (!arr.length) return;
+//   let mime = arr[0];
+//   if (!mime) return;
+//   const mimeTemp = mime.match(/:(.*?);/);
+//   if (!mimeTemp) return;
+//   mime = mimeTemp[1];
+//   const bstr = atob(arr[1]);
+//   let n = bstr.length;
+//   const u8arr = new Uint8Array(n);
+//   while (n--) {
+//     u8arr[n] = bstr.charCodeAt(n);
+//   }
+//   return new Blob([u8arr], {
+//     type: mime,
+//   });
+// }
 
 async function readImage(base64: string, user: IUser) {
   const url = `${user.orcUrl}access_token=${user.token}&Content-Type=application/x-www-form-urlencoded`;
@@ -129,7 +129,7 @@ async function autofillCaptcha(user: IUser) {
   }
 
   captcha(user)
-    .then((res) => {
+    .then(() => {
       const msId = new MessageBox();
       playVideo(msId);
       setTimeout(() => {

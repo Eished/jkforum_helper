@@ -26,7 +26,7 @@ const App: React.FC<{ username: string }> = ({ username }) => {
       .then((user) => {
         launch(user, counter); // 启动自动签到、投票、加载原图等
       });
-  }, []);
+  }, [username, counter]);
 
   return (
     <div className="fixed z-50">

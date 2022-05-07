@@ -12,6 +12,6 @@ export { playVideo } from './noSleep';
 export { loadOriginImage } from './originImage';
 export { autoPay } from './pay';
 export { autoPlay, addPlayEvent } from './play';
-export { autoThk, postAutoThk } from './thank';
+export { autoThk } from './thank';
 export { autoVoted } from './vote';
 export { User, getUserName, getUserFromName, creatUser } from './user';
