@@ -9,9 +9,9 @@ interface IUser {
   todaysay: string;
   mood: string;
   autoPlayDiff: number;
-  autoPaySw: number;
-  autoThkSw: number;
-  autoRePicSw: number;
+  autoPaySw: boolean;
+  autoThkSw: boolean;
+  autoRePicSw: boolean;
   differ: number;
   interval: number;
   thkDiffer: number;

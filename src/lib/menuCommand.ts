@@ -3,36 +3,36 @@ import { getData, MessageBox } from './';
 import { IUser } from '@/commonType';
 
 function swRePic(user: IUser) {
-  if (user.autoRePicSw === 1) {
-    user.autoRePicSw = 0;
+  if (user.autoRePicSw) {
+    user.autoRePicSw = false;
     GM_setValue(user.username, user);
     new MessageBox('已关闭加载原图');
   } else {
-    user.autoRePicSw = 1;
+    user.autoRePicSw = true;
     GM_setValue(user.username, user);
     new MessageBox('已开启加载原图');
   }
 }
 
 function swPay(user: IUser) {
-  if (user.autoPaySw === 1) {
-    user.autoPaySw = 0;
+  if (user.autoPaySw) {
+    user.autoPaySw = false;
     GM_setValue(user.username, user);
     new MessageBox('已关闭自动购买');
   } else {
-    user.autoPaySw = 1;
+    user.autoPaySw = true;
     GM_setValue(user.username, user);
     new MessageBox('已开启自动购买');
   }
 }
 
 function swThk(user: IUser) {
-  if (user.autoThkSw === 1) {
-    user.autoThkSw = 0;
+  if (user.autoThkSw) {
+    user.autoThkSw = false;
     GM_setValue(user.username, user);
     new MessageBox('已关闭自动感谢');
   } else {
-    user.autoThkSw = 1;
+    user.autoThkSw = true;
     GM_setValue(user.username, user);
     new MessageBox('已开启自动感谢');
   }

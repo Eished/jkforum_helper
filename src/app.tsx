@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Home } from '@/components/Home';
+import { Home } from '@/components';
 import { Counter, IUser } from '@/commonType';
 import { getUserName, creatUser, MessageBox, launch } from '@/lib';
 // import './app.less';

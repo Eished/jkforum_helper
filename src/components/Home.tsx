@@ -1,9 +1,5 @@
 import React, { useRef, useState } from 'react';
 import { Counter, IUser, ReplyOrThank } from '@/commonType';
-import { Button } from './Button/Button';
-import { Input } from './Input/Input';
-import { Panel } from './Panel/Panel';
-import { Toggle } from './Toggle/Toggle';
 import {
   addOnePage,
   addPageBatch,
@@ -19,6 +15,7 @@ import {
   timeControl,
   update,
 } from '@/lib';
+import { Button, Input, Panel, Toggle } from '.';
 
 interface HomeProps {
   setShowHome: () => void;
@@ -49,21 +46,21 @@ export const Home: React.FC<HomeProps> = ({ user, setShowHome, counter, setCount
             onClick={() => {
               swThk(user);
             }}
-            checked={!!user.autoThkSw}
+            checked={user.autoThkSw}
           />
           <Toggle
             text={'自动购买'}
             onClick={() => {
               swPay(user);
             }}
-            checked={!!user.autoPaySw}
+            checked={user.autoPaySw}
           />
           <Toggle
             text={'加载原图'}
             onClick={() => {
               swRePic(user);
             }}
-            checked={!!user.autoRePicSw}
+            checked={user.autoRePicSw}
           />
           {/* <Toggle text={'悬浮球靠右'} /> */}
         </Panel>
