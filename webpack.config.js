@@ -65,12 +65,48 @@ module.exports = (env) => {
           include: [src],
         },
         {
-          test: /\.(css)$/,
+          test: /\.css$/,
           use: ['style-loader', 'css-loader'],
+          include: /node_modules/,
         },
         {
-          test: /\.(less)$/,
-          use: ['style-loader', 'css-loader', 'less-loader'],
+          test: /\.css$/,
+          // 使用哪些 loader 进行处理
+          use: [
+            // use 数组中 loader 执行顺序：从右到左，从下到上 依次执行
+            // 创建 style 标签，将 js 中的样式资源插入进行，添加到 head 中生效
+            // GM_addStyle 不需要 style-loader
+            // 'style-loader',
+            'to-string-loader',
+            // 将 css 文件变成 commonjs 模块加载 js 中，里面内容是样式字符串
+            // esModule: false 可以 toString()
+            {
+              loader: 'css-loader',
+              options: {
+                esModule: false,
+              },
+            },
+          ],
+          include: [src],
+        },
+        {
+          test: /\.less$/,
+          // 使用哪些 loader 进行处理
+          use: [
+            // use 数组中 loader 执行顺序：从右到左，从下到上 依次执行
+            // 创建 style 标签，将 js 中的样式资源插入进行，添加到 head 中生效
+            'style-loader',
+            // 将 css 文件变成 commonjs 模块加载 js 中，里面内容是样式字符串
+            'css-loader',
+            {
+              loader: 'less-loader',
+              options: {
+                lessOptions: {
+                  javascriptEnabled: true,
+                },
+              },
+            },
+          ],
         },
       ],
     },

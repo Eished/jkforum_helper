@@ -19,6 +19,7 @@
 // @match               *://*.jkforum.net/type*
 // @match               *://*.jkforum.net/thread*
 // @match               *://*.jkforum.net/plugin*
+// @match               http://localhost:8080/*
 // @exclude             *.jkforum.net/member*
 // @run-at              document-idle
 // @supportURL          https://github.com/Eished/jkforum_helper/issues

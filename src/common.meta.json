@@ -18,7 +18,8 @@
     "*://*.jkforum.net/forum*",
     "*://*.jkforum.net/type*",
     "*://*.jkforum.net/thread*",
-    "*://*.jkforum.net/plugin*"
+    "*://*.jkforum.net/plugin*",
+    "http://localhost:8080/*"
   ],
   "exclude": [
     "*.jkforum.net/member*"

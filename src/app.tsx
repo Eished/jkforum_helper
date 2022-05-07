@@ -4,7 +4,6 @@ import { Counter, IUser } from '@/commonType';
 import { creatUser, MessageBox, launch } from '@/lib';
 // import './app.less';
 const commonMeta = require('@/common.meta.json');
-import './app.less';
 
 const App: React.FC<{ username: string }> = ({ username }) => {
   const [user, setUser] = useState<IUser>();

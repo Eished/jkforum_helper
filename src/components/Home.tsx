@@ -144,6 +144,7 @@ export const Home: React.FC<HomeProps> = ({ user, setShowHome, counter, setCount
           />
         </Panel>
 
+        <br />
         <Button text={'close'} onClick={setShowHome} />
       </div>
     </div>

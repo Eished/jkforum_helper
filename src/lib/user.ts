@@ -46,7 +46,7 @@ class User implements IUser {
 }
 
 const getUserName = () => {
-  return document.querySelector('.avatar_info a')?.innerHTML ?? 'hello';
+  return document.querySelector('.avatar_info a')?.innerHTML;
 };
 
 const getUserFromName = (): IUser | undefined => {
@@ -55,7 +55,7 @@ const getUserFromName = (): IUser | undefined => {
 };
 
 const getFormhash = () => {
-  return (document.querySelector('.listmenu li a') as HTMLLinkElement)?.href.split('&')[2].split('=')[1] ?? '12312';
+  return (document.querySelector('.listmenu li a') as HTMLLinkElement)?.href.split('&')[2].split('=')[1];
 };
 
 const creatUser = async (username: string) => {
