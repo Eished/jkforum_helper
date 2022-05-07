@@ -1,6 +1,5 @@
 import { urlSearchParams, checkHtml } from '@/utils/tools';
-import { getData, postDataCdata } from './ajax';
-import { MessageBox } from './message';
+import { getData, MessageBox, postDataCdata } from './';
 import { IUser } from '@/commonType';
 
 async function autoVoted(user: IUser) {

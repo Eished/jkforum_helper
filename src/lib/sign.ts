@@ -1,8 +1,6 @@
 import { Counter, IUser } from '@/commonType';
 import { checkHtml, NowTime, urlSearchParams, waitFor } from '@/utils/tools';
-import { postDataCdata } from './ajax';
-import { MessageBox } from './message';
-import { playVideo } from './noSleep';
+import { MessageBox, playVideo, postDataCdata } from './';
 
 // 定时签到
 function timeControl(counter: Counter, setCounter: (num: Counter) => void, user: IUser) {

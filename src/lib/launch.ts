@@ -1,11 +1,6 @@
 import { Counter, IUser } from '@/commonType';
 import { NowTime } from '@/utils/tools';
-import { autoPay } from './pay';
-import { addPlayEvent } from './play';
-import { loadOriginImage } from './originImage';
-import { sign } from './sign';
-import { autoThk } from './thank';
-import { autoVoted } from './vote';
+import { addPlayEvent, autoPay, autoThk, autoVoted, loadOriginImage, sign } from './';
 
 // 启动
 async function launch(user: IUser, counter: Counter) {

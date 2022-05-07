@@ -1,4 +1,4 @@
-import { MessageBox } from './message';
+import { MessageBox } from './';
 
 // 加载原图，自动播放
 async function loadOriginImage() {

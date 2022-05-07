@@ -1,5 +1,5 @@
+import { IUser } from '@/commonType';
 import { MessageBox } from './message';
-import { IUser } from './user';
 
 const resetReplyData = (user: IUser) => {
   user.replyThreads = [];

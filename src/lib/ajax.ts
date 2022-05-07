@@ -1,6 +1,6 @@
 import { XhrResponseType, XhrMethod, XhrOptions } from '@/commonType';
 import { turnCdata } from '@/utils/tools';
-import { MessageBox } from './message';
+import { MessageBox } from './';
 
 // GM_xmlhttpRequest GET异步通用模块
 function getData(

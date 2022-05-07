@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Home } from './components/Home';
-import { creatUser, getUserName, IUser } from '@/lib/user';
-import { MessageBox } from './lib/message';
-import { launch } from './lib/launch';
-import { Counter } from './commonType';
+import { Home } from '@/components/Home';
+import { Counter, IUser } from '@/commonType';
+import { getUserName, creatUser, MessageBox, launch } from '@/lib';
 // import './app.less';
 const commonMeta = require('@/common.meta.json');
 

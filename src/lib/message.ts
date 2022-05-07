@@ -1,5 +1,5 @@
 /**
- * 消息通知类：
+ * 消息通知类：不依赖框架，完全独立的模块
  * 0.先调用静态方法 genMessageBox() 方法初始化消息弹出窗口
  * 1.传参默认值：消息，持续时间，重要性
  * 2.持续时间非数字时为永久消息，需手动移除 removeMessage() ；
@@ -29,6 +29,12 @@ class MessageBox {
   static _msgBox: HTMLDivElement;
   // 静态方法，初始化消息盒子，先调用本方法初始化消息弹出窗口
   static genMessageBox() {
+    // 添加样式
+    GM_addStyle(`#messageBox {width: 222px; position: fixed; right: 5%; bottom: 20px; z-index: 999}`);
+    GM_addStyle(
+      `#messageBox div {width: 100%; background-color: #64ce83; float: left; padding: 5px 10px; margin-top: 10px; border-radius: 10px; color: #fff; box-shadow: 0px 0px 1px 3px #ffffff}`
+    );
+
     this._msgBox = document.createElement('div'); // 创建类型为div的DOM对象
     this._msgBox.id = 'messageBox';
     document.body.append(this._msgBox); // 消息盒子添加到body

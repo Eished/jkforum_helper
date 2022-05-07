@@ -1,8 +1,6 @@
 import { Counter, ForumThreads, ReplyOrThank, ReplyParams, Thread } from '@/commonType';
 import { checkHtml, getTid, rdNum, urlSearchParams, waitFor } from '@/utils/tools';
-import { getData, postDataCdata } from './ajax';
-import { MessageBox } from './message';
-import { playVideo } from './noSleep';
+import { getData, MessageBox, playVideo, postDataCdata } from './';
 import { IUser } from '@/commonType';
 
 function chooceReply(user: IUser, value?: string) {

@@ -1,6 +1,5 @@
 import { checkHtml, urlSearchParams } from '@/utils/tools';
-import { postDataCdata } from './ajax';
-import { MessageBox } from './message';
+import { MessageBox, postDataCdata } from './';
 import { IUser, GenericObject } from '@/commonType';
 
 // 自动感谢

@@ -1,9 +1,8 @@
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
-import { getData } from './ajax';
-import { MessageBox } from './message';
 import { Counter, XhrResponseType, IUser } from '@/commonType';
 import { ConcurrencyPromisePool } from '@/utils/ConcurrencyPromisePool';
+import { getData, MessageBox } from './';
 
 function downloadImgs(user: IUser, counter: Counter) {
   if (counter.downloadBtn > 0) {

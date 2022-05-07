@@ -1,6 +1,6 @@
 import { Counter, IUser } from '@/commonType';
 import { waitFor } from '@/utils/tools';
-import { MessageBox } from './message';
+import { MessageBox } from './';
 
 const addPlayEvent = (counter: Counter, user: IUser) => {
   const zoomimgs = document.querySelectorAll(`img[zoomfile]`); //获取图片列表

@@ -1,6 +1,5 @@
-import { GenericObject } from '@/commonType';
-import { MessageBox } from '@/lib/message';
-import { IUser } from '@/lib/user';
+import { GenericObject, IUser } from '@/commonType';
+import { MessageBox } from '@/lib';
 
 // POST返回 xml数据类型转换成 字符串或html 模块
 function turnCdata(xmlRepo: XMLDocument) {
@@ -88,7 +87,7 @@ function compaObjKey(source: IUser, target: IUser) {
 }
 
 // 赋值对象的值
-function copyObjVal(target: IUser & GenericObject, source: IUser & GenericObject) {
+function copyObjVal(target: IUser & GenericObject, source: IUser & GenericObject): IUser & GenericObject {
   Object.keys(source).forEach((key) => {
     if (source[key] && target.hasOwnProperty(key)) {
       target[key] = source[key];

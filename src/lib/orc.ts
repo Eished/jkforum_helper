@@ -1,7 +1,5 @@
 import { urlSearchParams, turnCdata, getTid } from '@/utils/tools';
-import { postData } from './ajax';
-import { MessageBox } from './message';
-import { playVideo } from './noSleep';
+import { MessageBox, playVideo, postData } from './';
 import { IUser } from '@/commonType';
 
 /**
@@ -113,14 +111,17 @@ async function readImage(base64: string, user: IUser) {
   });
 }
 
-async function autoCompleteCaptcha(user: IUser) {
+async function autofillCaptcha(user: IUser) {
   if (!user.token) {
-    user.token = prompt('请输入验证码识别的 api 令牌（需要令牌请私聊 or 发送邮件到 kished@outlook.com ）：') ?? '';
+    const token = prompt('请输入验证码识别的 api 令牌（需要令牌请私聊 or 发送邮件到 kished@outlook.com ）：');
     const reg = /.*\..*\..*\..*/g;
-    if (reg.test(user.token)) {
+    if (token && reg.test(user.token)) {
+      user.token = token;
       GM_setValue(user.username, user);
-    } else {
+    } else if (token !== null) {
       new MessageBox('无效的令牌');
+      return;
+    } else {
       return;
     }
   }
@@ -142,13 +143,13 @@ async function autoCompleteCaptcha(user: IUser) {
       playVideo(msId);
       setTimeout(() => {
         msId.removeMessage();
-        autoCompleteCaptcha(user);
+        autofillCaptcha(user);
       }, user.freeTime);
     })
     .catch((e) => {
       if (e === 'retry') {
         setTimeout(() => {
-          autoCompleteCaptcha(user);
+          autofillCaptcha(user);
         }, 5000); // 重试频率限制
       } else {
         new MessageBox(e);
@@ -156,4 +157,4 @@ async function autoCompleteCaptcha(user: IUser) {
     });
 }
 
-export { autoCompleteCaptcha };
+export { autofillCaptcha };

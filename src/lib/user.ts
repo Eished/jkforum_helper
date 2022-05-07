@@ -1,7 +1,6 @@
 import { IUser } from '@/commonType';
 import { compaObjKey, copyObjVal } from '@/utils/tools';
-import { setFastReply } from './fastReply';
-import { MessageBox } from './message';
+import { MessageBox, setFastReply } from './';
 
 class User implements IUser {
   username: string;
@@ -124,4 +123,4 @@ const creatUser = async (username: string) => {
   return user;
 };
 
-export { User, getUserName, getUserFromName, creatUser, IUser };
+export { User, getUserName, getUserFromName, creatUser };

@@ -1,5 +1,5 @@
 import { waitFor } from '@/utils/tools';
-import { MessageBox } from './message';
+import { MessageBox } from './';
 
 function genVideo() {
   const video = document.createElement('video');

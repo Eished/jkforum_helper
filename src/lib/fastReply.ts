@@ -1,6 +1,5 @@
 import { replaceHtml } from '@/utils/tools';
-import { getData } from './ajax';
-import { MessageBox } from './message';
+import { getData, MessageBox } from './';
 import { IUser } from '@/commonType';
 
 async function setFastReply(user: IUser) {

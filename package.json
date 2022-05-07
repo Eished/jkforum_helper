@@ -5,8 +5,8 @@
   "main": "/dist/jkforum.user.js",
   "scripts": {
     "dev": "webpack --watch",
-    "build": "webpack --env production",
-    "style": "npx tailwindcss -i ./src/input.css -o ./src/output.css --watch"
+    "style": "npx tailwindcss -i ./src/input.css -o ./src/output.css --watch",
+    "build": "npx tailwindcss -i ./src/input.css -o ./src/output.css && webpack --env production"
   },
   "repository": {
     "type": "git",

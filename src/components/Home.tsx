@@ -1,17 +1,24 @@
-import { Counter, ReplyOrThank } from '@/commonType';
-import { downloadImgs, noDisplayPic } from '@/lib/downloadPicture';
-import { setFastReply } from '@/lib/fastReply';
-import { swPay, swThk, swRePic, update } from '@/lib/menuCommand';
-import { autoCompleteCaptcha } from '@/lib/orc';
-import { addOnePage, addPageBatch, replyOrThk } from '@/lib/replyAndThank';
-import { resetReplyData } from '@/lib/resetReplyData';
-import { timeControl } from '@/lib/sign';
-import { IUser } from '@/lib/user';
 import React, { useRef, useState } from 'react';
+import { Counter, IUser, ReplyOrThank } from '@/commonType';
 import { Button } from './Button/Button';
 import { Input } from './Input/Input';
 import { Panel } from './Panel/Panel';
 import { Toggle } from './Toggle/Toggle';
+import {
+  addOnePage,
+  addPageBatch,
+  autofillCaptcha,
+  downloadImgs,
+  noDisplayPic,
+  replyOrThk,
+  resetReplyData,
+  setFastReply,
+  swPay,
+  swRePic,
+  swThk,
+  timeControl,
+  update,
+} from '@/lib';
 
 interface HomeProps {
   setShowHome: () => void;
@@ -129,7 +136,7 @@ export const Home: React.FC<HomeProps> = ({ user, setShowHome, counter, setCount
           <Button
             text={'现在有空'}
             onClick={() => {
-              autoCompleteCaptcha(user);
+              autofillCaptcha(user);
             }}
           />
           <Button
