@@ -6,8 +6,10 @@
   "scripts": {
     "start": "webpack serve",
     "dev": "webpack --watch",
-    "build": "webpack --env production",
-    "style": "npx tailwindcss -i ./src/input.css -o ./src/output.css --watch"
+    "style": "npx tailwindcss -i ./src/input.css -o ./src/output.css --watch",
+    "build": "yarn lint && npx tailwindcss -i ./src/input.css -o ./src/output.css && webpack --env production",
+    "lint": "eslint 'src/**/*.{ts,tsx}'",
+    "lint:fix": "eslint 'src/**/*.{ts,tsx}' --fix"
   },
   "repository": {
     "type": "git",
@@ -24,6 +26,7 @@
     "@babel/core": "^7.17.9",
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7",
+    "@tailwindcss/forms": "^0.5.1",
     "@types/file-saver": "^2.0.5",
     "@types/react": "^18.0.5",
     "@types/react-dom": "^18.0.1",
@@ -43,20 +46,19 @@
     "postcss": "^8.4.12",
     "postcss-loader": "^6.2.1",
     "postcss-preset-env": "^7.4.3",
+    "prettier": "^2.6.2",
     "style-loader": "^3.3.1",
     "tailwindcss": "^3.0.24",
     "to-string-loader": "^1.2.0",
     "ts-loader": "^9.2.8",
-    "tsc": "^2.0.4",
     "typescript": "^4.6.3",
     "webpack": "^5.72.0",
     "webpack-cli": "^4.9.2"
   },
   "dependencies": {
-    "@tailwindcss/forms": "^0.5.0",
     "file-saver": "^2.0.5",
     "jszip": "^3.9.1",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0"
   }
 }

@@ -14,7 +14,7 @@ interface ButtonProps {
   text: string;
   onClick: () => void;
 }
-export const Button = ({ text, onClick }: ButtonProps) => {
+export const Button: React.FC<ButtonProps> = ({ text, onClick }) => {
   return (
     <button
       type="button"

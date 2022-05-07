@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /*   
     NodeJS Promise并发控制 
     https://xin-tan.com/2020-09-13-bing-fa-kong-zhi/
@@ -6,16 +7,16 @@
 class ConcurrencyPromisePool {
   limit: number;
   runningNum: number;
-  queue: any[];
+  queue: (() => Promise<unknown>)[];
   results: Promise<unknown>[];
-  constructor(limit: any) {
+  constructor(limit: number) {
     this.limit = limit;
     this.runningNum = 0;
     this.queue = [];
     this.results = [];
   }
 
-  all(promises: any[] = []): Promise<[]> {
+  all(promises: (() => Promise<unknown>)[] = []): Promise<[]> {
     return new Promise((resolve, reject) => {
       for (const promise of promises) {
         // 发送所有 promise
@@ -45,7 +46,8 @@ class ConcurrencyPromisePool {
         }
         // 队列还有则，出队，然后递归调用
         if (this.queue.length) {
-          this._run(this.queue.shift(), resolve, reject);
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          this._run(this.queue.shift()!, resolve, reject);
         }
       })
       .catch(reject);

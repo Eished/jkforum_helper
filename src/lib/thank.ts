@@ -1,29 +1,14 @@
-import { checkHtml, GenericObject, urlSearchParams } from '@/utils/tools';
-import { postDataCdata } from './ajax';
-import { MessageBox } from './message';
-import { IUser } from '@/commonType';
+import { checkHtml, urlSearchParams } from '@/utils/tools';
+import { MessageBox, postDataCdata } from './';
+import { IUser, GenericObject } from '@/commonType';
 
 // 自动感谢
 async function autoThk(user: IUser) {
   const forms = document.forms as unknown as Document & GenericObject;
   if (!forms?.thankform) {
-    // 没有感谢
     return;
   }
-  if (document.querySelectorAll('#k_thankauthor').length == 2) {
-    //感谢可见
-    await postAutoThk(forms.thankform, user);
-    location.reload();
-  } else {
-    //普通贴
-    await postAutoThk(forms.thankform, user);
-  }
-}
-// 发送感谢请求
-async function postAutoThk(
-  thankform: { tid: { value: any }; touser: { value: any }; touseruid: { value: any } },
-  user: IUser
-) {
+  const thankform = forms.thankform;
   const thkParamsData = urlSearchParams({
     formhash: user.formhash,
     tid: thankform.tid.value,
@@ -39,6 +24,11 @@ async function postAutoThk(
   } else {
     new MessageBox(xmlData); //其它情况直接输出
   }
+
+  if (document.querySelectorAll('#k_thankauthor').length == 2) {
+    //感谢可见
+    location.reload();
+  }
 }
 
-export { autoThk, postAutoThk };
+export { autoThk };

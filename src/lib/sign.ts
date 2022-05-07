@@ -1,8 +1,6 @@
 import { Counter, IUser } from '@/commonType';
 import { checkHtml, NowTime, urlSearchParams, waitFor } from '@/utils/tools';
-import { postDataCdata } from './ajax';
-import { MessageBox } from './message';
-import { playVideo } from './noSleep';
+import { MessageBox, playVideo, postDataCdata } from './';
 
 // 定时签到
 function timeControl(counter: Counter, setCounter: (num: Counter) => void, user: IUser) {
@@ -18,25 +16,25 @@ function timeControl(counter: Counter, setCounter: (num: Counter) => void, user:
       clearInterval(counter.signBtn); // timer=1 未知原因
       counter.signBtn = 0;
       // 移除永久消息通知
-      msIdSlp.removeMessage();
-      msIdSig.removeMessage();
-      msIdTime.refreshMessage('执行中....');
+      msIdSlp.remove();
+      msIdSig.remove();
+      msIdTime.refresh('执行中....');
       for (let i = 0; i < user.signNum; i++) {
         //重试次数
         sign(user);
-        msIdTime.refreshMessage('执行第' + (i + 1) + '次');
+        msIdTime.refresh('执行第' + (i + 1) + '次');
         await waitFor(user.interTime); //重试间隔
       }
-      msIdTime.removeMessage();
+      msIdTime.remove();
     } else {
-      msIdTime.refreshMessage('时间没有到：' + signtime + '，目前时间：' + now.seconds);
+      msIdTime.refresh('时间没有到：' + signtime + '，目前时间：' + now.seconds);
     }
   }
   if (!counter.signBtn) {
     // 防重复点击
     playVideo(msIdSlp); // 防休眠
-    msIdSig.showMessage('定时签到中，请勿退出...', 'none');
-    msIdTime.showMessage('...', 'none'); // 占位消息，给刷新用
+    msIdSig.show('定时签到中，请勿退出...', 'none');
+    msIdTime.show('...', 'none'); // 占位消息，给刷新用
     counter.signBtn = window.setInterval(control, 500); // 运行自动签到
   }
 }

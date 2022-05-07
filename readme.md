@@ -144,9 +144,9 @@
     todaysay: '簽到', // 签到输入内容
     mood: 'fd', // 签到心情
     autoPlayDiff: 2000, // 自动播放图片间隔时间ms
-    autoPaySw: 1, // 自动支付开关
-    autoThkSw: 1, // 自动感谢开关
-    autoRePicSw: 1, // 自动加载原图开关
+    autoPaySw: true, // 自动支付开关
+    autoThkSw: true, // 自动感谢开关
+    autoRePicSw: true, // 自动加载原图开关
     differ: 10000, // 回帖随机间隔时间范围ms
     interval: 20000, // 回帖基础间隔时间ms
     thkDiffer: 1000, // 批量感谢间隔时间ms

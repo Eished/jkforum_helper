@@ -1,6 +1,5 @@
 import { urlSearchParams, checkHtml } from '@/utils/tools';
-import { getData, postDataCdata } from './ajax';
-import { MessageBox } from './message';
+import { getData, MessageBox, postDataCdata } from './';
 import { IUser } from '@/commonType';
 
 async function autoVoted(user: IUser) {
@@ -53,7 +52,7 @@ async function autoVoted(user: IUser) {
   } else {
     new MessageBox(votedMessage as string); //其它情况直接输出
   }
-  msId.removeMessage();
+  msId.remove();
   GM_setValue(user.username, user); //保存当天日// today 初始化
 }
 

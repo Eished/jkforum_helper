@@ -1,9 +1,9 @@
-import { MessageBox } from '@/lib/message';
-import { IUser } from '@/lib/user';
+import { GenericObject, IUser } from '@/commonType';
+import { MessageBox } from '@/lib';
 
 // POST返回 xml数据类型转换成 字符串或html 模块
 function turnCdata(xmlRepo: XMLDocument) {
-  let data = xmlRepo.getElementsByTagName('root')[0].childNodes[0].nodeValue;
+  const data = xmlRepo.getElementsByTagName('root')[0].childNodes[0].nodeValue;
   if (!data) return '';
   if (replaceHtml(data)) {
     // 如果判断去掉html是否还有文字，否则返回html
@@ -38,14 +38,14 @@ function checkHtml(htmlStr: string | Document) {
   if (htmlStr instanceof Document) {
     return true;
   } else {
-    let reg = /<[^>]+>/g;
+    const reg = /<[^>]+>/g;
     return reg.test(htmlStr);
   }
 }
 
 // 过滤html标签、前后空格、特殊符号
 function replaceHtml(txt: string) {
-  const reg3 = /[\a|\r|\n|\b|\f|\t|\v]+/g; //去掉特殊符号
+  const reg3 = /[\r|\n|\b|\f|\t|\v]+/g; //去掉特殊符号
   const reg = /<.+>/g; //去掉所有<>内内容
   // 先reg3,\n特殊符号会影响reg的匹配
   return txt.replace(reg3, '').replace(reg, '').trim();
@@ -56,7 +56,7 @@ const waitFor = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 // n, m 范围随机整数生成
 function rdNum(n: number, m: number) {
-  let c = m - n + 1;
+  const c = m - n + 1;
   return Math.floor(Math.random() * c + n);
 }
 class NowTime {
@@ -76,7 +76,8 @@ function compaObjKey(source: IUser, target: IUser) {
   if (Object.keys(target).length == Object.keys(source).length) {
     // 用户数据匹配
     Object.keys(source).forEach((key) => {
-      if (!target.hasOwnProperty(key)) {
+      // https://stackoverflow.com/questions/39282873/object-hasownproperty-yields-the-eslint-no-prototype-builtins-error-how-to
+      if (!Object.prototype.hasOwnProperty.call(target, key)) {
         return false;
       }
     });
@@ -86,14 +87,10 @@ function compaObjKey(source: IUser, target: IUser) {
   }
 }
 
-interface GenericObject {
-  [key: string]: any;
-}
-
 // 赋值对象的值
-function copyObjVal(target: IUser & GenericObject, source: IUser & GenericObject) {
+function copyObjVal(target: IUser & GenericObject, source: IUser & GenericObject): IUser & GenericObject {
   Object.keys(source).forEach((key) => {
-    if (source[key] && target.hasOwnProperty(key)) {
+    if (source[key] && Object.prototype.hasOwnProperty.call(target, key)) {
       target[key] = source[key];
     }
   });

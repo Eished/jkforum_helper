@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Home } from './components/Home';
-import { creatUser, getUserName, IUser } from '@/lib/user';
-import { MessageBox } from './lib/message';
-import { launch } from './lib/launch';
-import { Counter } from './commonType';
+import { Home } from '@/components';
+import { Counter, IUser } from '@/commonType';
+import { creatUser, MessageBox, launch } from '@/lib';
 // import './app.less';
 const commonMeta = require('@/common.meta.json');
 import './app.less';
 
-const App = () => {
-  const username = getUserName();
-  console.log('test username', username, GM_getValue('a'), 'hello');
-  if (!username) {
-    return <></>;
-  }
-
+const App: React.FC<{ username: string }> = ({ username }) => {
   const [user, setUser] = useState<IUser>();
+  const [showHome, setShowHome] = useState(false);
+  const [counter, setCounter] = useState<Counter>({
+    signBtn: 0,
+    playBtn: 0,
+    playFlag: 0,
+    downloadBtn: 0,
+    replyBtn: 0,
+    thkBtn: 0,
+  }); // 防止按钮重复点击
 
   useEffect(() => {
     creatUser(username)
@@ -26,19 +27,7 @@ const App = () => {
       .then((user) => {
         launch(user, counter); // 启动自动签到、投票、加载原图等
       });
-
-    return () => {};
-  }, []);
-
-  const [showHome, setShowHome] = useState(false);
-  const [counter, setCounter] = useState<Counter>({
-    signBtn: 0,
-    playBtn: 0,
-    playFlag: 0,
-    downloadBtn: 0,
-    replyBtn: 0,
-    thkBtn: 0,
-  }); // 防止按钮重复点击
+  }, [username, counter]);
 
   return (
     <div className="fixed z-50">

@@ -1,6 +1,5 @@
 import { replaceHtml } from '@/utils/tools';
-import { getData } from './ajax';
-import { MessageBox } from './message';
+import { getData, MessageBox } from './';
 import { IUser } from '@/commonType';
 
 async function setFastReply(user: IUser) {
@@ -8,7 +7,7 @@ async function setFastReply(user: IUser) {
   try {
     const htmlData = await getData(user.fastReplyUrl);
     const options = htmlData.querySelectorAll('#rqcss select option') as NodeListOf<HTMLOptionElement>;
-    let fastReply: string[] = []; //返回数组
+    const fastReply: string[] = []; //返回数组
     if (options.length) {
       options.forEach((option) => {
         if (option.value) {

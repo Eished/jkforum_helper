@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 interface IUser {
   username: string;
   formhash: string;
@@ -9,9 +10,9 @@ interface IUser {
   todaysay: string;
   mood: string;
   autoPlayDiff: number;
-  autoPaySw: number;
-  autoThkSw: number;
-  autoRePicSw: number;
+  autoPaySw: boolean;
+  autoThkSw: boolean;
+  autoRePicSw: boolean;
   differ: number;
   interval: number;
   thkDiffer: number;
@@ -96,4 +97,19 @@ type ReplyParams = {
   subject: string;
 };
 
-export { Counter, XhrMethod, XhrResponseType, XhrOptions, ReplyOrThank, Thread, ForumThreads, IUser, ReplyParams };
+interface GenericObject {
+  [key: string]: any;
+}
+
+export {
+  Counter,
+  XhrMethod,
+  XhrResponseType,
+  XhrOptions,
+  ReplyOrThank,
+  Thread,
+  ForumThreads,
+  IUser,
+  ReplyParams,
+  GenericObject,
+};

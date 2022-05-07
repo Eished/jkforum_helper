@@ -1,6 +1,5 @@
 import { turnUrl, checkHtml, getTid } from '@/utils/tools';
-import { postDataCdata } from './ajax';
-import { MessageBox } from './message';
+import { postDataCdata, MessageBox } from './';
 import { IUser } from '@/commonType';
 
 // 自动支付
