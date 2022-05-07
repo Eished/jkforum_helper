@@ -142,7 +142,7 @@ async function autofillCaptcha(user: IUser) {
       const msId = new MessageBox();
       playVideo(msId);
       setTimeout(() => {
-        msId.removeMessage();
+        msId.remove();
         autofillCaptcha(user);
       }, user.freeTime);
     })

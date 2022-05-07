@@ -1,39 +1,58 @@
 /**
- * 消息通知类：不依赖框架，完全独立的模块
- * 0.先调用静态方法 genMessageBox() 方法初始化消息弹出窗口
- * 1.传参默认值：消息，持续时间，重要性
- * 2.持续时间非数字时为永久消息，需手动移除 removeMessage() ；
- * 3.初始化用 new MessageBox() 参数为空时，调用 showMessage() 传参显示消息；用于增大作用域。refreshMessage() 刷新永久消息；
- * 4.重要性：1 = log + 自定义弹窗；2 = log + 自定义弹窗 + GM；默认 = 自定义弹窗；
+ * 消息通知类：不依赖框架
+ * @param text string | undefined
+ * @param setTime number | string = 5000,
+ * @param importance number = 1
+ * @example
+ * 0.先在入口文件中调用静态方法 generate() 方法初始化消息弹出窗口；
+ * 1. new MessageBox('hello')
+ * 2.空初始化时调用 show() 显示消息；
+ * 3.setTime：ms，非数字时为永久消息，需手动调用 refresh() 刷新消息，remove() 移除消息；
+ * 4.importance：1： log + 自定义弹窗；2： log + 自定义弹窗 + GM系统提示；其它值：自定义弹窗；
  */
 
 class MessageBox {
   _msg: undefined | null | HTMLDivElement;
   _text: string | undefined;
   _setTime: number | string;
-  _important: string | number;
+  _importance: string | number;
   _timer: number;
-  constructor(text?: string, setTime: number | string = 5000, important: number = 1) {
+  constructor(text?: string, setTime: number | string = 5000, importance: number = 1) {
     this._msg = null; // 永久显示标记，和元素地址
     this._text = text;
     this._setTime = setTime;
-    this._important = important;
+    this._importance = importance;
     this._timer = 0; // 计数器
     // 非空初始化，立即执行；
     if (text !== undefined) {
-      this.showMessage();
+      this.show();
     }
   }
 
   // 静态属性，消息盒子
   static _msgBox: HTMLDivElement;
   // 静态方法，初始化消息盒子，先调用本方法初始化消息弹出窗口
-  static genMessageBox() {
+  static generate() {
     // 添加样式
-    GM_addStyle(`#messageBox {width: 222px; position: fixed; right: 5%; bottom: 20px; z-index: 999}`);
-    GM_addStyle(
-      `#messageBox div {width: 100%; background-color: #64ce83; float: left; padding: 5px 10px; margin-top: 10px; border-radius: 10px; color: #fff; box-shadow: 0px 0px 1px 3px #ffffff}`
-    );
+    GM_addStyle(`
+      #messageBox {
+        width: 222px; 
+        position: fixed; 
+        right: 5%; 
+        bottom: 20px; 
+        z-index: 999
+      }
+      #messageBox div {
+        width: 100%; 
+        background-color: #64ce83; 
+        float: left; 
+        padding: 5px 10px; 
+        margin-top: 10px; 
+        border-radius: 10px; 
+        color: #fff; 
+        box-shadow: 0px 0px 1px 3px #ffffff
+      }
+      `);
 
     this._msgBox = document.createElement('div'); // 创建类型为div的DOM对象
     this._msgBox.id = 'messageBox';
@@ -41,7 +60,7 @@ class MessageBox {
   }
 
   // 显示消息
-  showMessage(text = this._text, setTime = this._setTime, important = this._important) {
+  show(text = this._text, setTime = this._setTime, importance = this._importance) {
     if (this._msg !== null) {
       throw new Error('先移除上条消息，才可再次添加！');
     }
@@ -50,13 +69,13 @@ class MessageBox {
     }
     this._text = text;
     this._setTime = setTime;
-    this._important = important;
+    this._importance = importance;
 
     this._msg = document.createElement('div');
     this._msg.textContent = text;
     MessageBox._msgBox.append(this._msg); // 显示消息
 
-    switch (important) {
+    switch (importance) {
       case 1: {
         console.log(text);
         break;
@@ -75,15 +94,15 @@ class MessageBox {
     if (setTime && !isNaN(Number(setTime))) {
       // 默认5秒删掉消息，可设置时间，none一直显示
       setTimeout(() => {
-        this.removeMessage();
+        this.remove();
       }, Number(setTime));
     }
   }
 
-  refreshMessage(text: string) {
+  refresh(text: string) {
     if (isNaN(Number(this._setTime)) && this._msg) {
       this._msg.textContent = text;
-      switch (this._important) {
+      switch (this._importance) {
         case 1: {
           console.log(text);
           break;
@@ -104,7 +123,7 @@ class MessageBox {
   }
 
   // 移除方法，没有元素则等待setTime 5秒再试5次
-  removeMessage() {
+  remove() {
     if (this._msg) {
       this._msg.remove();
       this._msg = null; // 清除标志位
@@ -116,7 +135,7 @@ class MessageBox {
       }
       this._timer++;
       setTimeout(() => {
-        this.removeMessage();
+        this.remove();
       }, Number(this._setTime));
     }
   }

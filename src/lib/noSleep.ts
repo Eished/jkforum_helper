@@ -13,7 +13,7 @@ function genVideo() {
 
 async function playVideo(msId: MessageBox) {
   if (document.querySelector('body > video')) {
-    msId.showMessage('防止休眠启动，请保持本页处于激活状态，请勿遮挡、最小化本窗口以及全屏运行其它应用！', 'none');
+    msId.show('防止休眠启动，请保持本页处于激活状态，请勿遮挡、最小化本窗口以及全屏运行其它应用！', 'none');
     return;
   }
   let p = 0;
@@ -27,7 +27,7 @@ async function playVideo(msId: MessageBox) {
     // 播放视频，防止休眠
     // video.removeEventListener("canplay", videoPlay, false); // 循环触发，移除事件监听
     // 显示永久消息通知
-    msId.showMessage('防止休眠启动，请保持本页处于激活状态，请勿遮挡、最小化本窗口以及全屏运行其它应用！', 'none');
+    msId.show('防止休眠启动，请保持本页处于激活状态，请勿遮挡、最小化本窗口以及全屏运行其它应用！', 'none');
     p = 99;
   }
 

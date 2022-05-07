@@ -71,7 +71,7 @@ function batchDownload(imgsUrls: string[], imgsTitles: string[], folderName: str
     const promise = () => {
       return new Promise(async (resolve) => {
         const file_name = imgsTitles[index]; // 获取文件名
-        mesIdH.refreshMessage(`正在下载：第 ${index + 1} / ${imgsUrls.length} 张，文件名：${file_name}`);
+        mesIdH.refresh(`正在下载：第 ${index + 1} / ${imgsUrls.length} 张，文件名：${file_name}`);
 
         await getData(item, XhrResponseType.blob)
           .then((blob) => {
@@ -80,7 +80,7 @@ function batchDownload(imgsUrls: string[], imgsTitles: string[], folderName: str
             zip.file(file_name, data, {
               binary: true,
             }); // 逐个添加文件
-            mesIdP.refreshMessage(
+            mesIdP.refresh(
               `第 ${index + 1} 张，文件名：${file_name}，大小：${(data.size / 1024).toFixed(
                 0
               )} Kb，下载完成！等待压缩...`
@@ -92,7 +92,7 @@ function batchDownload(imgsUrls: string[], imgsTitles: string[], folderName: str
             if (err.responseText) {
               const domParser = new DOMParser();
               const xmlDoc = domParser.parseFromString(err.responseText, 'text/html');
-              mesIdP.refreshMessage(`第 ${index + 1} 张，请求错误：${xmlDoc.body.innerHTML}`);
+              mesIdP.refresh(`第 ${index + 1} 张，请求错误：${xmlDoc.body.innerHTML}`);
             } else if (err.status) {
               console.error(err.status);
             } else {
@@ -106,7 +106,7 @@ function batchDownload(imgsUrls: string[], imgsTitles: string[], folderName: str
   }
   const pool = new ConcurrencyPromisePool(user.limit);
   pool.all(promises).then((results) => {
-    mesIdH.removeMessage();
+    mesIdH.remove();
     counter.downloadBtn = 0;
     for (let i = 0; i < results.length; i++) {
       if (results[i] == -1) {
@@ -117,7 +117,7 @@ function batchDownload(imgsUrls: string[], imgsTitles: string[], folderName: str
     if (results.length == counter.downloadBtn) {
       new MessageBox('全部图片下载失败！');
       counter.downloadBtn = 0;
-      mesIdP.removeMessage();
+      mesIdP.remove();
       return;
     }
     if (counter.downloadBtn) {
@@ -125,18 +125,18 @@ function batchDownload(imgsUrls: string[], imgsTitles: string[], folderName: str
         counter.downloadBtn = 0;
       } else {
         counter.downloadBtn = 0;
-        mesIdP.removeMessage();
+        mesIdP.remove();
         return;
       }
     }
-    mesIdP.refreshMessage('正在压缩打包，大文件请耐心等待...');
+    mesIdP.refresh('正在压缩打包，大文件请耐心等待...');
     zip
       .generateAsync({
         type: 'blob',
       })
       .then((content) => {
         // 生成二进制流
-        mesIdP.removeMessage();
+        mesIdP.remove();
         saveAs(content, `${folderName} [${imgsUrls.length}P]`); // 利用file-saver保存文件，大文件需等待很久
       });
   });

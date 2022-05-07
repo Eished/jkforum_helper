@@ -5,7 +5,7 @@ import App from '@/app';
 import { MessageBox } from '@/lib';
 
 // 初始化消息盒子
-MessageBox.genMessageBox();
+MessageBox.generate();
 
 // 添加根元素
 const rootDiv = document.createElement('div');

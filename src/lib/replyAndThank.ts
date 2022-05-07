@@ -77,7 +77,7 @@ async function addPageBatch(user: IUser, pageCode: string, inputValue?: string, 
     let replyLen = chooceReply(user, inputValue); //如果输入了值则使用用户值，如果没有则使用默认值；没有默认值则返回错误
     if (replyLen <= 0) {
       new MessageBox('获取回帖内容失败！');
-      msId.removeMessage();
+      msId.remove();
       return '获取回帖内容失败！';
     }
 
@@ -101,7 +101,7 @@ async function addPageBatch(user: IUser, pageCode: string, inputValue?: string, 
       setThreadsTask(user, data, fid, replyLen); // 设置任务列表
       pageFrom++;
     }
-    msId.removeMessage();
+    msId.remove();
   } else {
     new MessageBox(
       '请输入回帖列表页码，格式：版块代码-起点页-终点页 ；例如：640-1-2 ；版块代码见版块URL中间数字：forum-640-1',
@@ -176,7 +176,7 @@ function setThreadsTask(user: IUser, htmlData: Document, fid: string, replyLen: 
         const element = elem.fidthreads[index];
         if (element.tid == tid) {
           noSkip = false;
-          msId.refreshMessage(`${fid}：任务列表：${index}，thread-${tid}-1-1 ：已在任务列表，已跳过此贴！`);
+          msId.refresh(`${fid}：任务列表：${index}，thread-${tid}-1-1 ：已在任务列表，已跳过此贴！`);
           break;
         }
       }
@@ -198,7 +198,7 @@ function setThreadsTask(user: IUser, htmlData: Document, fid: string, replyLen: 
       }
     }
     GM_setValue(user.username, user);
-    msId.removeMessage();
+    msId.remove();
     new MessageBox(`${fid}：任务列表成功添加 ${count} 贴！`, 10000);
   }
 
@@ -223,14 +223,14 @@ async function replyOrThk(counter: Counter, user: IUser, type: ReplyOrThank = Re
       return;
     }
     counter.replyBtn = 1; // 防止重复点击
-    mesIdRep.showMessage('开始回帖...', 'none');
-    mesIdRepContent.showMessage('...', 'none');
+    mesIdRep.show('开始回帖...', 'none');
+    mesIdRepContent.show('...', 'none');
   } else {
     if (counter.thkBtn) {
       return;
     }
     counter.thkBtn = 1; // 防止重复点击
-    mesIdThk.showMessage('开始感谢...', 'none');
+    mesIdThk.show('开始感谢...', 'none');
   }
   playVideo(mesId); // 防休眠
 
@@ -251,7 +251,7 @@ async function replyOrThk(counter: Counter, user: IUser, type: ReplyOrThank = Re
       // 分别处理感谢和回帖
       switch (type) {
         case ReplyOrThank.reply: {
-          mesIdRep.refreshMessage(
+          mesIdRep.refresh(
             fid +
               '-版块，当前位置：' +
               fidRepIndex +
@@ -309,7 +309,7 @@ async function replyOrThk(counter: Counter, user: IUser, type: ReplyOrThank = Re
           } else {
             new MessageBox(data as string, 'none'); //其它情况直接输出
           }
-          mesIdRepContent.refreshMessage(
+          mesIdRepContent.refresh(
             '序号：' +
               fidRepIndex +
               '，随机号：' +
@@ -343,7 +343,7 @@ async function replyOrThk(counter: Counter, user: IUser, type: ReplyOrThank = Re
           } else {
             new MessageBox(data as string, 1000); //其它情况直接输出
           }
-          mesIdThk.refreshMessage(
+          mesIdThk.refresh(
             fid +
               '-版块，当前位置：' +
               fidThkIndex +
@@ -372,16 +372,16 @@ async function replyOrThk(counter: Counter, user: IUser, type: ReplyOrThank = Re
     GM_setValue(user.username, user);
   }
   if (type == ReplyOrThank.thank) {
-    mesIdThk.removeMessage(); // 移除永久消息
+    mesIdThk.remove(); // 移除永久消息
     new MessageBox('全部感谢完成！', 10000, 2);
     counter.thkBtn = 0;
   } else if (type == ReplyOrThank.reply) {
-    mesIdRep.removeMessage(); // 移除永久消息
-    mesIdRepContent.removeMessage();
+    mesIdRep.remove(); // 移除永久消息
+    mesIdRepContent.remove();
     new MessageBox('全部回帖完成！', 10000, 2);
     counter.replyBtn = 0;
   }
-  mesId.removeMessage(); // 移除永久消息
+  mesId.remove(); // 移除永久消息
 }
 
 export { replyOrThk, addPageBatch, addOnePage };
