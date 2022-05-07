@@ -144,7 +144,6 @@ export const Home: React.FC<HomeProps> = ({ user, setShowHome, counter, setCount
           />
         </Panel>
 
-        <div className='jkf-test-style'></div>
         <Button text={'close'} onClick={setShowHome} />
       </div>
     </div>
