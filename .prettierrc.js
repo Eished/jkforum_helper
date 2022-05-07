@@ -7,5 +7,5 @@ module.exports = {
   trailingComma: 'es5', //是否使用尾逗号，有三个可选值"<none|es5|all>"
   bracketSpacing: true, //对象大括号直接是否有空格，默认为true，效果：{ foo: bar }
   arrowParens: 'always', // 箭头函数单个参数加分号
-  jsxBracketSameLine: true,
+  bracketSameLine: true,
 };

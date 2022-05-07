@@ -46,7 +46,7 @@ async function autoPlay(counter: Counter, user: IUser) {
   }
   counter.playBtn = 1; // 已添加标志
 
-  function callback() {
+  const observer = new MutationObserver(() => {
     // 监听元素子节点变化，然后添加节点
     const imgzoom_y = document.querySelector('#imgzoom .y');
     if (imgzoom_y) {
@@ -54,8 +54,7 @@ async function autoPlay(counter: Counter, user: IUser) {
       observer.disconnect(); // 断开监听
       addAutoPlay(counter, user); // 添加按钮
     }
-  }
-  const observer = new MutationObserver(callback); // 建立监听器
+  }); // 建立监听器
   observer.observe(append_parent, {
     // 开始监听 append_parent
     childList: true,
@@ -104,12 +103,7 @@ function addAutoPlay(counter: Counter, user: IUser) {
         return;
       }
 
-      counter.playObserver = new MutationObserver(callback);
-      counter.playObserver.observe(imgzoom_waiting, {
-        attributes: true,
-      });
-
-      async function callback() {
+      counter.playObserver = new MutationObserver(async () => {
         const display = imgzoom_waiting.style.display;
         if (display == 'none') {
           await waitFor(user.autoPlayDiff); // 延迟，然后判断是否停止
@@ -120,7 +114,11 @@ function addAutoPlay(counter: Counter, user: IUser) {
           }
           (imgzoom?.querySelector('.zimg_next') as HTMLDivElement)?.click(); // 刷新NodeList
         }
-      }
+      });
+      counter.playObserver.observe(imgzoom_waiting, {
+        attributes: true,
+      });
+
       // 开始点击下一张
       await waitFor(user.autoPlayDiff);
       (zimg_next as HTMLDivElement).click();

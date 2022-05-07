@@ -17,7 +17,7 @@ class MessageBox {
   _setTime: number | string;
   _importance: string | number;
   _timer: number;
-  constructor(text?: string, setTime: number | string = 5000, importance: number = 1) {
+  constructor(text?: string, setTime: number | string = 5000, importance = 1) {
     this._msg = null; // 永久显示标记，和元素地址
     this._text = text;
     this._setTime = setTime;

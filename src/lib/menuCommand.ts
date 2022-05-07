@@ -41,7 +41,7 @@ function swThk(user: IUser) {
 async function update(user: IUser) {
   new MessageBox('正在检查更新...');
   const data = await getData(user.greasyforkUrl);
-  let version = data.querySelectorAll('.script-show-version span')[1].innerHTML;
+  const version = data.querySelectorAll('.script-show-version span')[1].innerHTML;
   if (getVersionNum(user.version) < getVersionNum(version)) {
     GM_openInTab(`${user.greasyforkUrl}-jkforum-%E5%8A%A9%E6%89%8B/code/JKForum%20%E5%8A%A9%E6%89%8B.user.js`);
   } else {

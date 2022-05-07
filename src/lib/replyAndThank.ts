@@ -74,7 +74,7 @@ async function addPageBatch(user: IUser, pageCode: string, inputValue?: string, 
     }
     const msId = new MessageBox('正在添加：' + forumPage, 'none');
 
-    let replyLen = chooceReply(user, inputValue); //如果输入了值则使用用户值，如果没有则使用默认值；没有默认值则返回错误
+    const replyLen = chooceReply(user, inputValue); //如果输入了值则使用用户值，如果没有则使用默认值；没有默认值则返回错误
     if (replyLen <= 0) {
       new MessageBox('获取回帖内容失败！');
       msId.remove();
@@ -113,9 +113,9 @@ async function addPageBatch(user: IUser, pageCode: string, inputValue?: string, 
 // 添加任务列表
 function setThreadsTask(user: IUser, htmlData: Document, fid: string, replyLen: number) {
   //帖子类名 40个a标签数组
-  let hrefs = htmlData.querySelectorAll('.s') as NodeListOf<HTMLAnchorElement>;
+  const hrefs = htmlData.querySelectorAll('.s') as NodeListOf<HTMLAnchorElement>;
   // 获取作者昵称和 UID
-  let cites = htmlData.querySelectorAll('cite a') as NodeListOf<HTMLAnchorElement>;
+  const cites = htmlData.querySelectorAll('cite a') as NodeListOf<HTMLAnchorElement>;
 
   // 以 fid 创建对象，如果fid存在则写入fid的数组的fidthreads属性的数组内；否则创建新的 fidthreads，自我调用
   const fidthreads: ForumThreads = {

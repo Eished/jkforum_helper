@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "webpack --watch",
     "style": "npx tailwindcss -i ./src/input.css -o ./src/output.css --watch",
-    "build": "npx tailwindcss -i ./src/input.css -o ./src/output.css && webpack --env production"
+    "build": "yarn lint && npx tailwindcss -i ./src/input.css -o ./src/output.css && webpack --env production",
+    "lint": "eslint 'src/**/*.{ts,tsx}'",
+    "lint:fix": "eslint 'src/**/*.{ts,tsx}' --fix"
   },
   "repository": {
     "type": "git",
@@ -40,6 +42,7 @@
     "postcss": "^8.4.12",
     "postcss-loader": "^6.2.1",
     "postcss-preset-env": "^7.4.3",
+    "prettier": "^2.6.2",
     "style-loader": "^3.3.1",
     "tailwindcss": "^3.0.24",
     "to-string-loader": "^1.2.0",

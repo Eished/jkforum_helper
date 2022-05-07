@@ -1,4 +1,3 @@
-const JSZipTypes = require('@types/jszip');
 import { XhrResponseType } from '@/commonType';
 
 declare global {

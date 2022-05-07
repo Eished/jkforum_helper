@@ -11,8 +11,8 @@ function downloadImgs(user: IUser, counter: Counter) {
   } else {
     counter.downloadBtn = 1;
   }
-  let imgsUrls: string[] = []; // 图片下载链接
-  let imgsTitles = []; // 图片名称
+  const imgsUrls: string[] = []; // 图片下载链接
+  const imgsTitles = []; // 图片名称
   const folderName = document.querySelector('.title-cont h1')?.innerHTML.trim().replace(/\.+/g, '-');
   const pcbImg = document.querySelectorAll('.pcb img'); // 所有帖子楼层的图片，逐个过滤
   if (pcbImg.length) {
@@ -35,7 +35,8 @@ function downloadImgs(user: IUser, counter: Counter) {
         const imgTitles = img.title.split('.');
         const title = `${imgTitles[imgTitles.length - 2]}-${i + 1}.${imgTitles[imgTitles.length - 1]}`; // 标题 +i.jpg，防重名！
         imgsTitles.push(title); // 保存下载名称到数组
-        imgsUrls.push(img.getAttribute('file')?.split('.thumb.')[0]!); // 保存下载链接到数组
+        const imgAtrrFile = img.getAttribute('file');
+        imgAtrrFile && imgsUrls.push(imgAtrrFile.split('.thumb.')[0]); // 保存下载链接到数组
       } else if (!img.getAttribute('file') && img.src.includes('mymypic.net')) {
         const nameSrc = img.src.split('/');
         imgsTitles.push(nameSrc[nameSrc.length - 1]); // 保存下载名称到数组
@@ -69,38 +70,32 @@ function batchDownload(imgsUrls: string[], imgsTitles: string[], folderName: str
     const item = imgsUrls[index];
     // 包装成 promise
     const promise = () => {
-      return new Promise(async (resolve) => {
-        const file_name = imgsTitles[index]; // 获取文件名
-        mesIdH.refresh(`正在下载：第 ${index + 1} / ${imgsUrls.length} 张，文件名：${file_name}`);
-
-        await getData(item, XhrResponseType.blob)
-          .then((blob) => {
-            const data = blob as unknown as Blob;
-            // 下载文件, 并存成ArrayBuffer对象
-            zip.file(file_name, data, {
-              binary: true,
-            }); // 逐个添加文件
-            mesIdP.refresh(
-              `第 ${index + 1} 张，文件名：${file_name}，大小：${(data.size / 1024).toFixed(
-                0
-              )} Kb，下载完成！等待压缩...`
-            );
-            resolve('');
-          })
-          .catch((err) => {
-            // 移除消息；
-            if (err.responseText) {
-              const domParser = new DOMParser();
-              const xmlDoc = domParser.parseFromString(err.responseText, 'text/html');
-              mesIdP.refresh(`第 ${index + 1} 张，请求错误：${xmlDoc.body.innerHTML}`);
-            } else if (err.status) {
-              console.error(err.status);
-            } else {
-              console.error(err);
-            }
-            resolve(-1); // 错误处理, 标记错误并返回
-          });
-      });
+      const file_name = imgsTitles[index]; // 获取文件名
+      mesIdH.refresh(`正在下载：第 ${index + 1} / ${imgsUrls.length} 张，文件名：${file_name}`);
+      return getData(item, XhrResponseType.blob)
+        .then((blob) => {
+          const data = blob as unknown as Blob;
+          // 下载文件, 并存成ArrayBuffer对象
+          zip.file(file_name, data, {
+            binary: true,
+          }); // 逐个添加文件
+          mesIdP.refresh(
+            `第 ${index + 1} 张，文件名：${file_name}，大小：${(data.size / 1024).toFixed(0)} Kb，下载完成！等待压缩...`
+          );
+        })
+        .catch((err) => {
+          // 移除消息；
+          if (err.responseText) {
+            const domParser = new DOMParser();
+            const xmlDoc = domParser.parseFromString(err.responseText, 'text/html');
+            mesIdP.refresh(`第 ${index + 1} 张，请求错误：${xmlDoc.body.innerHTML}`);
+          } else if (err.status) {
+            console.error(err.status);
+          } else {
+            console.error(err);
+          }
+          return -1; // 错误处理, 标记错误并返回
+        });
     };
     promises.push(promise);
   }
@@ -153,15 +148,15 @@ function noDisplayPic() {
         img.src = 'https://www.jkforum.net/static/image/common/none.gif';
         // new MessageBox("屏蔽图片成功");
         // 懒加载部分
-        function callback() {
+
+        const observer = new MutationObserver(() => {
           // 监听元素子节点属性变化，然后屏蔽链接
           if (img.src != 'https://www.jkforum.net/static/image/common/none.gif') {
             observer.disconnect(); // 断开监听
             console.log('屏蔽图片成功：', img.src);
             img.src = 'https://www.jkforum.net/static/image/common/none.gif';
           }
-        }
-        const observer = new MutationObserver(callback); // 建立监听器
+        }); // 建立监听器
         observer.observe(img, {
           // 开始监听
           attributes: true,

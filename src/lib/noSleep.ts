@@ -32,11 +32,9 @@ async function playVideo(msId: MessageBox) {
   }
 
   // 重试10次
-  while (true) {
+  while (p < 11) {
     await waitFor(5000);
-    if (p == 99) {
-      break;
-    } else if (p == 10) {
+    if (p == 10) {
       new MessageBox('防休眠启动失败！');
       break;
     } else {

@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { Home } from '@/components';
 import { Counter, IUser } from '@/commonType';
-import { getUserName, creatUser, MessageBox, launch } from '@/lib';
+import { creatUser, MessageBox, launch } from '@/lib';
 // import './app.less';
 const commonMeta = require('@/common.meta.json');
 
-const App: React.FC = () => {
-  const username = getUserName();
-  if (!username) {
-    return <></>;
-  }
-
+const App: React.FC<{ username: string }> = ({ username }) => {
   const [user, setUser] = useState<IUser>();
+  const [showHome, setShowHome] = useState(false);
+  const [counter, setCounter] = useState<Counter>({
+    signBtn: 0,
+    playBtn: 0,
+    playFlag: 0,
+    downloadBtn: 0,
+    replyBtn: 0,
+    thkBtn: 0,
+  }); // 防止按钮重复点击
 
   useEffect(() => {
     creatUser(username)
@@ -22,19 +26,7 @@ const App: React.FC = () => {
       .then((user) => {
         launch(user, counter); // 启动自动签到、投票、加载原图等
       });
-
-    return () => {};
   }, []);
-
-  const [showHome, setShowHome] = useState(false);
-  const [counter, setCounter] = useState<Counter>({
-    signBtn: 0,
-    playBtn: 0,
-    playFlag: 0,
-    downloadBtn: 0,
-    replyBtn: 0,
-    thkBtn: 0,
-  }); // 防止按钮重复点击
 
   return (
     <div className="fixed z-50">

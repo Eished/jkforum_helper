@@ -53,7 +53,9 @@ export const Toggle: React.FC<ToggleProps> = ({ text, checked, onClick }) => {
             onClick(!selected);
             setSelected(!selected);
           }}
-          onChange={() => {}}
+          onChange={() => {
+            return;
+          }}
         />
         <div className="toggle-bg bg-gray-300 border-2 border-gray-200 h-4 w-7 rounded-full"></div>
         <span className="ml-1 text-gray-900 text-xs">{text}</span>
