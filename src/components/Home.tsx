@@ -1,4 +1,3 @@
-import React, { useRef, useState } from 'react';
 import { Counter, IUser, ReplyOrThank } from '@/commonType';
 import {
   addOnePage,
@@ -15,6 +14,7 @@ import {
   timeControl,
   update,
 } from '@/lib';
+import React, { useRef, useState } from 'react';
 import { Button, Input, Panel, Toggle } from '.';
 
 interface HomeProps {

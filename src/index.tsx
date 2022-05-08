@@ -1,8 +1,8 @@
-import React from 'react';
-import { createRoot } from 'react-dom/client';
-import '@/utils/loadStyle';
 import App from '@/app';
 import { getUserName, MessageBox } from '@/lib';
+import '@/utils/loadStyle';
+import React from 'react';
+import { createRoot } from 'react-dom/client';
 
 const username = getUserName();
 if (username) {

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Home } from '@/components';
 import { Counter, IUser } from '@/commonType';
-import { creatUser, MessageBox, launch } from '@/lib';
+import { Home } from '@/components';
+import { creatUser, launch, MessageBox } from '@/lib';
+import React, { useEffect, useState } from 'react';
 // import './app.less';
 const commonMeta = require('@/common.meta.json');
 
