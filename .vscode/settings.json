@@ -29,7 +29,7 @@
   "editor.codeActionsOnSave": {
     "source.organizeImports": true,
     "source.fixAll": true,
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": false
   },
   "emmet.includeLanguages": {
     "vue": "html",
