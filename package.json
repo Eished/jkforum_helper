@@ -15,9 +15,14 @@
     "type": "git",
     "url": "git+https://github.com/Eished/jkforum_helper.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "JKForum",
+    "TamperMonkey",
+    "tailwindcsss",
+    "typescript"
+  ],
+  "author": "Eished",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Eished/jkforum_helper/issues"
   },

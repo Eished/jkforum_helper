@@ -1,4 +1,4 @@
-import { XhrResponseType, XhrMethod, XhrOptions } from '@/commonType';
+import { XhrMethod, XhrOptions, XhrResponseType } from '@/commonType';
 import { turnCdata } from '@/utils/tools';
 import { MessageBox } from './';
 
@@ -34,7 +34,6 @@ function getData(
 }
 
 // GM_xmlhttpRequest POST异步通用模块
-// todo: Content-Type:document
 function postDataCdata(
   url: string,
   postData: string,

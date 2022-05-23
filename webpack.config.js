@@ -24,7 +24,7 @@ const src = relativePath('src');
 
 module.exports = (env) => {
   console.log(env);
-  return {
+  const options = {
     entry: './src/index.tsx',
     output: {
       path: resolve(__dirname, 'dist'),
@@ -151,9 +151,26 @@ module.exports = (env) => {
         raw: true,
         entryOnly: true,
       }),
-      new HtmlWebpackPlugin({
-        template: './public/index.html',
-      }),
     ],
   };
+
+  if (!env.production) {
+    options.devServer = {
+      static: {
+        directory: path.join(__dirname, 'public'),
+      },
+      compress: true,
+      port: 8080,
+      hot: true,
+      open: true,
+      watchFiles: ['src/**/*.tsx'], // 无效
+    };
+    options.plugins.push(
+      new HtmlWebpackPlugin({
+        template: './public/index.html',
+      })
+    );
+  }
+
+  return options;
 };

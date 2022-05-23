@@ -24,6 +24,7 @@
 
 node_modules/
 dist/jkforum.dev.user.js
+dist/index.html
 npm-debug.log
 yarn-error.log
 
