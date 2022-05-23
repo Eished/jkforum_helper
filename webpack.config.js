@@ -2,6 +2,7 @@ const { resolve } = require('path');
 const path = require('path');
 const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const commonMeta = require('./src/common.meta.json');
 
@@ -24,10 +25,10 @@ const src = relativePath('src');
 module.exports = (env) => {
   console.log(env);
   return {
-    entry: ['./src/index.tsx'],
+    entry: './src/index.tsx',
     output: {
       path: resolve(__dirname, 'dist'),
-      filename: env.production ? 'jkforum.user.js' : 'jkforum.dev.user.js',
+      filename: env.production ? '[name].jkforum.user.js' : '[name].jkforum.dev.user.js',
       publicPath: '/',
     },
     externals: {},
@@ -121,6 +122,16 @@ module.exports = (env) => {
           extractComments: false,
         }),
       ],
+      // 单独打包react 和 react-dom file-saver jszip
+      splitChunks: {
+        cacheGroups: {
+          vendor: {
+            test: /[\\/]node_modules[\\/](react|react-dom|file-saver|jszip)[\\/]/,
+            name: 'vendor',
+            chunks: 'all',
+          },
+        },
+      },
     },
     watchOptions: {
       ignored: /node_modules/,
@@ -138,6 +149,9 @@ module.exports = (env) => {
         banner: getBanner({ name: env.production ? 'JKForum 助手' : 'JKForum 助手-dev' }),
         raw: true,
         entryOnly: true,
+      }),
+      new HtmlWebpackPlugin({
+        template: './public/index.html',
       }),
     ],
   };

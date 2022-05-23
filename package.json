@@ -4,11 +4,12 @@
   "description": "![JKFicon64oval2](https://cdn.jsdelivr.net/gh/eished/jkforum_helper/readme.assets/JKFicon64oval2.png)",
   "main": "/dist/jkforum.user.js",
   "scripts": {
+    "start": "webpack serve",
     "dev": "webpack --watch",
     "style": "npx tailwindcss -i ./src/input.css -o ./src/output.css --watch",
     "build": "yarn lint && npx tailwindcss -i ./src/input.css -o ./src/output.css && webpack --env production",
     "lint": "eslint 'src/**/*.{ts,tsx}'",
-    "lint:fix": "eslint 'src/**/*.{ts,tsx}' --fix"
+    "lint:fix": "yarn lint --fix"
   },
   "repository": {
     "type": "git",
@@ -36,9 +37,13 @@
     "css-loader": "^6.7.1",
     "eslint": "^8.13.0",
     "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-html": "^6.2.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.29.4",
     "eslint-plugin-react-hooks": "^4.4.0",
+    "html-webpack-plugin": "^5.5.0",
+    "less": "^4.1.2",
+    "less-loader": "^10.2.0",
     "postcss": "^8.4.12",
     "postcss-loader": "^6.2.1",
     "postcss-preset-env": "^7.4.3",
@@ -49,7 +54,8 @@
     "ts-loader": "^9.2.8",
     "typescript": "^4.6.3",
     "webpack": "^5.72.0",
-    "webpack-cli": "^4.9.2"
+    "webpack-cli": "^4.9.2",
+    "webpack-dev-server": "^4.9.0"
   },
   "dependencies": {
     "file-saver": "^2.0.5",

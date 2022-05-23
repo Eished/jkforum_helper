@@ -33,20 +33,20 @@ import React, { useState } from 'react';
 // };
 
 interface ToggleProps {
-  text: string;
+  label: string;
   onClick: (selected: boolean) => void;
   checked: boolean;
 }
 
-export const Toggle: React.FC<ToggleProps> = ({ text, checked, onClick }) => {
+export const Toggle: React.FC<ToggleProps> = ({ label, checked, onClick }) => {
   const [selected, setSelected] = useState(checked);
 
   return (
     <>
-      <label key={text} htmlFor={'toggle-' + text} className="mx-1 my-1 flex items-center cursor-pointer relative">
+      <label key={label} htmlFor={'toggle-' + label} className="mx-1 my-1 flex items-center cursor-pointer relative">
         <input
           type="checkbox"
-          id={'toggle-' + text}
+          id={'toggle-' + label}
           className="sr-only"
           checked={selected}
           onClick={() => {
@@ -58,7 +58,7 @@ export const Toggle: React.FC<ToggleProps> = ({ text, checked, onClick }) => {
           }}
         />
         <div className="toggle-bg bg-gray-300 border-2 border-gray-200 h-4 w-7 rounded-full"></div>
-        <span className="ml-1 text-gray-900 text-xs">{text}</span>
+        <span className="ml-1 text-gray-900 text-xs">{label}</span>
       </label>
     </>
   );
