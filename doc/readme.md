@@ -10,7 +10,7 @@
 
 ## 启动项目
 
-`ctrl shift B` 选择 `start:dev`
+`ctrl shift B` 选择 `start: style & dev`
 
 VSCode Task See https://go.microsoft.com/fwlink/?LinkId=733558
 
@@ -26,14 +26,15 @@ VSCode Task See https://go.microsoft.com/fwlink/?LinkId=733558
 
 ## 发布项目
 
-`yarn build` Or `ctrl shift B` 选择 `npm:build`
+`yarn build`
 
 生成文件文件：`jkforum_helper\dist\jkforum.user.js`
 
 ### splitchunks 拆包，减小发布体积
 
-参考 `splitchunks` 分支
-生成主文件发布，生成的 module 文件使用 `@require` 从自己代码库的 CDN 导入
+> 生成主文件发布，生成的 module 文件使用 `@require` 从自己代码库的 CDN 导入
+>
+> 实测提示：Code 使用了一个未经批准的外部脚本，无法发布。
 
 ## 适应其它网站
 

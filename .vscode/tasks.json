@@ -19,7 +19,7 @@
     },
     {
       "type": "shell",
-      "label": "start:dev",
+      "label": "start: style & dev",
       "group": "build",
       "dependsOn": ["yarn:style", "yarn:dev"]
     }

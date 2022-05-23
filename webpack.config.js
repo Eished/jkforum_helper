@@ -28,7 +28,7 @@ module.exports = (env) => {
     entry: './src/index.tsx',
     output: {
       path: resolve(__dirname, 'dist'),
-      filename: env.production ? '[name].jkforum.user.js' : '[name].jkforum.dev.user.js',
+      filename: env.production ? 'jkforum.user.js' : 'jkforum.dev.user.js',
       publicPath: '/',
     },
     externals: {},
@@ -123,15 +123,16 @@ module.exports = (env) => {
         }),
       ],
       // 单独打包react 和 react-dom file-saver jszip
-      splitChunks: {
-        cacheGroups: {
-          vendor: {
-            test: /[\\/]node_modules[\\/](react|react-dom|file-saver|jszip)[\\/]/,
-            name: 'vendor',
-            chunks: 'all',
-          },
-        },
-      },
+      // greasyfork 无法引入私人库
+      // splitChunks: {
+      //   cacheGroups: {
+      //     vendor: {
+      //       test: /[\\/]node_modules[\\/](react|react-dom|file-saver|jszip)[\\/]/,
+      //       name: 'vendor',
+      //       chunks: 'all',
+      //     },
+      //   },
+      // },
     },
     watchOptions: {
       ignored: /node_modules/,
