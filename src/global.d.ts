@@ -1,27 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { XhrResponseType } from '@/commonType';
+// https://juejin.cn/post/6898710177969602574
 
 declare global {
-  interface CompilationInfo {
-    commitHash: string;
-    branch: string;
-    version: string;
-    nearestTag: string;
-    versionWithTag: string;
-    // buildTime: number
-  }
-  const webpackCompilationInfo: CompilationInfo;
-
-  // const BwpElement: {
-  //   new (): HTMLVideoElement;
-  //   prototype: HTMLVideoElement;
-  // };
-  interface Window {
-    aid: string | undefined;
-    cid: string | undefined;
-    pageno: string | number | undefined;
-    // bilibiliEvolved: ExternalApis
-  }
   const unsafeWindow: Window & typeof globalThis;
   // const coreApis: CoreApis
   // const dq: CoreApis['utils']['dq']
@@ -125,3 +106,4 @@ declare global {
   function GM_notification(name: string): string;
   function GM_openInTab(name: string): string;
 }
+export {};
