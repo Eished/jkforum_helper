@@ -32,8 +32,9 @@ VSCode Task See https://go.microsoft.com/fwlink/?LinkId=733558
 
 ### splitchunks 拆包，减小发布体积
 
-参考 `splitchunks` 分支
 生成主文件发布，生成的 module 文件使用 `@require` 从自己代码库的 CDN 导入
+
+module 不能使用 `*.user.js` 后缀，否则提示 Code 使用了一个未经批准的外部脚本，所以 build 命令会改文件名
 
 ## 适应其它网站
 

@@ -7,7 +7,7 @@
     "start": "webpack serve",
     "dev": "webpack --watch",
     "style": "npx tailwindcss -i ./src/input.css -o ./src/output.css --watch",
-    "build": "yarn lint && npx tailwindcss -i ./src/input.css -o ./src/output.css && webpack --env production",
+    "build": "yarn lint && npx tailwindcss -i ./src/input.css -o ./src/output.css && webpack --env production && rm ./dist/vendor.jkforum.js && mv ./dist/vendor.jkforum.user.js ./dist/vendor.jkforum.js",
     "lint": "eslint 'src/**/*.{ts,tsx}'",
     "lint:fix": "yarn lint --fix"
   },
