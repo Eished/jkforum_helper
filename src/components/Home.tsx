@@ -15,7 +15,7 @@ import {
   update,
 } from '@/lib';
 import React, { useRef, useState } from 'react';
-import { Button, Input, Panel, Toggle } from '.';
+import { Button, Input, Panel, TextArea, Toggle } from '.';
 
 interface HomeProps {
   setShowHome: () => void;
@@ -42,21 +42,21 @@ export const Home: React.FC<HomeProps> = ({ user, setShowHome, counter, setCount
 
         <Panel title="通用设置">
           <Toggle
-            text={'自动感谢'}
+            label={'自动感谢'}
             onClick={() => {
               swThk(user);
             }}
             checked={user.autoThkSw}
           />
           <Toggle
-            text={'自动购买'}
+            label={'自动购买'}
             onClick={() => {
               swPay(user);
             }}
             checked={user.autoPaySw}
           />
           <Toggle
-            text={'加载原图'}
+            label={'加载原图'}
             onClick={() => {
               swRePic(user);
             }}
@@ -66,13 +66,14 @@ export const Home: React.FC<HomeProps> = ({ user, setShowHome, counter, setCount
         </Panel>
 
         <Panel title="批处理">
-          <Input
-            text={'输入回复:'}
-            placeholder={'中文分号；分隔每条回帖内容'}
+          <TextArea
+            label={'输入回复:'}
+            placeholder={'中文分号 ；分隔每条回帖内容，可输入论坛的富文本格式'}
             onChange={setReplyValue}
             value={replyValue}
+            rows={2}
           />
-          <Input text={'输入页码:'} placeholder={'板块号-起始页-终止页'} onChange={setPageValue} value={pageValue} />
+          <Input label={'输入页码:'} placeholder={'板块号-起始页-终止页'} onChange={setPageValue} value={pageValue} />
           <Button
             text={'添加当前页'}
             onClick={() => {
