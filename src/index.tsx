@@ -1,7 +1,7 @@
-import App from '@/app';
 import { getUserName, MessageBox } from '@/lib';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
+import { RecoilApp } from './store/RecoilStore';
 
 const username = getUserName();
 if (username) {
@@ -16,5 +16,6 @@ if (username) {
   document.body.prepend(rootDiv);
 
   const root = createRoot(rootDiv); // createRoot(container!) if you use TypeScript
-  root.render(<App username={username} />);
+  // root.render(<App username={username} />);
+  root.render(<RecoilApp />);
 }
