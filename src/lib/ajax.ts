@@ -5,7 +5,7 @@ import { MessageBox } from './';
 // GM_xmlhttpRequest GET异步通用模块
 function getData(
   url: string,
-  type: XhrResponseType = XhrResponseType.document,
+  type: XhrResponseType = XhrResponseType.DOCUMENT,
   usermethod: XhrMethod = XhrMethod.GET
 ): Promise<Document> {
   return new Promise((resolve, reject) => {
@@ -37,9 +37,9 @@ function getData(
 function postDataCdata(
   url: string,
   postData: string,
-  responseType: XhrResponseType = XhrResponseType.document,
+  responseType: XhrResponseType = XhrResponseType.DOCUMENT,
   usermethod: XhrMethod = XhrMethod.POST,
-  contentType: XhrResponseType = XhrResponseType.form
+  contentType: XhrResponseType = XhrResponseType.FORM
 ): Promise<Document | string> {
   return new Promise((resolve, reject) => {
     GM_xmlhttpRequest({
@@ -76,13 +76,13 @@ function postData(
   url: string,
   postData: string,
   {
-    responseType = XhrResponseType.form,
+    responseType = XhrResponseType.FORM,
     usermethod = XhrMethod.POST,
-    contentType = XhrResponseType.form,
+    contentType = XhrResponseType.FORM,
   }: XhrOptions = {
-    responseType: XhrResponseType.form,
+    responseType: XhrResponseType.FORM,
     usermethod: XhrMethod.POST,
-    contentType: XhrResponseType.form,
+    contentType: XhrResponseType.FORM,
   }
 ): Promise<MonkeyXhrResponse> {
   return new Promise((resolve, reject) => {

@@ -101,13 +101,13 @@ export const Home: React.FC<HomeProps> = ({ user, setShowHome, counter, setCount
           <Button
             text={'一键回帖'}
             onClick={() => {
-              replyOrThk(counter, user, ReplyOrThank.reply);
+              replyOrThk(counter, user, ReplyOrThank.REPLY);
             }}
           />
           <Button
             text={'一键感谢'}
             onClick={() => {
-              replyOrThk(counter, user, ReplyOrThank.thank);
+              replyOrThk(counter, user, ReplyOrThank.THANK);
             }}
           />
         </Panel>

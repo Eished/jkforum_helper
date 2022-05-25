@@ -1,7 +1,7 @@
-import JSZip from 'jszip';
-import { saveAs } from 'file-saver';
-import { Counter, XhrResponseType, IUser } from '@/commonType';
+import { Counter, IUser, XhrResponseType } from '@/commonType';
 import { ConcurrencyPromisePool } from '@/utils/ConcurrencyPromisePool';
+import { saveAs } from 'file-saver';
+import JSZip from 'jszip';
 import { getData, MessageBox } from './';
 
 function downloadImgs(user: IUser, counter: Counter) {
@@ -74,7 +74,7 @@ function batchDownload(imgsUrls: string[], imgsTitles: string[], folderName: str
     const promise = () => {
       const file_name = imgsTitles[index]; // 获取文件名
       mesIdH.refresh(`正在下载：第 ${index + 1} / ${imgsUrls.length} 张，文件名：${file_name}`);
-      return getData(item, XhrResponseType.blob)
+      return getData(item, XhrResponseType.BLOB)
         .then((blob) => {
           const data = blob as unknown as Blob;
           // 下载文件, 并存成ArrayBuffer对象

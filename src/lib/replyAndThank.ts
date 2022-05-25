@@ -1,7 +1,6 @@
-import { Counter, ForumThreads, ReplyOrThank, ReplyParams, Thread } from '@/commonType';
+import { Counter, ForumThreads, IUser, ReplyOrThank, ReplyParams, Thread } from '@/commonType';
 import { checkHtml, getTid, rdNum, urlSearchParams, waitFor } from '@/utils/tools';
 import { getData, MessageBox, playVideo, postDataCdata } from './';
-import { IUser } from '@/commonType';
 
 function chooceReply(user: IUser, value?: string) {
   if (value) {
@@ -200,7 +199,7 @@ function setThreadsTask(user: IUser, htmlData: Document, fid: string, replyLen: 
 }
 
 // 回帖\感谢函数
-async function replyOrThk(counter: Counter, user: IUser, type: ReplyOrThank = ReplyOrThank.reply) {
+async function replyOrThk(counter: Counter, user: IUser, type: ReplyOrThank = ReplyOrThank.REPLY) {
   let fidIndex = 0; // 当前回帖版块序号
   let thkFidIndex = 0; // 当前感谢版块序号
   // 初始化永久消息
@@ -212,7 +211,7 @@ async function replyOrThk(counter: Counter, user: IUser, type: ReplyOrThank = Re
   if (!user.replyThreads.length) {
     new MessageBox('任务列表为空，请先添加任务！');
     return;
-  } else if (type == ReplyOrThank.reply) {
+  } else if (type == ReplyOrThank.REPLY) {
     if (counter.replyBtn) {
       return;
     }
@@ -229,22 +228,22 @@ async function replyOrThk(counter: Counter, user: IUser, type: ReplyOrThank = Re
   playVideo(mesId); // 防休眠
 
   while (
-    (type == ReplyOrThank.reply && fidIndex < user.replyThreads.length) ||
-    (type == ReplyOrThank.thank && thkFidIndex < user.replyThreads.length)
+    (type == ReplyOrThank.REPLY && fidIndex < user.replyThreads.length) ||
+    (type == ReplyOrThank.THANK && thkFidIndex < user.replyThreads.length)
   ) {
     // 分别处理感谢和回帖
-    const elementForum = user.replyThreads[type == ReplyOrThank.reply ? fidIndex : thkFidIndex];
+    const elementForum = user.replyThreads[type == ReplyOrThank.REPLY ? fidIndex : thkFidIndex];
     const fid = elementForum.fid;
     let fidRepIndex = elementForum.fidRepIndex; // 上次回复位置
     let fidThkIndex = elementForum.fidThkIndex; // 上次感谢位置
 
     while (
-      (elementForum.fidthreads.length > fidRepIndex && type == ReplyOrThank.reply) ||
-      (elementForum.fidthreads.length > fidThkIndex && type == ReplyOrThank.thank)
+      (elementForum.fidthreads.length > fidRepIndex && type == ReplyOrThank.REPLY) ||
+      (elementForum.fidthreads.length > fidThkIndex && type == ReplyOrThank.THANK)
     ) {
       // 分别处理感谢和回帖
       switch (type) {
-        case ReplyOrThank.reply: {
+        case ReplyOrThank.REPLY: {
           mesIdRep.refresh(
             fid +
               '-版块，当前位置：' +
@@ -320,7 +319,7 @@ async function replyOrThk(counter: Counter, user: IUser, type: ReplyOrThank = Re
           await waitFor(randomTime); // 等待指定时间
           break;
         }
-        case ReplyOrThank.thank: {
+        case ReplyOrThank.THANK: {
           const elementThr = elementForum.fidthreads[fidThkIndex];
           const thkParamsData = urlSearchParams({
             formhash: user.formhash,
@@ -358,18 +357,18 @@ async function replyOrThk(counter: Counter, user: IUser, type: ReplyOrThank = Re
           break;
       }
     }
-    if (type == ReplyOrThank.thank) {
+    if (type == ReplyOrThank.THANK) {
       thkFidIndex++; // 翻页
-    } else if (type == ReplyOrThank.reply) {
+    } else if (type == ReplyOrThank.REPLY) {
       fidIndex++; // 翻页
     }
     GM_setValue(user.username, user);
   }
-  if (type == ReplyOrThank.thank) {
+  if (type == ReplyOrThank.THANK) {
     mesIdThk.remove(); // 移除永久消息
     new MessageBox('全部感谢完成！', 10000, 2);
     counter.thkBtn = 0;
-  } else if (type == ReplyOrThank.reply) {
+  } else if (type == ReplyOrThank.REPLY) {
     mesIdRep.remove(); // 移除永久消息
     mesIdRepContent.remove();
     new MessageBox('全部回帖完成！', 10000, 2);

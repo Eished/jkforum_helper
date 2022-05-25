@@ -53,12 +53,12 @@ const enum XhrMethod {
 }
 
 const enum XhrResponseType {
-  arraybuffer = 'arraybuffer',
-  blob = 'blob',
-  json = 'json',
-  text = 'text',
-  document = 'document',
-  form = 'application/x-www-form-urlencoded',
+  ARRAYBUFFER = 'arraybuffer',
+  BLOB = 'blob',
+  JSON = 'json',
+  TEXT = 'text',
+  DOCUMENT = 'document',
+  FORM = 'application/x-www-form-urlencoded',
 }
 
 type XhrOptions = {
@@ -68,8 +68,8 @@ type XhrOptions = {
 };
 
 const enum ReplyOrThank {
-  reply = 'reply',
-  thank = 'thk',
+  REPLY = 'reply',
+  THANK = 'thk',
 }
 
 type Thread = {
