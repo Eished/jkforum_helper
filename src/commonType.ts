@@ -101,6 +101,8 @@ interface GenericObject {
   [key: string]: any;
 }
 
+type exportType = { default: () => void } & GenericObject;
+
 export {
   Counter,
   XhrMethod,
@@ -112,4 +114,5 @@ export {
   IUser,
   ReplyParams,
   GenericObject,
+  exportType,
 };

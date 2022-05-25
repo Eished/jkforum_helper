@@ -1,7 +1,8 @@
 const tailwindStyles = require('@/output.css');
 
+// 导出的是 GM_addStyle 的值
 // delete css conflicts
-GM_addStyle(
+export default GM_addStyle(
   tailwindStyles
     .replace(/\nimg,\nvideo {\n {2}max-width: 100%;\n {2}height: auto;\n}\n/, '')
     .replace(

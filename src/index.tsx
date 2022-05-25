@@ -5,6 +5,8 @@ import { createRoot } from 'react-dom/client';
 
 const username = getUserName();
 if (username) {
+  import('@/utils/loadStyle');
+
   // 初始化消息盒子
   MessageBox.generate();
 

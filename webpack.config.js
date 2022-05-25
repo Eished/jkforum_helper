@@ -165,11 +165,12 @@ module.exports = (env) => {
       open: true,
       watchFiles: ['src/**/*.tsx'], // 无效
     };
-    options.plugins.push(
-      new HtmlWebpackPlugin({
-        template: './public/index.html',
-      })
-    );
+    // 插入打包后的 JavaScript 通过油猴插入，不需要此插件。但 public 文件夹下需要手动创建 index.html
+    // options.plugins.push(
+    //   new HtmlWebpackPlugin({
+    //     template: './public/index.html',
+    //   })
+    // );
   }
 
   return options;
