@@ -23,8 +23,7 @@
 # Recommended template: Node.gitignore
 
 node_modules/
-dist/jkforum.dev.user.js
-dist/index.html
+dist/
 npm-debug.log
 yarn-error.log
 
