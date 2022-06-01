@@ -1,3 +1,4 @@
+import { IMPORTANCE } from '@/commonType';
 /**
  * 消息通知类：不依赖框架
  * @param text string | undefined
@@ -15,9 +16,9 @@ class MessageBox {
   _msg: undefined | null | HTMLDivElement;
   _text: string | undefined;
   _setTime: number | string;
-  _importance: string | number;
+  _importance: IMPORTANCE;
   _timer: number;
-  constructor(text?: string, setTime: number | string = 5000, importance = 1) {
+  constructor(text?: string, setTime: number | string = 5000, importance: IMPORTANCE = IMPORTANCE.LOG_POP) {
     this._msg = null; // 永久显示标记，和元素地址
     this._text = text;
     this._setTime = setTime;

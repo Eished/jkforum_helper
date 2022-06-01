@@ -1,4 +1,4 @@
-import { Counter, ForumThreads, IUser, ReplyOrThank, ReplyParams, Thread } from '@/commonType';
+import { Counter, ForumThreads, IMPORTANCE, IUser, ReplyOrThank, ReplyParams, Thread } from '@/commonType';
 import { checkHtml, getTid, rdNum, urlSearchParams, waitFor } from '@/utils/tools';
 import { getData, MessageBox, playVideo, postDataCdata } from './';
 
@@ -366,12 +366,12 @@ async function replyOrThk(counter: Counter, user: IUser, type: ReplyOrThank = Re
   }
   if (type == ReplyOrThank.THANK) {
     mesIdThk.remove(); // 移除永久消息
-    new MessageBox('全部感谢完成！', 10000, 2);
+    new MessageBox('全部感谢完成！', 10000, IMPORTANCE.LOG_POP_GM);
     counter.thkBtn = 0;
   } else if (type == ReplyOrThank.REPLY) {
     mesIdRep.remove(); // 移除永久消息
     mesIdRepContent.remove();
-    new MessageBox('全部回帖完成！', 10000, 2);
+    new MessageBox('全部回帖完成！', 10000, IMPORTANCE.LOG_POP_GM);
     counter.replyBtn = 0;
   }
   mesId.remove(); // 移除永久消息

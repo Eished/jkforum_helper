@@ -1,4 +1,4 @@
-import { XhrMethod, XhrOptions, XhrResponseType } from '@/commonType';
+import { IMPORTANCE, XhrMethod, XhrOptions, XhrResponseType } from '@/commonType';
 import { turnCdata } from '@/utils/tools';
 import { MessageBox } from './';
 
@@ -26,7 +26,7 @@ function getData(
         reject(error);
       },
       ontimeout: () => {
-        new MessageBox('网络超时', 'none', 2);
+        new MessageBox('网络超时', 'none', IMPORTANCE.LOG_POP_GM);
         reject('timeout');
       },
     });
@@ -64,7 +64,7 @@ function postDataCdata(
         reject(error);
       },
       ontimeout: () => {
-        new MessageBox('网络超时', 'none', 2);
+        new MessageBox('网络超时', 'none', IMPORTANCE.LOG_POP_GM);
         reject('timeout');
       },
     });
@@ -108,7 +108,7 @@ function postData(
         reject(error);
       },
       ontimeout: () => {
-        new MessageBox('网络超时', 'none', 2);
+        new MessageBox('网络超时', 'none', IMPORTANCE.LOG_POP_GM);
         reject('timeout');
       },
     });
