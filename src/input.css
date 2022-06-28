@@ -2,18 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Toggle A */
-/* input:checked ~ .dot {
-  transform: translateX(100%);
-  background-color: #48bb78;
-} */
-
-/* Toggle B */
-/* input:checked ~ .dot {
-  transform: translateX(100%);
-  background-color: #48bb78;
-} */
-
 #jkforum-helper .toggle-bg:after {
   content: '';
   @apply absolute top-0.5 left-0.5 bg-white border border-gray-300 rounded-full h-3 w-3 transition shadow-sm;

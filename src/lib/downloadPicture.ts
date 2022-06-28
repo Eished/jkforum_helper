@@ -4,13 +4,13 @@ import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
 import { getData, MessageBox } from './';
 
-function downloadImgs(user: IUser, counter: Counter) {
-  if (counter.downloadBtn > 0) {
-    // 防重复点击
-    return;
-  } else {
-    counter.downloadBtn = 1;
-  }
+function downloadImgs(user: IUser, counter: Counter, setCounter: (num: Counter) => void) {
+  // 防重复点击
+  setCounter({
+    ...counter,
+    downloadBtn: 1,
+  });
+
   const imgsUrls: string[] = []; // 图片下载链接
   const imgsTitles = []; // 图片名称
   const foName = document.querySelector('.title-cont h1');
@@ -30,7 +30,10 @@ function downloadImgs(user: IUser, counter: Counter) {
             img.title = img.alt;
           } else {
             new MessageBox('获取图片名失败！');
-            counter.downloadBtn = 0;
+            setCounter({
+              ...counter,
+              downloadBtn: 0,
+            });
             return;
           }
         }
@@ -49,21 +52,34 @@ function downloadImgs(user: IUser, counter: Counter) {
       }
     }
     if (imgsUrls.length && imgsTitles.length) {
-      batchDownload(imgsUrls, imgsTitles, folderName, user, counter);
+      batchDownload(imgsUrls, imgsTitles, folderName, user, counter, setCounter);
     } else {
       new MessageBox('没有可下载的图片！');
-      counter.downloadBtn = 0;
+      setCounter({
+        ...counter,
+        downloadBtn: 0,
+      });
       return 0;
     }
   } else {
     new MessageBox('没有图片！');
-    counter.downloadBtn = 0;
+    setCounter({
+      ...counter,
+      downloadBtn: 0,
+    });
     return 0;
   }
 }
 
 // 批量下载 顺序
-function batchDownload(imgsUrls: string[], imgsTitles: string[], folderName: string, user: IUser, counter: Counter) {
+function batchDownload(
+  imgsUrls: string[],
+  imgsTitles: string[],
+  folderName: string,
+  user: IUser,
+  counter: Counter,
+  setCounter: (num: Counter) => void
+) {
   const zip = new JSZip();
   const promises: (() => Promise<number | void>)[] = [];
   const mesIdH = new MessageBox('正在下载...', 'none'); // 永久消息
@@ -113,15 +129,15 @@ function batchDownload(imgsUrls: string[], imgsTitles: string[], folderName: str
     }
     if (results.length == counter.downloadBtn) {
       new MessageBox('全部图片下载失败！');
-      counter.downloadBtn = 0;
       mesIdP.remove();
+      setCounter({
+        ...counter,
+        downloadBtn: 0,
+      });
       return;
     }
     if (counter.downloadBtn) {
-      if (confirm(`检测到文件缺失 ${counter.downloadBtn} 张，是否继续压缩？`)) {
-        counter.downloadBtn = 0;
-      } else {
-        counter.downloadBtn = 0;
+      if (!confirm(`检测到文件缺失 ${counter.downloadBtn} 张，是否继续压缩？`)) {
         mesIdP.remove();
         return;
       }
@@ -134,6 +150,10 @@ function batchDownload(imgsUrls: string[], imgsTitles: string[], folderName: str
       .then((content) => {
         // 生成二进制流
         mesIdP.remove();
+        setCounter({
+          ...counter,
+          downloadBtn: 0,
+        });
         saveAs(content, `${folderName} [${imgsUrls.length}P]`); // 利用file-saver保存文件，大文件需等待很久
       });
   });

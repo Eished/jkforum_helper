@@ -199,7 +199,12 @@ function setThreadsTask(user: IUser, htmlData: Document, fid: string, replyLen: 
 }
 
 // 回帖\感谢函数
-async function replyOrThk(counter: Counter, user: IUser, type: ReplyOrThank = ReplyOrThank.REPLY) {
+async function replyOrThk(
+  counter: Counter,
+  user: IUser,
+  type: ReplyOrThank = ReplyOrThank.REPLY,
+  setCounter: (num: Counter) => void
+) {
   let fidIndex = 0; // 当前回帖版块序号
   let thkFidIndex = 0; // 当前感谢版块序号
   // 初始化永久消息
@@ -212,17 +217,17 @@ async function replyOrThk(counter: Counter, user: IUser, type: ReplyOrThank = Re
     new MessageBox('任务列表为空，请先添加任务！');
     return;
   } else if (type == ReplyOrThank.REPLY) {
-    if (counter.replyBtn) {
-      return;
-    }
-    counter.replyBtn = 1; // 防止重复点击
+    setCounter({
+      ...counter,
+      replyBtn: 1,
+    });
     mesIdRep.show('开始回帖...', 'none');
     mesIdRepContent.show('...', 'none');
   } else {
-    if (counter.thkBtn) {
-      return;
-    }
-    counter.thkBtn = 1; // 防止重复点击
+    setCounter({
+      ...counter,
+      thkBtn: 1,
+    }); // 防止重复点击
     mesIdThk.show('开始感谢...', 'none');
   }
   playVideo(mesId); // 防休眠
@@ -347,7 +352,6 @@ async function replyOrThk(counter: Counter, user: IUser, type: ReplyOrThank = Re
           ); // 刷新永久消息
           elementForum.fidThkIndex = ++fidThkIndex;
           GM_setValue(user.username, user);
-          // clearInterval(counter.thkBtn); // ??
           await waitFor(user.thkDiffer); // 等待指定时间
           break;
         }
@@ -367,12 +371,18 @@ async function replyOrThk(counter: Counter, user: IUser, type: ReplyOrThank = Re
   if (type == ReplyOrThank.THANK) {
     mesIdThk.remove(); // 移除永久消息
     new MessageBox('全部感谢完成！', 10000, IMPORTANCE.LOG_POP_GM);
-    counter.thkBtn = 0;
+    setCounter({
+      ...counter,
+      thkBtn: 1,
+    });
   } else if (type == ReplyOrThank.REPLY) {
     mesIdRep.remove(); // 移除永久消息
     mesIdRepContent.remove();
     new MessageBox('全部回帖完成！', 10000, IMPORTANCE.LOG_POP_GM);
-    counter.replyBtn = 0;
+    setCounter({
+      ...counter,
+      replyBtn: 0,
+    });
   }
   mesId.remove(); // 移除永久消息
 }

@@ -32,16 +32,17 @@ async function playVideo(msId: MessageBox) {
   }
 
   // 重试10次
+  await waitFor(5000);
   while (p < 11) {
-    await waitFor(5000);
     if (p == 10) {
       new MessageBox('防休眠启动失败！');
       break;
     } else {
-      console.log('第' + (p + 1) + '次重启防休眠');
+      p++;
+      console.log('第' + p + '次重启防休眠');
+      video.load();
+      await waitFor(5000);
     }
-    video.load();
-    p++;
   }
 }
 

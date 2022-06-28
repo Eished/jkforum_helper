@@ -9,12 +9,16 @@ function timeControl(counter: Counter, setCounter: (num: Counter) => void, user:
   const msIdSlp = new MessageBox();
   const msIdSig = new MessageBox();
   const msIdTime = new MessageBox();
+  let timer = 0;
 
   async function control() {
     const now = new NowTime(); // 获取当前时间，到秒
     if (now.seconds == signtime) {
-      clearInterval(counter.signBtn); // timer=1 未知原因
-      counter.signBtn = 0;
+      clearInterval(timer); // timer=1 未知原因
+      setCounter({
+        ...counter,
+        signBtn: 0,
+      });
       // 移除永久消息通知
       msIdSlp.remove();
       msIdSig.remove();
@@ -35,7 +39,12 @@ function timeControl(counter: Counter, setCounter: (num: Counter) => void, user:
     playVideo(msIdSlp); // 防休眠
     msIdSig.show('定时签到中，请勿退出...', 'none');
     msIdTime.show('...', 'none'); // 占位消息，给刷新用
-    counter.signBtn = window.setInterval(control, 500); // 运行自动签到
+
+    timer = window.setInterval(control, 500);
+    setCounter({
+      ...counter,
+      signBtn: timer,
+    }); // 运行自动签到}
   }
 }
 

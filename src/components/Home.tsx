@@ -100,14 +100,16 @@ export const Home: React.FC<HomeProps> = ({ user, setShowHome, counter, setCount
           />
           <Button
             text={'一键回帖'}
+            disabled={!!counter.replyBtn}
             onClick={() => {
-              replyOrThk(counter, user, ReplyOrThank.REPLY);
+              replyOrThk(counter, user, ReplyOrThank.REPLY, setCounter);
             }}
           />
           <Button
             text={'一键感谢'}
+            disabled={!!counter.thkBtn}
             onClick={() => {
-              replyOrThk(counter, user, ReplyOrThank.THANK);
+              replyOrThk(counter, user, ReplyOrThank.THANK, setCounter);
             }}
           />
         </Panel>
@@ -115,14 +117,16 @@ export const Home: React.FC<HomeProps> = ({ user, setShowHome, counter, setCount
         <Panel title="高级功能">
           <Button
             text={'定时签到'}
+            disabled={!!counter.signBtn}
             onClick={() => {
               timeControl(counter, setCounter, user);
             }}
           />
           <Button
             text={'下载图片'}
+            disabled={!!counter.downloadBtn}
             onClick={() => {
-              downloadImgs(user, counter);
+              downloadImgs(user, counter, setCounter);
             }}
           />
           <Button

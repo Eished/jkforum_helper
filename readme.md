@@ -123,6 +123,7 @@
   - [x] 使用 React + TypeScript + Tailwindcss 重构，增加管理面板。
   - [x] 可清空已完成任务数据；
   - [x] 整合所有按钮、输入框和参数设置；
+  - [x] 增加按下后禁用，防止重复点击；
 - [ ] 分模块打包，减小发布大小
 - [x] Github Actions 自动构建发布
 - [ ] 集中状态管理 useContext or Redux
