@@ -14,7 +14,13 @@ function downloadImgs(user: IUser, counter: Counter, setCounter: (num: Counter) 
   const imgsUrls: string[] = []; // 图片下载链接
   const imgsTitles = []; // 图片名称
   const foName = document.querySelector('.title-cont h1');
-  if (!foName) return;
+  if (!foName) {
+    new MessageBox('没有帖子标题！');
+    return setCounter({
+      ...counter,
+      downloadBtn: 0,
+    });
+  }
   const folderName = foName.innerHTML.trim().replace(/\.+/g, '-');
   const pcbImg = document.querySelectorAll('.pcb img'); // 所有帖子楼层的图片，逐个过滤
   if (pcbImg.length) {
