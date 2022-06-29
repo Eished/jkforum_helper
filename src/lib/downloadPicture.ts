@@ -145,6 +145,10 @@ function batchDownload(
     if (counter.downloadBtn) {
       if (!confirm(`检测到文件缺失 ${counter.downloadBtn} 张，是否继续压缩？`)) {
         mesIdP.remove();
+        setCounter({
+          ...counter,
+          downloadBtn: 0,
+        });
         return;
       }
     }
