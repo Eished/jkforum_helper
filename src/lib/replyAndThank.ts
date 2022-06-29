@@ -373,7 +373,7 @@ async function replyOrThk(
     new MessageBox('全部感谢完成！', 10000, IMPORTANCE.LOG_POP_GM);
     setCounter({
       ...counter,
-      thkBtn: 1,
+      thkBtn: 0,
     });
   } else if (type == ReplyOrThank.REPLY) {
     mesIdRep.remove(); // 移除永久消息
