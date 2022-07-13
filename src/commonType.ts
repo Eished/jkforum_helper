@@ -1,4 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
+export enum Mood {
+  kaixin = 'kx', // 开心,
+  nanguo = 'ng', // 难过,
+  yumen = 'ym', // 郁闷,
+  wuliao = 'wl', // 无聊,
+  fennu = 'nu', // 怒,
+  cahan = 'ch', // 擦汗,
+  fendou = 'fd', // 奋斗,
+  yonglan = 'yl', // 慵懒,
+  shuai = 'shuai', // 衰,
+}
 interface IUser {
   username: string;
   formhash: string;
@@ -8,7 +20,7 @@ interface IUser {
   signNum: number;
   interTime: number;
   todaysay: string;
-  mood: string;
+  mood: Mood;
   autoPlayDiff: number;
   autoPaySw: boolean;
   autoThkSw: boolean;

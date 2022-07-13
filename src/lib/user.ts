@@ -1,4 +1,4 @@
-import { IUser } from '@/commonType';
+import { IUser, Mood } from '@/commonType';
 import { compaObjKey, copyObjVal } from '@/utils/tools';
 import { MessageBox, setFastReply } from './';
 
@@ -16,7 +16,7 @@ class User implements IUser {
   signNum = 10; // 定时签到重试次数
   interTime = 200; // 定时签到重试间隔时间ms
   todaysay = '簽到'; // 签到输入内容
-  mood = 'fd'; // 签到心情
+  mood = Mood.fendou; // 签到心情
   autoPlayDiff = 2000; // 自动播放图片间隔时间ms
   autoPaySw = true; // 自动支付开关
   autoThkSw = true; // 自动感谢开关
