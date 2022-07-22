@@ -2,7 +2,7 @@ const { resolve } = require('path');
 const path = require('path');
 const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+// const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const commonMeta = require('./src/common.meta.json');
 

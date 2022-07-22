@@ -1,4 +1,5 @@
 import { Counter, IUser, ReplyOrThank } from '@/commonType';
+import { Button, Input, Panel, TextArea, Toggle } from '@/components';
 import {
   addOnePage,
   addPageBatch,
@@ -15,7 +16,6 @@ import {
   update,
 } from '@/lib';
 import React, { useRef, useState } from 'react';
-import { Button, Input, Panel, TextArea, Toggle } from '.';
 
 interface HomeProps {
   setShowHome: () => void;

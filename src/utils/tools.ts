@@ -133,7 +133,6 @@ export {
   compaObjKey,
   copyObjVal,
   getUuiD,
-  GenericObject,
   getVersionNum,
   getTid,
 };

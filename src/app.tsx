@@ -1,6 +1,6 @@
 import { Counter, IUser } from '@/commonType';
-import { Home } from '@/components';
 import { creatUser, launch, MessageBox } from '@/lib';
+import { Home } from '@/views/Home';
 import React, { useEffect, useState } from 'react';
 const commonMeta = require('@/common.meta.json');
 
