@@ -4,11 +4,7 @@ import { XhrResponseType } from '@/commonType';
 
 declare global {
   const unsafeWindow: Window & typeof globalThis;
-  // const coreApis: CoreApis
-  // const dq: CoreApis['utils']['dq']
-  // const dqa: CoreApis['utils']['dqa']
-  // const none: CoreApis['utils']['none']
-  // const componentsTags: CoreApis['componentApis']['component']['componentsTags']
+  const PRODUCTION: boolean;
 
   interface MonkeyXhrResponse {
     finalUrl: string;

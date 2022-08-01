@@ -19,9 +19,16 @@
     },
     {
       "type": "shell",
-      "label": "start: style & dev",
+      "command": "yarn start",
       "group": "build",
-      "dependsOn": ["yarn:style", "yarn:dev"]
+      "problemMatcher": [],
+      "label": "yarn:start"
+    },
+    {
+      "type": "shell",
+      "label": "start & dev & style",
+      "group": "build",
+      "dependsOn": ["yarn:style", "yarn:dev", "yarn:start"]
     }
   ]
 }

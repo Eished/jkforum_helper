@@ -2,12 +2,12 @@ const { resolve } = require('path');
 const path = require('path');
 const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
-// const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const commonMeta = require('./src/common.meta.json');
 
 const year = new Date().getFullYear();
-const getBanner = (meta) => `// ==UserScript==\n${Object.entries(Object.assign(meta, commonMeta))
+const getBanner = (meta) => `// ==UserScript==\n${Object.entries(Object.assign(commonMeta, meta))
   .map(([key, value]) => {
     if (Array.isArray(value)) {
       return value.map((item) => `// @${key.padEnd(20, ' ')}${item}`).join('\n');
@@ -23,12 +23,20 @@ const relativePath = (p) => path.join(process.cwd(), p);
 const src = relativePath('src');
 
 module.exports = (env) => {
-  console.log(env);
+  const PRODUCTION = env.production;
+  const banner = {};
+  if (!PRODUCTION) {
+    banner.name = 'JKForum 助手-dev';
+    banner['name:zh-TW'] = 'JKForum 助手-dev';
+    banner.namespace = 'jkforum-helper-dev';
+    banner.match = ['*://*.jkforum.net/*', '*://*.localhost/*'];
+    banner.require = ['file://\\\\wsl$\\Ubuntu-20.04\\home\\eis\\web\\jkforum_helper\\dist\\jkforum.dev.user.js'];
+  }
   const options = {
     entry: './src/index.tsx',
     output: {
       path: resolve(__dirname, 'dist'),
-      filename: env.production ? 'jkforum.user.js' : 'jkforum.dev.user.js',
+      filename: PRODUCTION ? 'jkforum.user.js' : 'jkforum.dev.user.js',
       publicPath: '/',
     },
     externals: {},
@@ -143,18 +151,21 @@ module.exports = (env) => {
         '@': src,
       },
     },
-    mode: env.production ? 'production' : 'development',
-    // devtool: 'source-map',
+    mode: PRODUCTION ? 'production' : 'development',
+    // devtool: 'source-map', // 严重影响打包速度
     plugins: [
       new webpack.BannerPlugin({
-        banner: getBanner({ name: env.production ? 'JKForum 助手' : 'JKForum 助手-dev' }),
+        banner: getBanner(banner),
         raw: true,
         entryOnly: true,
+      }),
+      new webpack.DefinePlugin({
+        PRODUCTION,
       }),
     ],
   };
 
-  if (!env.production) {
+  if (!PRODUCTION) {
     options.devServer = {
       static: {
         directory: path.join(__dirname, 'public'),
@@ -163,14 +174,13 @@ module.exports = (env) => {
       port: 8080,
       hot: true,
       open: true,
-      watchFiles: ['src/**/*.tsx'], // 无效
+      watchFiles: ['src/**/*.tsx'],
     };
-    // 插入打包后的 JavaScript 通过油猴插入，不需要此插件。但 public 文件夹下需要手动创建 index.html
-    // options.plugins.push(
-    //   new HtmlWebpackPlugin({
-    //     template: './public/index.html',
-    //   })
-    // );
+    options.plugins.push(
+      new HtmlWebpackPlugin({
+        template: './public/index.html',
+      })
+    );
   }
 
   return options;
