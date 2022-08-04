@@ -25,8 +25,12 @@ module.exports = {
   },
   rules: {
     // 自定义的一些规则
-    'prettier/prettier': 'error',
-    'linebreak-style': ['error', 'unix'],
+    'prettier/prettier': [
+      'error',
+      {
+        endOfLine: 'auto',
+      },
+    ],
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': 'warn',
     'react/jsx-uses-react': 'error',
