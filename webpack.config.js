@@ -174,7 +174,6 @@ module.exports = (env) => {
       port: 8080,
       hot: true,
       open: true,
-      watchFiles: ['src/**/*.tsx'],
     };
     options.plugins.push(
       new HtmlWebpackPlugin({
