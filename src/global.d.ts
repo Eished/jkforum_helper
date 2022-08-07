@@ -101,5 +101,10 @@ declare global {
   function GM_addElement(name: string): string;
   function GM_notification(name: string): string;
   function GM_openInTab(name: string): string;
+  function GM_registerMenuCommand(name: string, callback: () => void): void;
+  function GM_addValueChangeListener(
+    name: string,
+    callback: (name: string, old_value: any, new_value: any, remote: boolean) => void
+  ): number;
 }
 export {};

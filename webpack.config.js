@@ -29,8 +29,9 @@ module.exports = (env) => {
     banner.name = 'JKForum 助手-dev';
     banner['name:zh-TW'] = 'JKForum 助手-dev';
     banner.namespace = 'jkforum-helper-dev';
-    banner.match = ['*://*.jkforum.net/*', '*://*.localhost/*'];
-    banner.require = ['file://\\\\wsl$\\Ubuntu-20.04\\home\\eis\\web\\jkforum_helper\\dist\\jkforum.dev.user.js'];
+    commonMeta.require.push('file://\\\\wsl$\\Ubuntu-20.04\\home\\eis\\web\\jkforum_helper\\dist\\jkforum.dev.user.js');
+    commonMeta.grant.push('GM_addValueChangeListener');
+    commonMeta.match.push('*://*.localhost/*');
   }
   const options = {
     entry: './src/index.tsx',

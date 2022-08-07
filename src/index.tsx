@@ -2,7 +2,6 @@ import App from '@/app';
 import { getUserName, MessageBox } from '@/lib';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { isTampermonkey } from './utils/environment';
 
 const start = () => {
   const username = getUserName();
@@ -25,9 +24,17 @@ const start = () => {
 if (PRODUCTION) {
   start();
 } else {
-  // 本地开发时注入页面的js，设置为只在油猴环境运行。
-  // 开启压缩后 webpack 在生产环境构建会把这部分代码删掉。
-  if (isTampermonkey()) {
-    start();
-  }
+  // 在生产环境打包时 webpack 会把 else 部分代码移除。使用动态导入就不会把这些代码打包进生产环境
+  import('@/utils/environment').then(({ isTampermonkey }) => {
+    if (isTampermonkey()) {
+      // 开发环境油猴脚本从这里开始运行
+      import('@/utils/hotReload').then(({ hotReload }) => {
+        // 载入在线调试热刷新
+        hotReload();
+        start();
+      });
+    } else {
+      // 运行不需要油猴环境的js，用于模拟目标网页原本逻辑。不需要模拟可以删除
+    }
+  });
 }
