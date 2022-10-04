@@ -1,5 +1,5 @@
 import { IUser, Mood } from '@/commonType';
-import { compaObjKey, copyObjVal } from '@/utils/tools';
+import { isSameObjKey, mergeObjValue, updateUserUrl } from '@/utils/tools';
 import { MessageBox, setFastReply } from './';
 
 class User implements IUser {
@@ -30,7 +30,7 @@ class User implements IUser {
   freeTime = 3600000; // 现在有空间隔
   freeTid = ''; // 自动现在有空 帖子ID，一个账号一个贴子
   votedMessage = '+1'; // 投票输入内容
-  orcUrl = 'https://aip.baidubce.com/rest/2.0/ocr/v1/accurate_basic?'; // general_basic 精准或普通 api
+  orcUrl = 'https://aip.baidubce.com/rest/2.0/ocr/v1/general_basic?'; // accurate_basic or general_basic 精准或普通 api
   votedUrl = 'https://www.jkforum.net/plugin.php?';
   applyVotedUrl = 'https://www.jkforum.net/home.php?mod=task&do=apply&id=59';
   taskDoneUrl = 'https://www.jkforum.net/home.php?mod=task&do=draw&id=59';
@@ -49,41 +49,42 @@ const getUserName = () => {
   return document.querySelector('.avatar_info a')?.innerHTML;
 };
 
-const getUserFromName = (): IUser | undefined => {
+const getUserFromName = (): IUser | null => {
   const userName = getUserName();
-  return userName ? GM_getValue(userName) : undefined;
+  return userName ? GM_getValue(userName) : null;
 };
 
 const getFormhash = () => {
-  return (document.querySelector('.listmenu li a') as HTMLLinkElement)?.href.split('&')[2].split('=')[1];
+  return new URLSearchParams((document.querySelector('.listmenu li a') as HTMLLinkElement | null)?.href).get(
+    'formhash'
+  );
 };
 
-const creatUser = async (username: string) => {
-  const formhash = getFormhash();
-  let user = getUserFromName();
+const creatUser = async (username: string, formhash: string) => {
+  let user = GM_getValue<IUser>(username);
+  const userMod = new User(username, formhash);
   if (!user) {
     // 空则写入，或版本变动写入
-    user = new User(username, formhash);
+    user = userMod;
     user = await setFastReply(user); // 设置快速回复
     GM_setValue(username, user);
     new MessageBox('添加用户成功！');
-  } else if (user.version != GM_info.script.version) {
-    const userMod = new User(username, formhash);
-    const compa = compaObjKey(userMod, user); // 比较key
-    if (compa) {
-      // key相同 只改变版本
-      user.version = GM_info.script.version; // 记录新版本
-    } else {
+  } else if (user.version !== GM_info.script.version) {
+    const compa = isSameObjKey(userMod, user); // 比较key
+    // 更新所有 Url 参数
+    user = updateUserUrl(user, userMod); // new对User赋值
+    // key相同 只改变版本
+    user.version = GM_info.script.version; // 记录新版本
+    if (!compa) {
       // key不同
-      user.version = GM_info.script.version; // 记录新版本
-      user = copyObjVal(userMod, user); // new对User赋值
+      user = mergeObjValue(userMod, user); // new对User赋值
       new MessageBox('数据更新成功！');
     }
     user = await setFastReply(user); // 设置快速回复
     GM_setValue(username, user);
     new MessageBox('版本更新成功！请阅读使用说明。');
   }
-  if (user.formhash != formhash) {
+  if (user.formhash !== formhash) {
     // formhash 变动存储
     user.formhash = formhash;
     GM_setValue(username, user);
@@ -91,4 +92,4 @@ const creatUser = async (username: string) => {
   return user;
 };
 
-export { User, getUserName, getUserFromName, creatUser };
+export { User, getUserName, getUserFromName, getFormhash, creatUser };

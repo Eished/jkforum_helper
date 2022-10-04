@@ -72,15 +72,15 @@ class NowTime {
 }
 
 // 比较键
-function compaObjKey(source: IUser, target: IUser) {
-  if (Object.keys(target).length == Object.keys(source).length) {
+function isSameObjKey(source: IUser, target: IUser) {
+  if (Object.keys(target).length === Object.keys(source).length) {
     // 用户数据匹配
-    Object.keys(source).forEach((key) => {
+    for (const key of Object.keys(source)) {
       // https://stackoverflow.com/questions/39282873/object-hasownproperty-yields-the-eslint-no-prototype-builtins-error-how-to
       if (!Object.prototype.hasOwnProperty.call(target, key)) {
         return false;
       }
-    });
+    }
     return true;
   } else {
     return false;
@@ -88,9 +88,19 @@ function compaObjKey(source: IUser, target: IUser) {
 }
 
 // 赋值对象的值
-function copyObjVal(target: IUser & GenericObject, source: IUser & GenericObject): IUser & GenericObject {
+function mergeObjValue(target: IUser & GenericObject, source: IUser & GenericObject): IUser {
   Object.keys(source).forEach((key) => {
     if (source[key] && Object.prototype.hasOwnProperty.call(target, key)) {
+      target[key] = source[key];
+    }
+  });
+  return target;
+}
+
+// 更新User对象的URL值
+function updateUserUrl(target: IUser & GenericObject, source: IUser & GenericObject): IUser {
+  Object.keys(source).forEach((key) => {
+    if (key.includes('Url')) {
       target[key] = source[key];
     }
   });
@@ -130,9 +140,10 @@ export {
   waitFor,
   rdNum,
   NowTime,
-  compaObjKey,
-  copyObjVal,
+  isSameObjKey,
+  mergeObjValue,
   getUuiD,
   getVersionNum,
   getTid,
+  updateUserUrl,
 };

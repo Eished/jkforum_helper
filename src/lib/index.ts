@@ -13,5 +13,5 @@ export { addOnePage, addPageBatch, replyOrThk } from './replyAndThank';
 export { resetReplyData } from './resetReplyData';
 export { sign, timeControl } from './sign';
 export { autoThk } from './thank';
-export { creatUser, getUserFromName, getUserName, User } from './user';
+export { creatUser, getFormhash, getUserFromName, getUserName, User } from './user';
 export { autoVoted } from './vote';

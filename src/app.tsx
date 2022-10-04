@@ -4,7 +4,7 @@ import { Home } from '@/views/Home';
 import React, { useEffect, useState } from 'react';
 const commonMeta = require('@/common.meta.json');
 
-const App: React.FC<{ username: string }> = ({ username }) => {
+const App: React.FC<{ username: string; formhash: string }> = ({ username, formhash }) => {
   const [user, setUser] = useState<IUser>();
   const [showHome, setShowHome] = useState(false);
   const [counter, setCounter] = useState<Counter>({
@@ -17,7 +17,7 @@ const App: React.FC<{ username: string }> = ({ username }) => {
   }); // 防止按钮重复点击
 
   useEffect(() => {
-    creatUser(username)
+    creatUser(username, formhash)
       .then((user) => {
         setUser(user);
         return user;
@@ -25,7 +25,7 @@ const App: React.FC<{ username: string }> = ({ username }) => {
       .then((user) => {
         launch(user, counter); // 启动自动签到、投票、加载原图等
       });
-  }, [username, counter]);
+  }, [username, formhash, counter]);
 
   return (
     <div className="fixed z-50">

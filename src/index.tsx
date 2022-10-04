@@ -1,11 +1,12 @@
 import App from '@/app';
-import { getUserName, MessageBox } from '@/lib';
+import { getFormhash, getUserName, MessageBox } from '@/lib';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 
 const start = () => {
   const username = getUserName();
-  if (username) {
+  const formhash = getFormhash();
+  if (username && formhash) {
     import('@/utils/loadStyle');
 
     // 初始化消息盒子
@@ -17,7 +18,7 @@ const start = () => {
     document.body.prepend(rootDiv);
 
     const root = createRoot(rootDiv); // createRoot(container!) if you use TypeScript
-    root.render(<App username={username} />);
+    root.render(<App username={username} formhash={formhash} />);
   }
 };
 
