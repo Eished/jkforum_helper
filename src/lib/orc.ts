@@ -1,6 +1,6 @@
-import { urlSearchParams, turnCdata, getTid } from '@/utils/tools';
-import { MessageBox, playVideo, postData } from './';
 import { IUser } from '@/commonType';
+import { getTid, turnCdata, urlSearchParams } from '@/utils/tools';
+import { MessageBox, playVideo, postData } from './';
 
 /**
  * ORC
@@ -105,8 +105,8 @@ async function readImage(base64: string, user: IUser) {
 async function autofillCaptcha(user: IUser) {
   if (!user.token) {
     const token = prompt('请输入验证码识别的 api 令牌（需要令牌请私聊 or 发送邮件到 kished@outlook.com ）：');
-    const reg = /.*\..*\..*\..*/g;
-    if (token && reg.test(user.token)) {
+    const reg = /.*\..*\..*\..*/;
+    if (token && reg.test(token)) {
       user.token = token;
       GM_setValue(user.username, user);
     } else if (token !== null) {
