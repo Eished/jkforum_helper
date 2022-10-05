@@ -4,7 +4,6 @@ export { setFastReply } from './fastReply';
 export { launch } from './launch';
 export { swPay, swRePic, swThk, update } from './menuCommand';
 export { MessageBox } from './message';
-export { playVideo } from './noSleep';
 export { autofillCaptcha } from './orc';
 export { loadOriginImage } from './originImage';
 export { autoPay } from './pay';

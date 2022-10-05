@@ -1,6 +1,6 @@
 import { Counter, ForumThreads, IMPORTANCE, IUser, ReplyOrThank, ReplyParams, Thread } from '@/commonType';
+import { getData, MessageBox, postDataCdata } from '@/lib';
 import { checkHtml, getTid, rdNum, urlSearchParams, waitFor } from '@/utils/tools';
-import { getData, MessageBox, playVideo, postDataCdata } from './';
 
 function chooceReply(user: IUser, value?: string) {
   if (value) {
@@ -208,7 +208,6 @@ async function replyOrThk(
   let fidIndex = 0; // 当前回帖版块序号
   let thkFidIndex = 0; // 当前感谢版块序号
   // 初始化永久消息
-  const mesId = new MessageBox();
   const mesIdRep = new MessageBox();
   const mesIdRepContent = new MessageBox();
   const mesIdThk = new MessageBox();
@@ -230,7 +229,6 @@ async function replyOrThk(
     }); // 防止重复点击
     mesIdThk.show('开始感谢...', 'none');
   }
-  playVideo(mesId); // 防休眠
 
   while (
     (type == ReplyOrThank.REPLY && fidIndex < user.replyThreads.length) ||
@@ -384,7 +382,6 @@ async function replyOrThk(
       replyBtn: 0,
     });
   }
-  mesId.remove(); // 移除永久消息
 }
 
 export { replyOrThk, addPageBatch, addOnePage };

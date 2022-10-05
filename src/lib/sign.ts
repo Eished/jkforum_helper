@@ -1,12 +1,11 @@
 import { Counter, IUser } from '@/commonType';
 import { checkHtml, NowTime, urlSearchParams, waitFor } from '@/utils/tools';
-import { MessageBox, playVideo, postDataCdata } from './';
+import { MessageBox, postDataCdata } from './';
 
 // 定时签到
 function timeControl(counter: Counter, setCounter: (num: Counter) => void, user: IUser) {
   const signtime = user.signtime; // 设定签到时间
   // 初始化永久消息通知
-  const msIdSlp = new MessageBox();
   const msIdSig = new MessageBox();
   const msIdTime = new MessageBox();
   let timer = 0;
@@ -20,7 +19,6 @@ function timeControl(counter: Counter, setCounter: (num: Counter) => void, user:
         signBtn: 0,
       });
       // 移除永久消息通知
-      msIdSlp.remove();
       msIdSig.remove();
       msIdTime.refresh('执行中....');
       for (let i = 0; i < user.signNum; i++) {
@@ -36,7 +34,6 @@ function timeControl(counter: Counter, setCounter: (num: Counter) => void, user:
   }
   if (!counter.signBtn) {
     // 防重复点击
-    playVideo(msIdSlp); // 防休眠
     msIdSig.show('定时签到中，请勿退出...', 'none');
     msIdTime.show('...', 'none'); // 占位消息，给刷新用
 
