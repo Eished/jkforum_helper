@@ -8,6 +8,10 @@
 
 `React + TypeScript + TailwindCSS`
 
+## 项目模板
+
+https://github.com/Eished/douyu-helper
+
 ## 启动项目
 
 `ctrl shift B` 选择 `start: style & dev`
