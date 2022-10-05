@@ -1,57 +1,62 @@
 import { IUser } from '@/commonType';
 import { getTid, turnCdata, urlSearchParams } from '@/utils/tools';
-import { MessageBox, playVideo, postData } from './';
+import { MessageBox, postData, setTimeoutWorker } from './';
 
 /**
  * ORC
  */
+
+const RETRY = 'retry';
+
 async function captcha(user: IUser) {
   const url = `${user.votedUrl}id=topthreads:setstatus&tid=${user.freeTid}&handlekey=k_setstatus&infloat=1&freeon=yes&inajax=1`;
   const captchaPage = await postData(url, urlSearchParams({ captcha_input: '' }).toString())
     .then((res) => turnCdata(res.responseXML))
     .catch((e) => {
       console.log(e);
-      return 'retry';
+      return RETRY;
     });
 
-  if (captchaPage === 'Access denied.') {
-    return Promise.reject(captchaPage + ' 无访问权限');
-  } else if (typeof captchaPage !== 'object') {
-    new MessageBox('验证码图片访问失败，正在重试...');
-    return Promise.reject('retry');
-  }
-  const image = captchaPage.querySelector('#captcha') as HTMLImageElement;
-  document.body.append(image);
-  image.onload = async function () {
-    //文件的Base64字符串获取验证码
-    const ma = await readImage(getBase64Image(image), user);
-    if (ma.includes(' ')) {
-      // 令牌错误不重试，使用空格通配
-      new MessageBox(ma + ' 令牌错误，需要令牌请私聊 or 发送邮件到 kished@outlook.com ', 10000);
-      user.token = '';
-      GM_setValue(user.username, user);
-      return Promise.reject(ma);
-    }
-
-    const result = await postData(url, urlSearchParams({ captcha_input: ma }).toString())
-      .then((res) => turnCdata(res.responseXML))
-      .catch((e) => {
-        console.log(e);
-        return 'retry';
-      });
-    if (result === 'retry') {
+  return new Promise<string>((resolve, reject) => {
+    if (captchaPage === 'Access denied.') {
+      return reject(captchaPage + ' 无访问权限');
+    } else if (typeof captchaPage !== 'object') {
       new MessageBox('验证码图片访问失败，正在重试...');
-      return Promise.reject('retry');
+      return reject(RETRY);
     }
-    if (result === '更新完成！若狀態仍沒更新，請嘗試刷新頁面') {
-      new MessageBox('更新完成！自動‘現在有空’中，請不要刷新頁面！', user.freeTime);
-      Promise.resolve(result);
-      return;
-    } else {
-      new MessageBox('验证码错误，正在重试...');
-      return Promise.reject('retry');
-    }
-  };
+    const image = captchaPage.querySelector('#captcha') as HTMLImageElement;
+    document.body.append(image);
+
+    image.onload = async function () {
+      //文件的Base64字符串获取验证码
+      const ma = await readImage(getBase64Image(image), user);
+      if (ma.includes(' ')) {
+        // 令牌错误不重试，使用空格通配
+        new MessageBox(ma + ' 令牌错误，需要令牌请私聊 or 发送邮件到 kished@outlook.com ', 10000);
+        user.token = '';
+        GM_setValue(user.username, user);
+        return Promise.reject(ma);
+      }
+
+      const result = await postData(url, urlSearchParams({ captcha_input: ma }).toString())
+        .then((res) => turnCdata(res.responseXML))
+        .catch((e) => {
+          console.log(e);
+          return RETRY;
+        });
+      if (result === RETRY) {
+        new MessageBox('验证码图片访问失败，正在重试...');
+        return reject(RETRY);
+      }
+      if (result === '更新完成！若狀態仍沒更新，請嘗試刷新頁面') {
+        new MessageBox('更新完成！自動‘現在有空’中，請不要刷新頁面！', user.freeTime);
+        return resolve(result);
+      } else {
+        new MessageBox('验证码错误，正在重试...');
+        return reject(RETRY);
+      }
+    };
+  });
 }
 
 /**
@@ -130,16 +135,13 @@ async function autofillCaptcha(user: IUser) {
 
   captcha(user)
     .then(() => {
-      const msId = new MessageBox();
-      playVideo(msId);
-      setTimeout(() => {
-        msId.remove();
+      setTimeoutWorker(() => {
         autofillCaptcha(user);
       }, user.freeTime);
     })
     .catch((e) => {
-      if (e === 'retry') {
-        setTimeout(() => {
+      if (e === RETRY) {
+        setTimeoutWorker(() => {
           autofillCaptcha(user);
         }, 5000); // 重试频率限制
       } else {

@@ -15,3 +15,4 @@ export { sign, timeControl } from './sign';
 export { autoThk } from './thank';
 export { creatUser, getFormhash, getUserFromName, getUserName, User } from './user';
 export { autoVoted } from './vote';
+export { setIntervalWorker, setTimeoutWorker } from './webWorker';
