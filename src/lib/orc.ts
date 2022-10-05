@@ -1,6 +1,6 @@
 import { IUser } from '@/commonType';
 import { getTid, turnCdata, urlSearchParams } from '@/utils/tools';
-import { MessageBox, postData, setTimeoutWorker } from './';
+import { MessageBox, postData } from './';
 
 /**
  * ORC
@@ -35,7 +35,7 @@ async function captcha(user: IUser) {
         new MessageBox(ma + ' 令牌错误，需要令牌请私聊 or 发送邮件到 kished@outlook.com ', 10000);
         user.token = '';
         GM_setValue(user.username, user);
-        return Promise.reject(ma);
+        return reject(ma);
       }
 
       const result = await postData(url, urlSearchParams({ captcha_input: ma }).toString())
@@ -135,13 +135,13 @@ async function autofillCaptcha(user: IUser) {
 
   captcha(user)
     .then(() => {
-      setTimeoutWorker(() => {
+      setTimeout(() => {
         autofillCaptcha(user);
       }, user.freeTime);
     })
     .catch((e) => {
       if (e === RETRY) {
-        setTimeoutWorker(() => {
+        setTimeout(() => {
           autofillCaptcha(user);
         }, 5000); // 重试频率限制
       } else {
