@@ -33,7 +33,6 @@ function getData(
   });
 }
 
-// GM_xmlhttpRequest POST异步通用模块
 function postDataCdata(
   url: string,
   postData: string,

@@ -1,6 +1,7 @@
 export { getData, postData, postDataCdata } from './ajax';
 export { downloadImgs, noDisplayPic } from './downloadPicture';
 export { setFastReply } from './fastReply';
+export { skipPhoneValidate } from './hackLogin';
 export { launch } from './launch';
 export { swPay, swRePic, swThk, update } from './menuCommand';
 export { MessageBox } from './message';

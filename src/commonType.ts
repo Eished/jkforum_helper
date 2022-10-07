@@ -71,6 +71,7 @@ const enum XhrResponseType {
   TEXT = 'text',
   DOCUMENT = 'document',
   FORM = 'application/x-www-form-urlencoded',
+  GRCP = 'application/grpc-web-text',
 }
 
 type XhrOptions = {

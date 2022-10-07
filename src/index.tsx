@@ -1,10 +1,11 @@
 import App from '@/app';
-import { getFormhash, getUserName, MessageBox } from '@/lib';
+import { getFormhash, getUserName, MessageBox, skipPhoneValidate } from '@/lib';
 import 'hacktimer'; // 定时器不会因为窗口隐藏而降频
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 
 const start = () => {
+  skipPhoneValidate();
   const username = getUserName();
   const formhash = getFormhash();
   if (username && formhash) {
