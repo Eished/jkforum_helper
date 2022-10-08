@@ -1,4 +1,4 @@
-import { IUser } from '@/commonType';
+import { IMPORTANCE, IUser, XhrMethod, XhrResponseType } from '@/commonType';
 import { getTid, rdNum, turnCdata, urlSearchParams } from '@/utils/tools';
 import { MessageBox, postData } from './';
 
@@ -29,16 +29,24 @@ async function captcha(user: IUser, freeTid: string) {
 
     image.onload = async function () {
       //文件的Base64字符串获取验证码
-      const ma = await readImage(getBase64Image(image), user);
-      if (ma.includes(' ')) {
+      const code = await readImage(getBase64Image(image), user);
+      if (typeof code === 'object') {
         // 令牌错误不重试，使用空格通配
-        new MessageBox(ma + ' 令牌错误，需要令牌请私聊 or 发送邮件到 kished@outlook.com ', 10000);
-        user.token = '';
-        GM_setValue(user.username, user);
-        return reject(ma);
+        if (code.error_code === 100 || code.error_code === 111 || code.error_code === 110) {
+          new MessageBox(
+            code.error_msg + ' 令牌错误，需要令牌请私聊 or 发送邮件到 kished@outlook.com ',
+            10000,
+            IMPORTANCE.LOG_POP_GM
+          );
+          user.token = '';
+          GM_setValue(user.username, user);
+        } else {
+          new MessageBox(code.error_msg + ' 未处理的错误，请手动重试或联系管理员', 10000, IMPORTANCE.LOG_POP_GM);
+        }
+        return reject(code.error_msg);
       }
 
-      const result = await postData(url, urlSearchParams({ captcha_input: ma }).toString())
+      const result = await postData(url, urlSearchParams({ captcha_input: code }).toString())
         .then((res) => turnCdata(res.responseXML))
         .catch((e) => {
           console.log(e);
@@ -95,15 +103,38 @@ function getBase64Image(img: HTMLImageElement) {
 //   });
 // }
 
+type OrcResult =
+  | {
+      words_result: {
+        words: string;
+      }[];
+      words_result_num: number;
+      log_id: number;
+    }
+  | {
+      log_id: number;
+      error_msg: string;
+      error_code: number;
+    };
+
 async function readImage(base64: string, user: IUser) {
   const url = `${user.orcUrl}access_token=${user.token}&Content-Type=application/x-www-form-urlencoded`;
   const body = urlSearchParams({ image: base64 }).toString();
-  return postData(url, body).then((res) => {
-    const code = JSON.parse(res.responseText);
-    if (code?.words_result) {
-      return code.words_result[0].words;
+  return postData(url, body, {
+    responseType: XhrResponseType.JSON,
+    usermethod: XhrMethod.POST,
+    contentType: XhrResponseType.FORM,
+  }).then((res) => {
+    const orcResults: OrcResult = res.response;
+    if ('words_result_num' in orcResults) {
+      if (orcResults.words_result_num === 1 && orcResults.words_result[0].words.length === 4) {
+        return orcResults.words_result[0].words;
+      }
     }
-    return code.error_msg + ' '; // 空格作为错误标志
+    if ('error_msg' in orcResults) {
+      return orcResults;
+    }
+    return String(rdNum(1000, 10000));
   });
 }
 
