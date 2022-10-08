@@ -1,5 +1,5 @@
 import { IUser } from '@/commonType';
-import { getTid, turnCdata, urlSearchParams } from '@/utils/tools';
+import { getTid, rdNum, turnCdata, urlSearchParams } from '@/utils/tools';
 import { MessageBox, postData } from './';
 
 /**
@@ -8,8 +8,8 @@ import { MessageBox, postData } from './';
 
 const RETRY = 'retry';
 
-async function captcha(user: IUser) {
-  const url = `${user.votedUrl}id=topthreads:setstatus&tid=${user.freeTid}&handlekey=k_setstatus&infloat=1&freeon=yes&inajax=1`;
+async function captcha(user: IUser, freeTid: string) {
+  const url = `${user.votedUrl}id=topthreads:setstatus&tid=${freeTid}&handlekey=k_setstatus&infloat=1&freeon=yes&inajax=1`;
   const captchaPage = await postData(url, urlSearchParams({ captcha_input: '' }).toString())
     .then((res) => turnCdata(res.responseXML))
     .catch((e) => {
@@ -107,7 +107,7 @@ async function readImage(base64: string, user: IUser) {
   });
 }
 
-async function autofillCaptcha(user: IUser) {
+async function autofillCaptcha(user: IUser, freeTid?: string) {
   if (!user.token) {
     const token = prompt('请输入验证码识别的 api 令牌（需要令牌请私聊 or 发送邮件到 kished@outlook.com ）：');
     const reg = /.*\..*\..*\..*/;
@@ -122,28 +122,27 @@ async function autofillCaptcha(user: IUser) {
     }
   }
 
-  if (!user.freeTid) {
+  if (!freeTid) {
     const status = document.querySelector('#topthread_status');
     if (status) {
-      user.freeTid = getTid(location.href);
-      GM_setValue(user.username, user);
+      freeTid = getTid(location.href);
     } else {
       new MessageBox('找不到指定页面元素！请先打开自己的帖子再试');
       return;
     }
   }
 
-  captcha(user)
+  captcha(user, freeTid)
     .then(() => {
       setTimeout(() => {
-        autofillCaptcha(user);
+        autofillCaptcha(user, freeTid);
       }, user.freeTime);
     })
     .catch((e) => {
       if (e === RETRY) {
         setTimeout(() => {
-          autofillCaptcha(user);
-        }, 5000); // 重试频率限制
+          autofillCaptcha(user, freeTid);
+        }, 2000 + rdNum(1000, 4000)); // 重试频率限制
       } else {
         new MessageBox(e);
       }
