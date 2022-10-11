@@ -97,10 +97,10 @@ function mergeObjValue(target: IUser & GenericObject, source: IUser & GenericObj
   return target;
 }
 
-// 更新User对象的URL值
+// 更新User对象的URL值，自动有空间隔时间
 function updateUserUrl(target: IUser & GenericObject, source: IUser & GenericObject): IUser {
   Object.keys(source).forEach((key) => {
-    if (key.includes('Url')) {
+    if (key.includes('Url') || key === 'freeTime') {
       target[key] = source[key];
     }
   });

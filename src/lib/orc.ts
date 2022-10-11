@@ -9,22 +9,12 @@ import { MessageBox, postData } from './';
 const RETRY = 'retry';
 
 async function captcha(user: IUser, freeTid: string) {
-  const url = `${user.votedUrl}id=topthreads:setstatus&tid=${freeTid}&handlekey=k_setstatus&infloat=1&freeon=yes&inajax=1`;
-  const captchaPage = await postData(url, urlSearchParams({ captcha_input: '' }).toString())
-    .then((res) => turnCdata(res.responseXML))
-    .catch((e) => {
-      console.log(e);
-      return RETRY;
-    });
-
   return new Promise<string>((resolve, reject) => {
-    if (captchaPage === 'Access denied.') {
-      return reject(captchaPage + ' 无访问权限');
-    } else if (typeof captchaPage !== 'object') {
-      new MessageBox('验证码图片访问失败，正在重试...');
-      return reject(RETRY);
-    }
-    const image = captchaPage.querySelector('#captcha') as HTMLImageElement;
+    const url = `${user.votedUrl}id=topthreads:setstatus&tid=${freeTid}&handlekey=k_setstatus&infloat=1&freeon=yes&inajax=1`;
+    const image = document.createElement('img') as HTMLImageElement;
+    image.id = 'captcha';
+    image.src = '/captcha/code.php' + '?' + new Date().getMilliseconds();
+    image.width = 120;
     document.body.append(image);
 
     image.onload = async function () {
@@ -45,7 +35,9 @@ async function captcha(user: IUser, freeTid: string) {
         }
         return reject(code.error_msg);
       }
-
+      if (image.parentNode) {
+        image.parentNode.removeChild(image);
+      }
       const result = await postData(url, urlSearchParams({ captcha_input: code }).toString())
         .then((res) => turnCdata(res.responseXML))
         .catch((e) => {
@@ -53,16 +45,24 @@ async function captcha(user: IUser, freeTid: string) {
           return RETRY;
         });
       if (result === RETRY) {
-        new MessageBox('验证码图片访问失败，正在重试...');
+        new MessageBox('验证码发送失败，正在重试...');
         return reject(RETRY);
-      }
-      if (result === '更新完成！若狀態仍沒更新，請嘗試刷新頁面') {
+      } else if (result === '更新完成！若狀態仍沒更新，請嘗試刷新頁面') {
         new MessageBox('更新完成！自動‘現在有空’中，請不要刷新頁面！', user.freeTime);
         return resolve(result);
       } else {
         new MessageBox('验证码错误，正在重试...');
         return reject(RETRY);
       }
+    };
+
+    image.onerror = function (error) {
+      console.log(error);
+      if (image.parentNode) {
+        image.parentNode.removeChild(image);
+      }
+      new MessageBox('验证码图片加载失败，正在重试...');
+      return reject(RETRY);
     };
   });
 }
@@ -80,28 +80,6 @@ function getBase64Image(img: HTMLImageElement) {
   const dataURL = canvas.toDataURL('image/' + ext);
   return dataURL;
 }
-
-/**
- *Base64字符串转二进制
- */
-// function dataURLtoBlob(dataurl: string) {
-//   const arr = dataurl.split(',');
-//   if (!arr.length) return;
-//   let mime = arr[0];
-//   if (!mime) return;
-//   const mimeTemp = mime.match(/:(.*?);/);
-//   if (!mimeTemp) return;
-//   mime = mimeTemp[1];
-//   const bstr = atob(arr[1]);
-//   let n = bstr.length;
-//   const u8arr = new Uint8Array(n);
-//   while (n--) {
-//     u8arr[n] = bstr.charCodeAt(n);
-//   }
-//   return new Blob([u8arr], {
-//     type: mime,
-//   });
-// }
 
 type OrcResult =
   | {

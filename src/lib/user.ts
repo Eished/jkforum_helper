@@ -27,7 +27,7 @@ class User implements IUser {
   limit = 2; // 并发下载图片数量限制
   page = ''; // 批量回帖页码
   token = ''; // ORC token
-  freeTime = 3600000; // 现在有空间隔
+  freeTime = 3300000; // 现在有空间隔
   freeTid = ''; // 自动现在有空 帖子ID，一个账号一个贴子
   votedMessage = '+1'; // 投票输入内容
   orcUrl = 'https://aip.baidubce.com/rest/2.0/ocr/v1/general_basic?'; // accurate_basic or general_basic 精准或普通 api
