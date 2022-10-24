@@ -1,4 +1,5 @@
-import { IMPORTANCE, XhrMethod, XhrOptions, XhrResponseType } from '@/commonType';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { GenericObject, IMPORTANCE, XhrMethod, XhrOptions, XhrResponseType } from '@/commonType';
 import { turnCdata } from '@/utils/tools';
 import { MessageBox } from './';
 
@@ -73,30 +74,35 @@ function postDataCdata(
 // 正常的post
 function postData(
   url: string,
-  postData: string,
+  data: string,
   {
-    responseType = XhrResponseType.FORM,
+    responseType = XhrResponseType.DOCUMENT,
     usermethod = XhrMethod.POST,
     contentType = XhrResponseType.FORM,
+    authorization,
   }: XhrOptions = {
-    responseType: XhrResponseType.FORM,
+    responseType: XhrResponseType.DOCUMENT,
     usermethod: XhrMethod.POST,
     contentType: XhrResponseType.FORM,
   }
-): Promise<MonkeyXhrResponse> {
+): Promise<any> {
+  const headers: GenericObject = {
+    'Content-Type': contentType,
+  };
+  if (authorization) {
+    headers.Authorization = authorization;
+  }
   return new Promise((resolve, reject) => {
     GM_xmlhttpRequest({
       method: usermethod,
-      url: url,
-      headers: {
-        'Content-Type': contentType,
-      },
-      data: postData,
+      url,
+      headers,
+      data,
       responseType: responseType,
       timeout: 1 * 60 * 1000,
       onload: function (response) {
         if (response.status >= 200 && response.status < 400) {
-          resolve(response);
+          resolve(response.response);
         } else {
           new MessageBox('请求错误：' + response.status);
           reject(response.status);

@@ -2,11 +2,11 @@ import { GenericObject, IUser } from '@/commonType';
 import { MessageBox } from '@/lib';
 
 // POST返回 xml数据类型转换成 字符串或html 模块
-function turnCdata(xmlRepo: XMLDocument) {
-  const data = xmlRepo.getElementsByTagName('root')[0].childNodes[0].nodeValue;
+function turnCdata(xmlRepo: Document) {
+  const data = xmlRepo.querySelector('root')?.textContent;
   if (!data) return '';
+  // 如果判断去掉html是否还有文字，否则返回html
   if (replaceHtml(data)) {
-    // 如果判断去掉html是否还有文字，否则返回html
     return replaceHtml(data); // 去掉html内容，返回文字
   } else {
     const domParser = new DOMParser();

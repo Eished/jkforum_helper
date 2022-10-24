@@ -75,9 +75,10 @@ const enum XhrResponseType {
 }
 
 type XhrOptions = {
-  responseType: XhrResponseType;
-  usermethod: XhrMethod;
-  contentType: XhrResponseType;
+  responseType?: XhrResponseType;
+  usermethod?: XhrMethod;
+  contentType?: XhrResponseType;
+  authorization?: string;
 };
 
 const enum ReplyOrThank {

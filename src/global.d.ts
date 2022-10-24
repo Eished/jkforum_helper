@@ -3,7 +3,6 @@ import { XhrResponseType } from '@/commonType';
 
 declare global {
   const PRODUCTION: boolean;
-
   interface MonkeyXhrResponse {
     finalUrl: string;
     readyState: number;
@@ -13,6 +12,7 @@ declare global {
     response: any;
     responseXML: Document;
     responseText: string;
+    responseType: XhrResponseType;
   }
   interface MonkeyXhrBasicDetails {
     url: string;

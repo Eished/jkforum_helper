@@ -14,18 +14,18 @@ import { IMPORTANCE } from '@/commonType';
 
 class MessageBox {
   _msg: undefined | null | HTMLDivElement;
-  _text: string | undefined;
+  _text: string | null | undefined;
   _setTime: number | string;
   _importance: IMPORTANCE;
   _timer: number;
-  constructor(text?: string, setTime: number | string = 5000, importance: IMPORTANCE = IMPORTANCE.LOG_POP) {
+  constructor(text?: string | null, setTime: number | string = 5000, importance: IMPORTANCE = IMPORTANCE.LOG_POP) {
     this._msg = null; // 永久显示标记，和元素地址
     this._text = text;
     this._setTime = setTime;
     this._importance = importance;
     this._timer = 0; // 计数器
     // 非空初始化，立即执行；
-    if (text !== undefined) {
+    if (text !== undefined && text !== null) {
       this.show();
     }
   }
@@ -65,7 +65,7 @@ class MessageBox {
     if (this._msg !== null) {
       throw new Error('先移除上条消息，才可再次添加！');
     }
-    if (text === undefined) {
+    if (text === undefined || text === null) {
       throw new Error('未输入消息');
     }
     this._text = text;

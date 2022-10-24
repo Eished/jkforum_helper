@@ -39,7 +39,7 @@ async function captcha(user: IUser, freeTid: string) {
         return reject(code.error_msg);
       }
       const result = await postData(url, urlSearchParams({ captcha_input: code }).toString())
-        .then((res) => turnCdata(res.responseXML))
+        .then((response) => turnCdata(response))
         .catch((e) => {
           console.log(e);
           return RETRY;
@@ -102,8 +102,8 @@ async function readImage(base64: string, user: IUser) {
     responseType: XhrResponseType.JSON,
     usermethod: XhrMethod.POST,
     contentType: XhrResponseType.FORM,
-  }).then((res) => {
-    const orcResults: OrcResult = res.response;
+  }).then((response) => {
+    const orcResults: OrcResult = response;
     if ('words_result_num' in orcResults) {
       if (orcResults.words_result_num === 1 && orcResults.words_result[0].words.length === 4) {
         return orcResults.words_result[0].words;

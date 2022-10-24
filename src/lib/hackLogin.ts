@@ -35,26 +35,15 @@ const hackLogin = () => {
         const results = response.responseText.match(reg);
         if (results) {
           const jwt = results[0].replace(/�/, '');
-          GM_xmlhttpRequest({
-            method: XhrMethod.POST,
-            url: SigninUrl,
-            headers: {
-              'Content-Type': XhrResponseType.GRCP,
-              Cookie: document.cookie,
-              Authorization: 'Bearer ' + jwt,
-            },
+          postData(SigninUrl, '', {
+            contentType: XhrResponseType.GRCP,
+            authorization: 'Bearer ' + jwt,
             responseType: XhrResponseType.GRCP,
-            timeout: 1 * 60 * 1000,
-            onload: function (response) {
-              if (response.status >= 200 && response.status < 400) {
-                const reg = /AKb4_2132_auth.*;/;
-                const auth = response.responseHeaders.match(reg);
-                console.log(auth[0], 'response');
-                window.location.reload();
-              } else {
-                console.log(response);
-              }
-            },
+          }).then((response) => {
+            // const reg = /AKb4_2132_auth.*;/;
+            // const auth = response.responseHeaders.match(reg);
+            // console.log(auth[0], 'response');
+            window.location.reload();
           });
         }
       });
