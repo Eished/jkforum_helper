@@ -20,6 +20,9 @@ async function captcha(user: IUser, freeTid: string) {
     image.onload = async function () {
       //文件的Base64字符串获取验证码
       const code = await readImage(getBase64Image(image), user);
+      if (image.parentNode) {
+        image.parentNode.removeChild(image);
+      }
       if (typeof code === 'object') {
         // 令牌错误不重试，使用空格通配
         if (code.error_code === 100 || code.error_code === 111 || code.error_code === 110) {
@@ -34,9 +37,6 @@ async function captcha(user: IUser, freeTid: string) {
           new MessageBox(code.error_msg + ' 未处理的错误，请手动重试或联系管理员', 10000, IMPORTANCE.LOG_POP_GM);
         }
         return reject(code.error_msg);
-      }
-      if (image.parentNode) {
-        image.parentNode.removeChild(image);
       }
       const result = await postData(url, urlSearchParams({ captcha_input: code }).toString())
         .then((res) => turnCdata(res.responseXML))
