@@ -74,12 +74,13 @@ function postDataCdata(
 // 正常的post
 function postData(
   url: string,
-  data: string,
+  data?: string,
   {
     responseType = XhrResponseType.DOCUMENT,
     usermethod = XhrMethod.POST,
     contentType = XhrResponseType.FORM,
     authorization,
+    cookie,
   }: XhrOptions = {
     responseType: XhrResponseType.DOCUMENT,
     usermethod: XhrMethod.POST,
@@ -87,10 +88,13 @@ function postData(
   }
 ): Promise<any> {
   const headers: GenericObject = {
-    'Content-Type': contentType,
+    'content-type': contentType,
   };
   if (authorization) {
-    headers.Authorization = authorization;
+    headers.authorization = authorization;
+  }
+  if (cookie) {
+    headers.cookie = cookie;
   }
   return new Promise((resolve, reject) => {
     GM_xmlhttpRequest({

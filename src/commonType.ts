@@ -79,6 +79,7 @@ type XhrOptions = {
   usermethod?: XhrMethod;
   contentType?: XhrResponseType;
   authorization?: string;
+  cookie?: string;
 };
 
 const enum ReplyOrThank {

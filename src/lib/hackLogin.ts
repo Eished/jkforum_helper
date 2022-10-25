@@ -23,30 +23,25 @@ const skipPhoneValidate = () => {
 const hackLogin = () => {
   const xhrSend = XMLHttpRequest.prototype.send;
   let isAuthMethod = 0;
-  XMLHttpRequest.prototype.send = function (...args) {
+  XMLHttpRequest.prototype.send = async function (...args) {
     if (isAuthMethod) {
       const authBase64 = args[0] as string;
-      postData(AccessTokenUrl, authBase64, {
+      const response = await postData(AccessTokenUrl, authBase64, {
         contentType: XhrResponseType.GRCP,
         responseType: XhrResponseType.GRCP,
         usermethod: XhrMethod.POST,
-      }).then((response) => {
-        const reg = /[ey].*�/;
-        const results = response.responseText.match(reg);
-        if (results) {
-          const jwt = results[0].replace(/�/, '');
-          postData(SigninUrl, '', {
-            contentType: XhrResponseType.GRCP,
-            authorization: 'Bearer ' + jwt,
-            responseType: XhrResponseType.GRCP,
-          }).then((response) => {
-            // const reg = /AKb4_2132_auth.*;/;
-            // const auth = response.responseHeaders.match(reg);
-            // console.log(auth[0], 'response');
-            window.location.reload();
-          });
-        }
       });
+      const reg = /[ey].*�/;
+      const results = response.match(reg);
+      if (results) {
+        const jwt = results[0].replace(/�/, '');
+        await postData(SigninUrl, undefined, {
+          contentType: XhrResponseType.GRCP,
+          authorization: 'Bearer ' + jwt,
+          responseType: XhrResponseType.GRCP,
+        });
+        window.location.reload();
+      }
     }
     return xhrSend.apply(this, args);
   };
