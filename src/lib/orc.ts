@@ -27,7 +27,7 @@ async function captcha(user: IUser, freeTid: string) {
         // 令牌错误不重试，使用空格通配
         if (code.error_code === 100 || code.error_code === 111 || code.error_code === 110) {
           new MessageBox(
-            code.error_msg + ' 令牌错误，需要令牌请私聊 or 发送邮件到 kished@outlook.com ',
+            code.error_msg + '：令牌错误，需要令牌请登录 jkf.iknow.fun or 发送邮件到 kished@outlook.com ',
             10000,
             IMPORTANCE.LOG_POP_GM
           );
@@ -96,24 +96,24 @@ type OrcResult =
     };
 
 async function readImage(base64: string, user: IUser) {
-  const url = `${user.orcUrl}access_token=${user.token}&Content-Type=application/x-www-form-urlencoded`;
-  const body = urlSearchParams({ image: base64 }).toString();
-  return postData(url, body, {
+  const body = urlSearchParams({ image: base64, token: user.token }).toString();
+  const response = await postData(user.orcUrl, body, {
     responseType: XhrResponseType.JSON,
     usermethod: XhrMethod.POST,
     contentType: XhrResponseType.FORM,
-  }).then((response) => {
-    const orcResults: OrcResult = response;
-    if ('words_result_num' in orcResults) {
-      if (orcResults.words_result_num === 1 && orcResults.words_result[0].words.length === 4) {
-        return orcResults.words_result[0].words;
-      }
-    }
-    if ('error_msg' in orcResults) {
-      return orcResults;
-    }
-    return String(rdNum(1000, 10000));
+  }).catch((e) => {
+    return { error_msg: e.response?.message, error_code: 100 };
   });
+  const orcResults: OrcResult = response;
+  if ('words_result_num' in orcResults) {
+    if (orcResults.words_result_num === 1 && orcResults.words_result[0].words.length === 4) {
+      return orcResults.words_result[0].words;
+    }
+  }
+  if ('error_msg' in orcResults) {
+    return orcResults;
+  }
+  return String(rdNum(1000, 10000));
 }
 
 async function autofillCaptcha(user: IUser, freeTid?: string) {

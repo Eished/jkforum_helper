@@ -109,7 +109,7 @@ function postData(
           resolve(response.response);
         } else {
           new MessageBox('请求错误：' + response.status);
-          reject(response.status);
+          reject(response);
         }
       },
       onerror: function (error) {

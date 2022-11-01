@@ -30,7 +30,7 @@ class User implements IUser {
   freeTime = 3300000; // 现在有空间隔
   freeTid = ''; // 自动现在有空 帖子ID，一个账号一个贴子
   votedMessage = '+1'; // 投票输入内容
-  orcUrl = 'https://aip.baidubce.com/rest/2.0/ocr/v1/general_basic?'; // accurate_basic or general_basic 精准或普通 api
+  orcUrl = 'https://jkf.iknow.fun/api/orc'; // accurate_basic or general_basic 精准或普通 api
   votedUrl = 'https://www.jkforum.net/plugin.php?';
   applyVotedUrl = 'https://www.jkforum.net/home.php?mod=task&do=apply&id=59';
   taskDoneUrl = 'https://www.jkforum.net/home.php?mod=task&do=draw&id=59';
