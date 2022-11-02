@@ -108,12 +108,10 @@ function postData(
         if (response.status >= 200 && response.status < 400) {
           resolve(response.response);
         } else {
-          new MessageBox('请求错误：' + response.status);
           reject(response);
         }
       },
       onerror: function (error) {
-        new MessageBox('网络错误');
         reject(error);
       },
       ontimeout: () => {

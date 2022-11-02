@@ -4,13 +4,15 @@ interface ModalProps {
   header: ReactElement;
   footer: ReactElement;
   children: ReactNode;
+  width?: string;
+  height?: string;
   onClose: () => void;
 }
 
-export const Modal: FC<ModalProps> = ({ header, footer, children, onClose }) => {
+export const Modal: FC<ModalProps> = ({ header, footer, children, width, height, onClose }) => {
   return (
     <div className="fixed top-0 right-0 h-full w-full left-0 z-50 overflow-y-auto overflow-x-hidden items-center justify-center flex bg-gray-900 bg-opacity-50">
-      <div className="relative rounded-lg h-[95%] w-full bg-white shadow dark:bg-gray-700 m-4 flex flex-col">
+      <div className={`relative rounded-lg bg-white shadow dark:bg-gray-700 m-4 flex flex-col ${width} ${height}`}>
         <div className="flex items-start justify-between rounded-t dark:border-gray-600 border-b p-5">
           <h3 className="text-xl font-medium text-gray-900 dark:text-white">{header}</h3>
           <button
@@ -32,7 +34,7 @@ export const Modal: FC<ModalProps> = ({ header, footer, children, onClose }) => 
             </svg>
           </button>
         </div>
-        <div className="p-6 h-full">{children}</div>
+        <div className="p-6 h-full overflow-auto">{children}</div>
         <div className="flex items-center space-x-2 rounded-b border-gray-200 p-6 dark:border-gray-600 border-t">
           {footer}
         </div>

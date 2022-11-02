@@ -1,20 +1,27 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface ToggleProps {
   label: string;
   onClick: (selected: boolean) => void;
   checked: boolean;
+  mykey?: string;
 }
 
-export const Toggle: React.FC<ToggleProps> = ({ label, checked, onClick }) => {
+export const Toggle: React.FC<ToggleProps> = ({ label, checked, mykey = '-', onClick }) => {
   const [selected, setSelected] = useState(checked);
+  useEffect(() => {
+    setSelected(checked);
+  }, [checked]);
 
   return (
     <>
-      <label key={label} htmlFor={'toggle-' + label} className="mx-1 my-1 flex items-center cursor-pointer relative">
+      <label
+        key={label + mykey}
+        htmlFor={'toggle-' + mykey + label}
+        className="mx-1 my-1 flex items-center cursor-pointer relative">
         <input
           type="checkbox"
-          id={'toggle-' + label}
+          id={'toggle-' + mykey + label}
           className="sr-only"
           checked={selected}
           onClick={() => {

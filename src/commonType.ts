@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { ThreadData } from './views/AutoClickManage';
+
 export enum Mood {
   kaixin = 'kx', // 开心,
   nanguo = 'ng', // 难过,
@@ -33,6 +35,7 @@ interface IUser {
   token: string;
   freeTime: number;
   freeTid: string;
+  freeData: ThreadData[];
   votedMessage: string;
   orcUrl: string;
   votedUrl: string;

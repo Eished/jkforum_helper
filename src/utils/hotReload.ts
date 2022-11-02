@@ -6,8 +6,6 @@ const hotReload = () => {
 
   if (!window.location.host.includes('localhost')) {
     const callback = (name: string, oldValue: boolean, newValue: boolean, remote: boolean) => {
-      console.log(remote);
-
       if (remote) {
         window.location.reload();
       }

@@ -2,12 +2,14 @@ import React from 'react';
 
 interface ButtonProps {
   text: string;
+  title?: string;
   onClick: () => void;
   disabled?: boolean;
 }
-export const Button: React.FC<ButtonProps> = ({ text, onClick, disabled }) => {
+export const Button: React.FC<ButtonProps> = ({ text, title = '', onClick, disabled }) => {
   return (
     <button
+      title={title}
       type="button"
       data-mdb-ripple="true"
       data-mdb-ripple-color="light"

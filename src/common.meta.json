@@ -36,8 +36,7 @@
     "GM_registerMenuCommand",
     "GM_addElement",
     "GM_addStyle",
-    "GM_notification",
-    "GM_cookie"
+    "GM_notification"
   ],
   "connect": ["mymypic.net", "jkf.iknow.fun", "cdn.jsdelivr.net", "github.com", "greasyfork.org", "jkf.hare200.com"],
   "require": [],

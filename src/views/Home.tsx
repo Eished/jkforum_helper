@@ -1,9 +1,7 @@
 import { Counter, IUser, ReplyOrThank } from '@/commonType';
 import { Button, Input, Panel, TextArea, Toggle } from '@/components';
-import { Modal } from '@/components/Modal/Modal';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import ReactTableCard from '@/components/Table';
 import {
   addOnePage,
   addPageBatch,
@@ -19,6 +17,7 @@ import {
   update,
 } from '@/lib';
 import React, { useRef, useState } from 'react';
+import { AutoClickManage } from './AutoClickManage';
 
 interface HomeProps {
   setShowHome: () => void;
@@ -30,7 +29,7 @@ export const Home: React.FC<HomeProps> = ({ user, setShowHome, counter, setCount
   const mask = useRef<HTMLDivElement>(null);
   const [replyValue, setReplyValue] = useState('');
   const [pageValue, setPageValue] = useState('');
-  const [showModal, setShowModal] = useState(true);
+  const [showModal, setShowModal] = useState(false);
 
   return (
     <div
@@ -156,43 +155,7 @@ export const Home: React.FC<HomeProps> = ({ user, setShowHome, counter, setCount
 
         <br />
         <Button text={'close'} onClick={setShowHome} />
-        {showModal ? (
-          <Modal header={<>自动点击现在有空管理页面</>} footer={<>这是底部</>} onClose={() => setShowModal(false)}>
-            <>
-              <div className="flex items-baseline">
-                <div className="w-64">
-                  <Input
-                    onChange={function (value: string): void {
-                      throw new Error('Function not implemented.');
-                    }}
-                    placeholder="请输入Token令牌"
-                    value={''}></Input>
-                </div>
-                <div className="ml-4">
-                  <Button
-                    text={'确认'}
-                    onClick={function (): void {
-                      throw new Error('Function not implemented.');
-                    }}></Button>
-                </div>
-              </div>
-              <div className=" overflow-auto">
-                <ReactTableCard
-                  title={'hi'}
-                  data={[
-                    { name: 'test', age: 1, test: 'afhaks' },
-                    { name: 'test', age: 2, test: 'afhaks' },
-                    { name: 'test', age: 3, test: 'afhaks' },
-                    { name: 'test', age: 4, test: 'afhaks' },
-                    { name: 'test', age: 0, test: 'afhaks' },
-                    { name: 'test', age: 10, test: 'afhaks' },
-                  ]}></ReactTableCard>
-              </div>
-            </>
-          </Modal>
-        ) : (
-          ''
-        )}
+        {showModal ? <AutoClickManage user={user} onClose={() => setShowModal(false)} /> : ''}
       </div>
     </div>
   );

@@ -5,15 +5,18 @@ interface InputProps {
   placeholder?: string;
   onChange: (value: string) => void;
   value: string;
+  type?: string;
+  autoComplete?: string;
 }
-export const Input: React.FC<InputProps> = ({ label, placeholder, onChange, value }) => {
+export const Input: React.FC<InputProps> = ({ label, placeholder, autoComplete, onChange, value, type = 'text' }) => {
   return (
     <>
       <label htmlFor={'input' + label} className="block m-1 text-xs font-medium text-gray-900 dark:text-gray-300">
         {label}
       </label>
       <input
-        type="text"
+        autoComplete={autoComplete}
+        type={type}
         id={'input' + label}
         placeholder={placeholder}
         value={value}

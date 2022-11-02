@@ -1,16 +1,16 @@
 import { IMPORTANCE, IUser, XhrMethod, XhrResponseType } from '@/commonType';
-import { getTid, rdNum, turnCdata, urlSearchParams } from '@/utils/tools';
+import { rdNum, turnCdata, urlSearchParams } from '@/utils/tools';
 import { MessageBox, postData } from './';
+import { ThreadData } from './../views/AutoClickManage';
 
 /**
  * ORC
  */
 
-const RETRY = 'retry';
+export const RETRY = 'retry';
 
-async function captcha(user: IUser, freeTid: string) {
+async function captcha(url: string, user: IUser) {
   return new Promise<string>((resolve, reject) => {
-    const url = `${user.votedUrl}id=topthreads:setstatus&tid=${freeTid}&handlekey=k_setstatus&infloat=1&freeon=yes&inajax=1`;
     const image = document.createElement('img') as HTMLImageElement;
     image.id = 'captcha';
     image.src = '/captcha/code.php' + '?' + new Date().getMilliseconds();
@@ -31,8 +31,6 @@ async function captcha(user: IUser, freeTid: string) {
             10000,
             IMPORTANCE.LOG_POP_GM
           );
-          user.token = '';
-          GM_setValue(user.username, user);
         } else {
           new MessageBox(code.error_msg + ' 未处理的错误，请手动重试或联系管理员', 10000, IMPORTANCE.LOG_POP_GM);
         }
@@ -116,46 +114,31 @@ async function readImage(base64: string, user: IUser) {
   return String(rdNum(1000, 10000));
 }
 
-async function autofillCaptcha(user: IUser, freeTid?: string) {
-  if (!user.token) {
-    const token = prompt('请输入验证码识别的 api 令牌（需要令牌请私聊 or 发送邮件到 kished@outlook.com ）：');
-    const reg = /.*\..*\..*\..*/;
-    if (token && reg.test(token)) {
-      user.token = token;
-      GM_setValue(user.username, user);
-    } else if (token !== null) {
-      new MessageBox('无效的令牌');
-      return;
-    } else {
-      return;
-    }
-  }
-
-  if (!freeTid) {
-    const status = document.querySelector('#topthread_status');
-    if (status) {
-      freeTid = getTid(location.href);
-    } else {
-      new MessageBox('找不到指定页面元素！请先打开自己的帖子再试');
-      return;
-    }
-  }
-
-  captcha(user, freeTid)
-    .then(() => {
+async function autofillCaptcha(
+  t: ThreadData,
+  user: IUser,
+  saveTimesData: (value: ThreadData) => void,
+  saveStatusData: (value: ThreadData) => void
+) {
+  try {
+    const result = await captcha(t.url, user);
+    // 调用计数
+    saveTimesData(t);
+    setTimeout(() => {
+      autofillCaptcha(t, user, saveTimesData, saveStatusData);
+    }, Number(t.cycle) * 60 * 1000);
+  } catch (e: any) {
+    if (e === RETRY) {
+      // 调用计数
+      saveTimesData(t);
       setTimeout(() => {
-        autofillCaptcha(user, freeTid);
-      }, user.freeTime);
-    })
-    .catch((e) => {
-      if (e === RETRY) {
-        setTimeout(() => {
-          autofillCaptcha(user, freeTid);
-        }, 2000 + rdNum(1000, 4000)); // 重试频率限制
-      } else {
-        new MessageBox(e);
-      }
-    });
+        autofillCaptcha(t, user, saveTimesData, saveStatusData);
+      }, 2000 + rdNum(1000, 4000)); // 重试频率限制
+    } else {
+      // 错误则改变状态
+      saveStatusData(t);
+    }
+  }
 }
 
 export { autofillCaptcha };

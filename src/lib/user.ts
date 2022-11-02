@@ -29,6 +29,7 @@ class User implements IUser {
   token = ''; // ORC token
   freeTime = 3300000; // 现在有空间隔
   freeTid = ''; // 自动现在有空 帖子ID，一个账号一个贴子
+  freeData = [];
   votedMessage = '+1'; // 投票输入内容
   orcUrl = 'https://jkf.iknow.fun/api/orc'; // accurate_basic or general_basic 精准或普通 api
   votedUrl = 'https://www.jkforum.net/plugin.php?';
