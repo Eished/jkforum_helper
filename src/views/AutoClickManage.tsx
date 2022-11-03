@@ -1,7 +1,7 @@
 import { IUser } from '@/commonType';
 import { Button, Input } from '@/components';
 import { Modal } from '@/components/Modal/Modal';
-import ReactTableCard from '@/components/Table';
+import ReactTableCard from '@/components/Table/Table';
 import { getData, MessageBox } from '@/lib';
 import { autofillCaptcha } from '@/lib/orc';
 import React, { FC, useCallback, useEffect, useState } from 'react';

@@ -31,7 +31,7 @@ class User implements IUser {
   freeTid = ''; // 自动现在有空 帖子ID，一个账号一个贴子
   freeData = [];
   votedMessage = '+1'; // 投票输入内容
-  orcUrl = 'https://jkf.iknow.fun/api/orc'; // accurate_basic or general_basic 精准或普通 api
+  orcUrl = 'https://jkf.iknow.fun/api/orc/numbers';
   votedUrl = 'https://www.jkforum.net/plugin.php?';
   applyVotedUrl = 'https://www.jkforum.net/home.php?mod=task&do=apply&id=59';
   taskDoneUrl = 'https://www.jkforum.net/home.php?mod=task&do=draw&id=59';
