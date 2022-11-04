@@ -1,5 +1,5 @@
 import { IMPORTANCE, IUser, XhrMethod, XhrResponseType } from '@/commonType';
-import { rdNum, turnCdata, urlSearchParams } from '@/utils/tools';
+import { getTid, rdNum, turnCdata, urlSearchParams } from '@/utils/tools';
 import { MessageBox, postData } from './';
 import { ThreadData } from './../views/AutoClickManage';
 
@@ -27,7 +27,7 @@ async function captcha(url: string, user: IUser) {
         // 令牌错误不重试，使用空格通配
         if (code.error_code === 100 || code.error_code === 111 || code.error_code === 110) {
           new MessageBox(
-            code.error_msg + '：令牌错误，需要令牌请登录 jkf.iknow.fun or 发送邮件到 kished@outlook.com ',
+            code.error_msg + '：令牌错误，需要令牌请登录 jkf.iknow.fun 或发送邮件到 kished@outlook.com ',
             10000,
             IMPORTANCE.LOG_POP_GM
           );
@@ -121,7 +121,10 @@ async function autofillCaptcha(
   saveStatusData: (value: ThreadData) => void
 ) {
   try {
-    const result = await captcha(t.url, user);
+    const url = `${user.votedUrl}id=topthreads:setstatus&tid=${getTid(
+      t.url
+    )}&handlekey=k_setstatus&infloat=1&freeon=yes&inajax=1`;
+    const result = await captcha(url, user);
     // 调用计数
     saveTimesData(t);
     setTimeout(() => {
