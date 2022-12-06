@@ -2,8 +2,7 @@ import { IUser } from '@/commonType';
 import { Button, Input } from '@/components';
 import { Modal } from '@/components/Modal/Modal';
 import ReactTableCard from '@/components/Table/Table';
-import { getData, MessageBox } from '@/lib';
-import { autofillCaptcha } from '@/lib/orc';
+import { autofillCaptcha, getData, MessageBox } from '@/lib';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 
 interface AutoClickManage {
@@ -137,7 +136,7 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
     }
     const onThreads = data.filter((t) => t.status === 'online');
     if (!onThreads.length) {
-      return alert('请将需要执行的帖子 status 设为 online');
+      return alert('请将需要执行的帖子运行状态设为 online');
     }
     onThreads.map((t) => autofillCaptcha(t, user, saveTimesData, saveStatusData));
     setRunning(true);
@@ -168,7 +167,17 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
       }
       onClose={onClose}>
       <>
-        <span className="text-red-500">目前本页面仅支持管理一个账号的多个帖子，多个账号请多开浏览器</span>
+        <span className="text-red-500">
+          目前本页面仅支持管理一个账号的多个帖子，多个账号请
+          <a
+            className="text-blue-500 border-b"
+            target="_blank"
+            href="https://roro4ever.github.io/2019/11/28/%E5%88%A9%E7%94%A8Chrome%E5%90%8C%E6%97%B6%E7%99%BB%E5%BD%95%E7%BD%91%E7%AB%99%E7%9A%84%E5%A4%9A%E4%B8%AA%E8%B4%A6%E5%8F%B7/%E5%88%A9%E7%94%A8chrome%E5%90%8C%E6%97%B6%E7%99%BB%E5%BD%95%E7%BD%91%E7%AB%99%E7%9A%84%E5%A4%9A%E4%B8%AA%E8%B4%A6%E5%8F%B7/"
+            rel="noreferrer">
+            多开浏览器
+          </a>
+          。
+        </span>
         <div className="flex items-end">
           <div className="w-64 pr-4">
             <Input

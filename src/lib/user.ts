@@ -26,12 +26,12 @@ class User implements IUser {
   thkDiffer = 1000; // 批量感谢间隔时间ms
   limit = 2; // 并发下载图片数量限制
   page = ''; // 批量回帖页码
-  token = ''; // ORC token
+  token = ''; // OCR token
   freeTime = 3300000; // 现在有空间隔
   freeTid = ''; // 自动现在有空 帖子ID，一个账号一个贴子
   freeData = [];
   votedMessage = '+1'; // 投票输入内容
-  orcUrl = 'https://jkf.iknow.fun/api/orc/numbers';
+  ocrUrl = 'https://jkf.iknow.fun/api/ocr/numbers';
   votedUrl = 'https://www.jkforum.net/plugin.php?';
   applyVotedUrl = 'https://www.jkforum.net/home.php?mod=task&do=apply&id=59';
   taskDoneUrl = 'https://www.jkforum.net/home.php?mod=task&do=draw&id=59';

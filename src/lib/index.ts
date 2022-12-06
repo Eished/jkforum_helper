@@ -5,7 +5,7 @@ export { skipPhoneValidate } from './hackLogin';
 export { launch } from './launch';
 export { swPay, swRePic, swThk, update } from './menuCommand';
 export { MessageBox } from './message';
-export { autofillCaptcha } from './orc';
+export { autofillCaptcha } from './ocr';
 export { loadOriginImage } from './originImage';
 export { autoPay } from './pay';
 export { addPlayEvent, autoPlay } from './play';

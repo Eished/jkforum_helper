@@ -1,10 +1,10 @@
 import { IMPORTANCE, IUser, XhrMethod, XhrResponseType } from '@/commonType';
 import { getTid, rdNum, turnCdata, urlSearchParams } from '@/utils/tools';
-import { MessageBox, postData } from './';
-import { ThreadData } from './../views/AutoClickManage';
+import { MessageBox, postData } from '.';
+import { ThreadData } from '../views/AutoClickManage';
 
 /**
- * ORC
+ * OCR
  */
 
 export const RETRY = 'retry';
@@ -79,7 +79,7 @@ function getBase64Image(img: HTMLImageElement) {
   return dataURL;
 }
 
-type OrcResult =
+type OcrResult =
   | {
       words_result: {
         words: string;
@@ -95,21 +95,21 @@ type OrcResult =
 
 async function readImage(base64: string, user: IUser) {
   const body = urlSearchParams({ image: base64, token: user.token }).toString();
-  const response = await postData(user.orcUrl, body, {
+  const response = await postData(user.ocrUrl, body, {
     responseType: XhrResponseType.JSON,
     usermethod: XhrMethod.POST,
     contentType: XhrResponseType.FORM,
   }).catch((e) => {
     return { error_msg: e.response?.message, error_code: 100 };
   });
-  const orcResults: OrcResult = response;
-  if ('words_result_num' in orcResults) {
-    if (orcResults.words_result_num === 1 && orcResults.words_result[0].words.length === 4) {
-      return orcResults.words_result[0].words;
+  const ocrResults: OcrResult = response;
+  if ('words_result_num' in ocrResults) {
+    if (ocrResults.words_result_num === 1 && ocrResults.words_result[0].words.length === 4) {
+      return ocrResults.words_result[0].words;
     }
   }
-  if ('error_msg' in orcResults) {
-    return orcResults;
+  if ('error_msg' in ocrResults) {
+    return ocrResults;
   }
   return String(rdNum(1000, 10000));
 }

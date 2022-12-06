@@ -37,7 +37,7 @@ interface IUser {
   freeTid: string;
   freeData: ThreadData[];
   votedMessage: string;
-  orcUrl: string;
+  ocrUrl: string;
   votedUrl: string;
   applyVotedUrl: string;
   taskDoneUrl: string;
