@@ -17,9 +17,9 @@
 1. 登录后脚本开始运行。
 2. 鼠标点击页面 左侧黄色 F 按钮，即可看到控制面板。
 3. 仅测试油猴 **Tampermonkey + Chrome** 的兼容性。
-4. 需要定制功能请私聊或发送邮件。
 5. 登陆时跳过验证手机号码：
    - 在登录页面右上方，有跳过手机验证按钮，按下按钮后再登录，可跳过手机验证。
+5. 需要定制功能请私聊或[发送邮件](mailto:kished@outlook.com)。
 
 
 ### 通用设置
@@ -100,11 +100,13 @@
 
 #### 现在有空
 
-![image_2022-11-03_02-05-35](readme.assets/image_2022-11-03_02-05-35.jpg)
+- 自动我有空，自动点击现在有空按钮。
+- 需要验证令牌，令牌免费试用，[获取令牌](https://jkf.iknow.fun/)。
+- 默认每 55 分钟点击一次，可自定义间隔。
+- 支持一个账号的多个帖子。
+- 支持多账号登录，[用 Chrome 同时登录多个账号](https://roro4ever.github.io/2019/11/28/%E5%88%A9%E7%94%A8Chrome%E5%90%8C%E6%97%B6%E7%99%BB%E5%BD%95%E7%BD%91%E7%AB%99%E7%9A%84%E5%A4%9A%E4%B8%AA%E8%B4%A6%E5%8F%B7/%E5%88%A9%E7%94%A8chrome%E5%90%8C%E6%97%B6%E7%99%BB%E5%BD%95%E7%BD%91%E7%AB%99%E7%9A%84%E5%A4%9A%E4%B8%AA%E8%B4%A6%E5%8F%B7/)。
 
-- 自动现在有空按钮，令牌免費试用，[令牌获取地址](https://jkf.iknow.fun/)。
-- 默认每 55 分钟点击一次，支持一个账号点击多个帖子
-- 支持多账号登录，每个账户数据独立存储。或 [利用 Chrome 同时登录网站的多个账号](https://roro4ever.github.io/2019/11/28/%E5%88%A9%E7%94%A8Chrome%E5%90%8C%E6%97%B6%E7%99%BB%E5%BD%95%E7%BD%91%E7%AB%99%E7%9A%84%E5%A4%9A%E4%B8%AA%E8%B4%A6%E5%8F%B7/%E5%88%A9%E7%94%A8chrome%E5%90%8C%E6%97%B6%E7%99%BB%E5%BD%95%E7%BD%91%E7%AB%99%E7%9A%84%E5%A4%9A%E4%B8%AA%E8%B4%A6%E5%8F%B7/)
+<img src="https://raw.githubusercontent.com/Eished/jkforum_helper/main/readme.assets/image_2022-11-03_02-05-35.jpg" alt="image_2022-11-03_02-05-35" style="zoom: 67%;" />
 
 ## TODO：
 
