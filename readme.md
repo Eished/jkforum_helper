@@ -100,7 +100,7 @@
 #### 现在有空
 
 - 自动我有空，自动点击现在有空按钮。
-- 需要验证令牌，令牌免费试用，[获取令牌](https://jkf.iknow.fun/)。六折优惠代码：JKF60
+- 需要验证令牌，令牌免费试用，[获取令牌](https://jkf.iknow.fun/)。
 - 默认每 55 分钟点击一次，可自定义间隔。
 - 支持一个账号的多个帖子。
 - 支持多账号登录，[用 Chrome 同时登录多个账号](https://roro4ever.github.io/2019/11/28/%E5%88%A9%E7%94%A8Chrome%E5%90%8C%E6%97%B6%E7%99%BB%E5%BD%95%E7%BD%91%E7%AB%99%E7%9A%84%E5%A4%9A%E4%B8%AA%E8%B4%A6%E5%8F%B7/%E5%88%A9%E7%94%A8chrome%E5%90%8C%E6%97%B6%E7%99%BB%E5%BD%95%E7%BD%91%E7%AB%99%E7%9A%84%E5%A4%9A%E4%B8%AA%E8%B4%A6%E5%8F%B7/)。
@@ -197,4 +197,6 @@
 
 **注意：因为使用了 TailwindCSS 可能会有部分样式冲突，留言反馈。**
 
-## 觉得好用就好评吧！你的支持是我前进的动力！
+## 赞助作者
+
+[https://www.patreon.com/kished](https://www.patreon.com/kished)
