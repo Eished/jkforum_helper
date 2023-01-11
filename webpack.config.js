@@ -120,7 +120,7 @@ module.exports = (env) => {
       ],
     },
     optimization: {
-      minimize: true,
+      minimize: false,
       minimizer: [
         new TerserPlugin({
           terserOptions: {
@@ -181,6 +181,14 @@ module.exports = (env) => {
         template: './public/index.html',
       })
     );
+  } else {
+    options.externals = {
+      'file-saver': 'saveAs',
+      // jszip: 'JSZip', // 无法弹窗下载界面
+      react: 'React',
+      'react-dom': 'ReactDOM',
+      'react-table': 'ReactTable',
+    };
   }
 
   return options;
