@@ -3,7 +3,7 @@ import { Button, Input } from '@/components';
 import { Modal } from '@/components/Modal/Modal';
 import ReactTableCard from '@/components/Table/Table';
 import { autofillCaptcha, getData, MessageBox } from '@/lib';
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 
 interface AutoClickManage {
   onClose: () => void;
@@ -30,6 +30,7 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
   const [threadUrl, setThreadUrl] = useState('');
   const [skipPageReset, setSkipPageReset] = useState(false);
   const [running, setRunning] = useState(false);
+  const isInitialMount = useRef(true);
 
   // When our cell renderer calls updateMyData, we'll use
   // the rowIndex, columnId and new value to update the
@@ -142,14 +143,16 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
     setRunning(true);
   };
 
-  // After data chagnes, we turn the flag back off
-  // so that if data actually changes when we're not
-  // editing it, the page is reset
   useEffect(() => {
-    setSkipPageReset(false);
-    saveData();
-    if (running && data.every((t) => t.status === 'offline')) {
-      setRunning(false);
+    // only on update
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+    } else {
+      setSkipPageReset(false);
+      saveData();
+      if (running && data.every((t) => t.status === 'offline')) {
+        setRunning(false);
+      }
     }
   }, [data, running, saveData]);
 

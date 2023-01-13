@@ -85,7 +85,6 @@ module.exports = (env) => {
             // use 数组中 loader 执行顺序：从右到左，从下到上 依次执行
             // 创建 style 标签，将 js 中的样式资源插入进行，添加到 head 中生效
             // GM_addStyle 不需要 style-loader
-            // 'style-loader',
             'to-string-loader',
             // 将 css 文件变成 commonjs 模块加载 js 中，里面内容是样式字符串
             // esModule: false 可以 toString()
@@ -100,12 +99,8 @@ module.exports = (env) => {
         },
         {
           test: /\.less$/,
-          // 使用哪些 loader 进行处理
           use: [
-            // use 数组中 loader 执行顺序：从右到左，从下到上 依次执行
-            // 创建 style 标签，将 js 中的样式资源插入进行，添加到 head 中生效
             'style-loader',
-            // 将 css 文件变成 commonjs 模块加载 js 中，里面内容是样式字符串
             'css-loader',
             {
               loader: 'less-loader',
@@ -131,17 +126,6 @@ module.exports = (env) => {
           extractComments: false,
         }),
       ],
-      // 单独打包react 和 react-dom file-saver jszip
-      // greasyfork 无法引入私人库
-      // splitChunks: {
-      //   cacheGroups: {
-      //     vendor: {
-      //       test: /[\\/]node_modules[\\/](react|react-dom|file-saver|jszip)[\\/]/,
-      //       name: 'vendor',
-      //       chunks: 'all',
-      //     },
-      //   },
-      // },
     },
     watchOptions: {
       ignored: /node_modules/,
@@ -184,7 +168,7 @@ module.exports = (env) => {
   } else {
     options.externals = {
       'file-saver': 'saveAs',
-      jszip: 'JSZip', // 无法弹窗下载界面
+      jszip: 'JSZip',
       react: 'React',
       'react-dom': 'ReactDOM',
       'react-table': 'ReactTable',
