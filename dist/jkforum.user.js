@@ -3199,19 +3199,15 @@ const AutoClickManage = ({ onClose, user }) => {
         ]);
     });
     const saveData = (0, react_1.useCallback)(() => {
-        if (user) {
-            console.log(Object.assign({}, user));
-            console.log([...data]);
-            user.freeData = data;
-            if (token && token.length === 36) {
-                user.token !== token ? (user.token = token) : null;
-            }
-            else {
-                new lib_1.MessageBox('没有输入令牌 or 令牌无效', 1000);
-            }
-            GM_setValue(user.username, user);
-            new lib_1.MessageBox('保存成功', 500);
+        user.freeData = data;
+        if (token && token.length === 36) {
+            user.token !== token ? (user.token = token) : null;
         }
+        else {
+            new lib_1.MessageBox('没有输入令牌 or 令牌无效', 1000);
+        }
+        GM_setValue(user.username, user);
+        new lib_1.MessageBox('保存成功', 500);
     }, [data, token, user]);
     const saveTimesData = (t) => {
         setData((old) => old.map((row) => {
