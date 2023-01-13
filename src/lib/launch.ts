@@ -1,9 +1,9 @@
-import { Counter, IUser } from '@/commonType';
+import { AutoPlayCounter, IUser } from '@/commonType';
 import { NowTime } from '@/utils/tools';
 import { addPlayEvent, autoPay, autoThk, autoVoted, loadOriginImage, sign } from './';
 
 // 启动
-async function launch(user: IUser, counter: Counter) {
+async function launch(user: IUser) {
   try {
     // 增加路由地址判断，只执行对应函数
     const localUrl = location.href;
@@ -22,6 +22,10 @@ async function launch(user: IUser, counter: Counter) {
         loadOriginImage();
       }
       // 自动播放图片
+      const counter: AutoPlayCounter = {
+        playBtn: 0,
+        playFlag: 0,
+      };
       addPlayEvent(counter, user);
     } else if (
       localUrl.includes('/forum-') ||

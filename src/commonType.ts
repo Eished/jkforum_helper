@@ -54,12 +54,15 @@ interface IUser {
 
 type Counter = {
   signBtn: number;
-  playBtn: number;
-  playFlag: number;
-  playObserver?: MutationObserver;
   downloadBtn: number;
   replyBtn: number;
   thkBtn: number;
+};
+
+type AutoPlayCounter = {
+  playBtn: number;
+  playFlag: number;
+  playObserver?: MutationObserver;
 };
 
 const enum XhrMethod {
@@ -140,4 +143,5 @@ export {
   GenericObject,
   exportType,
   IMPORTANCE,
+  AutoPlayCounter,
 };

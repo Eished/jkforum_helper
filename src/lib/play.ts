@@ -1,8 +1,8 @@
-import { Counter, IUser } from '@/commonType';
+import { AutoPlayCounter, IUser } from '@/commonType';
 import { waitFor } from '@/utils/tools';
 import { MessageBox } from './';
 
-const addPlayEvent = (counter: Counter, user: IUser) => {
+const addPlayEvent = (counter: AutoPlayCounter, user: IUser) => {
   const zoomimgs = document.querySelectorAll(`img[zoomfile]`); //获取图片列表
   if (zoomimgs) {
     // 自动播放
@@ -38,7 +38,7 @@ const addPlayEvent = (counter: Counter, user: IUser) => {
 };
 
 // 自动播放图片
-async function autoPlay(counter: Counter, user: IUser) {
+async function autoPlay(counter: AutoPlayCounter, user: IUser) {
   const append_parent = document.querySelector('#append_parent'); // 监听子节点
   if (counter.playBtn || !append_parent) {
     // 防重复点击、添加
@@ -61,7 +61,7 @@ async function autoPlay(counter: Counter, user: IUser) {
   });
 }
 // 添加播放图片按钮、事件
-function addAutoPlay(counter: Counter, user: IUser) {
+function addAutoPlay(counter: AutoPlayCounter, user: IUser) {
   const append_parent = document.querySelector('#append_parent');
   if (!append_parent) return;
   const imgzoom = append_parent.querySelector('#imgzoom');
