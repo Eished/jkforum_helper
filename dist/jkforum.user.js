@@ -3141,6 +3141,7 @@ const AutoClickManage = ({ onClose, user }) => {
     const [threadUrl, setThreadUrl] = (0, react_1.useState)('');
     const [skipPageReset, setSkipPageReset] = (0, react_1.useState)(false);
     const [running, setRunning] = (0, react_1.useState)(false);
+    const isInitialMount = (0, react_1.useRef)(true);
     // When our cell renderer calls updateMyData, we'll use
     // the rowIndex, columnId and new value to update the
     // original data
@@ -3236,14 +3237,17 @@ const AutoClickManage = ({ onClose, user }) => {
         onThreads.map((t) => (0, lib_1.autofillCaptcha)(t, user, saveTimesData, saveStatusData));
         setRunning(true);
     });
-    // After data chagnes, we turn the flag back off
-    // so that if data actually changes when we're not
-    // editing it, the page is reset
     (0, react_1.useEffect)(() => {
-        setSkipPageReset(false);
-        saveData();
-        if (running && data.every((t) => t.status === 'offline')) {
-            setRunning(false);
+        // only on update
+        if (isInitialMount.current) {
+            isInitialMount.current = false;
+        }
+        else {
+            setSkipPageReset(false);
+            saveData();
+            if (running && data.every((t) => t.status === 'offline')) {
+                setRunning(false);
+            }
         }
     }, [data, running, saveData]);
     return (react_1.default.createElement(Modal_1.Modal, { width: "w-[800px]", height: "max-h-[95%]", header: react_1.default.createElement(react_1.default.Fragment, null, "\u81EA\u52A8\u70B9\u51FB\u73B0\u5728\u6709\u7A7A\u7BA1\u7406\u9875\u9762"), footer: react_1.default.createElement(react_1.default.Fragment, null,
