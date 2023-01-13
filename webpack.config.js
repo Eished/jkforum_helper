@@ -29,7 +29,7 @@ module.exports = (env) => {
     banner.name = 'JKForum 助手-dev';
     banner['name:zh-TW'] = 'JKForum 助手-dev';
     banner.namespace = 'jkforum-helper-dev';
-    commonMeta.require.push('file://\\\\wsl$\\Ubuntu-20.04\\home\\eis\\web\\jkforum_helper\\dist\\jkforum.dev.user.js');
+    commonMeta.require = 'file://\\\\wsl$\\Ubuntu-20.04\\home\\eis\\web\\jkforum_helper\\dist\\jkforum.dev.user.js';
     commonMeta.grant.push('GM_addValueChangeListener');
     commonMeta.match.push('*://*.localhost/*');
   }
@@ -120,7 +120,7 @@ module.exports = (env) => {
       ],
     },
     optimization: {
-      minimize: true,
+      minimize: false,
       minimizer: [
         new TerserPlugin({
           terserOptions: {
@@ -181,6 +181,14 @@ module.exports = (env) => {
         template: './public/index.html',
       })
     );
+  } else {
+    options.externals = {
+      'file-saver': 'saveAs',
+      jszip: 'JSZip', // 无法弹窗下载界面
+      react: 'React',
+      'react-dom': 'ReactDOM',
+      'react-table': 'ReactTable',
+    };
   }
 
   return options;
