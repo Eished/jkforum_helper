@@ -10,7 +10,7 @@
 
 ## 项目模板
 
-https://github.com/Eished/douyu-helper
+https://github.com/Eished/tampermonkey-template
 
 ## 启动项目
 
@@ -46,16 +46,8 @@ VSCode Task See https://go.microsoft.com/fwlink/?LinkId=733558
 
 生成文件文件：`jkforum_helper\dist\jkforum.user.js`
 
-### splitchunks 拆包，减小发布体积
-
-> 生成主文件发布，生成的 module 文件使用 `@require` 从自己代码库的 CDN 导入
->
-> 实测提示：Code 使用了一个未经批准的外部脚本，无法发布。
-
-## 适应其它网站
-
-修改油猴头文件 `src/common.meta.json` 的 `"match": "*://*.xxx.com/*",`
-
 ## 参考项目及其文档
+
+https://github.com/Eished/tampermonkey-template
 
 https://bilibili-evolved-doc.vercel.app/developer
