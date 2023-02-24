@@ -863,8 +863,8 @@ select {
   width: 3rem;
 }
 
-.w-\[800px\] {
-  width: 800px;
+.w-full {
+  width: 100%;
 }
 
 .w-64 {
@@ -885,10 +885,6 @@ select {
 
 .w-24 {
   width: 6rem;
-}
-
-.w-full {
-  width: 100%;
 }
 
 .w-5 {
