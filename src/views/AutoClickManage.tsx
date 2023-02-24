@@ -3,6 +3,7 @@ import { Button, Input } from '@/components';
 import { Modal } from '@/components/Modal/Modal';
 import ReactTableCard from '@/components/Table/Table';
 import { autofillCaptcha, getData, MessageBox } from '@/lib';
+import { ConcurrencyPromisePool } from '@/utils/ConcurrencyPromisePool';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 
 interface AutoClickManage {
@@ -17,6 +18,7 @@ export interface ThreadData {
   cycle: string;
   times: number;
   delete: string;
+  nextClickTime: number;
 }
 
 export enum Status {
@@ -31,6 +33,7 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
   const [skipPageReset, setSkipPageReset] = useState(false);
   const [running, setRunning] = useState(false);
   const isInitialMount = useRef(true);
+  const [pool, setPool] = useState(new ConcurrencyPromisePool(2));
 
   // When our cell renderer calls updateMyData, we'll use
   // the rowIndex, columnId and new value to update the
@@ -94,6 +97,7 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
         cycle: '55',
         times: 0,
         delete: '',
+        nextClickTime: 0,
       },
     ]);
   };
@@ -109,15 +113,39 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
     new MessageBox('保存成功', 500);
   }, [data, token, user]);
 
-  const saveTimesData = (t: ThreadData) => {
+  const setNextClickTime = (t: ThreadData) => {
     setData((old) =>
       old.map((row) => {
         if (row.url === t.url) {
-          return { ...row, times: row.times + 1 };
+          return { ...row, times: row.times + 1, nextClickTime: t.nextClickTime };
         }
         return row;
       })
     );
+  };
+
+  const triggerNextClick = (t: ThreadData) => {
+    const onThread = data.find((onlineThread) => onlineThread.status === 'online' && t.url === onlineThread.url);
+    if (!onThread) {
+      return;
+    }
+
+    // 点击时间校验，防止点击时间错乱
+    const diff = Math.abs(t.nextClickTime - new Date().getTime());
+    // 时间精度过高，误差等于网络超时时间，设置误差60秒
+    if (diff < 60000) {
+      // 添加任务，在此处开始闭包，递归调用
+      pool.all([() => autofillCaptcha(onThread, user, setNextClickTime, saveStatusData, triggerNextClick)]);
+    } else {
+      saveStatusData(onThread);
+      new MessageBox(
+        `帖子：${onThread.title}，已错过点击时间，自动现在有空已停止运行！预设点击时间：${new Date(
+          t.nextClickTime
+        ).toLocaleString()}，实际时间：${new Date().toLocaleString()}`,
+        10000,
+        2
+      );
+    }
   };
 
   const saveStatusData = (t: ThreadData) => {
@@ -139,8 +167,12 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
     if (!onThreads.length) {
       return alert('请将需要执行的帖子运行状态设为 online');
     }
-    onThreads.map((t) => autofillCaptcha(t, user, saveTimesData, saveStatusData));
     setRunning(true);
+
+    const promises = onThreads.map(
+      (t) => () => autofillCaptcha(t, user, setNextClickTime, saveStatusData, triggerNextClick)
+    );
+    pool.all(promises);
   };
 
   useEffect(() => {
@@ -158,17 +190,30 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
 
   return (
     <Modal
-      width="w-[800px]"
+      width="w-full"
       height="max-h-[95%]"
       header={<>自动点击现在有空管理页面</>}
       footer={
         <>
           <Button text={'开始执行'} onClick={start} disabled={running} />
           {/* <Button text={'保存'} onClick={saveData} /> */}
-          <Button title="停止现在有空请刷新页面" text={'关闭页面'} onClick={onClose} />
+          <Button
+            title="不使用时请停止运行，修改设置后需要停止重新运行"
+            text={'停止自动现在有空'}
+            onClick={() => {
+              location.reload();
+            }}
+          />
+          <Button title="停止运行自动现在有空后可关闭" text={'关闭页面'} onClick={onClose} disabled={running} />
         </>
       }
-      onClose={onClose}>
+      onClose={() => {
+        if (running) {
+          alert('停止运行自动现在有空后可关闭');
+        } else {
+          onClose();
+        }
+      }}>
       <>
         <span className="text-red-500">
           目前本页面仅支持管理一个账号的多个帖子，多个账号请

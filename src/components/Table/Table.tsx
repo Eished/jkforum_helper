@@ -125,6 +125,14 @@ export default function ReactTableCard({
           return <span>{value + ' 次'}</span>;
         },
       };
+    } else if (headerItem === 'nextClickTime') {
+      return {
+        Header: '下次点击',
+        accessor: headerItem,
+        Cell: ({ value }: any) => {
+          return <span>{new Date(value).toLocaleString()}</span>;
+        },
+      };
     } else {
       return {
         Header: headerItem,

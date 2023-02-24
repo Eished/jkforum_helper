@@ -117,29 +117,39 @@ async function readImage(base64: string, user: IUser) {
 async function autofillCaptcha(
   t: ThreadData,
   user: IUser,
-  saveTimesData: (value: ThreadData) => void,
-  saveStatusData: (value: ThreadData) => void
+  setNextClickTime: (value: ThreadData) => void,
+  saveStatusData: (value: ThreadData) => void,
+  triggerNextClick: (value: ThreadData) => void
 ) {
   try {
+    // 在异步请求前设置好时间，防止时间错误
+    const timeInterval = 1000 * 60 * Number(t.cycle);
+    const nextClickTime = new Date().getTime() + timeInterval;
+    t.nextClickTime = nextClickTime;
+
     const url = `${user.votedUrl}id=topthreads:setstatus&tid=${getTid(
       t.url
     )}&handlekey=k_setstatus&infloat=1&freeon=yes&inajax=1`;
     const result = await captcha(url, user);
-    // 调用计数
-    saveTimesData(t);
+    // 调用计数和存入时间
+    setNextClickTime(t);
     setTimeout(() => {
-      autofillCaptcha(t, user, saveTimesData, saveStatusData);
-    }, Number(t.cycle) * 60 * 1000);
+      triggerNextClick(t);
+    }, timeInterval);
   } catch (e: any) {
     if (e === RETRY) {
+      const timeInterval = 1000 + rdNum(1000, 4000);
+      const nextClickTime = new Date().getTime() + timeInterval;
+      t.nextClickTime = nextClickTime;
       // 调用计数
-      saveTimesData(t);
+      setNextClickTime(t);
       setTimeout(() => {
-        autofillCaptcha(t, user, saveTimesData, saveStatusData);
-      }, 2000 + rdNum(1000, 4000)); // 重试频率限制
+        triggerNextClick(t);
+      }, timeInterval); // 重试频率限制
     } else {
       // 错误则改变状态
       saveStatusData(t);
+      new MessageBox(e);
     }
   }
 }

@@ -42,7 +42,10 @@ class ConcurrencyPromisePool {
         // 运行结束条件：队列长度 && 正在运行的数量
         if (this.queue.length === 0 && this.runningNum === 0) {
           // promise返回结果, 然后递归结束;
-          return resolve(this.results);
+          const results = [...this.results];
+          // 清空结果，方便重复使用
+          this.results = [];
+          return resolve(results);
         }
         // 队列还有则，出队，然后递归调用
         if (this.queue.length) {
