@@ -2967,7 +2967,7 @@ exports["default"] = GM_addStyle(tailwindStyles
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.updateUserUrl = exports.getTid = exports.getVersionNum = exports.getUuiD = exports.mergeObjValue = exports.isSameObjKey = exports.NowTime = exports.rdNum = exports.waitFor = exports.replaceHtml = exports.checkHtml = exports.turnUrl = exports.urlSearchParams = exports.turnCdata = void 0;
+exports.preciseSetTimeout = exports.preciseSetInterval = exports.updateUserUrl = exports.getTid = exports.getVersionNum = exports.getUuiD = exports.mergeObjValue = exports.isSameObjKey = exports.NowTime = exports.rdNum = exports.waitFor = exports.replaceHtml = exports.checkHtml = exports.turnUrl = exports.urlSearchParams = exports.turnCdata = void 0;
 const lib_1 = __webpack_require__(915);
 // POST返回 xml数据类型转换成 字符串或html 模块
 function turnCdata(xmlRepo) {
@@ -3103,6 +3103,28 @@ const getTid = (url) => {
     return tid;
 };
 exports.getTid = getTid;
+const preciseSetInterval = (handler, delay, timeout = 0) => {
+    let baseTime = Date.now();
+    const callHandler = () => {
+        if (Math.abs(Date.now() - baseTime) <= delay + timeout) {
+            baseTime = Date.now();
+            handler();
+        }
+    };
+    return window.setInterval(callHandler, delay);
+};
+exports.preciseSetInterval = preciseSetInterval;
+const preciseSetTimeout = (handler, delay, timeout = 0) => {
+    let baseTime = Date.now();
+    const callHandler = () => {
+        if (Math.abs(Date.now() - baseTime) <= delay + timeout) {
+            baseTime = Date.now();
+            handler();
+        }
+    };
+    return window.setTimeout(callHandler, delay);
+};
+exports.preciseSetTimeout = preciseSetTimeout;
 
 
 /***/ }),
