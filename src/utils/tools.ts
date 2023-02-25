@@ -131,6 +131,28 @@ const getTid = (url: string) => {
   return tid;
 };
 
+const preciseSetInterval = (handler: () => void, delay: number, timeout = 0) => {
+  let baseTime = Date.now();
+  const callHandler = () => {
+    if (Math.abs(Date.now() - baseTime) <= delay + timeout) {
+      baseTime = Date.now();
+      handler();
+    }
+  };
+  return window.setInterval(callHandler, delay);
+};
+
+const preciseSetTimeout = (handler: () => void, delay: number, timeout = 0) => {
+  let baseTime = Date.now();
+  const callHandler = () => {
+    if (Math.abs(Date.now() - baseTime) <= delay + timeout) {
+      baseTime = Date.now();
+      handler();
+    }
+  };
+  return window.setTimeout(callHandler, delay);
+};
+
 export {
   turnCdata,
   urlSearchParams,
@@ -146,4 +168,6 @@ export {
   getVersionNum,
   getTid,
   updateUserUrl,
+  preciseSetInterval,
+  preciseSetTimeout,
 };
