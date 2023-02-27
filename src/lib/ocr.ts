@@ -48,6 +48,9 @@ async function captcha(url: string, user: IUser) {
       } else if (result === '更新完成！若狀態仍沒更新，請嘗試刷新頁面') {
         new MessageBox('更新完成！自動‘現在有空’中，請不要刷新頁面！', user.freeTime);
         return resolve(result);
+      } else if (result === 'Access denied.') {
+        new MessageBox('无此帖子的访问权限，请检查帖子状态');
+        return reject(result);
       } else {
         new MessageBox('验证码错误，正在重试...');
         return reject(RETRY);
