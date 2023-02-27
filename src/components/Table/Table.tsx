@@ -78,7 +78,7 @@ export default function ReactTableCard({
         accessor: headerItem,
         Cell: (props: any) => {
           return (
-            <strong title={props.value} className="block w-40 whitespace-nowrap overflow-hidden overflow-ellipsis">
+            <strong title={props.value} className="block w-40 whitespace-nowrap overflow-hidden overflow-ellipsis mx-1">
               {props.value}
             </strong>
           );
@@ -109,7 +109,7 @@ export default function ReactTableCard({
         Cell: ({ value }: any) => {
           return (
             <a
-              className="border-b block w-40 whitespace-nowrap overflow-hidden overflow-ellipsis"
+              className="border-b block w-40 whitespace-nowrap overflow-hidden overflow-ellipsis mx-1"
               title={value}
               href={value}>
               {value}
@@ -131,6 +131,14 @@ export default function ReactTableCard({
         accessor: headerItem,
         Cell: ({ value }: any) => {
           return <span>{new Date(value).toLocaleString()}</span>;
+        },
+      };
+    } else if (headerItem === 'retry') {
+      return {
+        Header: '重试次数',
+        accessor: headerItem,
+        Cell: ({ value }: any) => {
+          return <span>{value}</span>;
         },
       };
     } else {

@@ -19,6 +19,7 @@ export interface ThreadData {
   times: number;
   delete: string;
   nextClickTime: number;
+  retry: number;
 }
 
 export enum Status {
@@ -98,6 +99,7 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
         times: 0,
         delete: '',
         nextClickTime: 0,
+        retry: 0,
       },
     ]);
   };
@@ -110,14 +112,18 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
       new MessageBox('没有输入令牌 or 令牌无效', 1000);
     }
     GM_setValue(user.username, user);
-    new MessageBox('保存成功', 500);
   }, [data, token, user]);
 
   const setNextClickTime = (t: ThreadData) => {
     setData((old) =>
       old.map((row) => {
         if (row.url === t.url) {
-          return { ...row, times: row.times + 1, nextClickTime: t.nextClickTime };
+          return {
+            ...row,
+            times: row.times + 1,
+            nextClickTime: t.nextClickTime,
+            retry: t.retry,
+          };
         }
         return row;
       })
@@ -133,9 +139,16 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
     // 点击时间校验，防止点击时间错乱
     const diff = Math.abs(t.nextClickTime - new Date().getTime());
     // 时间精度过高，误差等于网络超时时间，设置误差60秒
-    if (diff < 60000) {
+    if (diff < 60000 && t.retry < 10) {
       // 添加任务，在此处开始闭包，递归调用
       pool.all([() => autofillCaptcha(onThread, user, setNextClickTime, saveStatusData, triggerNextClick)]);
+    } else if (t.retry >= 10) {
+      saveStatusData({ ...onThread, retry: t.retry });
+      new MessageBox(
+        `帖子：${onThread.title}，连续重试次数过多：${onThread.retry}次，自动现在有空已停止运行！`,
+        10000,
+        2
+      );
     } else {
       saveStatusData(onThread);
       new MessageBox(

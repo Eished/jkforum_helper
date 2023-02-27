@@ -131,6 +131,7 @@ async function autofillCaptcha(
       t.url
     )}&handlekey=k_setstatus&infloat=1&freeon=yes&inajax=1`;
     const result = await captcha(url, user);
+    t.retry = 0;
     // 调用计数和存入时间
     setNextClickTime(t);
     setTimeout(() => {
@@ -141,6 +142,7 @@ async function autofillCaptcha(
       const timeInterval = 1000 + rdNum(1000, 4000);
       const nextClickTime = new Date().getTime() + timeInterval;
       t.nextClickTime = nextClickTime;
+      t.retry = (t.retry ?? 0) + 1;
       // 调用计数
       setNextClickTime(t);
       setTimeout(() => {
