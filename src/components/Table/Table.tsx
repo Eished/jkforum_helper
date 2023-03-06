@@ -86,7 +86,7 @@ export default function ReactTableCard({
       };
     } else if (headerItem === 'status') {
       return {
-        Header: '运行状态',
+        Header: '启用状态',
         accessor: headerItem,
         Cell: ToggleCell,
       };

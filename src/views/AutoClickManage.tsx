@@ -178,7 +178,7 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
     }
     const onThreads = data.filter((t) => t.status === 'online');
     if (!onThreads.length) {
-      return alert('请将需要执行的帖子运行状态设为 online');
+      return alert('请将需要执行的帖子启用状态设为 online');
     }
     setRunning(true);
 
