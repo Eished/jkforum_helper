@@ -19,10 +19,10 @@ async function autoThk(user: IUser) {
   }).toString();
   const xmlData = await postDataCdata(user.thkUrl, thkParamsData); //post感谢数据
   if (xmlData && checkHtml(xmlData)) {
-    const info = (xmlData as Document).querySelector('.alert_info')?.innerHTML.split('<')[0].trim(); //去除html，返回字符串
+    const info = xmlData.querySelector('.alert_info')?.innerHTML.split('<')[0].trim(); //去除html，返回字符串
     new MessageBox(info);
   } else {
-    new MessageBox(xmlData as string); //其它情况直接输出
+    new MessageBox(xmlData); //其它情况直接输出
   }
 
   if (document.querySelectorAll('#k_thankauthor').length == 2) {

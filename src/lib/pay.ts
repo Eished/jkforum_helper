@@ -1,6 +1,6 @@
-import { turnUrl, checkHtml, getTid } from '@/utils/tools';
-import { postDataCdata, MessageBox } from './';
 import { IUser } from '@/commonType';
+import { checkHtml, getTid, turnUrl } from '@/utils/tools';
+import { MessageBox, postDataCdata } from './';
 
 // 自动支付
 async function autoPay(user: IUser) {
@@ -11,11 +11,11 @@ async function autoPay(user: IUser) {
     const stringOrHtml = await postDataCdata(url, pData);
     if (checkHtml(stringOrHtml)) {
       // 确认html
-      const info = (stringOrHtml as Document).querySelector('script')?.innerHTML.split(`', `)[1].slice(1);
+      const info = stringOrHtml.querySelector('script')?.innerHTML.split(`', `)[1].slice(1);
       new MessageBox(info);
       location.reload();
     } else {
-      new MessageBox(stringOrHtml as string); //其它情况直接输出
+      new MessageBox(stringOrHtml); //其它情况直接输出
     }
   }
 }

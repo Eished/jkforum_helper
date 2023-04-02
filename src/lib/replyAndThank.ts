@@ -297,13 +297,13 @@ async function replyOrThk(
           const data = await postDataCdata(user.replyUrl + replyUrlParamsData.toString(), replyParamsData.toString());
           if (checkHtml(data)) {
             // 确认html
-            const info = (data as Document).querySelector('script')?.innerHTML.split(`, `)[1];
+            const info = data.querySelector('script')?.innerHTML.split(`, `)[1];
             if (!info) {
               throw new Error("querySelector('script') 错误：" + info);
             }
             new MessageBox(info.split('，')[0].slice(1) + '，' + info.split('，')[1] + '！'); // 返回html成功消息
           } else {
-            new MessageBox(data as string, 'none'); //其它情况直接输出
+            new MessageBox(data, 'none'); //其它情况直接输出
           }
           mesIdRepContent.refresh(
             '序号：' +
@@ -334,10 +334,10 @@ async function replyOrThk(
           });
           const data = await postDataCdata(user.thkUrl, thkParamsData.toString()); //post感谢数据
           if (checkHtml(data)) {
-            const info = (data as Document).querySelector('.alert_info')?.innerHTML.split('<')[0].trim(); //去除html，返回字符串
+            const info = data.querySelector('.alert_info')?.innerHTML.split('<')[0].trim(); //去除html，返回字符串
             new MessageBox(info, 1000);
           } else {
-            new MessageBox(data as string, 1000); //其它情况直接输出
+            new MessageBox(data, 1000); //其它情况直接输出
           }
           mesIdThk.refresh(
             fid +

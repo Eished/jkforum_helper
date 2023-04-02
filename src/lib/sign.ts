@@ -56,10 +56,10 @@ async function sign(user: IUser) {
   const stringOrHtml = await postDataCdata(user.signUrl, signParamsData); // 直接post签到数据
   if (checkHtml(stringOrHtml)) {
     // 确认html
-    const info = (stringOrHtml as Document).querySelector('.c')?.innerHTML.split('<')[0].trim(); // 解析html，返回字符串
+    const info = stringOrHtml.querySelector('.c')?.innerHTML.split('<')[0].trim(); // 解析html，返回字符串
     new MessageBox(info);
   } else {
-    new MessageBox(stringOrHtml as string); //其它情况直接输出
+    new MessageBox(stringOrHtml); //其它情况直接输出
   }
 }
 

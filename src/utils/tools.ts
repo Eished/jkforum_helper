@@ -34,7 +34,7 @@ function turnUrl(data: string, type?: boolean) {
 }
 
 // 判断html和字符串是不是html
-function checkHtml(htmlStr: string | Document) {
+function checkHtml(htmlStr: string | Document): htmlStr is Document {
   if (htmlStr instanceof Document) {
     return true;
   } else {

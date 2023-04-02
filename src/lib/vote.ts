@@ -1,6 +1,6 @@
-import { urlSearchParams, checkHtml } from '@/utils/tools';
-import { getData, MessageBox, postDataCdata } from './';
 import { IUser } from '@/commonType';
+import { checkHtml, urlSearchParams } from '@/utils/tools';
+import { getData, MessageBox, postDataCdata } from './';
 
 async function autoVoted(user: IUser) {
   await getData(user.applyVotedUrl); // 申请任务
@@ -36,10 +36,9 @@ async function autoVoted(user: IUser) {
   // 投票
   const votedMessage = await postDataCdata(user.votedUrl + votedParams, votedParamsData);
   if (checkHtml(votedMessage)) {
-    const votedDom = votedMessage as Document;
     let info: string | undefined = '';
-    const alertInfo = votedDom.querySelector('.alert_info');
-    const script = votedDom.querySelector('script');
+    const alertInfo = votedMessage.querySelector('.alert_info');
+    const script = votedMessage.querySelector('script');
     if (alertInfo) {
       info = alertInfo.innerHTML; // 解析html，返回字符串，失败警告
       new MessageBox(info);
@@ -50,7 +49,7 @@ async function autoVoted(user: IUser) {
       new MessageBox('领取投票奖励成功！');
     }
   } else {
-    new MessageBox(votedMessage as string); //其它情况直接输出
+    new MessageBox(votedMessage); //其它情况直接输出
   }
   msId.remove();
   GM_setValue(user.username, user); //保存当天日// today 初始化
