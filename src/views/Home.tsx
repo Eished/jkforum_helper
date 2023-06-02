@@ -1,7 +1,5 @@
 import { Counter, IUser, ReplyOrThank } from '@/commonType';
 import { Button, Input, Panel, TextArea, Toggle } from '@/components';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import {
   addOnePage,
   addPageBatch,
