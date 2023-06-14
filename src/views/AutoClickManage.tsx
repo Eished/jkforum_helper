@@ -1,30 +1,12 @@
-import { IUser } from '@/commonType';
-import { Button, Input } from '@/components';
-import { Modal } from '@/components/Modal/Modal';
-import ReactTableCard from '@/components/Table/Table';
-import { autofillCaptcha, getData, MessageBox } from '@/lib';
+import { IUser, Status, ThreadData } from '@/commonType';
+import { Button, Input, Modal, ReactTableCard } from '@/components';
+import { MessageBox, autofillCaptcha, getData } from '@/lib';
 import { ConcurrencyPromisePool } from '@/utils/ConcurrencyPromisePool';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 
 interface AutoClickManage {
   onClose: () => void;
   user: IUser;
-}
-
-export interface ThreadData {
-  title: string;
-  url: string;
-  status: Status;
-  cycle: string;
-  times: number;
-  delete: string;
-  nextClickTime: number;
-  retry: number;
-}
-
-export enum Status {
-  online = 'online',
-  offline = 'offline',
 }
 
 export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
@@ -34,7 +16,7 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
   const [skipPageReset, setSkipPageReset] = useState(false);
   const [running, setRunning] = useState(false);
   const isInitialMount = useRef(true);
-  const [pool, setPool] = useState(new ConcurrencyPromisePool(2));
+  const [pool] = useState(new ConcurrencyPromisePool(2));
 
   // When our cell renderer calls updateMyData, we'll use
   // the rowIndex, columnId and new value to update the

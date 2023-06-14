@@ -1,6 +1,5 @@
 /* eslint-disable react/jsx-key */
-import { GenericObject } from '@/commonType';
-import { Status } from '@/views/AutoClickManage';
+import { GenericObject, Status } from '@/commonType';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useGlobalFilter, usePagination, useSortBy, useTable } from 'react-table';
 import { Button } from '../Button/Button';

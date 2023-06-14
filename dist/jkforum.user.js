@@ -419,13 +419,9 @@ const App = ({ username, formhash }) => {
     }); // 防止按钮重复点击
     (0, react_1.useEffect)(() => {
         if (!user) {
-            (0, lib_1.creatUser)(username, formhash)
-                .then((user) => {
-                setUser(user);
-                return user;
-            })
-                .then((user) => {
+            (0, lib_1.creatUser)(username, formhash).then((user) => {
                 (0, lib_1.launch)(user); // 启动自动签到、投票、加载原图等
+                setUser(user);
             });
         }
     }, [username, formhash, user]);
@@ -452,7 +448,7 @@ exports["default"] = App;
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.Mood = void 0;
+exports.Status = exports.Mood = void 0;
 var Mood;
 (function (Mood) {
     Mood["kaixin"] = "kx";
@@ -465,6 +461,12 @@ var Mood;
     Mood["yonglan"] = "yl";
     Mood["shuai"] = "shuai";
 })(Mood = exports.Mood || (exports.Mood = {}));
+var Status;
+(function (Status) {
+    Status["online"] = "online";
+    Status["offline"] = "offline";
+})(Status || (Status = {}));
+exports.Status = Status;
 
 
 /***/ }),
@@ -590,7 +592,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const AutoClickManage_1 = __webpack_require__(699);
+/* eslint-disable react/jsx-key */
+const commonType_1 = __webpack_require__(321);
 const react_1 = __importStar(__webpack_require__(995));
 const react_table_1 = __webpack_require__(282);
 const Button_1 = __webpack_require__(237);
@@ -617,9 +620,9 @@ const EditableCell = ({ value: initialValue, row: { index }, column: { id }, upd
 const ToggleCell = ({ value, row: { index }, column: { id }, updateMyData, // This is a custom function that we supplied to our table instance
  }) => {
     const update = () => {
-        updateMyData(index, id, value === AutoClickManage_1.Status.online ? AutoClickManage_1.Status.offline : AutoClickManage_1.Status.online);
+        updateMyData(index, id, value === commonType_1.Status.online ? commonType_1.Status.offline : commonType_1.Status.online);
     };
-    return react_1.default.createElement(Toggle_1.Toggle, { mykey: `${id}-${index}-${value}`, label: value, onClick: update, checked: value === AutoClickManage_1.Status.online });
+    return react_1.default.createElement(Toggle_1.Toggle, { mykey: `${id}-${index}-${value}`, label: value, onClick: update, checked: value === commonType_1.Status.online });
 };
 const DeleteCell = ({ row: { index }, deleteData, // This is a custom function that we supplied to our table instance
  }) => {
@@ -638,7 +641,7 @@ function ReactTableCard({ title, data, updateMyData, deleteData, skipPageReset =
         }
         else if (headerItem === 'status') {
             return {
-                Header: '运行状态',
+                Header: '启用状态',
                 accessor: headerItem,
                 Cell: ToggleCell,
             };
@@ -864,18 +867,25 @@ exports.Toggle = Toggle;
 /***/ }),
 
 /***/ 740:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
 
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.Toggle = exports.TextArea = exports.Panel = exports.Input = exports.Button = void 0;
+exports.Toggle = exports.TextArea = exports.ReactTableCard = exports.Panel = exports.Modal = exports.Input = exports.Button = void 0;
 var Button_1 = __webpack_require__(237);
 Object.defineProperty(exports, "Button", ({ enumerable: true, get: function () { return Button_1.Button; } }));
 var Input_1 = __webpack_require__(84);
 Object.defineProperty(exports, "Input", ({ enumerable: true, get: function () { return Input_1.Input; } }));
+var Modal_1 = __webpack_require__(653);
+Object.defineProperty(exports, "Modal", ({ enumerable: true, get: function () { return Modal_1.Modal; } }));
 var Panel_1 = __webpack_require__(414);
 Object.defineProperty(exports, "Panel", ({ enumerable: true, get: function () { return Panel_1.Panel; } }));
+var Table_1 = __webpack_require__(420);
+Object.defineProperty(exports, "ReactTableCard", ({ enumerable: true, get: function () { return __importDefault(Table_1).default; } }));
 var TextArea_1 = __webpack_require__(815);
 Object.defineProperty(exports, "TextArea", ({ enumerable: true, get: function () { return TextArea_1.TextArea; } }));
 var Toggle_1 = __webpack_require__(219);
@@ -1343,7 +1353,7 @@ const skipPhoneValidate = () => {
 exports.skipPhoneValidate = skipPhoneValidate;
 const hackLogin = () => {
     const xhrSend = XMLHttpRequest.prototype.send;
-    let isAuthMethod = 0;
+    let isAuthMethod = false;
     XMLHttpRequest.prototype.send = function (...args) {
         return __awaiter(this, void 0, void 0, function* () {
             if (isAuthMethod) {
@@ -1371,10 +1381,10 @@ const hackLogin = () => {
     const xhrOpen = XMLHttpRequest.prototype.open;
     XMLHttpRequest.prototype.open = function (method, url) {
         if (url === AccessTokenUrl) {
-            isAuthMethod = 1;
+            isAuthMethod = true;
         }
         else {
-            isAuthMethod = 0;
+            isAuthMethod = false;
         }
         return xhrOpen.apply(this, [method, url, true]);
     };
@@ -2836,10 +2846,9 @@ function autoVoted(user) {
         // 投票
         const votedMessage = yield (0, _1.postDataCdata)(user.votedUrl + votedParams, votedParamsData);
         if ((0, tools_1.checkHtml)(votedMessage)) {
-            const votedDom = votedMessage;
             let info = '';
-            const alertInfo = votedDom.querySelector('.alert_info');
-            const script = votedDom.querySelector('script');
+            const alertInfo = votedMessage.querySelector('.alert_info');
+            const script = votedMessage.querySelector('script');
             if (alertInfo) {
                 info = alertInfo.innerHTML; // 解析html，返回字符串，失败警告
                 new _1.MessageBox(info);
@@ -3182,22 +3191,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.AutoClickManage = exports.Status = void 0;
+exports.AutoClickManage = void 0;
+const commonType_1 = __webpack_require__(321);
 const components_1 = __webpack_require__(740);
-const Modal_1 = __webpack_require__(653);
-const Table_1 = __importDefault(__webpack_require__(420));
 const lib_1 = __webpack_require__(915);
 const ConcurrencyPromisePool_1 = __webpack_require__(287);
 const react_1 = __importStar(__webpack_require__(995));
-var Status;
-(function (Status) {
-    Status["online"] = "online";
-    Status["offline"] = "offline";
-})(Status = exports.Status || (exports.Status = {}));
 const AutoClickManage = ({ onClose, user }) => {
     const [data, setData] = (0, react_1.useState)(user.freeData ? [...user.freeData] : []);
     const [token, setToken] = (0, react_1.useState)(user.token);
@@ -3205,7 +3205,7 @@ const AutoClickManage = ({ onClose, user }) => {
     const [skipPageReset, setSkipPageReset] = (0, react_1.useState)(false);
     const [running, setRunning] = (0, react_1.useState)(false);
     const isInitialMount = (0, react_1.useRef)(true);
-    const [pool, setPool] = (0, react_1.useState)(new ConcurrencyPromisePool_1.ConcurrencyPromisePool(2));
+    const [pool] = (0, react_1.useState)(new ConcurrencyPromisePool_1.ConcurrencyPromisePool(2));
     // When our cell renderer calls updateMyData, we'll use
     // the rowIndex, columnId and new value to update the
     // original data
@@ -3254,7 +3254,7 @@ const AutoClickManage = ({ onClose, user }) => {
         setData([
             ...data,
             {
-                status: Status.offline,
+                status: commonType_1.Status.offline,
                 title,
                 url: threadUrl,
                 cycle: '55',
@@ -3307,7 +3307,7 @@ const AutoClickManage = ({ onClose, user }) => {
     const saveStatusData = (t) => {
         setData((old) => old.map((row) => {
             if (row.url === t.url) {
-                return Object.assign(Object.assign({}, row), { status: Status.offline });
+                return Object.assign(Object.assign({}, row), { status: commonType_1.Status.offline });
             }
             return row;
         }));
@@ -3318,7 +3318,7 @@ const AutoClickManage = ({ onClose, user }) => {
         }
         const onThreads = data.filter((t) => t.status === 'online');
         if (!onThreads.length) {
-            return alert('请将需要执行的帖子运行状态设为 online');
+            return alert('请将需要执行的帖子启用状态设为 online');
         }
         setRunning(true);
         const promises = onThreads.map((t) => () => (0, lib_1.autofillCaptcha)(t, user, setNextClickTime, saveStatusData, triggerNextClick));
@@ -3337,7 +3337,7 @@ const AutoClickManage = ({ onClose, user }) => {
             }
         }
     }, [data, running, saveData]);
-    return (react_1.default.createElement(Modal_1.Modal, { width: "w-full", height: "max-h-[95%]", header: react_1.default.createElement(react_1.default.Fragment, null, "\u81EA\u52A8\u70B9\u51FB\u73B0\u5728\u6709\u7A7A\u7BA1\u7406\u9875\u9762"), footer: react_1.default.createElement(react_1.default.Fragment, null,
+    return (react_1.default.createElement(components_1.Modal, { width: "w-full", height: "max-h-[95%]", header: react_1.default.createElement(react_1.default.Fragment, null, "\u81EA\u52A8\u70B9\u51FB\u73B0\u5728\u6709\u7A7A\u7BA1\u7406\u9875\u9762"), footer: react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement(components_1.Button, { text: '开始执行', onClick: start, disabled: running }),
             react_1.default.createElement(components_1.Button, { title: "\u4E0D\u4F7F\u7528\u65F6\u8BF7\u505C\u6B62\u8FD0\u884C\uFF0C\u4FEE\u6539\u8BBE\u7F6E\u540E\u9700\u8981\u505C\u6B62\u91CD\u65B0\u8FD0\u884C", text: '停止自动现在有空', onClick: () => {
                     location.reload();
@@ -3365,7 +3365,7 @@ const AutoClickManage = ({ onClose, user }) => {
                     react_1.default.createElement(components_1.Input, { label: "\u5E16\u5B50\u94FE\u63A5\uFF1A", onChange: setThreadUrl, placeholder: "\u8BF7\u8F93\u5165\u5E16\u5B50\u94FE\u63A5", value: threadUrl })),
                 react_1.default.createElement("div", { className: "ml-4" },
                     react_1.default.createElement(components_1.Button, { text: '添加', onClick: addThread }))),
-            react_1.default.createElement("div", { className: "overflow-auto" }, data.length ? (react_1.default.createElement(Table_1.default, { searchBar: false, title: '帖子管理', data: data, skipPageReset: skipPageReset, updateMyData: updateMyData, deleteData: deleteData })) : ('')))));
+            react_1.default.createElement("div", { className: "overflow-auto" }, data.length ? (react_1.default.createElement(components_1.ReactTableCard, { searchBar: false, title: '帖子管理', data: data, skipPageReset: skipPageReset, updateMyData: updateMyData, deleteData: deleteData })) : ('')))));
 };
 exports.AutoClickManage = AutoClickManage;
 
@@ -3403,8 +3403,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Home = void 0;
 const components_1 = __webpack_require__(740);
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 const lib_1 = __webpack_require__(915);
 const react_1 = __importStar(__webpack_require__(995));
 const AutoClickManage_1 = __webpack_require__(699);

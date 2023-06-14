@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { ThreadData } from './views/AutoClickManage';
-
 export enum Mood {
   kaixin = 'kx', // 开心,
   nanguo = 'ng', // 难过,
@@ -130,18 +128,36 @@ const enum IMPORTANCE {
   POP = 3,
 }
 
+interface ThreadData {
+  title: string;
+  url: string;
+  status: Status;
+  cycle: string;
+  times: number;
+  delete: string;
+  nextClickTime: number;
+  retry: number;
+}
+
+enum Status {
+  online = 'online',
+  offline = 'offline',
+}
+
 export {
-  Counter,
-  XhrMethod,
-  XhrResponseType,
-  XhrOptions,
-  ReplyOrThank,
-  Thread,
-  ForumThreads,
-  IUser,
-  ReplyParams,
-  GenericObject,
-  exportType,
-  IMPORTANCE,
   AutoPlayCounter,
+  Counter,
+  ForumThreads,
+  GenericObject,
+  IMPORTANCE,
+  IUser,
+  ReplyOrThank,
+  ReplyParams,
+  Status,
+  Thread,
+  ThreadData,
+  XhrMethod,
+  XhrOptions,
+  XhrResponseType,
+  exportType,
 };

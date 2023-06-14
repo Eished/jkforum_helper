@@ -1,7 +1,6 @@
-import { IMPORTANCE, IUser, XhrMethod, XhrResponseType } from '@/commonType';
+import { IMPORTANCE, IUser, ThreadData, XhrMethod, XhrResponseType } from '@/commonType';
 import { getTid, rdNum, turnCdata, urlSearchParams } from '@/utils/tools';
 import { MessageBox, postData } from '.';
-import { ThreadData } from '../views/AutoClickManage';
 
 /**
  * OCR

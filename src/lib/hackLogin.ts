@@ -22,7 +22,7 @@ const skipPhoneValidate = () => {
 
 const hackLogin = () => {
   const xhrSend = XMLHttpRequest.prototype.send;
-  let isAuthMethod = 0;
+  let isAuthMethod = false;
   XMLHttpRequest.prototype.send = async function (...args) {
     if (isAuthMethod) {
       const authBase64 = args[0] as string;
@@ -49,9 +49,9 @@ const hackLogin = () => {
   const xhrOpen = XMLHttpRequest.prototype.open;
   XMLHttpRequest.prototype.open = function (method: string, url: string | URL) {
     if (url === AccessTokenUrl) {
-      isAuthMethod = 1;
+      isAuthMethod = true;
     } else {
-      isAuthMethod = 0;
+      isAuthMethod = false;
     }
     return xhrOpen.apply(this, [method, url, true]);
   };
