@@ -63,7 +63,6 @@ export const Home: React.FC<HomeProps> = ({ user, setShowHome, counter, setCount
             }}
             checked={user.autoRePicSw}
           />
-          {/* <Toggle text={'悬浮球靠右'} /> */}
         </Panel>
 
         <Panel title="批处理">
@@ -140,7 +139,6 @@ export const Home: React.FC<HomeProps> = ({ user, setShowHome, counter, setCount
             text={'现在有空'}
             onClick={() => {
               setShowModal(true);
-              // autofillCaptcha(user);
             }}
           />
           <Button

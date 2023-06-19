@@ -7,8 +7,7 @@ async function launch(user: IUser) {
   try {
     // 增加路由地址判断，只执行对应函数
     const localUrl = location.href;
-
-    if (location.href.includes('thread')) {
+    if (localUrl.includes('thread')) {
       if (user.autoThkSw) {
         // 自动感谢当前贴
         await autoThk(user);

@@ -46,9 +46,8 @@ const App: React.FC<{ username: string; formhash: string }> = ({ username, formh
             } else {
               new MessageBox('未获取到用户，请稍后再试');
             }
-          }}>
-          {/* JKFH */}
-        </button>
+          }}
+        />
       )}
     </div>
   );
