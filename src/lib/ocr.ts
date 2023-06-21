@@ -132,28 +132,33 @@ async function autofillCaptcha(
     const url = `${user.votedUrl}id=topthreads:setstatus&tid=${getTid(
       t.url
     )}&handlekey=k_setstatus&infloat=1&freeon=yes&inajax=1`;
-    const result = await captcha(url, user);
+    await captcha(url, user);
     t.retry = 0;
     // 调用计数和存入时间
     setNextClickTime(t);
     setTimeout(() => {
       triggerNextClick(t);
     }, timeInterval);
-  } catch (e: any) {
-    if (e === RETRY) {
-      const timeInterval = 1000 + rdNum(1000, 4000);
-      const nextClickTime = new Date().getTime() + timeInterval;
-      t.nextClickTime = nextClickTime;
-      t.retry = (t.retry ?? 0) + 1;
-      // 调用计数
-      setNextClickTime(t);
-      setTimeout(() => {
-        triggerNextClick(t);
-      }, timeInterval); // 重试频率限制
+  } catch (e: unknown) {
+    if (typeof e === 'string') {
+      if (e === RETRY) {
+        const timeInterval = 1000 + rdNum(1000, 4000);
+        const nextClickTime = new Date().getTime() + timeInterval;
+        t.nextClickTime = nextClickTime;
+        t.retry = (t.retry ?? 0) + 1;
+        // 调用计数
+        setNextClickTime(t);
+        setTimeout(() => {
+          triggerNextClick(t);
+        }, timeInterval); // 重试频率限制
+      } else {
+        // 错误则改变状态
+        saveStatusData(t);
+        new MessageBox(e);
+      }
     } else {
-      // 错误则改变状态
       saveStatusData(t);
-      new MessageBox(e);
+      new MessageBox(JSON.stringify(e));
     }
   }
 }
