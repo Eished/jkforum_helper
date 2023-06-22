@@ -15,8 +15,12 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
   const [threadUrl, setThreadUrl] = useState('');
   const [skipPageReset, setSkipPageReset] = useState(false);
   const [running, setRunning] = useState(false);
-  const isInitialMount = useRef(true);
+  const [startTime, setStartTime] = useState(
+    user.freeData?.[0]?.runTime ? String(user.freeData[0].runTime.startTime) : '0'
+  );
+  const [endTime, setEndTime] = useState(user.freeData?.[0]?.runTime ? String(user.freeData[0].runTime.endTime) : '23');
   const [pool] = useState(new ConcurrencyPromisePool(2));
+  const isInitialMount = useRef(true);
 
   // When our cell renderer calls updateMyData, we'll use
   // the rowIndex, columnId and new value to update the
@@ -96,13 +100,13 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
     GM_setValue(user.username, user);
   }, [data, token, user]);
 
-  const setNextClickTime = (t: ThreadData) => {
+  const setNextClickTime = (t: ThreadData, skip?: boolean) => {
     setData((old) =>
       old.map((row) => {
         if (row.url === t.url) {
           return {
             ...row,
-            times: row.times + 1,
+            times: skip ? row.times : row.times + 1,
             nextClickTime: t.nextClickTime,
             retry: t.retry,
           };
@@ -183,6 +187,15 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
     }
   }, [data, running, saveData]);
 
+  const setRunTime = () => {
+    const startTimeNum = Number(startTime);
+    const endTimeNum = Number(endTime);
+    if (startTimeNum > 23 || startTimeNum < 0 || endTimeNum > 23 || endTimeNum < 0 || startTimeNum === endTimeNum) {
+      return alert('时间必须大于等于0点，小于等于23点');
+    }
+    setData(data.map((d) => ({ ...d, runTime: { startTime: startTimeNum, endTime: endTimeNum } })));
+  };
+
   return (
     <Modal
       width="w-full"
@@ -227,9 +240,10 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
               autoComplete="off"
               label="输入令牌："
               type="password"
-              onChange={setToken}
+              onChange={(e) => setToken(e.target.value)}
               placeholder="请输入令牌"
-              value={token}></Input>
+              value={token}
+            />
           </div>
           <span>还没有令牌？</span>
           <Button
@@ -240,11 +254,42 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
         </div>
         <div className="flex items-end">
           <div className="w-64">
-            <Input label="帖子链接：" onChange={setThreadUrl} placeholder="请输入帖子链接" value={threadUrl}></Input>
+            <Input
+              label="帖子链接："
+              onChange={(e) => setThreadUrl(e.target.value)}
+              placeholder="请输入帖子链接"
+              value={threadUrl}
+            />
           </div>
           <div className="ml-4">
-            <Button text={'添加'} onClick={addThread}></Button>
+            <Button text={'添加'} onClick={addThread} />
           </div>
+        </div>
+        <div className="flex items-end justify-between w-80 mt-2">
+          <span title="设置自动点击仅在该时间段内运行，重新启动后生效">运行时间段：</span>
+          <div className="w-8">
+            <Input
+              type="number"
+              min={0}
+              max={23}
+              onChange={(e) => setStartTime(e.target.value)}
+              placeholder="0"
+              value={startTime}
+            />
+          </div>
+          <span>点 ~ </span>
+          <div className="w-8">
+            <Input
+              type="number"
+              min={0}
+              max={23}
+              onChange={(e) => setEndTime(e.target.value)}
+              placeholder="23"
+              value={endTime}
+            />
+          </div>
+          <span className="pl-2">:59分</span>
+          <Button text={'保存'} title="重新启动后生效" onClick={setRunTime} />
         </div>
         <div className="overflow-auto">
           {data.length ? (

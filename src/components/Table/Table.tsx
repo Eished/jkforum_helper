@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-key */
 import { GenericObject, Status } from '@/commonType';
+import { getTid } from '@/utils/tools';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useGlobalFilter, usePagination, useSortBy, useTable } from 'react-table';
 import { Button } from '../Button/Button';
@@ -77,7 +78,7 @@ export default function ReactTableCard({
         accessor: headerItem,
         Cell: (props: any) => {
           return (
-            <strong title={props.value} className="block w-40 whitespace-nowrap overflow-hidden overflow-ellipsis mx-1">
+            <strong title={props.value} className="block whitespace-nowrap overflow-hidden overflow-ellipsis mx-1">
               {props.value}
             </strong>
           );
@@ -103,15 +104,17 @@ export default function ReactTableCard({
       };
     } else if (headerItem === 'url') {
       return {
-        Header: '地址',
+        Header: '帖子ID',
         accessor: headerItem,
         Cell: ({ value }: any) => {
           return (
             <a
-              className="border-b block w-40 whitespace-nowrap overflow-hidden overflow-ellipsis mx-1"
+              className="border-b block whitespace-nowrap overflow-hidden overflow-ellipsis mx-1"
               title={value}
-              href={value}>
-              {value}
+              target="_blank"
+              href={value}
+              rel="noreferrer">
+              {getTid(value)}
             </a>
           );
         },
@@ -138,6 +141,14 @@ export default function ReactTableCard({
         accessor: headerItem,
         Cell: ({ value }: any) => {
           return <span>{value}</span>;
+        },
+      };
+    } else if (headerItem === 'runTime') {
+      return {
+        Header: '运行时段',
+        accessor: headerItem,
+        Cell: ({ value }: any) => {
+          return <span>{`${value.startTime}:00~${value.endTime}:59`}</span>;
         },
       };
     } else {
@@ -173,7 +184,7 @@ export default function ReactTableCard({
       data: memoData,
       initialState: {
         // sortBy: [defaultSort()],
-        pageSize: 5,
+        pageSize: 20,
       },
       // defaultColumn,
       autoResetPage: !skipPageReset,
@@ -227,7 +238,7 @@ export default function ReactTableCard({
               </svg>
             </div>
             <input
-              className="pl-5 block shadow-sm border-2 transition text-gray-900 disabled:opacity-25 focus:border-gray-100 focus:outline-none focus:ring-0 duration-150 ease-in-out sm:text-sm sm:leading-5 shadow-sm"
+              className="pl-5 block shadow-sm border-2 transition text-gray-900 disabled:opacity-25 focus:border-gray-100 focus:outline-none focus:ring-0 duration-150 ease-in-out sm:text-sm sm:leading-5"
               type="text"
               value={globalFilter || ''}
               onChange={(e) => setGlobalFilter(e.target.value)}
@@ -237,7 +248,7 @@ export default function ReactTableCard({
           ''
         )}
         <table {...getTableProps()} className="mb-4 min-w-full divide-y divide-gray-100 table-auto">
-          <thead>
+          <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
             {headerGroups.map((headerGroup) => (
               <tr {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map((column) => (
@@ -283,14 +294,21 @@ export default function ReactTableCard({
               </tr>
             ))}
           </thead>
-          <tbody {...getTableBodyProps()}>
+          <tbody
+            className="w-full divide-y text-left text-sm text-gray-500 dark:text-gray-400"
+            role="table"
+            {...getTableBodyProps()}>
             {page.map((row) => {
               prepareRow(row);
               return (
-                <tr {...row.getRowProps()} className="hover:bg-gray-200">
+                <tr
+                  {...row.getRowProps()}
+                  className="hover:bg-gray-200 dark:hover:bg-gray-600 bg-white dark:border-gray-700 dark:bg-gray-800">
                   {row.cells.map((cell) => {
                     return (
-                      <td {...cell.getCellProps()} className="text-xs p-0 h-8 overflow-hidden">
+                      <td
+                        {...cell.getCellProps()}
+                        className="text-xs p-0 h-8 whitespace-nowrap font-medium text-gray-900 dark:text-white max-w-[150px] overflow-hidden text-ellipsis">
                         {cell.render('Cell')}
                       </td>
                     );
@@ -298,7 +316,7 @@ export default function ReactTableCard({
                 </tr>
               );
             })}
-            {pageSize - page.length > 0 && <tr style={{ height: (pageSize - page.length) * 32 }}></tr>}
+            {/* {pageSize - page.length > 0 && <tr style={{ height: (pageSize - page.length) * 32 }}></tr>} */}
           </tbody>
         </table>
         <div className="flex justify-center bg-gray-100">
@@ -307,34 +325,34 @@ export default function ReactTableCard({
               className="bg-gray-200 hover:bg-gray-100 font-bold py-1 px-2 border-b-2 border-gray-400 hover:border-gray-200 rounded"
               onClick={() => gotoPage(0)}
               disabled={!canPreviousPage}>
-              {'<<'}
+              {'<< 第一页'}
             </button>{' '}
             <button
               className="bg-gray-200 hover:bg-gray-100 font-bold py-1 px-2 border-b-2 border-gray-400 hover:border-gray-200 rounded"
               onClick={() => previousPage()}
               disabled={!canPreviousPage}>
-              {'<'}
+              {'< 上一页'}
             </button>{' '}
             <button
               className="bg-gray-200 hover:bg-gray-100 font-bold py-1 px-2 border-b-2 border-gray-400 hover:border-gray-200 rounded"
               onClick={() => nextPage()}
               disabled={!canNextPage}>
-              {'>'}
+              {'下一页 >'}
             </button>{' '}
             <button
               className="bg-gray-200 hover:bg-gray-100 font-bold py-1 px-2 border-b-2 border-gray-400 hover:border-gray-200 rounded"
               onClick={() => gotoPage(pageCount - 1)}
               disabled={!canNextPage}>
-              {'>>'}
+              {'最后一页 >>'}
             </button>{' '}
             <span>
-              | Page{' '}
+              | 第{' '}
               <strong>
-                {pageIndex + 1} of {pageOptions.length}
+                {pageIndex + 1} 页，共 {pageOptions.length} 页
               </strong>{' '}
             </span>
             <span>
-              | Go to page:{' '}
+              | 跳转到第{' '}
               <input
                 className="w-8 bg-gray-100 hover:bg-gray-200"
                 type="number"
@@ -343,17 +361,18 @@ export default function ReactTableCard({
                   const page = e.target.value ? Number(e.target.value) - 1 : 0;
                   gotoPage(page);
                 }}
-              />
+              />{' '}
+              页
             </span>{' '}
             <select
-              className="bg-gray-100 hover:bg-gray-200"
+              className="bg-gray-100 hover:bg-gray-200 pl-1"
               value={pageSize}
               onChange={(e) => {
                 setPageSize(Number(e.target.value));
               }}>
-              {[5, 10, 20, 30].map((pageSize) => (
+              {[10, 20, 50].map((pageSize) => (
                 <option key={pageSize} value={pageSize}>
-                  Show {pageSize}
+                  显示{pageSize}条
                 </option>
               ))}
             </select>

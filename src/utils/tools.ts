@@ -153,21 +153,45 @@ const preciseSetTimeout = (handler: () => void, delay: number, timeout = 0) => {
   return window.setTimeout(callHandler, delay);
 };
 
+function hoursUntilTimeRange(startHour: number, endHour: number) {
+  const date = new Date();
+  const currentHour = date.getHours();
+
+  if (startHour <= endHour) {
+    // 范围在同一天的情况
+    if (currentHour >= startHour && currentHour <= endHour) {
+      return 0;
+    } else if (currentHour < startHour) {
+      return startHour - currentHour;
+    } else {
+      return 24 - currentHour + startHour;
+    }
+  } else {
+    // 范围跨越两天的情况
+    if (currentHour >= startHour || currentHour <= endHour) {
+      return 0;
+    } else {
+      return startHour - currentHour;
+    }
+  }
+}
+
 export {
-  turnCdata,
-  urlSearchParams,
-  turnUrl,
-  checkHtml,
-  replaceHtml,
-  waitFor,
-  rdNum,
   NowTime,
-  isSameObjKey,
-  mergeObjValue,
+  checkHtml,
+  getTid,
   getUuiD,
   getVersionNum,
-  getTid,
-  updateUserUrl,
+  hoursUntilTimeRange,
+  isSameObjKey,
+  mergeObjValue,
   preciseSetInterval,
   preciseSetTimeout,
+  rdNum,
+  replaceHtml,
+  turnCdata,
+  turnUrl,
+  updateUserUrl,
+  urlSearchParams,
+  waitFor,
 };

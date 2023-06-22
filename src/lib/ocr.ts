@@ -1,5 +1,5 @@
 import { IMPORTANCE, IUser, ThreadData, XhrMethod, XhrResponseType } from '@/commonType';
-import { getTid, rdNum, turnCdata, urlSearchParams } from '@/utils/tools';
+import { getTid, hoursUntilTimeRange, rdNum, turnCdata, urlSearchParams } from '@/utils/tools';
 import { MessageBox, postData } from '.';
 
 /**
@@ -30,6 +30,9 @@ async function captcha(url: string, user: IUser) {
             10000,
             IMPORTANCE.LOG_POP_GM
           );
+        } else if (code.error_code === 282000 || code.error_code === 18) {
+          new MessageBox('服务器内部错误：' + code.error_msg);
+          return reject(RETRY);
         } else {
           new MessageBox(code.error_msg + ' 未处理的错误，请手动重试或联系管理员', 10000, IMPORTANCE.LOG_POP_GM);
         }
@@ -119,23 +122,35 @@ async function readImage(base64: string, user: IUser) {
 async function autofillCaptcha(
   t: ThreadData,
   user: IUser,
-  setNextClickTime: (value: ThreadData) => void,
+  setNextClickTime: (value: ThreadData, skip?: boolean) => void,
   saveStatusData: (value: ThreadData) => void,
   triggerNextClick: (value: ThreadData) => void
 ) {
   try {
     // 在异步请求前设置好时间，防止时间错误
-    const timeInterval = 1000 * 60 * Number(t.cycle);
+    let timeInterval = 60000 * Number(t.cycle);
+    let skip = false;
+    if (t.runTime) {
+      const hours = hoursUntilTimeRange(t.runTime.startTime, t.runTime.endTime);
+      if (hours !== 0) {
+        const now = new Date();
+        const overMinutes = now.getMinutes() * 60000 + now.getSeconds() * 1000;
+        timeInterval = hours * 3600000 - overMinutes;
+        skip = true;
+      }
+    }
     const nextClickTime = new Date().getTime() + timeInterval;
     t.nextClickTime = nextClickTime;
 
-    const url = `${user.votedUrl}id=topthreads:setstatus&tid=${getTid(
-      t.url
-    )}&handlekey=k_setstatus&infloat=1&freeon=yes&inajax=1`;
-    await captcha(url, user);
-    t.retry = 0;
+    if (!skip) {
+      const url = `${user.votedUrl}id=topthreads:setstatus&tid=${getTid(
+        t.url
+      )}&handlekey=k_setstatus&infloat=1&freeon=yes&inajax=1`;
+      await captcha(url, user);
+      t.retry = 0;
+    }
     // 调用计数和存入时间
-    setNextClickTime(t);
+    setNextClickTime(t, skip);
     setTimeout(() => {
       triggerNextClick(t);
     }, timeInterval);

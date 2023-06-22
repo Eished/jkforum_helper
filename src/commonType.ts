@@ -139,6 +139,10 @@ interface ThreadData {
   delete: string;
   nextClickTime: number;
   retry: number;
+  runTime?: {
+    startTime: number;
+    endTime: number;
+  };
 }
 
 enum Status {

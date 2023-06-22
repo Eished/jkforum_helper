@@ -73,7 +73,12 @@ export const Home: React.FC<HomeProps> = ({ user, setShowHome, counter, setCount
             value={replyValue}
             rows={2}
           />
-          <Input label={'输入页码:'} placeholder={'板块号-起始页-终止页'} onChange={setPageValue} value={pageValue} />
+          <Input
+            label={'输入页码:'}
+            placeholder={'板块号-起始页-终止页'}
+            onChange={(e) => setPageValue(e.target.value)}
+            value={pageValue}
+          />
           <Button
             text={'添加当前页'}
             onClick={() => {
