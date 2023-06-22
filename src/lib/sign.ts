@@ -1,5 +1,5 @@
 import { Counter, IUser } from '@/commonType';
-import { checkHtml, NowTime, urlSearchParams, waitFor } from '@/utils/tools';
+import { NowTime, checkHtml, urlSearchParams, waitFor } from '@/utils/tools';
 import { MessageBox, postDataCdata } from './';
 
 // 定时签到
@@ -20,16 +20,16 @@ function timeControl(counter: Counter, setCounter: (num: Counter) => void, user:
       });
       // 移除永久消息通知
       msIdSig.remove();
-      msIdTime.refresh('执行中....');
+      msIdTime.update('执行中....');
       for (let i = 0; i < user.signNum; i++) {
         //重试次数
         sign(user);
-        msIdTime.refresh('执行第' + (i + 1) + '次');
+        msIdTime.update('执行第' + (i + 1) + '次');
         await waitFor(user.interTime); //重试间隔
       }
       msIdTime.remove();
     } else {
-      msIdTime.refresh('时间没有到：' + signtime + '，目前时间：' + now.seconds);
+      msIdTime.update('时间没有到：' + signtime + '，目前时间：' + now.seconds);
     }
   }
   if (!counter.signBtn) {
@@ -63,4 +63,4 @@ async function sign(user: IUser) {
   }
 }
 
-export { timeControl, sign };
+export { sign, timeControl };

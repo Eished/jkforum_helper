@@ -1,6 +1,6 @@
+import { IUser } from '@/commonType';
 import { getVersionNum } from '@/utils/tools';
 import { getData, MessageBox } from './';
-import { IUser } from '@/commonType';
 
 function swRePic(user: IUser) {
   if (user.autoRePicSw) {
@@ -38,8 +38,8 @@ function swThk(user: IUser) {
   }
 }
 
-async function update(user: IUser) {
-  new MessageBox('正在检查更新...');
+async function checkUpdate(user: IUser) {
+  const msg = new MessageBox('正在检查更新...', 'none');
   const data = await getData(user.greasyforkUrl);
   const version = data.querySelectorAll('.script-show-version span')[1].innerHTML;
   if (getVersionNum(user.version) < getVersionNum(version)) {
@@ -47,6 +47,7 @@ async function update(user: IUser) {
   } else {
     new MessageBox('已是最新版本！');
   }
+  msg.remove();
 }
 
-export { update, swThk, swPay, swRePic };
+export { checkUpdate, swPay, swRePic, swThk };

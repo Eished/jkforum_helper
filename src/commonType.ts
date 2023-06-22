@@ -123,10 +123,12 @@ interface GenericObject {
 type exportType = { default: () => void } & GenericObject;
 
 const enum IMPORTANCE {
-  LOG_POP = 1,
-  LOG_POP_GM = 2,
-  POP = 3,
+  LOG_POP = 'LOG_POP',
+  LOG_POP_GM = 'LOG_POP_GM',
+  POP = 'POP',
 }
+
+type MsgLevel = keyof typeof IMPORTANCE;
 
 interface ThreadData {
   title: string;
@@ -151,6 +153,7 @@ export {
   GenericObject,
   IMPORTANCE,
   IUser,
+  MsgLevel,
   ReplyOrThank,
   ReplyParams,
   Status,

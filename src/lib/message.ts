@@ -1,24 +1,21 @@
-import { IMPORTANCE } from '@/commonType';
+import { IMPORTANCE, MsgLevel } from '@/commonType';
 /**
  * 消息通知类：不依赖框架
- * @param text string | undefined
- * @param setTime number | string = 5000,
- * @param importance number = 1
  * @example
  * 0.先在入口文件中调用静态方法 generate() 方法初始化消息弹出窗口；
  * 1. new MessageBox('hello')
  * 2.空初始化时调用 show() 显示消息；
- * 3.setTime：ms，非数字时为永久消息，需手动调用 refresh() 刷新消息，remove() 移除消息；
- * 4.importance：1： log + 自定义弹窗；2： log + 自定义弹窗 + GM系统提示；其它值：自定义弹窗；
+ * 3.setTime：ms，非数字时为永久消息，需手动调用 update() 刷新消息，remove() 移除消息；
+ * 4.importance：LOG_POP：log+自定义弹窗；LOG_POP_GM：log+自定义弹窗+GM系统提示；POP：自定义弹窗；
  */
 
 class MessageBox {
-  _msg: undefined | null | HTMLDivElement;
-  _text: string | null | undefined;
-  _setTime: number | string;
-  _importance: IMPORTANCE;
-  _timer: number;
-  constructor(text?: string | null, setTime: number | string = 5000, importance: IMPORTANCE = IMPORTANCE.LOG_POP) {
+  private _msg: undefined | null | HTMLDivElement;
+  private _text: string | null | undefined;
+  private _setTime: number | string;
+  private _importance: MsgLevel;
+  private _timer: number;
+  constructor(text?: string | null, setTime: number | 'none' = 5000, importance: MsgLevel = IMPORTANCE.LOG_POP) {
     this._msg = null; // 永久显示标记，和元素地址
     this._text = text;
     this._setTime = setTime;
@@ -31,7 +28,7 @@ class MessageBox {
   }
 
   // 静态属性，消息盒子
-  static _msgBox: HTMLDivElement;
+  private static _msgBox: HTMLDivElement;
   // 静态方法，初始化消息盒子，先调用本方法初始化消息弹出窗口
   static generate() {
     // 添加样式
@@ -77,11 +74,11 @@ class MessageBox {
     MessageBox._msgBox.append(this._msg); // 显示消息
 
     switch (importance) {
-      case 1: {
+      case IMPORTANCE.LOG_POP: {
         console.log(text);
         break;
       }
-      case 2: {
+      case IMPORTANCE.LOG_POP_GM: {
         console.log(text);
         GM_notification(text);
         break;
@@ -100,15 +97,15 @@ class MessageBox {
     }
   }
 
-  refresh(text: string) {
+  update(text: string) {
     if (isNaN(Number(this._setTime)) && this._msg) {
       this._msg.textContent = text;
+      console.log(text);
       switch (this._importance) {
-        case 1: {
-          console.log(text);
+        case IMPORTANCE.LOG_POP: {
           break;
         }
-        case 2: {
+        case IMPORTANCE.LOG_POP_GM: {
           console.log(text);
           GM_notification(text);
           break;

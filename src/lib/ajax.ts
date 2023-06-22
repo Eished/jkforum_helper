@@ -122,4 +122,4 @@ function postData(
   });
 }
 
-export { getData, postDataCdata, postData };
+export { getData, postData, postDataCdata };

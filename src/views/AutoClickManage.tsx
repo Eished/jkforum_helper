@@ -129,7 +129,7 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
       new MessageBox(
         `帖子：${onThread.title}，连续重试次数过多：${onThread.retry}次，自动现在有空已停止运行！`,
         10000,
-        2
+        'LOG_POP_GM'
       );
     } else {
       saveStatusData(onThread);
@@ -138,7 +138,7 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
           t.nextClickTime
         ).toLocaleString()}，实际时间：${new Date().toLocaleString()}`,
         10000,
-        2
+        'LOG_POP_GM'
       );
     }
   };

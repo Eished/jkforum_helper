@@ -3,6 +3,7 @@ import { Button, Input, Panel, TextArea, Toggle } from '@/components';
 import {
   addOnePage,
   addPageBatch,
+  checkUpdate,
   downloadImgs,
   noDisplayPic,
   replyOrThk,
@@ -12,7 +13,6 @@ import {
   swRePic,
   swThk,
   timeControl,
-  update,
 } from '@/lib';
 import React, { useRef, useState } from 'react';
 import { AutoClickManage } from './AutoClickManage';
@@ -144,7 +144,7 @@ export const Home: React.FC<HomeProps> = ({ user, setShowHome, counter, setCount
           <Button
             text={'检查更新'}
             onClick={() => {
-              update(user);
+              checkUpdate(user);
             }}
           />
         </Panel>

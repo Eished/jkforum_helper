@@ -2,7 +2,7 @@ import { Counter, IUser, XhrResponseType } from '@/commonType';
 import { ConcurrencyPromisePool } from '@/utils/ConcurrencyPromisePool';
 import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
-import { getData, MessageBox } from './';
+import { MessageBox, getData } from './';
 
 function downloadImgs(user: IUser, counter: Counter, setCounter: (num: Counter) => void) {
   // 防重复点击
@@ -95,7 +95,7 @@ function batchDownload(
     // 包装成 promise
     const promise = () => {
       const file_name = imgsTitles[index]; // 获取文件名
-      mesIdH.refresh(`正在下载：第 ${index + 1} / ${imgsUrls.length} 张，文件名：${file_name}`);
+      mesIdH.update(`正在下载：第 ${index + 1} / ${imgsUrls.length} 张，文件名：${file_name}`);
       return getData(item, XhrResponseType.BLOB)
         .then((blob) => {
           const data = blob as unknown as Blob;
@@ -103,7 +103,7 @@ function batchDownload(
           zip.file(file_name, data, {
             binary: true,
           }); // 逐个添加文件
-          mesIdP.refresh(
+          mesIdP.update(
             `第 ${index + 1} 张，文件名：${file_name}，大小：${(data.size / 1024).toFixed(0)} Kb，下载完成！等待压缩...`
           );
         })
@@ -112,7 +112,7 @@ function batchDownload(
           if (err.responseText) {
             const domParser = new DOMParser();
             const xmlDoc = domParser.parseFromString(err.responseText, 'text/html');
-            mesIdP.refresh(`第 ${index + 1} 张，请求错误：${xmlDoc.body.innerHTML}`);
+            mesIdP.update(`第 ${index + 1} 张，请求错误：${xmlDoc.body.innerHTML}`);
           } else if (err.status) {
             console.error(err.status);
           } else {
@@ -152,7 +152,7 @@ function batchDownload(
         return;
       }
     }
-    mesIdP.refresh('正在压缩打包，大文件请耐心等待...');
+    mesIdP.update('正在压缩打包，大文件请耐心等待...');
     zip
       .generateAsync({
         type: 'blob',
@@ -201,4 +201,4 @@ function noDisplayPic() {
   }
 }
 
-export { noDisplayPic, downloadImgs };
+export { downloadImgs, noDisplayPic };

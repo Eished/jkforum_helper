@@ -1,5 +1,5 @@
 import { Counter, ForumThreads, IMPORTANCE, IUser, ReplyOrThank, ReplyParams, Thread } from '@/commonType';
-import { getData, MessageBox, postDataCdata } from '@/lib';
+import { MessageBox, getData, postDataCdata } from '@/lib';
 import { checkHtml, getTid, rdNum, urlSearchParams, waitFor } from '@/utils/tools';
 
 function chooceReply(user: IUser, value?: string) {
@@ -169,7 +169,7 @@ function setThreadsTask(user: IUser, htmlData: Document, fid: string, replyLen: 
         const element = elem.fidthreads[index];
         if (element.tid == tid) {
           noSkip = false;
-          msId.refresh(`${fid}：任务列表：${index}，thread-${tid}-1-1 ：已在任务列表，已跳过此贴！`);
+          msId.update(`${fid}：任务列表：${index}，thread-${tid}-1-1 ：已在任务列表，已跳过此贴！`);
           break;
         }
       }
@@ -247,7 +247,7 @@ async function replyOrThk(
       // 分别处理感谢和回帖
       switch (type) {
         case ReplyOrThank.REPLY: {
-          mesIdRep.refresh(
+          mesIdRep.update(
             fid +
               '-版块，当前位置：' +
               fidRepIndex +
@@ -305,7 +305,7 @@ async function replyOrThk(
           } else {
             new MessageBox(data, 'none'); //其它情况直接输出
           }
-          mesIdRepContent.refresh(
+          mesIdRepContent.update(
             '序号：' +
               fidRepIndex +
               '，随机号：' +
@@ -339,7 +339,7 @@ async function replyOrThk(
           } else {
             new MessageBox(data, 1000); //其它情况直接输出
           }
-          mesIdThk.refresh(
+          mesIdThk.update(
             fid +
               '-版块，当前位置：' +
               fidThkIndex +
@@ -384,4 +384,4 @@ async function replyOrThk(
   }
 }
 
-export { replyOrThk, addPageBatch, addOnePage };
+export { addOnePage, addPageBatch, replyOrThk };
