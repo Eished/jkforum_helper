@@ -5,10 +5,10 @@
 // @name:ja             JKForum 助手
 // @name:ko             JKForum 조수
 // @namespace           https://github.com/Eished/jkforum_helper
-// @version             0.8.4
-// @description         JKF 捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动播放图片、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片，自动识别验证码，自动现在有空，登录时跳过手机验证码
+// @version             0.8.5
+// @description         JKF 捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动播放图片、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片，自动识别验证码，自动现在有空，自动点击置顶广告，登录时跳过绑定手机号验证码
 // @description:en      JKF JKForum Helper: Auto-sign-in, timed sign-in, auto-thank you, auto-load original image, auto-play image, auto-pay to buy theme post, auto-complete voting task, optimize browsing experience, one-click bulk reply/thank you, one-click package to download post image，Skip mobile verification code when logging in
-// @description:zh-TW   JKF 捷克論壇助手：自動簽到、定時簽到、自動感謝、自動加載原圖、自動播放圖片、自動支付購買主題貼、自動完成投票任務，優化瀏覽體驗，一鍵批量回帖/感謝，一鍵打包下載帖子圖片，自動識別驗證碼，自動現在有空，登錄時跳過手機驗證碼
+// @description:zh-TW   JKF 捷克論壇助手：自動簽到、定時簽到、自動感謝、自動加載原圖、自動播放圖片、自動支付購買主題貼、自動完成投票任務，優化瀏覽體驗，一鍵批量回帖/感謝，一鍵打包下載帖子圖片，自動識別驗證碼，自動現在有空，自動點擊置頂廣告，登錄時跳過綁定手機號驗證碼
 // @description:ja      JKF チェコ語フォーラム助手：自動チェックイン、時限式チェックイン、オートサンキュー、オリジナル画像の自動読み込み、画像の自動再生、トピック投稿の自動支払い、ポールタスクの自動完了、ブラウジングエクスペリエンスの最適化、ワンクリックでの一括返信/サンキュー、ワンクリックでの投稿画像のパッケージダウンロード，ログイン時にモバイル認証コードをスキップ
 // @description:ko      JKF 체코 포럼 조수: 자동 로그인, 정기 로그인, 자동 감사, 원본 사진 자동로드, 테마 스티커 구매 자동 결제, 투표 작업 자동 완료, 최적화 된 브라우징 경험, 원 클릭 일괄 회신 / 감사, 원 클릭 포스트 사진의 패키지 다운로드 클릭다운로드하십시오，로그인 시 모바일 인증 코드 건너뛰기
 // @author              Eished
@@ -59,7 +59,7 @@ var ___CSS_LOADER_API_NO_SOURCEMAP_IMPORT___ = __webpack_require__(81);
 var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(645);
 var ___CSS_LOADER_EXPORT___ = ___CSS_LOADER_API_IMPORT___(___CSS_LOADER_API_NO_SOURCEMAP_IMPORT___);
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "/*\n! tailwindcss v3.0.24 | MIT License | https://tailwindcss.com\n*/\n\n/*\n1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)\n2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)\n*/\n\n*,\n::before,\n::after {\n  box-sizing: border-box;\n  /* 1 */\n  border-width: 0;\n  /* 2 */\n  border-style: solid;\n  /* 2 */\n  border-color: #e5e7eb;\n  /* 2 */\n}\n\n::before,\n::after {\n  --tw-content: '';\n}\n\n/*\n1. Use a consistent sensible line-height in all browsers.\n2. Prevent adjustments of font size after orientation changes in iOS.\n3. Use a more readable tab size.\n4. Use the user's configured `sans` font-family by default.\n*/\n\nhtml {\n  line-height: 1.5;\n  /* 1 */\n  -webkit-text-size-adjust: 100%;\n  /* 2 */\n  -moz-tab-size: 4;\n  /* 3 */\n  -o-tab-size: 4;\n     tab-size: 4;\n  /* 3 */\n  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n  /* 4 */\n}\n\n/*\n1. Remove the margin in all browsers.\n2. Inherit line-height from `html` so users can set them as a class directly on the `html` element.\n*/\n\nbody {\n  margin: 0;\n  /* 1 */\n  line-height: inherit;\n  /* 2 */\n}\n\n/*\n1. Add the correct height in Firefox.\n2. Correct the inheritance of border color in Firefox. (https://bugzilla.mozilla.org/show_bug.cgi?id=190655)\n3. Ensure horizontal rules are visible by default.\n*/\n\nhr {\n  height: 0;\n  /* 1 */\n  color: inherit;\n  /* 2 */\n  border-top-width: 1px;\n  /* 3 */\n}\n\n/*\nAdd the correct text decoration in Chrome, Edge, and Safari.\n*/\n\nabbr:where([title]) {\n  -webkit-text-decoration: underline dotted;\n          text-decoration: underline dotted;\n}\n\n/*\nRemove the default font size and weight for headings.\n*/\n\nh1,\nh2,\nh3,\nh4,\nh5,\nh6 {\n  font-size: inherit;\n  font-weight: inherit;\n}\n\n/*\nReset links to optimize for opt-in styling instead of opt-out.\n*/\n\na {\n  color: inherit;\n  text-decoration: inherit;\n}\n\n/*\nAdd the correct font weight in Edge and Safari.\n*/\n\nb,\nstrong {\n  font-weight: bolder;\n}\n\n/*\n1. Use the user's configured `mono` font family by default.\n2. Correct the odd `em` font sizing in all browsers.\n*/\n\ncode,\nkbd,\nsamp,\npre {\n  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace;\n  /* 1 */\n  font-size: 1em;\n  /* 2 */\n}\n\n/*\nAdd the correct font size in all browsers.\n*/\n\nsmall {\n  font-size: 80%;\n}\n\n/*\nPrevent `sub` and `sup` elements from affecting the line height in all browsers.\n*/\n\nsub,\nsup {\n  font-size: 75%;\n  line-height: 0;\n  position: relative;\n  vertical-align: baseline;\n}\n\nsub {\n  bottom: -0.25em;\n}\n\nsup {\n  top: -0.5em;\n}\n\n/*\n1. Remove text indentation from table contents in Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=999088, https://bugs.webkit.org/show_bug.cgi?id=201297)\n2. Correct table border color inheritance in all Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=935729, https://bugs.webkit.org/show_bug.cgi?id=195016)\n3. Remove gaps between table borders by default.\n*/\n\ntable {\n  text-indent: 0;\n  /* 1 */\n  border-color: inherit;\n  /* 2 */\n  border-collapse: collapse;\n  /* 3 */\n}\n\n/*\n1. Change the font styles in all browsers.\n2. Remove the margin in Firefox and Safari.\n3. Remove default padding in all browsers.\n*/\n\nbutton,\ninput,\noptgroup,\nselect,\ntextarea {\n  font-family: inherit;\n  /* 1 */\n  font-size: 100%;\n  /* 1 */\n  line-height: inherit;\n  /* 1 */\n  color: inherit;\n  /* 1 */\n  margin: 0;\n  /* 2 */\n  padding: 0;\n  /* 3 */\n}\n\n/*\nRemove the inheritance of text transform in Edge and Firefox.\n*/\n\nbutton,\nselect {\n  text-transform: none;\n}\n\n/*\n1. Correct the inability to style clickable types in iOS and Safari.\n2. Remove default button styles.\n*/\n\nbutton,\n[type='button'],\n[type='reset'],\n[type='submit'] {\n  -webkit-appearance: button;\n  /* 1 */\n  background-color: transparent;\n  /* 2 */\n  background-image: none;\n  /* 2 */\n}\n\n/*\nUse the modern Firefox focus style for all focusable elements.\n*/\n\n:-moz-focusring {\n  outline: auto;\n}\n\n/*\nRemove the additional `:invalid` styles in Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737)\n*/\n\n:-moz-ui-invalid {\n  box-shadow: none;\n}\n\n/*\nAdd the correct vertical alignment in Chrome and Firefox.\n*/\n\nprogress {\n  vertical-align: baseline;\n}\n\n/*\nCorrect the cursor style of increment and decrement buttons in Safari.\n*/\n\n::-webkit-inner-spin-button,\n::-webkit-outer-spin-button {\n  height: auto;\n}\n\n/*\n1. Correct the odd appearance in Chrome and Safari.\n2. Correct the outline style in Safari.\n*/\n\n[type='search'] {\n  -webkit-appearance: textfield;\n  /* 1 */\n  outline-offset: -2px;\n  /* 2 */\n}\n\n/*\nRemove the inner padding in Chrome and Safari on macOS.\n*/\n\n::-webkit-search-decoration {\n  -webkit-appearance: none;\n}\n\n/*\n1. Correct the inability to style clickable types in iOS and Safari.\n2. Change font properties to `inherit` in Safari.\n*/\n\n::-webkit-file-upload-button {\n  -webkit-appearance: button;\n  /* 1 */\n  font: inherit;\n  /* 2 */\n}\n\n/*\nAdd the correct display in Chrome and Safari.\n*/\n\nsummary {\n  display: list-item;\n}\n\n/*\nRemoves the default spacing and border for appropriate elements.\n*/\n\nblockquote,\ndl,\ndd,\nh1,\nh2,\nh3,\nh4,\nh5,\nh6,\nhr,\nfigure,\np,\npre {\n  margin: 0;\n}\n\nfieldset {\n  margin: 0;\n  padding: 0;\n}\n\nlegend {\n  padding: 0;\n}\n\nol,\nul,\nmenu {\n  list-style: none;\n  margin: 0;\n  padding: 0;\n}\n\n/*\nPrevent resizing textareas horizontally by default.\n*/\n\ntextarea {\n  resize: vertical;\n}\n\n/*\n1. Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)\n2. Set the default placeholder color to the user's configured gray 400 color.\n*/\n\ninput::-moz-placeholder, textarea::-moz-placeholder {\n  opacity: 1;\n  /* 1 */\n  color: #9ca3af;\n  /* 2 */\n}\n\ninput:-ms-input-placeholder, textarea:-ms-input-placeholder {\n  opacity: 1;\n  /* 1 */\n  color: #9ca3af;\n  /* 2 */\n}\n\ninput::placeholder,\ntextarea::placeholder {\n  opacity: 1;\n  /* 1 */\n  color: #9ca3af;\n  /* 2 */\n}\n\n/*\nSet the default cursor for buttons.\n*/\n\nbutton,\n[role=\"button\"] {\n  cursor: pointer;\n}\n\n/*\nMake sure disabled buttons don't get the pointer cursor.\n*/\n\n:disabled {\n  cursor: default;\n}\n\n/*\n1. Make replaced elements `display: block` by default. (https://github.com/mozdevs/cssremedy/issues/14)\n2. Add `vertical-align: middle` to align replaced elements more sensibly by default. (https://github.com/jensimmons/cssremedy/issues/14#issuecomment-634934210)\n   This can trigger a poorly considered lint error in some tools but is included by design.\n*/\n\nimg,\nsvg,\nvideo,\ncanvas,\naudio,\niframe,\nembed,\nobject {\n  display: block;\n  /* 1 */\n  vertical-align: middle;\n  /* 2 */\n}\n\n/*\nConstrain images and videos to the parent width and preserve their intrinsic aspect ratio. (https://github.com/mozdevs/cssremedy/issues/14)\n*/\n\nimg,\nvideo {\n  max-width: 100%;\n  height: auto;\n}\n\n/*\nEnsure the default browser behavior of the `hidden` attribute.\n*/\n\n[hidden] {\n  display: none;\n}\n\n[type='text'],[type='email'],[type='url'],[type='password'],[type='number'],[type='date'],[type='datetime-local'],[type='month'],[type='search'],[type='tel'],[type='time'],[type='week'],[multiple],textarea,select {\n  -webkit-appearance: none;\n     -moz-appearance: none;\n          appearance: none;\n  background-color: #fff;\n  border-color: #6b7280;\n  border-width: 1px;\n  border-radius: 0px;\n  padding-top: 0.5rem;\n  padding-right: 0.75rem;\n  padding-bottom: 0.5rem;\n  padding-left: 0.75rem;\n  font-size: 1rem;\n  line-height: 1.5rem;\n  --tw-shadow: 0 0 #0000;\n}\n\n[type='text']:focus, [type='email']:focus, [type='url']:focus, [type='password']:focus, [type='number']:focus, [type='date']:focus, [type='datetime-local']:focus, [type='month']:focus, [type='search']:focus, [type='tel']:focus, [type='time']:focus, [type='week']:focus, [multiple]:focus, textarea:focus, select:focus {\n  outline: 2px solid transparent;\n  outline-offset: 2px;\n  --tw-ring-inset: var(--tw-empty,/*!*/ /*!*/);\n  --tw-ring-offset-width: 0px;\n  --tw-ring-offset-color: #fff;\n  --tw-ring-color: #2563eb;\n  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);\n  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);\n  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);\n  border-color: #2563eb;\n}\n\ninput::-moz-placeholder, textarea::-moz-placeholder {\n  color: #6b7280;\n  opacity: 1;\n}\n\ninput:-ms-input-placeholder, textarea:-ms-input-placeholder {\n  color: #6b7280;\n  opacity: 1;\n}\n\ninput::placeholder,textarea::placeholder {\n  color: #6b7280;\n  opacity: 1;\n}\n\n::-webkit-datetime-edit-fields-wrapper {\n  padding: 0;\n}\n\n::-webkit-date-and-time-value {\n  min-height: 1.5em;\n}\n\n::-webkit-datetime-edit,::-webkit-datetime-edit-year-field,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute-field,::-webkit-datetime-edit-second-field,::-webkit-datetime-edit-millisecond-field,::-webkit-datetime-edit-meridiem-field {\n  padding-top: 0;\n  padding-bottom: 0;\n}\n\nselect {\n  background-image: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e\");\n  background-position: right 0.5rem center;\n  background-repeat: no-repeat;\n  background-size: 1.5em 1.5em;\n  padding-right: 2.5rem;\n  print-color-adjust: exact;\n}\n\n[multiple] {\n  background-image: initial;\n  background-position: initial;\n  background-repeat: unset;\n  background-size: initial;\n  padding-right: 0.75rem;\n  print-color-adjust: unset;\n}\n\n[type='checkbox'],[type='radio'] {\n  -webkit-appearance: none;\n     -moz-appearance: none;\n          appearance: none;\n  padding: 0;\n  print-color-adjust: exact;\n  display: inline-block;\n  vertical-align: middle;\n  background-origin: border-box;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n  flex-shrink: 0;\n  height: 1rem;\n  width: 1rem;\n  color: #2563eb;\n  background-color: #fff;\n  border-color: #6b7280;\n  border-width: 1px;\n  --tw-shadow: 0 0 #0000;\n}\n\n[type='checkbox'] {\n  border-radius: 0px;\n}\n\n[type='radio'] {\n  border-radius: 100%;\n}\n\n[type='checkbox']:focus,[type='radio']:focus {\n  outline: 2px solid transparent;\n  outline-offset: 2px;\n  --tw-ring-inset: var(--tw-empty,/*!*/ /*!*/);\n  --tw-ring-offset-width: 2px;\n  --tw-ring-offset-color: #fff;\n  --tw-ring-color: #2563eb;\n  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);\n  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);\n  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);\n}\n\n[type='checkbox']:checked,[type='radio']:checked {\n  border-color: transparent;\n  background-color: currentColor;\n  background-size: 100% 100%;\n  background-position: center;\n  background-repeat: no-repeat;\n}\n\n[type='checkbox']:checked {\n  background-image: url(\"data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e\");\n}\n\n[type='radio']:checked {\n  background-image: url(\"data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='8' cy='8' r='3'/%3e%3c/svg%3e\");\n}\n\n[type='checkbox']:checked:hover,[type='checkbox']:checked:focus,[type='radio']:checked:hover,[type='radio']:checked:focus {\n  border-color: transparent;\n  background-color: currentColor;\n}\n\n[type='checkbox']:indeterminate {\n  background-image: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 16 16'%3e%3cpath stroke='white' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 8h8'/%3e%3c/svg%3e\");\n  border-color: transparent;\n  background-color: currentColor;\n  background-size: 100% 100%;\n  background-position: center;\n  background-repeat: no-repeat;\n}\n\n[type='checkbox']:indeterminate:hover,[type='checkbox']:indeterminate:focus {\n  border-color: transparent;\n  background-color: currentColor;\n}\n\n[type='file'] {\n  background: unset;\n  border-color: inherit;\n  border-width: 0;\n  border-radius: 0;\n  padding: 0;\n  font-size: unset;\n  line-height: inherit;\n}\n\n[type='file']:focus {\n  outline: 1px solid ButtonText;\n  outline: 1px auto -webkit-focus-ring-color;\n}\n\n*, ::before, ::after {\n  --tw-translate-x: 0;\n  --tw-translate-y: 0;\n  --tw-rotate: 0;\n  --tw-skew-x: 0;\n  --tw-skew-y: 0;\n  --tw-scale-x: 1;\n  --tw-scale-y: 1;\n  --tw-pan-x:  ;\n  --tw-pan-y:  ;\n  --tw-pinch-zoom:  ;\n  --tw-scroll-snap-strictness: proximity;\n  --tw-ordinal:  ;\n  --tw-slashed-zero:  ;\n  --tw-numeric-figure:  ;\n  --tw-numeric-spacing:  ;\n  --tw-numeric-fraction:  ;\n  --tw-ring-inset:  ;\n  --tw-ring-offset-width: 0px;\n  --tw-ring-offset-color: #fff;\n  --tw-ring-color: rgb(59 130 246 / 0.5);\n  --tw-ring-offset-shadow: 0 0 #0000;\n  --tw-ring-shadow: 0 0 #0000;\n  --tw-shadow: 0 0 #0000;\n  --tw-shadow-colored: 0 0 #0000;\n  --tw-blur:  ;\n  --tw-brightness:  ;\n  --tw-contrast:  ;\n  --tw-grayscale:  ;\n  --tw-hue-rotate:  ;\n  --tw-invert:  ;\n  --tw-saturate:  ;\n  --tw-sepia:  ;\n  --tw-drop-shadow:  ;\n  --tw-backdrop-blur:  ;\n  --tw-backdrop-brightness:  ;\n  --tw-backdrop-contrast:  ;\n  --tw-backdrop-grayscale:  ;\n  --tw-backdrop-hue-rotate:  ;\n  --tw-backdrop-invert:  ;\n  --tw-backdrop-opacity:  ;\n  --tw-backdrop-saturate:  ;\n  --tw-backdrop-sepia:  ;\n}\n\n.sr-only {\n  position: absolute;\n  width: 1px;\n  height: 1px;\n  padding: 0;\n  margin: -1px;\n  overflow: hidden;\n  clip: rect(0, 0, 0, 0);\n  white-space: nowrap;\n  border-width: 0;\n}\n\n.pointer-events-none {\n  pointer-events: none;\n}\n\n.pointer-events-auto {\n  pointer-events: auto;\n}\n\n.static {\n  position: static;\n}\n\n.fixed {\n  position: fixed;\n}\n\n.absolute {\n  position: absolute;\n}\n\n.relative {\n  position: relative;\n}\n\n.inset-0 {\n  top: 0px;\n  right: 0px;\n  bottom: 0px;\n  left: 0px;\n}\n\n.inset-y-0 {\n  top: 0px;\n  bottom: 0px;\n}\n\n.-left-8 {\n  left: -2rem;\n}\n\n.top-1\\/2 {\n  top: 50%;\n}\n\n.top-0 {\n  top: 0px;\n}\n\n.right-0 {\n  right: 0px;\n}\n\n.left-0 {\n  left: 0px;\n}\n\n.z-50 {\n  z-index: 50;\n}\n\n.m-2 {\n  margin: 0.5rem;\n}\n\n.-m-2 {\n  margin: -0.5rem;\n}\n\n.m-1 {\n  margin: 0.25rem;\n}\n\n.m-4 {\n  margin: 1rem;\n}\n\n.mx-1 {\n  margin-left: 0.25rem;\n  margin-right: 0.25rem;\n}\n\n.my-1 {\n  margin-top: 0.25rem;\n  margin-bottom: 0.25rem;\n}\n\n.-my-6 {\n  margin-top: -1.5rem;\n  margin-bottom: -1.5rem;\n}\n\n.mx-2 {\n  margin-left: 0.5rem;\n  margin-right: 0.5rem;\n}\n\n.ml-4 {\n  margin-left: 1rem;\n}\n\n.ml-3 {\n  margin-left: 0.75rem;\n}\n\n.mt-8 {\n  margin-top: 2rem;\n}\n\n.mt-1 {\n  margin-top: 0.25rem;\n}\n\n.mt-0\\.5 {\n  margin-top: 0.125rem;\n}\n\n.mt-0 {\n  margin-top: 0px;\n}\n\n.mt-6 {\n  margin-top: 1.5rem;\n}\n\n.ml-auto {\n  margin-left: auto;\n}\n\n.mb-4 {\n  margin-bottom: 1rem;\n}\n\n.ml-1 {\n  margin-left: 0.25rem;\n}\n\n.block {\n  display: block;\n}\n\n.inline-block {\n  display: inline-block;\n}\n\n.flex {\n  display: flex;\n}\n\n.inline-flex {\n  display: inline-flex;\n}\n\n.table {\n  display: table;\n}\n\n.flow-root {\n  display: flow-root;\n}\n\n.h-12 {\n  height: 3rem;\n}\n\n.h-screen {\n  height: 100vh;\n}\n\n.h-fit {\n  height: -webkit-fit-content;\n  height: -moz-fit-content;\n  height: fit-content;\n}\n\n.h-full {\n  height: 100%;\n}\n\n.h-7 {\n  height: 1.75rem;\n}\n\n.h-6 {\n  height: 1.5rem;\n}\n\n.h-24 {\n  height: 6rem;\n}\n\n.h-5 {\n  height: 1.25rem;\n}\n\n.h-3 {\n  height: 0.75rem;\n}\n\n.h-4 {\n  height: 1rem;\n}\n\n.h-8 {\n  height: 2rem;\n}\n\n.max-h-\\[95\\%\\] {\n  max-height: 95%;\n}\n\n.w-12 {\n  width: 3rem;\n}\n\n.w-full {\n  width: 100%;\n}\n\n.w-64 {\n  width: 16rem;\n}\n\n.w-screen {\n  width: 100vw;\n}\n\n.w-72 {\n  width: 18rem;\n}\n\n.w-6 {\n  width: 1.5rem;\n}\n\n.w-24 {\n  width: 6rem;\n}\n\n.w-5 {\n  width: 1.25rem;\n}\n\n.w-3 {\n  width: 0.75rem;\n}\n\n.w-40 {\n  width: 10rem;\n}\n\n.w-4 {\n  width: 1rem;\n}\n\n.w-8 {\n  width: 2rem;\n}\n\n.w-7 {\n  width: 1.75rem;\n}\n\n.min-w-full {\n  min-width: 100%;\n}\n\n.max-w-full {\n  max-width: 100%;\n}\n\n.max-w-md {\n  max-width: 28rem;\n}\n\n.flex-1 {\n  flex: 1 1 0%;\n}\n\n.flex-shrink-0 {\n  flex-shrink: 0;\n}\n\n.table-auto {\n  table-layout: auto;\n}\n\n.translate-x-full {\n  --tw-translate-x: 100%;\n  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n}\n\n.translate-x-0 {\n  --tw-translate-x: 0px;\n  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n}\n\n.transform {\n  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n}\n\n.cursor-not-allowed {\n  cursor: not-allowed;\n}\n\n.cursor-pointer {\n  cursor: pointer;\n}\n\n.flex-col {\n  flex-direction: column;\n}\n\n.flex-wrap {\n  flex-wrap: wrap;\n}\n\n.items-start {\n  align-items: flex-start;\n}\n\n.items-end {\n  align-items: flex-end;\n}\n\n.items-center {\n  align-items: center;\n}\n\n.justify-center {\n  justify-content: center;\n}\n\n.justify-between {\n  justify-content: space-between;\n}\n\n.space-x-2 > :not([hidden]) ~ :not([hidden]) {\n  --tw-space-x-reverse: 0;\n  margin-right: calc(0.5rem * var(--tw-space-x-reverse));\n  margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)));\n}\n\n.space-y-2 > :not([hidden]) ~ :not([hidden]) {\n  --tw-space-y-reverse: 0;\n  margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));\n  margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));\n}\n\n.divide-y > :not([hidden]) ~ :not([hidden]) {\n  --tw-divide-y-reverse: 0;\n  border-top-width: calc(1px * calc(1 - var(--tw-divide-y-reverse)));\n  border-bottom-width: calc(1px * var(--tw-divide-y-reverse));\n}\n\n.divide-gray-200 > :not([hidden]) ~ :not([hidden]) {\n  --tw-divide-opacity: 1;\n  border-color: rgb(229 231 235 / var(--tw-divide-opacity));\n}\n\n.divide-gray-100 > :not([hidden]) ~ :not([hidden]) {\n  --tw-divide-opacity: 1;\n  border-color: rgb(243 244 246 / var(--tw-divide-opacity));\n}\n\n.overflow-auto {\n  overflow: auto;\n}\n\n.overflow-hidden {\n  overflow: hidden;\n}\n\n.overflow-y-auto {\n  overflow-y: auto;\n}\n\n.overflow-x-hidden {\n  overflow-x: hidden;\n}\n\n.overflow-y-scroll {\n  overflow-y: scroll;\n}\n\n.overflow-ellipsis {\n  text-overflow: ellipsis;\n}\n\n.whitespace-nowrap {\n  white-space: nowrap;\n}\n\n.rounded-md {\n  border-radius: 0.375rem;\n}\n\n.rounded {\n  border-radius: 0.25rem;\n}\n\n.rounded-lg {\n  border-radius: 0.5rem;\n}\n\n.rounded-full {\n  border-radius: 9999px;\n}\n\n.rounded-t {\n  border-top-left-radius: 0.25rem;\n  border-top-right-radius: 0.25rem;\n}\n\n.rounded-b {\n  border-bottom-right-radius: 0.25rem;\n  border-bottom-left-radius: 0.25rem;\n}\n\n.border {\n  border-width: 1px;\n}\n\n.border-2 {\n  border-width: 2px;\n}\n\n.border-b {\n  border-bottom-width: 1px;\n}\n\n.border-t {\n  border-top-width: 1px;\n}\n\n.border-b-2 {\n  border-bottom-width: 2px;\n}\n\n.border-gray-200 {\n  --tw-border-opacity: 1;\n  border-color: rgb(229 231 235 / var(--tw-border-opacity));\n}\n\n.border-transparent {\n  border-color: transparent;\n}\n\n.border-gray-400 {\n  --tw-border-opacity: 1;\n  border-color: rgb(156 163 175 / var(--tw-border-opacity));\n}\n\n.bg-transparent {\n  background-color: transparent;\n}\n\n.bg-gray-50 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(249 250 251 / var(--tw-bg-opacity));\n}\n\n.bg-indigo-400 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(129 140 248 / var(--tw-bg-opacity));\n}\n\n.bg-indigo-600 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(79 70 229 / var(--tw-bg-opacity));\n}\n\n.bg-gray-500 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(107 114 128 / var(--tw-bg-opacity));\n}\n\n.bg-white {\n  --tw-bg-opacity: 1;\n  background-color: rgb(255 255 255 / var(--tw-bg-opacity));\n}\n\n.bg-gray-900 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(17 24 39 / var(--tw-bg-opacity));\n}\n\n.bg-gray-200 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(229 231 235 / var(--tw-bg-opacity));\n}\n\n.bg-blue-200 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(191 219 254 / var(--tw-bg-opacity));\n}\n\n.bg-gray-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(243 244 246 / var(--tw-bg-opacity));\n}\n\n.bg-gray-300 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(209 213 219 / var(--tw-bg-opacity));\n}\n\n.bg-opacity-75 {\n  --tw-bg-opacity: 0.75;\n}\n\n.bg-opacity-50 {\n  --tw-bg-opacity: 0.5;\n}\n\n.bg-cover {\n  background-size: cover;\n}\n\n.bg-center {\n  background-position: center;\n}\n\n.object-cover {\n  -o-object-fit: cover;\n     object-fit: cover;\n}\n\n.object-center {\n  -o-object-position: center;\n     object-position: center;\n}\n\n.p-2 {\n  padding: 0.5rem;\n}\n\n.p-5 {\n  padding: 1.25rem;\n}\n\n.p-1\\.5 {\n  padding: 0.375rem;\n}\n\n.p-1 {\n  padding: 0.25rem;\n}\n\n.p-6 {\n  padding: 1.5rem;\n}\n\n.p-3 {\n  padding: 0.75rem;\n}\n\n.p-0 {\n  padding: 0px;\n}\n\n.px-2 {\n  padding-left: 0.5rem;\n  padding-right: 0.5rem;\n}\n\n.py-1 {\n  padding-top: 0.25rem;\n  padding-bottom: 0.25rem;\n}\n\n.py-6 {\n  padding-top: 1.5rem;\n  padding-bottom: 1.5rem;\n}\n\n.px-4 {\n  padding-left: 1rem;\n  padding-right: 1rem;\n}\n\n.px-6 {\n  padding-left: 1.5rem;\n  padding-right: 1.5rem;\n}\n\n.py-3 {\n  padding-top: 0.75rem;\n  padding-bottom: 0.75rem;\n}\n\n.py-4 {\n  padding-top: 1rem;\n  padding-bottom: 1rem;\n}\n\n.px-3 {\n  padding-left: 0.75rem;\n  padding-right: 0.75rem;\n}\n\n.py-2 {\n  padding-top: 0.5rem;\n  padding-bottom: 0.5rem;\n}\n\n.pr-4 {\n  padding-right: 1rem;\n}\n\n.pl-10 {\n  padding-left: 2.5rem;\n}\n\n.pl-2 {\n  padding-left: 0.5rem;\n}\n\n.pl-1 {\n  padding-left: 0.25rem;\n}\n\n.pl-5 {\n  padding-left: 1.25rem;\n}\n\n.text-left {\n  text-align: left;\n}\n\n.text-center {\n  text-align: center;\n}\n\n.text-sm {\n  font-size: 0.875rem;\n  line-height: 1.25rem;\n}\n\n.text-xs {\n  font-size: 0.75rem;\n  line-height: 1rem;\n}\n\n.text-lg {\n  font-size: 1.125rem;\n  line-height: 1.75rem;\n}\n\n.text-base {\n  font-size: 1rem;\n  line-height: 1.5rem;\n}\n\n.text-xl {\n  font-size: 1.25rem;\n  line-height: 1.75rem;\n}\n\n.font-bold {\n  font-weight: 700;\n}\n\n.font-medium {\n  font-weight: 500;\n}\n\n.font-normal {\n  font-weight: 400;\n}\n\n.uppercase {\n  text-transform: uppercase;\n}\n\n.leading-tight {\n  line-height: 1.25;\n}\n\n.leading-6 {\n  line-height: 1.5rem;\n}\n\n.tracking-wider {\n  letter-spacing: 0.05em;\n}\n\n.text-white {\n  --tw-text-opacity: 1;\n  color: rgb(255 255 255 / var(--tw-text-opacity));\n}\n\n.text-red-500 {\n  --tw-text-opacity: 1;\n  color: rgb(239 68 68 / var(--tw-text-opacity));\n}\n\n.text-blue-500 {\n  --tw-text-opacity: 1;\n  color: rgb(59 130 246 / var(--tw-text-opacity));\n}\n\n.text-gray-900 {\n  --tw-text-opacity: 1;\n  color: rgb(17 24 39 / var(--tw-text-opacity));\n}\n\n.text-gray-400 {\n  --tw-text-opacity: 1;\n  color: rgb(156 163 175 / var(--tw-text-opacity));\n}\n\n.text-gray-500 {\n  --tw-text-opacity: 1;\n  color: rgb(107 114 128 / var(--tw-text-opacity));\n}\n\n.text-indigo-600 {\n  --tw-text-opacity: 1;\n  color: rgb(79 70 229 / var(--tw-text-opacity));\n}\n\n.text-gray-800 {\n  --tw-text-opacity: 1;\n  color: rgb(31 41 55 / var(--tw-text-opacity));\n}\n\n.text-blue-600 {\n  --tw-text-opacity: 1;\n  color: rgb(37 99 235 / var(--tw-text-opacity));\n}\n\n.opacity-0 {\n  opacity: 0;\n}\n\n.opacity-100 {\n  opacity: 1;\n}\n\n.shadow-md {\n  --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);\n  --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\n\n.shadow-xl {\n  --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);\n  --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\n\n.shadow-sm {\n  --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);\n  --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\n\n.shadow {\n  --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);\n  --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\n\n.filter {\n  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);\n}\n\n.transition {\n  transition-property: color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;\n  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;\n  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n\n.transition-opacity {\n  transition-property: opacity;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n\n.delay-150 {\n  transition-delay: 150ms;\n}\n\n.duration-300 {\n  transition-duration: 300ms;\n}\n\n.duration-150 {\n  transition-duration: 150ms;\n}\n\n.duration-500 {\n  transition-duration: 500ms;\n}\n\n.duration-75 {\n  transition-duration: 75ms;\n}\n\n.ease-in-out {\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n}\n\n#jkforum-helper .toggle-bg:after {\n  content: '';\n  position: absolute;\n  top: 0.125rem;\n  left: 0.125rem;\n  height: 0.75rem;\n  width: 0.75rem;\n  border-radius: 9999px;\n  border-width: 1px;\n  --tw-border-opacity: 1;\n  border-color: rgb(209 213 219 / var(--tw-border-opacity));\n  --tw-bg-opacity: 1;\n  background-color: rgb(255 255 255 / var(--tw-bg-opacity));\n  --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);\n  --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n  transition-property: color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;\n  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;\n  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n\n#jkforum-helper input:checked + .toggle-bg:after {\n  transform: translateX(100%);\n  --tw-border-opacity: 1;\n  border-color: rgb(255 255 255 / var(--tw-border-opacity));\n}\n\n#jkforum-helper input:checked + .toggle-bg {\n  --tw-border-opacity: 1;\n  border-color: rgb(37 99 235 / var(--tw-border-opacity));\n  --tw-bg-opacity: 1;\n  background-color: rgb(37 99 235 / var(--tw-bg-opacity));\n}\n\n.border-b {\n  border-bottom: 1px solid lightgray;\n}\n\n/* 增加 visited 样式，图片模式已阅的帖子变灰色 */\n\n.xw0 a:visited {\n  color: grey;\n}\n\n#jkforum-helper button {\n  border: unset;\n}\n\n.focus-within\\:text-gray-400:focus-within {\n  --tw-text-opacity: 1;\n  color: rgb(156 163 175 / var(--tw-text-opacity));\n}\n\n.hover\\:translate-x-9:hover {\n  --tw-translate-x: 2.25rem;\n  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n}\n\n.hover\\:rotate-\\[360deg\\]:hover {\n  --tw-rotate: 360deg;\n  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n}\n\n.hover\\:scale-110:hover {\n  --tw-scale-x: 1.1;\n  --tw-scale-y: 1.1;\n  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n}\n\n.hover\\:border-gray-200:hover {\n  --tw-border-opacity: 1;\n  border-color: rgb(229 231 235 / var(--tw-border-opacity));\n}\n\n.hover\\:bg-indigo-700:hover {\n  --tw-bg-opacity: 1;\n  background-color: rgb(67 56 202 / var(--tw-bg-opacity));\n}\n\n.hover\\:bg-gray-200:hover {\n  --tw-bg-opacity: 1;\n  background-color: rgb(229 231 235 / var(--tw-bg-opacity));\n}\n\n.hover\\:bg-gray-100:hover {\n  --tw-bg-opacity: 1;\n  background-color: rgb(243 244 246 / var(--tw-bg-opacity));\n}\n\n.hover\\:text-gray-500:hover {\n  --tw-text-opacity: 1;\n  color: rgb(107 114 128 / var(--tw-text-opacity));\n}\n\n.hover\\:text-indigo-500:hover {\n  --tw-text-opacity: 1;\n  color: rgb(99 102 241 / var(--tw-text-opacity));\n}\n\n.hover\\:text-gray-900:hover {\n  --tw-text-opacity: 1;\n  color: rgb(17 24 39 / var(--tw-text-opacity));\n}\n\n.hover\\:shadow-lg:hover {\n  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);\n  --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\n\n.focus\\:border-blue-500:focus {\n  --tw-border-opacity: 1;\n  border-color: rgb(59 130 246 / var(--tw-border-opacity));\n}\n\n.focus\\:border-gray-100:focus {\n  --tw-border-opacity: 1;\n  border-color: rgb(243 244 246 / var(--tw-border-opacity));\n}\n\n.focus\\:bg-indigo-700:focus {\n  --tw-bg-opacity: 1;\n  background-color: rgb(67 56 202 / var(--tw-bg-opacity));\n}\n\n.focus\\:shadow-lg:focus {\n  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);\n  --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\n\n.focus\\:outline-none:focus {\n  outline: 2px solid transparent;\n  outline-offset: 2px;\n}\n\n.focus\\:ring-2:focus {\n  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);\n  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);\n  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);\n}\n\n.focus\\:ring-0:focus {\n  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);\n  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(0px + var(--tw-ring-offset-width)) var(--tw-ring-color);\n  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);\n}\n\n.focus\\:ring-indigo-500:focus {\n  --tw-ring-opacity: 1;\n  --tw-ring-color: rgb(99 102 241 / var(--tw-ring-opacity));\n}\n\n.focus\\:ring-blue-500:focus {\n  --tw-ring-opacity: 1;\n  --tw-ring-color: rgb(59 130 246 / var(--tw-ring-opacity));\n}\n\n.focus\\:ring-offset-2:focus {\n  --tw-ring-offset-width: 2px;\n}\n\n.active\\:bg-indigo-800:active {\n  --tw-bg-opacity: 1;\n  background-color: rgb(55 48 163 / var(--tw-bg-opacity));\n}\n\n.active\\:shadow-lg:active {\n  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);\n  --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\n\n.disabled\\:opacity-25:disabled {\n  opacity: 0.25;\n}\n\n.group:hover .group-hover\\:text-gray-900 {\n  --tw-text-opacity: 1;\n  color: rgb(17 24 39 / var(--tw-text-opacity));\n}\n\n@media (prefers-color-scheme: dark) {\n  .dark\\:border-gray-600 {\n    --tw-border-opacity: 1;\n    border-color: rgb(75 85 99 / var(--tw-border-opacity));\n  }\n\n  .dark\\:bg-gray-700 {\n    --tw-bg-opacity: 1;\n    background-color: rgb(55 65 81 / var(--tw-bg-opacity));\n  }\n\n  .dark\\:bg-gray-800 {\n    --tw-bg-opacity: 1;\n    background-color: rgb(31 41 55 / var(--tw-bg-opacity));\n  }\n\n  .dark\\:bg-blue-900 {\n    --tw-bg-opacity: 1;\n    background-color: rgb(30 58 138 / var(--tw-bg-opacity));\n  }\n\n  .dark\\:text-gray-300 {\n    --tw-text-opacity: 1;\n    color: rgb(209 213 219 / var(--tw-text-opacity));\n  }\n\n  .dark\\:text-white {\n    --tw-text-opacity: 1;\n    color: rgb(255 255 255 / var(--tw-text-opacity));\n  }\n\n  .dark\\:text-gray-400 {\n    --tw-text-opacity: 1;\n    color: rgb(156 163 175 / var(--tw-text-opacity));\n  }\n\n  .dark\\:text-blue-200 {\n    --tw-text-opacity: 1;\n    color: rgb(191 219 254 / var(--tw-text-opacity));\n  }\n\n  .dark\\:placeholder-gray-400::-moz-placeholder {\n    --tw-placeholder-opacity: 1;\n    color: rgb(156 163 175 / var(--tw-placeholder-opacity));\n  }\n\n  .dark\\:placeholder-gray-400:-ms-input-placeholder {\n    --tw-placeholder-opacity: 1;\n    color: rgb(156 163 175 / var(--tw-placeholder-opacity));\n  }\n\n  .dark\\:placeholder-gray-400::placeholder {\n    --tw-placeholder-opacity: 1;\n    color: rgb(156 163 175 / var(--tw-placeholder-opacity));\n  }\n\n  .dark\\:hover\\:bg-gray-600:hover {\n    --tw-bg-opacity: 1;\n    background-color: rgb(75 85 99 / var(--tw-bg-opacity));\n  }\n\n  .dark\\:hover\\:bg-gray-700:hover {\n    --tw-bg-opacity: 1;\n    background-color: rgb(55 65 81 / var(--tw-bg-opacity));\n  }\n\n  .dark\\:hover\\:text-white:hover {\n    --tw-text-opacity: 1;\n    color: rgb(255 255 255 / var(--tw-text-opacity));\n  }\n\n  .dark\\:focus\\:border-blue-500:focus {\n    --tw-border-opacity: 1;\n    border-color: rgb(59 130 246 / var(--tw-border-opacity));\n  }\n\n  .dark\\:focus\\:ring-blue-500:focus {\n    --tw-ring-opacity: 1;\n    --tw-ring-color: rgb(59 130 246 / var(--tw-ring-opacity));\n  }\n\n  .group:hover .dark\\:group-hover\\:text-white {\n    --tw-text-opacity: 1;\n    color: rgb(255 255 255 / var(--tw-text-opacity));\n  }\n}\n\n@media (min-width: 640px) {\n  .sm\\:px-6 {\n    padding-left: 1.5rem;\n    padding-right: 1.5rem;\n  }\n\n  .sm\\:text-xs {\n    font-size: 0.75rem;\n    line-height: 1rem;\n  }\n\n  .sm\\:text-sm {\n    font-size: 0.875rem;\n    line-height: 1.25rem;\n  }\n\n  .sm\\:leading-5 {\n    line-height: 1.25rem;\n  }\n\n  .sm\\:duration-700 {\n    transition-duration: 700ms;\n  }\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "/*\n! tailwindcss v3.0.24 | MIT License | https://tailwindcss.com\n*/\n\n/*\n1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)\n2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)\n*/\n\n*,\n::before,\n::after {\n  box-sizing: border-box;\n  /* 1 */\n  border-width: 0;\n  /* 2 */\n  border-style: solid;\n  /* 2 */\n  border-color: #e5e7eb;\n  /* 2 */\n}\n\n::before,\n::after {\n  --tw-content: '';\n}\n\n/*\n1. Use a consistent sensible line-height in all browsers.\n2. Prevent adjustments of font size after orientation changes in iOS.\n3. Use a more readable tab size.\n4. Use the user's configured `sans` font-family by default.\n*/\n\nhtml {\n  line-height: 1.5;\n  /* 1 */\n  -webkit-text-size-adjust: 100%;\n  /* 2 */\n  -moz-tab-size: 4;\n  /* 3 */\n  -o-tab-size: 4;\n     tab-size: 4;\n  /* 3 */\n  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n  /* 4 */\n}\n\n/*\n1. Remove the margin in all browsers.\n2. Inherit line-height from `html` so users can set them as a class directly on the `html` element.\n*/\n\nbody {\n  margin: 0;\n  /* 1 */\n  line-height: inherit;\n  /* 2 */\n}\n\n/*\n1. Add the correct height in Firefox.\n2. Correct the inheritance of border color in Firefox. (https://bugzilla.mozilla.org/show_bug.cgi?id=190655)\n3. Ensure horizontal rules are visible by default.\n*/\n\nhr {\n  height: 0;\n  /* 1 */\n  color: inherit;\n  /* 2 */\n  border-top-width: 1px;\n  /* 3 */\n}\n\n/*\nAdd the correct text decoration in Chrome, Edge, and Safari.\n*/\n\nabbr:where([title]) {\n  -webkit-text-decoration: underline dotted;\n          text-decoration: underline dotted;\n}\n\n/*\nRemove the default font size and weight for headings.\n*/\n\nh1,\nh2,\nh3,\nh4,\nh5,\nh6 {\n  font-size: inherit;\n  font-weight: inherit;\n}\n\n/*\nReset links to optimize for opt-in styling instead of opt-out.\n*/\n\na {\n  color: inherit;\n  text-decoration: inherit;\n}\n\n/*\nAdd the correct font weight in Edge and Safari.\n*/\n\nb,\nstrong {\n  font-weight: bolder;\n}\n\n/*\n1. Use the user's configured `mono` font family by default.\n2. Correct the odd `em` font sizing in all browsers.\n*/\n\ncode,\nkbd,\nsamp,\npre {\n  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace;\n  /* 1 */\n  font-size: 1em;\n  /* 2 */\n}\n\n/*\nAdd the correct font size in all browsers.\n*/\n\nsmall {\n  font-size: 80%;\n}\n\n/*\nPrevent `sub` and `sup` elements from affecting the line height in all browsers.\n*/\n\nsub,\nsup {\n  font-size: 75%;\n  line-height: 0;\n  position: relative;\n  vertical-align: baseline;\n}\n\nsub {\n  bottom: -0.25em;\n}\n\nsup {\n  top: -0.5em;\n}\n\n/*\n1. Remove text indentation from table contents in Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=999088, https://bugs.webkit.org/show_bug.cgi?id=201297)\n2. Correct table border color inheritance in all Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=935729, https://bugs.webkit.org/show_bug.cgi?id=195016)\n3. Remove gaps between table borders by default.\n*/\n\ntable {\n  text-indent: 0;\n  /* 1 */\n  border-color: inherit;\n  /* 2 */\n  border-collapse: collapse;\n  /* 3 */\n}\n\n/*\n1. Change the font styles in all browsers.\n2. Remove the margin in Firefox and Safari.\n3. Remove default padding in all browsers.\n*/\n\nbutton,\ninput,\noptgroup,\nselect,\ntextarea {\n  font-family: inherit;\n  /* 1 */\n  font-size: 100%;\n  /* 1 */\n  line-height: inherit;\n  /* 1 */\n  color: inherit;\n  /* 1 */\n  margin: 0;\n  /* 2 */\n  padding: 0;\n  /* 3 */\n}\n\n/*\nRemove the inheritance of text transform in Edge and Firefox.\n*/\n\nbutton,\nselect {\n  text-transform: none;\n}\n\n/*\n1. Correct the inability to style clickable types in iOS and Safari.\n2. Remove default button styles.\n*/\n\nbutton,\n[type='button'],\n[type='reset'],\n[type='submit'] {\n  -webkit-appearance: button;\n  /* 1 */\n  background-color: transparent;\n  /* 2 */\n  background-image: none;\n  /* 2 */\n}\n\n/*\nUse the modern Firefox focus style for all focusable elements.\n*/\n\n:-moz-focusring {\n  outline: auto;\n}\n\n/*\nRemove the additional `:invalid` styles in Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737)\n*/\n\n:-moz-ui-invalid {\n  box-shadow: none;\n}\n\n/*\nAdd the correct vertical alignment in Chrome and Firefox.\n*/\n\nprogress {\n  vertical-align: baseline;\n}\n\n/*\nCorrect the cursor style of increment and decrement buttons in Safari.\n*/\n\n::-webkit-inner-spin-button,\n::-webkit-outer-spin-button {\n  height: auto;\n}\n\n/*\n1. Correct the odd appearance in Chrome and Safari.\n2. Correct the outline style in Safari.\n*/\n\n[type='search'] {\n  -webkit-appearance: textfield;\n  /* 1 */\n  outline-offset: -2px;\n  /* 2 */\n}\n\n/*\nRemove the inner padding in Chrome and Safari on macOS.\n*/\n\n::-webkit-search-decoration {\n  -webkit-appearance: none;\n}\n\n/*\n1. Correct the inability to style clickable types in iOS and Safari.\n2. Change font properties to `inherit` in Safari.\n*/\n\n::-webkit-file-upload-button {\n  -webkit-appearance: button;\n  /* 1 */\n  font: inherit;\n  /* 2 */\n}\n\n/*\nAdd the correct display in Chrome and Safari.\n*/\n\nsummary {\n  display: list-item;\n}\n\n/*\nRemoves the default spacing and border for appropriate elements.\n*/\n\nblockquote,\ndl,\ndd,\nh1,\nh2,\nh3,\nh4,\nh5,\nh6,\nhr,\nfigure,\np,\npre {\n  margin: 0;\n}\n\nfieldset {\n  margin: 0;\n  padding: 0;\n}\n\nlegend {\n  padding: 0;\n}\n\nol,\nul,\nmenu {\n  list-style: none;\n  margin: 0;\n  padding: 0;\n}\n\n/*\nPrevent resizing textareas horizontally by default.\n*/\n\ntextarea {\n  resize: vertical;\n}\n\n/*\n1. Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)\n2. Set the default placeholder color to the user's configured gray 400 color.\n*/\n\ninput::-moz-placeholder, textarea::-moz-placeholder {\n  opacity: 1;\n  /* 1 */\n  color: #9ca3af;\n  /* 2 */\n}\n\ninput:-ms-input-placeholder, textarea:-ms-input-placeholder {\n  opacity: 1;\n  /* 1 */\n  color: #9ca3af;\n  /* 2 */\n}\n\ninput::placeholder,\ntextarea::placeholder {\n  opacity: 1;\n  /* 1 */\n  color: #9ca3af;\n  /* 2 */\n}\n\n/*\nSet the default cursor for buttons.\n*/\n\nbutton,\n[role=\"button\"] {\n  cursor: pointer;\n}\n\n/*\nMake sure disabled buttons don't get the pointer cursor.\n*/\n\n:disabled {\n  cursor: default;\n}\n\n/*\n1. Make replaced elements `display: block` by default. (https://github.com/mozdevs/cssremedy/issues/14)\n2. Add `vertical-align: middle` to align replaced elements more sensibly by default. (https://github.com/jensimmons/cssremedy/issues/14#issuecomment-634934210)\n   This can trigger a poorly considered lint error in some tools but is included by design.\n*/\n\nimg,\nsvg,\nvideo,\ncanvas,\naudio,\niframe,\nembed,\nobject {\n  display: block;\n  /* 1 */\n  vertical-align: middle;\n  /* 2 */\n}\n\n/*\nConstrain images and videos to the parent width and preserve their intrinsic aspect ratio. (https://github.com/mozdevs/cssremedy/issues/14)\n*/\n\nimg,\nvideo {\n  max-width: 100%;\n  height: auto;\n}\n\n/*\nEnsure the default browser behavior of the `hidden` attribute.\n*/\n\n[hidden] {\n  display: none;\n}\n\n[type='text'],[type='email'],[type='url'],[type='password'],[type='number'],[type='date'],[type='datetime-local'],[type='month'],[type='search'],[type='tel'],[type='time'],[type='week'],[multiple],textarea,select {\n  -webkit-appearance: none;\n     -moz-appearance: none;\n          appearance: none;\n  background-color: #fff;\n  border-color: #6b7280;\n  border-width: 1px;\n  border-radius: 0px;\n  padding-top: 0.5rem;\n  padding-right: 0.75rem;\n  padding-bottom: 0.5rem;\n  padding-left: 0.75rem;\n  font-size: 1rem;\n  line-height: 1.5rem;\n  --tw-shadow: 0 0 #0000;\n}\n\n[type='text']:focus, [type='email']:focus, [type='url']:focus, [type='password']:focus, [type='number']:focus, [type='date']:focus, [type='datetime-local']:focus, [type='month']:focus, [type='search']:focus, [type='tel']:focus, [type='time']:focus, [type='week']:focus, [multiple]:focus, textarea:focus, select:focus {\n  outline: 2px solid transparent;\n  outline-offset: 2px;\n  --tw-ring-inset: var(--tw-empty,/*!*/ /*!*/);\n  --tw-ring-offset-width: 0px;\n  --tw-ring-offset-color: #fff;\n  --tw-ring-color: #2563eb;\n  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);\n  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);\n  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);\n  border-color: #2563eb;\n}\n\ninput::-moz-placeholder, textarea::-moz-placeholder {\n  color: #6b7280;\n  opacity: 1;\n}\n\ninput:-ms-input-placeholder, textarea:-ms-input-placeholder {\n  color: #6b7280;\n  opacity: 1;\n}\n\ninput::placeholder,textarea::placeholder {\n  color: #6b7280;\n  opacity: 1;\n}\n\n::-webkit-datetime-edit-fields-wrapper {\n  padding: 0;\n}\n\n::-webkit-date-and-time-value {\n  min-height: 1.5em;\n}\n\n::-webkit-datetime-edit,::-webkit-datetime-edit-year-field,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute-field,::-webkit-datetime-edit-second-field,::-webkit-datetime-edit-millisecond-field,::-webkit-datetime-edit-meridiem-field {\n  padding-top: 0;\n  padding-bottom: 0;\n}\n\nselect {\n  background-image: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e\");\n  background-position: right 0.5rem center;\n  background-repeat: no-repeat;\n  background-size: 1.5em 1.5em;\n  padding-right: 2.5rem;\n  print-color-adjust: exact;\n}\n\n[multiple] {\n  background-image: initial;\n  background-position: initial;\n  background-repeat: unset;\n  background-size: initial;\n  padding-right: 0.75rem;\n  print-color-adjust: unset;\n}\n\n[type='checkbox'],[type='radio'] {\n  -webkit-appearance: none;\n     -moz-appearance: none;\n          appearance: none;\n  padding: 0;\n  print-color-adjust: exact;\n  display: inline-block;\n  vertical-align: middle;\n  background-origin: border-box;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n  flex-shrink: 0;\n  height: 1rem;\n  width: 1rem;\n  color: #2563eb;\n  background-color: #fff;\n  border-color: #6b7280;\n  border-width: 1px;\n  --tw-shadow: 0 0 #0000;\n}\n\n[type='checkbox'] {\n  border-radius: 0px;\n}\n\n[type='radio'] {\n  border-radius: 100%;\n}\n\n[type='checkbox']:focus,[type='radio']:focus {\n  outline: 2px solid transparent;\n  outline-offset: 2px;\n  --tw-ring-inset: var(--tw-empty,/*!*/ /*!*/);\n  --tw-ring-offset-width: 2px;\n  --tw-ring-offset-color: #fff;\n  --tw-ring-color: #2563eb;\n  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);\n  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);\n  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);\n}\n\n[type='checkbox']:checked,[type='radio']:checked {\n  border-color: transparent;\n  background-color: currentColor;\n  background-size: 100% 100%;\n  background-position: center;\n  background-repeat: no-repeat;\n}\n\n[type='checkbox']:checked {\n  background-image: url(\"data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e\");\n}\n\n[type='radio']:checked {\n  background-image: url(\"data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='8' cy='8' r='3'/%3e%3c/svg%3e\");\n}\n\n[type='checkbox']:checked:hover,[type='checkbox']:checked:focus,[type='radio']:checked:hover,[type='radio']:checked:focus {\n  border-color: transparent;\n  background-color: currentColor;\n}\n\n[type='checkbox']:indeterminate {\n  background-image: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 16 16'%3e%3cpath stroke='white' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 8h8'/%3e%3c/svg%3e\");\n  border-color: transparent;\n  background-color: currentColor;\n  background-size: 100% 100%;\n  background-position: center;\n  background-repeat: no-repeat;\n}\n\n[type='checkbox']:indeterminate:hover,[type='checkbox']:indeterminate:focus {\n  border-color: transparent;\n  background-color: currentColor;\n}\n\n[type='file'] {\n  background: unset;\n  border-color: inherit;\n  border-width: 0;\n  border-radius: 0;\n  padding: 0;\n  font-size: unset;\n  line-height: inherit;\n}\n\n[type='file']:focus {\n  outline: 1px solid ButtonText;\n  outline: 1px auto -webkit-focus-ring-color;\n}\n\n*, ::before, ::after {\n  --tw-translate-x: 0;\n  --tw-translate-y: 0;\n  --tw-rotate: 0;\n  --tw-skew-x: 0;\n  --tw-skew-y: 0;\n  --tw-scale-x: 1;\n  --tw-scale-y: 1;\n  --tw-pan-x:  ;\n  --tw-pan-y:  ;\n  --tw-pinch-zoom:  ;\n  --tw-scroll-snap-strictness: proximity;\n  --tw-ordinal:  ;\n  --tw-slashed-zero:  ;\n  --tw-numeric-figure:  ;\n  --tw-numeric-spacing:  ;\n  --tw-numeric-fraction:  ;\n  --tw-ring-inset:  ;\n  --tw-ring-offset-width: 0px;\n  --tw-ring-offset-color: #fff;\n  --tw-ring-color: rgb(59 130 246 / 0.5);\n  --tw-ring-offset-shadow: 0 0 #0000;\n  --tw-ring-shadow: 0 0 #0000;\n  --tw-shadow: 0 0 #0000;\n  --tw-shadow-colored: 0 0 #0000;\n  --tw-blur:  ;\n  --tw-brightness:  ;\n  --tw-contrast:  ;\n  --tw-grayscale:  ;\n  --tw-hue-rotate:  ;\n  --tw-invert:  ;\n  --tw-saturate:  ;\n  --tw-sepia:  ;\n  --tw-drop-shadow:  ;\n  --tw-backdrop-blur:  ;\n  --tw-backdrop-brightness:  ;\n  --tw-backdrop-contrast:  ;\n  --tw-backdrop-grayscale:  ;\n  --tw-backdrop-hue-rotate:  ;\n  --tw-backdrop-invert:  ;\n  --tw-backdrop-opacity:  ;\n  --tw-backdrop-saturate:  ;\n  --tw-backdrop-sepia:  ;\n}\n\n.sr-only {\n  position: absolute;\n  width: 1px;\n  height: 1px;\n  padding: 0;\n  margin: -1px;\n  overflow: hidden;\n  clip: rect(0, 0, 0, 0);\n  white-space: nowrap;\n  border-width: 0;\n}\n\n.pointer-events-none {\n  pointer-events: none;\n}\n\n.pointer-events-auto {\n  pointer-events: auto;\n}\n\n.static {\n  position: static;\n}\n\n.fixed {\n  position: fixed;\n}\n\n.absolute {\n  position: absolute;\n}\n\n.relative {\n  position: relative;\n}\n\n.inset-0 {\n  top: 0px;\n  right: 0px;\n  bottom: 0px;\n  left: 0px;\n}\n\n.inset-y-0 {\n  top: 0px;\n  bottom: 0px;\n}\n\n.-left-8 {\n  left: -2rem;\n}\n\n.top-1\\/2 {\n  top: 50%;\n}\n\n.top-0 {\n  top: 0px;\n}\n\n.right-0 {\n  right: 0px;\n}\n\n.left-0 {\n  left: 0px;\n}\n\n.z-50 {\n  z-index: 50;\n}\n\n.m-2 {\n  margin: 0.5rem;\n}\n\n.-m-2 {\n  margin: -0.5rem;\n}\n\n.m-1 {\n  margin: 0.25rem;\n}\n\n.m-4 {\n  margin: 1rem;\n}\n\n.mx-1 {\n  margin-left: 0.25rem;\n  margin-right: 0.25rem;\n}\n\n.my-1 {\n  margin-top: 0.25rem;\n  margin-bottom: 0.25rem;\n}\n\n.-my-6 {\n  margin-top: -1.5rem;\n  margin-bottom: -1.5rem;\n}\n\n.mx-2 {\n  margin-left: 0.5rem;\n  margin-right: 0.5rem;\n}\n\n.ml-4 {\n  margin-left: 1rem;\n}\n\n.mt-2 {\n  margin-top: 0.5rem;\n}\n\n.ml-3 {\n  margin-left: 0.75rem;\n}\n\n.mt-8 {\n  margin-top: 2rem;\n}\n\n.mt-1 {\n  margin-top: 0.25rem;\n}\n\n.mt-0\\.5 {\n  margin-top: 0.125rem;\n}\n\n.mt-0 {\n  margin-top: 0px;\n}\n\n.mt-6 {\n  margin-top: 1.5rem;\n}\n\n.ml-auto {\n  margin-left: auto;\n}\n\n.mb-4 {\n  margin-bottom: 1rem;\n}\n\n.ml-1 {\n  margin-left: 0.25rem;\n}\n\n.block {\n  display: block;\n}\n\n.inline-block {\n  display: inline-block;\n}\n\n.flex {\n  display: flex;\n}\n\n.inline-flex {\n  display: inline-flex;\n}\n\n.table {\n  display: table;\n}\n\n.flow-root {\n  display: flow-root;\n}\n\n.h-12 {\n  height: 3rem;\n}\n\n.h-screen {\n  height: 100vh;\n}\n\n.h-fit {\n  height: -webkit-fit-content;\n  height: -moz-fit-content;\n  height: fit-content;\n}\n\n.h-full {\n  height: 100%;\n}\n\n.h-7 {\n  height: 1.75rem;\n}\n\n.h-6 {\n  height: 1.5rem;\n}\n\n.h-24 {\n  height: 6rem;\n}\n\n.h-5 {\n  height: 1.25rem;\n}\n\n.h-3 {\n  height: 0.75rem;\n}\n\n.h-4 {\n  height: 1rem;\n}\n\n.h-8 {\n  height: 2rem;\n}\n\n.max-h-\\[95\\%\\] {\n  max-height: 95%;\n}\n\n.w-12 {\n  width: 3rem;\n}\n\n.w-full {\n  width: 100%;\n}\n\n.w-64 {\n  width: 16rem;\n}\n\n.w-80 {\n  width: 20rem;\n}\n\n.w-8 {\n  width: 2rem;\n}\n\n.w-screen {\n  width: 100vw;\n}\n\n.w-72 {\n  width: 18rem;\n}\n\n.w-6 {\n  width: 1.5rem;\n}\n\n.w-24 {\n  width: 6rem;\n}\n\n.w-5 {\n  width: 1.25rem;\n}\n\n.w-3 {\n  width: 0.75rem;\n}\n\n.w-4 {\n  width: 1rem;\n}\n\n.w-7 {\n  width: 1.75rem;\n}\n\n.min-w-full {\n  min-width: 100%;\n}\n\n.max-w-full {\n  max-width: 100%;\n}\n\n.max-w-md {\n  max-width: 28rem;\n}\n\n.max-w-\\[150px\\] {\n  max-width: 150px;\n}\n\n.flex-1 {\n  flex: 1 1 0%;\n}\n\n.flex-shrink-0 {\n  flex-shrink: 0;\n}\n\n.table-auto {\n  table-layout: auto;\n}\n\n.translate-x-full {\n  --tw-translate-x: 100%;\n  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n}\n\n.translate-x-0 {\n  --tw-translate-x: 0px;\n  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n}\n\n.transform {\n  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n}\n\n.cursor-not-allowed {\n  cursor: not-allowed;\n}\n\n.cursor-pointer {\n  cursor: pointer;\n}\n\n.flex-col {\n  flex-direction: column;\n}\n\n.flex-wrap {\n  flex-wrap: wrap;\n}\n\n.items-start {\n  align-items: flex-start;\n}\n\n.items-end {\n  align-items: flex-end;\n}\n\n.items-center {\n  align-items: center;\n}\n\n.justify-center {\n  justify-content: center;\n}\n\n.justify-between {\n  justify-content: space-between;\n}\n\n.space-x-2 > :not([hidden]) ~ :not([hidden]) {\n  --tw-space-x-reverse: 0;\n  margin-right: calc(0.5rem * var(--tw-space-x-reverse));\n  margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)));\n}\n\n.space-y-2 > :not([hidden]) ~ :not([hidden]) {\n  --tw-space-y-reverse: 0;\n  margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));\n  margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));\n}\n\n.divide-y > :not([hidden]) ~ :not([hidden]) {\n  --tw-divide-y-reverse: 0;\n  border-top-width: calc(1px * calc(1 - var(--tw-divide-y-reverse)));\n  border-bottom-width: calc(1px * var(--tw-divide-y-reverse));\n}\n\n.divide-gray-200 > :not([hidden]) ~ :not([hidden]) {\n  --tw-divide-opacity: 1;\n  border-color: rgb(229 231 235 / var(--tw-divide-opacity));\n}\n\n.divide-gray-100 > :not([hidden]) ~ :not([hidden]) {\n  --tw-divide-opacity: 1;\n  border-color: rgb(243 244 246 / var(--tw-divide-opacity));\n}\n\n.overflow-auto {\n  overflow: auto;\n}\n\n.overflow-hidden {\n  overflow: hidden;\n}\n\n.overflow-y-auto {\n  overflow-y: auto;\n}\n\n.overflow-x-hidden {\n  overflow-x: hidden;\n}\n\n.overflow-y-scroll {\n  overflow-y: scroll;\n}\n\n.overflow-ellipsis {\n  text-overflow: ellipsis;\n}\n\n.text-ellipsis {\n  text-overflow: ellipsis;\n}\n\n.whitespace-nowrap {\n  white-space: nowrap;\n}\n\n.rounded-md {\n  border-radius: 0.375rem;\n}\n\n.rounded {\n  border-radius: 0.25rem;\n}\n\n.rounded-lg {\n  border-radius: 0.5rem;\n}\n\n.rounded-full {\n  border-radius: 9999px;\n}\n\n.rounded-t {\n  border-top-left-radius: 0.25rem;\n  border-top-right-radius: 0.25rem;\n}\n\n.rounded-b {\n  border-bottom-right-radius: 0.25rem;\n  border-bottom-left-radius: 0.25rem;\n}\n\n.border {\n  border-width: 1px;\n}\n\n.border-2 {\n  border-width: 2px;\n}\n\n.border-b {\n  border-bottom-width: 1px;\n}\n\n.border-t {\n  border-top-width: 1px;\n}\n\n.border-b-2 {\n  border-bottom-width: 2px;\n}\n\n.border-gray-200 {\n  --tw-border-opacity: 1;\n  border-color: rgb(229 231 235 / var(--tw-border-opacity));\n}\n\n.border-transparent {\n  border-color: transparent;\n}\n\n.border-gray-400 {\n  --tw-border-opacity: 1;\n  border-color: rgb(156 163 175 / var(--tw-border-opacity));\n}\n\n.bg-transparent {\n  background-color: transparent;\n}\n\n.bg-gray-50 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(249 250 251 / var(--tw-bg-opacity));\n}\n\n.bg-indigo-400 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(129 140 248 / var(--tw-bg-opacity));\n}\n\n.bg-indigo-600 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(79 70 229 / var(--tw-bg-opacity));\n}\n\n.bg-gray-500 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(107 114 128 / var(--tw-bg-opacity));\n}\n\n.bg-white {\n  --tw-bg-opacity: 1;\n  background-color: rgb(255 255 255 / var(--tw-bg-opacity));\n}\n\n.bg-gray-900 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(17 24 39 / var(--tw-bg-opacity));\n}\n\n.bg-gray-200 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(229 231 235 / var(--tw-bg-opacity));\n}\n\n.bg-blue-200 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(191 219 254 / var(--tw-bg-opacity));\n}\n\n.bg-gray-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(243 244 246 / var(--tw-bg-opacity));\n}\n\n.bg-gray-300 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(209 213 219 / var(--tw-bg-opacity));\n}\n\n.bg-opacity-75 {\n  --tw-bg-opacity: 0.75;\n}\n\n.bg-opacity-50 {\n  --tw-bg-opacity: 0.5;\n}\n\n.bg-cover {\n  background-size: cover;\n}\n\n.bg-center {\n  background-position: center;\n}\n\n.object-cover {\n  -o-object-fit: cover;\n     object-fit: cover;\n}\n\n.object-center {\n  -o-object-position: center;\n     object-position: center;\n}\n\n.p-2 {\n  padding: 0.5rem;\n}\n\n.p-5 {\n  padding: 1.25rem;\n}\n\n.p-1\\.5 {\n  padding: 0.375rem;\n}\n\n.p-1 {\n  padding: 0.25rem;\n}\n\n.p-6 {\n  padding: 1.5rem;\n}\n\n.p-3 {\n  padding: 0.75rem;\n}\n\n.p-0 {\n  padding: 0px;\n}\n\n.px-2 {\n  padding-left: 0.5rem;\n  padding-right: 0.5rem;\n}\n\n.py-1 {\n  padding-top: 0.25rem;\n  padding-bottom: 0.25rem;\n}\n\n.py-6 {\n  padding-top: 1.5rem;\n  padding-bottom: 1.5rem;\n}\n\n.px-4 {\n  padding-left: 1rem;\n  padding-right: 1rem;\n}\n\n.px-6 {\n  padding-left: 1.5rem;\n  padding-right: 1.5rem;\n}\n\n.py-3 {\n  padding-top: 0.75rem;\n  padding-bottom: 0.75rem;\n}\n\n.py-4 {\n  padding-top: 1rem;\n  padding-bottom: 1rem;\n}\n\n.px-3 {\n  padding-left: 0.75rem;\n  padding-right: 0.75rem;\n}\n\n.py-2 {\n  padding-top: 0.5rem;\n  padding-bottom: 0.5rem;\n}\n\n.pr-4 {\n  padding-right: 1rem;\n}\n\n.pl-2 {\n  padding-left: 0.5rem;\n}\n\n.pl-10 {\n  padding-left: 2.5rem;\n}\n\n.pl-1 {\n  padding-left: 0.25rem;\n}\n\n.pl-5 {\n  padding-left: 1.25rem;\n}\n\n.text-left {\n  text-align: left;\n}\n\n.text-center {\n  text-align: center;\n}\n\n.text-sm {\n  font-size: 0.875rem;\n  line-height: 1.25rem;\n}\n\n.text-xs {\n  font-size: 0.75rem;\n  line-height: 1rem;\n}\n\n.text-lg {\n  font-size: 1.125rem;\n  line-height: 1.75rem;\n}\n\n.text-base {\n  font-size: 1rem;\n  line-height: 1.5rem;\n}\n\n.text-xl {\n  font-size: 1.25rem;\n  line-height: 1.75rem;\n}\n\n.font-bold {\n  font-weight: 700;\n}\n\n.font-medium {\n  font-weight: 500;\n}\n\n.font-normal {\n  font-weight: 400;\n}\n\n.uppercase {\n  text-transform: uppercase;\n}\n\n.leading-tight {\n  line-height: 1.25;\n}\n\n.leading-6 {\n  line-height: 1.5rem;\n}\n\n.tracking-wider {\n  letter-spacing: 0.05em;\n}\n\n.text-white {\n  --tw-text-opacity: 1;\n  color: rgb(255 255 255 / var(--tw-text-opacity));\n}\n\n.text-red-500 {\n  --tw-text-opacity: 1;\n  color: rgb(239 68 68 / var(--tw-text-opacity));\n}\n\n.text-blue-500 {\n  --tw-text-opacity: 1;\n  color: rgb(59 130 246 / var(--tw-text-opacity));\n}\n\n.text-gray-900 {\n  --tw-text-opacity: 1;\n  color: rgb(17 24 39 / var(--tw-text-opacity));\n}\n\n.text-gray-400 {\n  --tw-text-opacity: 1;\n  color: rgb(156 163 175 / var(--tw-text-opacity));\n}\n\n.text-gray-500 {\n  --tw-text-opacity: 1;\n  color: rgb(107 114 128 / var(--tw-text-opacity));\n}\n\n.text-indigo-600 {\n  --tw-text-opacity: 1;\n  color: rgb(79 70 229 / var(--tw-text-opacity));\n}\n\n.text-gray-800 {\n  --tw-text-opacity: 1;\n  color: rgb(31 41 55 / var(--tw-text-opacity));\n}\n\n.text-blue-600 {\n  --tw-text-opacity: 1;\n  color: rgb(37 99 235 / var(--tw-text-opacity));\n}\n\n.text-gray-700 {\n  --tw-text-opacity: 1;\n  color: rgb(55 65 81 / var(--tw-text-opacity));\n}\n\n.opacity-0 {\n  opacity: 0;\n}\n\n.opacity-100 {\n  opacity: 1;\n}\n\n.shadow-md {\n  --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);\n  --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\n\n.shadow-xl {\n  --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);\n  --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\n\n.shadow-sm {\n  --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);\n  --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\n\n.shadow {\n  --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);\n  --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\n\n.filter {\n  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);\n}\n\n.transition {\n  transition-property: color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;\n  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;\n  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n\n.transition-opacity {\n  transition-property: opacity;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n\n.delay-150 {\n  transition-delay: 150ms;\n}\n\n.duration-300 {\n  transition-duration: 300ms;\n}\n\n.duration-150 {\n  transition-duration: 150ms;\n}\n\n.duration-500 {\n  transition-duration: 500ms;\n}\n\n.duration-75 {\n  transition-duration: 75ms;\n}\n\n.ease-in-out {\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n}\n\n#jkforum-helper .toggle-bg:after {\n  content: '';\n  position: absolute;\n  top: 0.125rem;\n  left: 0.125rem;\n  height: 0.75rem;\n  width: 0.75rem;\n  border-radius: 9999px;\n  border-width: 1px;\n  --tw-border-opacity: 1;\n  border-color: rgb(209 213 219 / var(--tw-border-opacity));\n  --tw-bg-opacity: 1;\n  background-color: rgb(255 255 255 / var(--tw-bg-opacity));\n  --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);\n  --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n  transition-property: color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;\n  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;\n  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n\n#jkforum-helper input:checked + .toggle-bg:after {\n  transform: translateX(100%);\n  --tw-border-opacity: 1;\n  border-color: rgb(255 255 255 / var(--tw-border-opacity));\n}\n\n#jkforum-helper input:checked + .toggle-bg {\n  --tw-border-opacity: 1;\n  border-color: rgb(37 99 235 / var(--tw-border-opacity));\n  --tw-bg-opacity: 1;\n  background-color: rgb(37 99 235 / var(--tw-bg-opacity));\n}\n\n.border-b {\n  border-bottom: 1px solid lightgray;\n}\n\n/* 增加 visited 样式，图片模式已阅的帖子变灰色 */\n\n.xw0 a:visited {\n  color: grey;\n}\n\n#jkforum-helper button {\n  border: unset;\n}\n\n.focus-within\\:text-gray-400:focus-within {\n  --tw-text-opacity: 1;\n  color: rgb(156 163 175 / var(--tw-text-opacity));\n}\n\n.hover\\:translate-x-9:hover {\n  --tw-translate-x: 2.25rem;\n  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n}\n\n.hover\\:rotate-\\[360deg\\]:hover {\n  --tw-rotate: 360deg;\n  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n}\n\n.hover\\:scale-110:hover {\n  --tw-scale-x: 1.1;\n  --tw-scale-y: 1.1;\n  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n}\n\n.hover\\:border-gray-200:hover {\n  --tw-border-opacity: 1;\n  border-color: rgb(229 231 235 / var(--tw-border-opacity));\n}\n\n.hover\\:bg-indigo-700:hover {\n  --tw-bg-opacity: 1;\n  background-color: rgb(67 56 202 / var(--tw-bg-opacity));\n}\n\n.hover\\:bg-gray-200:hover {\n  --tw-bg-opacity: 1;\n  background-color: rgb(229 231 235 / var(--tw-bg-opacity));\n}\n\n.hover\\:bg-gray-100:hover {\n  --tw-bg-opacity: 1;\n  background-color: rgb(243 244 246 / var(--tw-bg-opacity));\n}\n\n.hover\\:text-gray-500:hover {\n  --tw-text-opacity: 1;\n  color: rgb(107 114 128 / var(--tw-text-opacity));\n}\n\n.hover\\:text-indigo-500:hover {\n  --tw-text-opacity: 1;\n  color: rgb(99 102 241 / var(--tw-text-opacity));\n}\n\n.hover\\:text-gray-900:hover {\n  --tw-text-opacity: 1;\n  color: rgb(17 24 39 / var(--tw-text-opacity));\n}\n\n.hover\\:shadow-lg:hover {\n  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);\n  --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\n\n.focus\\:border-blue-500:focus {\n  --tw-border-opacity: 1;\n  border-color: rgb(59 130 246 / var(--tw-border-opacity));\n}\n\n.focus\\:border-gray-100:focus {\n  --tw-border-opacity: 1;\n  border-color: rgb(243 244 246 / var(--tw-border-opacity));\n}\n\n.focus\\:bg-indigo-700:focus {\n  --tw-bg-opacity: 1;\n  background-color: rgb(67 56 202 / var(--tw-bg-opacity));\n}\n\n.focus\\:shadow-lg:focus {\n  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);\n  --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\n\n.focus\\:outline-none:focus {\n  outline: 2px solid transparent;\n  outline-offset: 2px;\n}\n\n.focus\\:ring-2:focus {\n  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);\n  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);\n  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);\n}\n\n.focus\\:ring-0:focus {\n  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);\n  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(0px + var(--tw-ring-offset-width)) var(--tw-ring-color);\n  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);\n}\n\n.focus\\:ring-indigo-500:focus {\n  --tw-ring-opacity: 1;\n  --tw-ring-color: rgb(99 102 241 / var(--tw-ring-opacity));\n}\n\n.focus\\:ring-blue-500:focus {\n  --tw-ring-opacity: 1;\n  --tw-ring-color: rgb(59 130 246 / var(--tw-ring-opacity));\n}\n\n.focus\\:ring-offset-2:focus {\n  --tw-ring-offset-width: 2px;\n}\n\n.active\\:bg-indigo-800:active {\n  --tw-bg-opacity: 1;\n  background-color: rgb(55 48 163 / var(--tw-bg-opacity));\n}\n\n.active\\:shadow-lg:active {\n  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);\n  --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\n\n.disabled\\:opacity-25:disabled {\n  opacity: 0.25;\n}\n\n.group:hover .group-hover\\:text-gray-900 {\n  --tw-text-opacity: 1;\n  color: rgb(17 24 39 / var(--tw-text-opacity));\n}\n\n@media (prefers-color-scheme: dark) {\n  .dark\\:border-gray-600 {\n    --tw-border-opacity: 1;\n    border-color: rgb(75 85 99 / var(--tw-border-opacity));\n  }\n\n  .dark\\:border-gray-700 {\n    --tw-border-opacity: 1;\n    border-color: rgb(55 65 81 / var(--tw-border-opacity));\n  }\n\n  .dark\\:bg-gray-700 {\n    --tw-bg-opacity: 1;\n    background-color: rgb(55 65 81 / var(--tw-bg-opacity));\n  }\n\n  .dark\\:bg-gray-800 {\n    --tw-bg-opacity: 1;\n    background-color: rgb(31 41 55 / var(--tw-bg-opacity));\n  }\n\n  .dark\\:bg-blue-900 {\n    --tw-bg-opacity: 1;\n    background-color: rgb(30 58 138 / var(--tw-bg-opacity));\n  }\n\n  .dark\\:text-gray-300 {\n    --tw-text-opacity: 1;\n    color: rgb(209 213 219 / var(--tw-text-opacity));\n  }\n\n  .dark\\:text-white {\n    --tw-text-opacity: 1;\n    color: rgb(255 255 255 / var(--tw-text-opacity));\n  }\n\n  .dark\\:text-gray-400 {\n    --tw-text-opacity: 1;\n    color: rgb(156 163 175 / var(--tw-text-opacity));\n  }\n\n  .dark\\:text-blue-200 {\n    --tw-text-opacity: 1;\n    color: rgb(191 219 254 / var(--tw-text-opacity));\n  }\n\n  .dark\\:placeholder-gray-400::-moz-placeholder {\n    --tw-placeholder-opacity: 1;\n    color: rgb(156 163 175 / var(--tw-placeholder-opacity));\n  }\n\n  .dark\\:placeholder-gray-400:-ms-input-placeholder {\n    --tw-placeholder-opacity: 1;\n    color: rgb(156 163 175 / var(--tw-placeholder-opacity));\n  }\n\n  .dark\\:placeholder-gray-400::placeholder {\n    --tw-placeholder-opacity: 1;\n    color: rgb(156 163 175 / var(--tw-placeholder-opacity));\n  }\n\n  .dark\\:hover\\:bg-gray-600:hover {\n    --tw-bg-opacity: 1;\n    background-color: rgb(75 85 99 / var(--tw-bg-opacity));\n  }\n\n  .dark\\:hover\\:bg-gray-700:hover {\n    --tw-bg-opacity: 1;\n    background-color: rgb(55 65 81 / var(--tw-bg-opacity));\n  }\n\n  .dark\\:hover\\:text-white:hover {\n    --tw-text-opacity: 1;\n    color: rgb(255 255 255 / var(--tw-text-opacity));\n  }\n\n  .dark\\:focus\\:border-blue-500:focus {\n    --tw-border-opacity: 1;\n    border-color: rgb(59 130 246 / var(--tw-border-opacity));\n  }\n\n  .dark\\:focus\\:ring-blue-500:focus {\n    --tw-ring-opacity: 1;\n    --tw-ring-color: rgb(59 130 246 / var(--tw-ring-opacity));\n  }\n\n  .group:hover .dark\\:group-hover\\:text-white {\n    --tw-text-opacity: 1;\n    color: rgb(255 255 255 / var(--tw-text-opacity));\n  }\n}\n\n@media (min-width: 640px) {\n  .sm\\:px-6 {\n    padding-left: 1.5rem;\n    padding-right: 1.5rem;\n  }\n\n  .sm\\:text-xs {\n    font-size: 0.75rem;\n    line-height: 1rem;\n  }\n\n  .sm\\:text-sm {\n    font-size: 0.875rem;\n    line-height: 1.25rem;\n  }\n\n  .sm\\:leading-5 {\n    line-height: 1.25rem;\n  }\n\n  .sm\\:duration-700 {\n    transition-duration: 700ms;\n  }\n}\n", ""]);
 // Exports
 module.exports = ___CSS_LOADER_EXPORT___;
 
@@ -497,18 +497,28 @@ exports.Button = Button;
 
 "use strict";
 
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Input = void 0;
 const react_1 = __importDefault(__webpack_require__(995));
-const Input = ({ label, placeholder, autoComplete, onChange, value, type = 'text' }) => {
+const Input = (_a) => {
+    var { label, placeholder, autoComplete, value, type = 'text' } = _a, args = __rest(_a, ["label", "placeholder", "autoComplete", "value", "type"]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement("label", { htmlFor: 'input' + label, className: "block m-1 text-xs font-medium text-gray-900 dark:text-gray-300" }, label),
-        react_1.default.createElement("input", { autoComplete: autoComplete, type: type, id: 'input' + label, placeholder: placeholder, value: value, onChange: (e) => {
-                onChange(e.target.value);
-            }, className: "py-1 pl-2 block w-full text-gray-900 bg-gray-50 rounded-lg border sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" })));
+        label ? (react_1.default.createElement("label", { htmlFor: 'input' + label, className: "block m-1 text-xs font-medium text-gray-900 dark:text-gray-300" }, label)) : (''),
+        react_1.default.createElement("input", Object.assign({}, args, { autoComplete: autoComplete, type: type, id: label ? 'input' + label : '', placeholder: placeholder, value: value, className: "py-1 pl-2 block w-full text-gray-900 bg-gray-50 rounded-lg border sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" }))));
 };
 exports.Input = Input;
 
@@ -594,6 +604,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 /* eslint-disable react/jsx-key */
 const commonType_1 = __webpack_require__(321);
+const tools_1 = __webpack_require__(633);
 const react_1 = __importStar(__webpack_require__(995));
 const react_table_1 = __webpack_require__(282);
 const Button_1 = __webpack_require__(237);
@@ -635,7 +646,7 @@ function ReactTableCard({ title, data, updateMyData, deleteData, skipPageReset =
                 Header: '标题',
                 accessor: headerItem,
                 Cell: (props) => {
-                    return (react_1.default.createElement("strong", { title: props.value, className: "block w-40 whitespace-nowrap overflow-hidden overflow-ellipsis mx-1" }, props.value));
+                    return (react_1.default.createElement("strong", { title: props.value, className: "block whitespace-nowrap overflow-hidden overflow-ellipsis mx-1" }, props.value));
                 },
             };
         }
@@ -662,10 +673,10 @@ function ReactTableCard({ title, data, updateMyData, deleteData, skipPageReset =
         }
         else if (headerItem === 'url') {
             return {
-                Header: '地址',
+                Header: '帖子ID',
                 accessor: headerItem,
                 Cell: ({ value }) => {
-                    return (react_1.default.createElement("a", { className: "border-b block w-40 whitespace-nowrap overflow-hidden overflow-ellipsis mx-1", title: value, href: value }, value));
+                    return (react_1.default.createElement("a", { className: "border-b", title: value, target: "_blank", href: value, rel: "noreferrer" }, (0, tools_1.getTid)(value)));
                 },
             };
         }
@@ -696,6 +707,15 @@ function ReactTableCard({ title, data, updateMyData, deleteData, skipPageReset =
                 },
             };
         }
+        else if (headerItem === 'runTime') {
+            return {
+                Header: '运行时段',
+                accessor: headerItem,
+                Cell: ({ value }) => {
+                    return react_1.default.createElement("span", null, `${value.startTime}:00~${value.endTime}:59`);
+                },
+            };
+        }
         else {
             return {
                 Header: headerItem,
@@ -722,7 +742,7 @@ function ReactTableCard({ title, data, updateMyData, deleteData, skipPageReset =
         data: memoData,
         initialState: {
             // sortBy: [defaultSort()],
-            pageSize: 5,
+            pageSize: 20,
         },
         // defaultColumn,
         autoResetPage: !skipPageReset,
@@ -738,53 +758,55 @@ function ReactTableCard({ title, data, updateMyData, deleteData, skipPageReset =
                 react_1.default.createElement("div", { className: "absolute inset-y-0 left-0 pl-1 flex items-center pointer-events-none" },
                     react_1.default.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", fill: "none", viewBox: "0 0 24 24", stroke: "currentColor", className: "h-4 w-4", height: "25", width: "25" },
                         react_1.default.createElement("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: "2", d: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" }))),
-                react_1.default.createElement("input", { className: "pl-5 block shadow-sm border-2 transition text-gray-900 disabled:opacity-25 focus:border-gray-100 focus:outline-none focus:ring-0 duration-150 ease-in-out sm:text-sm sm:leading-5 shadow-sm", type: "text", value: globalFilter || '', onChange: (e) => setGlobalFilter(e.target.value) }))) : (''),
+                react_1.default.createElement("input", { className: "pl-5 block shadow-sm border-2 transition text-gray-900 disabled:opacity-25 focus:border-gray-100 focus:outline-none focus:ring-0 duration-150 ease-in-out sm:text-sm sm:leading-5", type: "text", value: globalFilter || '', onChange: (e) => setGlobalFilter(e.target.value) }))) : (''),
             react_1.default.createElement("table", Object.assign({}, getTableProps(), { className: "mb-4 min-w-full divide-y divide-gray-100 table-auto" }),
-                react_1.default.createElement("thead", null, headerGroups.map((headerGroup) => (react_1.default.createElement("tr", Object.assign({}, headerGroup.getHeaderGroupProps()), headerGroup.headers.map((column) => (react_1.default.createElement("th", Object.assign({}, column.getHeaderProps(column.getSortByToggleProps()), { className: "px-2 py-3 text-left text-xs text-gray-500 uppercase tracking-wider" }),
+                react_1.default.createElement("thead", { className: "bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400" }, headerGroups.map((headerGroup) => (react_1.default.createElement("tr", Object.assign({}, headerGroup.getHeaderGroupProps()), headerGroup.headers.map((column) => (react_1.default.createElement("th", Object.assign({}, column.getHeaderProps(column.getSortByToggleProps()), { className: "px-2 py-3 text-left text-xs text-gray-500 uppercase tracking-wider" }),
                     react_1.default.createElement("div", { className: "flex" },
                         column.render('Header'),
                         column.isSorted ? (column.isSortedDesc ? (react_1.default.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 20 20", fill: "currentColor", className: "h-4 w-4", height: "16", width: "16" },
                             react_1.default.createElement("path", { fillRule: "evenodd", d: "M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z", clipRule: "evenodd" }))) : (react_1.default.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 20 20", fill: "currentColor", className: "h-4 w-4", height: "16", width: "16" },
                             react_1.default.createElement("path", { fillRule: "evenodd", d: "M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z", clipRule: "evenodd" })))) : (''))))))))),
-                react_1.default.createElement("tbody", Object.assign({}, getTableBodyProps()),
-                    page.map((row) => {
-                        prepareRow(row);
-                        return (react_1.default.createElement("tr", Object.assign({}, row.getRowProps(), { className: "hover:bg-gray-200" }), row.cells.map((cell) => {
-                            return (react_1.default.createElement("td", Object.assign({}, cell.getCellProps(), { className: "text-xs p-0 h-8 overflow-hidden" }), cell.render('Cell')));
-                        })));
-                    }),
-                    pageSize - page.length > 0 && react_1.default.createElement("tr", { style: { height: (pageSize - page.length) * 32 } }))),
+                react_1.default.createElement("tbody", Object.assign({ className: "w-full divide-y text-left text-sm text-gray-500 dark:text-gray-400", role: "table" }, getTableBodyProps()), page.map((row) => {
+                    prepareRow(row);
+                    return (react_1.default.createElement("tr", Object.assign({}, row.getRowProps(), { className: "hover:bg-gray-200 dark:hover:bg-gray-600 bg-white dark:border-gray-700 dark:bg-gray-800" }), row.cells.map((cell) => {
+                        return (react_1.default.createElement("td", Object.assign({}, cell.getCellProps(), { className: "text-xs p-0 h-8 whitespace-nowrap font-medium text-gray-900 dark:text-white max-w-[150px] overflow-hidden text-ellipsis" }), cell.render('Cell')));
+                    })));
+                }))),
             react_1.default.createElement("div", { className: "flex justify-center bg-gray-100" },
                 react_1.default.createElement("div", { className: "px-2 text-left text-xs text-gray-500 tracking-wider" },
-                    react_1.default.createElement("button", { className: "bg-gray-200 hover:bg-gray-100 font-bold py-1 px-2 border-b-2 border-gray-400 hover:border-gray-200 rounded", onClick: () => gotoPage(0), disabled: !canPreviousPage }, '<<'),
+                    react_1.default.createElement("button", { className: "bg-gray-200 hover:bg-gray-100 font-bold py-1 px-2 border-b-2 border-gray-400 hover:border-gray-200 rounded", onClick: () => gotoPage(0), disabled: !canPreviousPage }, '<< 第一页'),
                     ' ',
-                    react_1.default.createElement("button", { className: "bg-gray-200 hover:bg-gray-100 font-bold py-1 px-2 border-b-2 border-gray-400 hover:border-gray-200 rounded", onClick: () => previousPage(), disabled: !canPreviousPage }, '<'),
+                    react_1.default.createElement("button", { className: "bg-gray-200 hover:bg-gray-100 font-bold py-1 px-2 border-b-2 border-gray-400 hover:border-gray-200 rounded", onClick: () => previousPage(), disabled: !canPreviousPage }, '< 上一页'),
                     ' ',
-                    react_1.default.createElement("button", { className: "bg-gray-200 hover:bg-gray-100 font-bold py-1 px-2 border-b-2 border-gray-400 hover:border-gray-200 rounded", onClick: () => nextPage(), disabled: !canNextPage }, '>'),
+                    react_1.default.createElement("button", { className: "bg-gray-200 hover:bg-gray-100 font-bold py-1 px-2 border-b-2 border-gray-400 hover:border-gray-200 rounded", onClick: () => nextPage(), disabled: !canNextPage }, '下一页 >'),
                     ' ',
-                    react_1.default.createElement("button", { className: "bg-gray-200 hover:bg-gray-100 font-bold py-1 px-2 border-b-2 border-gray-400 hover:border-gray-200 rounded", onClick: () => gotoPage(pageCount - 1), disabled: !canNextPage }, '>>'),
+                    react_1.default.createElement("button", { className: "bg-gray-200 hover:bg-gray-100 font-bold py-1 px-2 border-b-2 border-gray-400 hover:border-gray-200 rounded", onClick: () => gotoPage(pageCount - 1), disabled: !canNextPage }, '最后一页 >>'),
                     ' ',
                     react_1.default.createElement("span", null,
-                        "| Page",
+                        "| \u7B2C",
                         ' ',
                         react_1.default.createElement("strong", null,
                             pageIndex + 1,
-                            " of ",
-                            pageOptions.length),
+                            " \u9875\uFF0C\u5171 ",
+                            pageOptions.length,
+                            " \u9875"),
                         ' '),
                     react_1.default.createElement("span", null,
-                        "| Go to page:",
+                        "| \u8DF3\u8F6C\u5230\u7B2C",
                         ' ',
                         react_1.default.createElement("input", { className: "w-8 bg-gray-100 hover:bg-gray-200", type: "number", defaultValue: pageIndex + 1, onChange: (e) => {
                                 const page = e.target.value ? Number(e.target.value) - 1 : 0;
                                 gotoPage(page);
-                            } })),
+                            } }),
+                        ' ',
+                        "\u9875"),
                     ' ',
-                    react_1.default.createElement("select", { className: "bg-gray-100 hover:bg-gray-200", value: pageSize, onChange: (e) => {
+                    react_1.default.createElement("select", { className: "bg-gray-100 hover:bg-gray-200 pl-1", value: pageSize, onChange: (e) => {
                             setPageSize(Number(e.target.value));
-                        } }, [5, 10, 20, 30].map((pageSize) => (react_1.default.createElement("option", { key: pageSize, value: pageSize },
-                        "Show ",
-                        pageSize)))))))));
+                        } }, [10, 20, 50].map((pageSize) => (react_1.default.createElement("option", { key: pageSize, value: pageSize },
+                        "\u663E\u793A",
+                        pageSize,
+                        "\u6761")))))))));
 }
 exports["default"] = ReactTableCard;
 
@@ -961,7 +983,7 @@ else {}
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.postData = exports.postDataCdata = exports.getData = void 0;
+exports.postDataCdata = exports.postData = exports.getData = void 0;
 const tools_1 = __webpack_require__(633);
 const _1 = __webpack_require__(915);
 // GM_xmlhttpRequest GET异步通用模块
@@ -985,7 +1007,7 @@ function getData(url, type = "document" /* DOCUMENT */, usermethod = "GET" /* GE
                 reject(error);
             },
             ontimeout: () => {
-                new _1.MessageBox('网络超时', 'none', 2 /* LOG_POP_GM */);
+                new _1.MessageBox('网络超时', 'none', "LOG_POP_GM" /* LOG_POP_GM */);
                 reject('timeout');
             },
         });
@@ -1017,7 +1039,7 @@ function postDataCdata(url, postData, responseType = "document" /* DOCUMENT */, 
                 reject(error);
             },
             ontimeout: () => {
-                new _1.MessageBox('网络超时', 'none', 2 /* LOG_POP_GM */);
+                new _1.MessageBox('网络超时', 'none', "LOG_POP_GM" /* LOG_POP_GM */);
                 reject('timeout');
             },
         });
@@ -1059,7 +1081,7 @@ function postData(url, data, { responseType = "document" /* DOCUMENT */, usermet
                 reject(error);
             },
             ontimeout: () => {
-                new _1.MessageBox('网络超时', 'none', 2 /* LOG_POP_GM */);
+                new _1.MessageBox('网络超时', 'none', "LOG_POP_GM" /* LOG_POP_GM */);
                 reject('timeout');
             },
         });
@@ -1079,7 +1101,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.downloadImgs = exports.noDisplayPic = void 0;
+exports.noDisplayPic = exports.downloadImgs = void 0;
 const ConcurrencyPromisePool_1 = __webpack_require__(287);
 const file_saver_1 = __webpack_require__(581);
 const jszip_1 = __importDefault(__webpack_require__(583));
@@ -1158,7 +1180,7 @@ function batchDownload(imgsUrls, imgsTitles, folderName, user, counter, setCount
         // 包装成 promise
         const promise = () => {
             const file_name = imgsTitles[index]; // 获取文件名
-            mesIdH.refresh(`正在下载：第 ${index + 1} / ${imgsUrls.length} 张，文件名：${file_name}`);
+            mesIdH.update(`正在下载：第 ${index + 1} / ${imgsUrls.length} 张，文件名：${file_name}`);
             return (0, _1.getData)(item, "blob" /* BLOB */)
                 .then((blob) => {
                 const data = blob;
@@ -1166,14 +1188,14 @@ function batchDownload(imgsUrls, imgsTitles, folderName, user, counter, setCount
                 zip.file(file_name, data, {
                     binary: true,
                 }); // 逐个添加文件
-                mesIdP.refresh(`第 ${index + 1} 张，文件名：${file_name}，大小：${(data.size / 1024).toFixed(0)} Kb，下载完成！等待压缩...`);
+                mesIdP.update(`第 ${index + 1} 张，文件名：${file_name}，大小：${(data.size / 1024).toFixed(0)} Kb，下载完成！等待压缩...`);
             })
                 .catch((err) => {
                 // 移除消息；
                 if (err.responseText) {
                     const domParser = new DOMParser();
                     const xmlDoc = domParser.parseFromString(err.responseText, 'text/html');
-                    mesIdP.refresh(`第 ${index + 1} 张，请求错误：${xmlDoc.body.innerHTML}`);
+                    mesIdP.update(`第 ${index + 1} 张，请求错误：${xmlDoc.body.innerHTML}`);
                 }
                 else if (err.status) {
                     console.error(err.status);
@@ -1209,7 +1231,7 @@ function batchDownload(imgsUrls, imgsTitles, folderName, user, counter, setCount
                 return;
             }
         }
-        mesIdP.refresh('正在压缩打包，大文件请耐心等待...');
+        mesIdP.update('正在压缩打包，大文件请耐心等待...');
         zip
             .generateAsync({
             type: 'blob',
@@ -1399,7 +1421,7 @@ const hackLogin = () => {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.setTimeoutWorker = exports.setIntervalWorker = exports.autoVoted = exports.User = exports.getUserName = exports.getUserFromName = exports.getFormhash = exports.creatUser = exports.autoThk = exports.timeControl = exports.sign = exports.resetReplyData = exports.replyOrThk = exports.addPageBatch = exports.addOnePage = exports.autoPlay = exports.addPlayEvent = exports.autoPay = exports.loadOriginImage = exports.autofillCaptcha = exports.MessageBox = exports.update = exports.swThk = exports.swRePic = exports.swPay = exports.launch = exports.skipPhoneValidate = exports.setFastReply = exports.noDisplayPic = exports.downloadImgs = exports.postDataCdata = exports.postData = exports.getData = void 0;
+exports.setTimeoutWorker = exports.setIntervalWorker = exports.autoVoted = exports.getUserName = exports.getUserFromName = exports.getFormhash = exports.creatUser = exports.User = exports.autoThk = exports.timeControl = exports.sign = exports.resetReplyData = exports.replyOrThk = exports.addPageBatch = exports.addOnePage = exports.autoPlay = exports.addPlayEvent = exports.autoPay = exports.loadOriginImage = exports.autofillCaptcha = exports.MessageBox = exports.swThk = exports.swRePic = exports.swPay = exports.checkUpdate = exports.launch = exports.skipPhoneValidate = exports.setFastReply = exports.noDisplayPic = exports.downloadImgs = exports.postDataCdata = exports.postData = exports.getData = void 0;
 var ajax_1 = __webpack_require__(516);
 Object.defineProperty(exports, "getData", ({ enumerable: true, get: function () { return ajax_1.getData; } }));
 Object.defineProperty(exports, "postData", ({ enumerable: true, get: function () { return ajax_1.postData; } }));
@@ -1414,10 +1436,10 @@ Object.defineProperty(exports, "skipPhoneValidate", ({ enumerable: true, get: fu
 var launch_1 = __webpack_require__(450);
 Object.defineProperty(exports, "launch", ({ enumerable: true, get: function () { return launch_1.launch; } }));
 var menuCommand_1 = __webpack_require__(817);
+Object.defineProperty(exports, "checkUpdate", ({ enumerable: true, get: function () { return menuCommand_1.checkUpdate; } }));
 Object.defineProperty(exports, "swPay", ({ enumerable: true, get: function () { return menuCommand_1.swPay; } }));
 Object.defineProperty(exports, "swRePic", ({ enumerable: true, get: function () { return menuCommand_1.swRePic; } }));
 Object.defineProperty(exports, "swThk", ({ enumerable: true, get: function () { return menuCommand_1.swThk; } }));
-Object.defineProperty(exports, "update", ({ enumerable: true, get: function () { return menuCommand_1.update; } }));
 var message_1 = __webpack_require__(244);
 Object.defineProperty(exports, "MessageBox", ({ enumerable: true, get: function () { return message_1.MessageBox; } }));
 var ocr_1 = __webpack_require__(2);
@@ -1441,11 +1463,11 @@ Object.defineProperty(exports, "timeControl", ({ enumerable: true, get: function
 var thank_1 = __webpack_require__(226);
 Object.defineProperty(exports, "autoThk", ({ enumerable: true, get: function () { return thank_1.autoThk; } }));
 var user_1 = __webpack_require__(506);
+Object.defineProperty(exports, "User", ({ enumerable: true, get: function () { return user_1.User; } }));
 Object.defineProperty(exports, "creatUser", ({ enumerable: true, get: function () { return user_1.creatUser; } }));
 Object.defineProperty(exports, "getFormhash", ({ enumerable: true, get: function () { return user_1.getFormhash; } }));
 Object.defineProperty(exports, "getUserFromName", ({ enumerable: true, get: function () { return user_1.getUserFromName; } }));
 Object.defineProperty(exports, "getUserName", ({ enumerable: true, get: function () { return user_1.getUserName; } }));
-Object.defineProperty(exports, "User", ({ enumerable: true, get: function () { return user_1.User; } }));
 var vote_1 = __webpack_require__(608);
 Object.defineProperty(exports, "autoVoted", ({ enumerable: true, get: function () { return vote_1.autoVoted; } }));
 var webWorker_1 = __webpack_require__(67);
@@ -1479,7 +1501,7 @@ function launch(user) {
         try {
             // 增加路由地址判断，只执行对应函数
             const localUrl = location.href;
-            if (location.href.includes('thread')) {
+            if (localUrl.includes('thread')) {
                 if (user.autoThkSw) {
                     // 自动感谢当前贴
                     yield (0, _1.autoThk)(user);
@@ -1545,7 +1567,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.swRePic = exports.swPay = exports.swThk = exports.update = void 0;
+exports.swThk = exports.swRePic = exports.swPay = exports.checkUpdate = void 0;
 const tools_1 = __webpack_require__(633);
 const _1 = __webpack_require__(915);
 function swRePic(user) {
@@ -1587,9 +1609,9 @@ function swThk(user) {
     }
 }
 exports.swThk = swThk;
-function update(user) {
+function checkUpdate(user) {
     return __awaiter(this, void 0, void 0, function* () {
-        new _1.MessageBox('正在检查更新...');
+        const msg = new _1.MessageBox('正在检查更新...', 'none');
         const data = yield (0, _1.getData)(user.greasyforkUrl);
         const version = data.querySelectorAll('.script-show-version span')[1].innerHTML;
         if ((0, tools_1.getVersionNum)(user.version) < (0, tools_1.getVersionNum)(version)) {
@@ -1598,9 +1620,10 @@ function update(user) {
         else {
             new _1.MessageBox('已是最新版本！');
         }
+        msg.remove();
     });
 }
-exports.update = update;
+exports.checkUpdate = checkUpdate;
 
 
 /***/ }),
@@ -1614,18 +1637,15 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MessageBox = void 0;
 /**
  * 消息通知类：不依赖框架
- * @param text string | undefined
- * @param setTime number | string = 5000,
- * @param importance number = 1
  * @example
  * 0.先在入口文件中调用静态方法 generate() 方法初始化消息弹出窗口；
  * 1. new MessageBox('hello')
  * 2.空初始化时调用 show() 显示消息；
- * 3.setTime：ms，非数字时为永久消息，需手动调用 refresh() 刷新消息，remove() 移除消息；
- * 4.importance：1： log + 自定义弹窗；2： log + 自定义弹窗 + GM系统提示；其它值：自定义弹窗；
+ * 3.setTime：ms，非数字时为永久消息，需手动调用 update() 刷新消息，remove() 移除消息；
+ * 4.importance：LOG_POP：log+自定义弹窗；LOG_POP_GM：log+自定义弹窗+GM系统提示；POP：自定义弹窗；
  */
 class MessageBox {
-    constructor(text, setTime = 5000, importance = 1 /* LOG_POP */) {
+    constructor(text, setTime = 5000, importance = "LOG_POP" /* LOG_POP */) {
         this._msg = null; // 永久显示标记，和元素地址
         this._text = text;
         this._setTime = setTime;
@@ -1677,11 +1697,11 @@ class MessageBox {
         this._msg.textContent = text;
         MessageBox._msgBox.append(this._msg); // 显示消息
         switch (importance) {
-            case 1: {
+            case "LOG_POP" /* LOG_POP */: {
                 console.log(text);
                 break;
             }
-            case 2: {
+            case "LOG_POP_GM" /* LOG_POP_GM */: {
                 console.log(text);
                 GM_notification(text);
                 break;
@@ -1697,15 +1717,15 @@ class MessageBox {
             }, Number(setTime));
         }
     }
-    refresh(text) {
+    update(text) {
         if (isNaN(Number(this._setTime)) && this._msg) {
             this._msg.textContent = text;
+            console.log(text);
             switch (this._importance) {
-                case 1: {
-                    console.log(text);
+                case "LOG_POP" /* LOG_POP */: {
                     break;
                 }
-                case 2: {
+                case "LOG_POP_GM" /* LOG_POP_GM */: {
                     console.log(text);
                     GM_notification(text);
                     break;
@@ -1783,10 +1803,14 @@ function captcha(url, user) {
                     if (typeof code === 'object') {
                         // 令牌错误不重试，使用空格通配
                         if (code.error_code === 100 || code.error_code === 111 || code.error_code === 110) {
-                            new _1.MessageBox(code.error_msg + '：令牌错误，需要令牌请登录 jkf.iknow.fun 或发送邮件到 kished@outlook.com ', 10000, 2 /* LOG_POP_GM */);
+                            new _1.MessageBox(code.error_msg + '：令牌错误，需要令牌请登录 jkf.iknow.fun 或发送邮件到 kished@outlook.com ', 10000, "LOG_POP_GM" /* LOG_POP_GM */);
+                        }
+                        else if (code.error_code === 282000 || code.error_code === 18) {
+                            new _1.MessageBox('服务器内部错误：' + code.error_msg);
+                            return reject(exports.RETRY);
                         }
                         else {
-                            new _1.MessageBox(code.error_msg + ' 未处理的错误，请手动重试或联系管理员', 10000, 2 /* LOG_POP_GM */);
+                            new _1.MessageBox(code.error_msg + ' 未处理的错误，请手动重试或联系管理员', 10000, "LOG_POP_GM" /* LOG_POP_GM */);
                         }
                         return reject(code.error_msg);
                     }
@@ -1866,34 +1890,52 @@ function autofillCaptcha(t, user, setNextClickTime, saveStatusData, triggerNextC
     return __awaiter(this, void 0, void 0, function* () {
         try {
             // 在异步请求前设置好时间，防止时间错误
-            const timeInterval = 1000 * 60 * Number(t.cycle);
+            let timeInterval = 60000 * Number(t.cycle);
+            let skip = false;
+            if (t.runTime) {
+                const hours = (0, tools_1.hoursUntilTimeRange)(t.runTime.startTime, t.runTime.endTime);
+                if (hours !== 0) {
+                    const now = new Date();
+                    const overMinutes = now.getMinutes() * 60000 + now.getSeconds() * 1000;
+                    timeInterval = hours * 3600000 - overMinutes;
+                    skip = true;
+                }
+            }
             const nextClickTime = new Date().getTime() + timeInterval;
             t.nextClickTime = nextClickTime;
-            const url = `${user.votedUrl}id=topthreads:setstatus&tid=${(0, tools_1.getTid)(t.url)}&handlekey=k_setstatus&infloat=1&freeon=yes&inajax=1`;
-            const result = yield captcha(url, user);
-            t.retry = 0;
+            if (!skip) {
+                const url = `${user.votedUrl}id=topthreads:setstatus&tid=${(0, tools_1.getTid)(t.url)}&handlekey=k_setstatus&infloat=1&freeon=yes&inajax=1`;
+                yield captcha(url, user);
+                t.retry = 0;
+            }
             // 调用计数和存入时间
-            setNextClickTime(t);
+            setNextClickTime(t, skip);
             setTimeout(() => {
                 triggerNextClick(t);
             }, timeInterval);
         }
         catch (e) {
-            if (e === exports.RETRY) {
-                const timeInterval = 1000 + (0, tools_1.rdNum)(1000, 4000);
-                const nextClickTime = new Date().getTime() + timeInterval;
-                t.nextClickTime = nextClickTime;
-                t.retry = ((_a = t.retry) !== null && _a !== void 0 ? _a : 0) + 1;
-                // 调用计数
-                setNextClickTime(t);
-                setTimeout(() => {
-                    triggerNextClick(t);
-                }, timeInterval); // 重试频率限制
+            if (typeof e === 'string') {
+                if (e === exports.RETRY) {
+                    const timeInterval = 1000 + (0, tools_1.rdNum)(1000, 4000);
+                    const nextClickTime = new Date().getTime() + timeInterval;
+                    t.nextClickTime = nextClickTime;
+                    t.retry = ((_a = t.retry) !== null && _a !== void 0 ? _a : 0) + 1;
+                    // 调用计数
+                    setNextClickTime(t);
+                    setTimeout(() => {
+                        triggerNextClick(t);
+                    }, timeInterval); // 重试频率限制
+                }
+                else {
+                    // 错误则改变状态
+                    saveStatusData(t);
+                    new _1.MessageBox(e);
+                }
             }
             else {
-                // 错误则改变状态
                 saveStatusData(t);
-                new _1.MessageBox(e);
+                new _1.MessageBox(JSON.stringify(e));
             }
         }
     });
@@ -2161,7 +2203,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.addOnePage = exports.addPageBatch = exports.replyOrThk = void 0;
+exports.replyOrThk = exports.addPageBatch = exports.addOnePage = void 0;
 const lib_1 = __webpack_require__(915);
 const tools_1 = __webpack_require__(633);
 function chooceReply(user, value) {
@@ -2331,7 +2373,7 @@ function setThreadsTask(user, htmlData, fid, replyLen) {
                 const element = elem.fidthreads[index];
                 if (element.tid == tid) {
                     noSkip = false;
-                    msId.refresh(`${fid}：任务列表：${index}，thread-${tid}-1-1 ：已在任务列表，已跳过此贴！`);
+                    msId.update(`${fid}：任务列表：${index}，thread-${tid}-1-1 ：已在任务列表，已跳过此贴！`);
                     break;
                 }
             }
@@ -2392,7 +2434,7 @@ function replyOrThk(counter, user, type = "reply" /* REPLY */, setCounter) {
                 // 分别处理感谢和回帖
                 switch (type) {
                     case "reply" /* REPLY */: {
-                        mesIdRep.refresh(fid +
+                        mesIdRep.update(fid +
                             '-版块，当前位置：' +
                             fidRepIndex +
                             ' ，总数：' +
@@ -2449,7 +2491,7 @@ function replyOrThk(counter, user, type = "reply" /* REPLY */, setCounter) {
                         else {
                             new lib_1.MessageBox(data, 'none'); //其它情况直接输出
                         }
-                        mesIdRepContent.refresh('序号：' +
+                        mesIdRepContent.update('序号：' +
                             fidRepIndex +
                             '，随机号：' +
                             replyIndex +
@@ -2482,7 +2524,7 @@ function replyOrThk(counter, user, type = "reply" /* REPLY */, setCounter) {
                         else {
                             new lib_1.MessageBox(data, 1000); //其它情况直接输出
                         }
-                        mesIdThk.refresh(fid +
+                        mesIdThk.update(fid +
                             '-版块，当前位置：' +
                             fidThkIndex +
                             ' ，总数：' +
@@ -2509,13 +2551,13 @@ function replyOrThk(counter, user, type = "reply" /* REPLY */, setCounter) {
         }
         if (type == "thk" /* THANK */) {
             mesIdThk.remove(); // 移除永久消息
-            new lib_1.MessageBox('全部感谢完成！', 10000, 2 /* LOG_POP_GM */);
+            new lib_1.MessageBox('全部感谢完成！', 10000, "LOG_POP_GM" /* LOG_POP_GM */);
             setCounter(Object.assign(Object.assign({}, counter), { thkBtn: 0 }));
         }
         else if (type == "reply" /* REPLY */) {
             mesIdRep.remove(); // 移除永久消息
             mesIdRepContent.remove();
-            new lib_1.MessageBox('全部回帖完成！', 10000, 2 /* LOG_POP_GM */);
+            new lib_1.MessageBox('全部回帖完成！', 10000, "LOG_POP_GM" /* LOG_POP_GM */);
             setCounter(Object.assign(Object.assign({}, counter), { replyBtn: 0 }));
         }
     });
@@ -2560,7 +2602,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.sign = exports.timeControl = void 0;
+exports.timeControl = exports.sign = void 0;
 const tools_1 = __webpack_require__(633);
 const _1 = __webpack_require__(915);
 // 定时签到
@@ -2578,17 +2620,17 @@ function timeControl(counter, setCounter, user) {
                 setCounter(Object.assign(Object.assign({}, counter), { signBtn: 0 }));
                 // 移除永久消息通知
                 msIdSig.remove();
-                msIdTime.refresh('执行中....');
+                msIdTime.update('执行中....');
                 for (let i = 0; i < user.signNum; i++) {
                     //重试次数
                     sign(user);
-                    msIdTime.refresh('执行第' + (i + 1) + '次');
+                    msIdTime.update('执行第' + (i + 1) + '次');
                     yield (0, tools_1.waitFor)(user.interTime); //重试间隔
                 }
                 msIdTime.remove();
             }
             else {
-                msIdTime.refresh('时间没有到：' + signtime + '，目前时间：' + now.seconds);
+                msIdTime.update('时间没有到：' + signtime + '，目前时间：' + now.seconds);
             }
         });
     }
@@ -2992,7 +3034,7 @@ exports["default"] = GM_addStyle(tailwindStyles
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.preciseSetTimeout = exports.preciseSetInterval = exports.updateUserUrl = exports.getTid = exports.getVersionNum = exports.getUuiD = exports.mergeObjValue = exports.isSameObjKey = exports.NowTime = exports.rdNum = exports.waitFor = exports.replaceHtml = exports.checkHtml = exports.turnUrl = exports.urlSearchParams = exports.turnCdata = void 0;
+exports.waitFor = exports.urlSearchParams = exports.updateUserUrl = exports.turnUrl = exports.turnCdata = exports.replaceHtml = exports.rdNum = exports.preciseSetTimeout = exports.preciseSetInterval = exports.mergeObjValue = exports.isSameObjKey = exports.hoursUntilTimeRange = exports.getVersionNum = exports.getUuiD = exports.getTid = exports.checkHtml = exports.NowTime = void 0;
 const lib_1 = __webpack_require__(915);
 // POST返回 xml数据类型转换成 字符串或html 模块
 function turnCdata(xmlRepo) {
@@ -3150,6 +3192,32 @@ const preciseSetTimeout = (handler, delay, timeout = 0) => {
     return window.setTimeout(callHandler, delay);
 };
 exports.preciseSetTimeout = preciseSetTimeout;
+function hoursUntilTimeRange(startHour, endHour) {
+    const date = new Date();
+    const currentHour = date.getHours();
+    if (startHour <= endHour) {
+        // 范围在同一天的情况
+        if (currentHour >= startHour && currentHour <= endHour) {
+            return 0;
+        }
+        else if (currentHour < startHour) {
+            return startHour - currentHour;
+        }
+        else {
+            return 24 - currentHour + startHour;
+        }
+    }
+    else {
+        // 范围跨越两天的情况
+        if (currentHour >= startHour || currentHour <= endHour) {
+            return 0;
+        }
+        else {
+            return startHour - currentHour;
+        }
+    }
+}
+exports.hoursUntilTimeRange = hoursUntilTimeRange;
 
 
 /***/ }),
@@ -3199,13 +3267,16 @@ const lib_1 = __webpack_require__(915);
 const ConcurrencyPromisePool_1 = __webpack_require__(287);
 const react_1 = __importStar(__webpack_require__(995));
 const AutoClickManage = ({ onClose, user }) => {
+    var _a, _b, _c, _d;
     const [data, setData] = (0, react_1.useState)(user.freeData ? [...user.freeData] : []);
     const [token, setToken] = (0, react_1.useState)(user.token);
     const [threadUrl, setThreadUrl] = (0, react_1.useState)('');
     const [skipPageReset, setSkipPageReset] = (0, react_1.useState)(false);
     const [running, setRunning] = (0, react_1.useState)(false);
-    const isInitialMount = (0, react_1.useRef)(true);
+    const [startTime, setStartTime] = (0, react_1.useState)(((_b = (_a = user.freeData) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.runTime) ? String(user.freeData[0].runTime.startTime) : '0');
+    const [endTime, setEndTime] = (0, react_1.useState)(((_d = (_c = user.freeData) === null || _c === void 0 ? void 0 : _c[0]) === null || _d === void 0 ? void 0 : _d.runTime) ? String(user.freeData[0].runTime.endTime) : '23');
     const [pool] = (0, react_1.useState)(new ConcurrencyPromisePool_1.ConcurrencyPromisePool(2));
+    const isInitialMount = (0, react_1.useRef)(true);
     // When our cell renderer calls updateMyData, we'll use
     // the rowIndex, columnId and new value to update the
     // original data
@@ -3228,7 +3299,7 @@ const AutoClickManage = ({ onClose, user }) => {
         });
     };
     const addThread = () => __awaiter(void 0, void 0, void 0, function* () {
-        var _a, _b, _c, _d;
+        var _e, _f, _g, _h;
         if (!threadUrl) {
             return alert('请输入帖子链接');
         }
@@ -3247,7 +3318,7 @@ const AutoClickManage = ({ onClose, user }) => {
         if (!titleCont) {
             return alert('未找到帖子标题');
         }
-        const title = ((_b = (_a = titleCont.querySelector('.z')) === null || _a === void 0 ? void 0 : _a.textContent) !== null && _b !== void 0 ? _b : '') + ((_d = (_c = titleCont.querySelector('h1')) === null || _c === void 0 ? void 0 : _c.textContent) !== null && _d !== void 0 ? _d : '');
+        const title = ((_f = (_e = titleCont.querySelector('.z')) === null || _e === void 0 ? void 0 : _e.textContent) !== null && _f !== void 0 ? _f : '') + ((_h = (_g = titleCont.querySelector('h1')) === null || _g === void 0 ? void 0 : _g.textContent) !== null && _h !== void 0 ? _h : '');
         if (!title) {
             return alert('未找到帖子标题');
         }
@@ -3275,10 +3346,10 @@ const AutoClickManage = ({ onClose, user }) => {
         }
         GM_setValue(user.username, user);
     }, [data, token, user]);
-    const setNextClickTime = (t) => {
+    const setNextClickTime = (t, skip) => {
         setData((old) => old.map((row) => {
             if (row.url === t.url) {
-                return Object.assign(Object.assign({}, row), { times: row.times + 1, nextClickTime: t.nextClickTime, retry: t.retry });
+                return Object.assign(Object.assign({}, row), { times: skip ? row.times : row.times + 1, nextClickTime: t.nextClickTime, retry: t.retry });
             }
             return row;
         }));
@@ -3297,11 +3368,11 @@ const AutoClickManage = ({ onClose, user }) => {
         }
         else if (t.retry >= 10) {
             saveStatusData(Object.assign(Object.assign({}, onThread), { retry: t.retry }));
-            new lib_1.MessageBox(`帖子：${onThread.title}，连续重试次数过多：${onThread.retry}次，自动现在有空已停止运行！`, 10000, 2);
+            new lib_1.MessageBox(`帖子：${onThread.title}，连续重试次数过多：${onThread.retry}次，自动现在有空已停止运行！`, 10000, 'LOG_POP_GM');
         }
         else {
             saveStatusData(onThread);
-            new lib_1.MessageBox(`帖子：${onThread.title}，已错过点击时间，自动现在有空已停止运行！预设点击时间：${new Date(t.nextClickTime).toLocaleString()}，实际时间：${new Date().toLocaleString()}`, 10000, 2);
+            new lib_1.MessageBox(`帖子：${onThread.title}，已错过点击时间，自动现在有空已停止运行！预设点击时间：${new Date(t.nextClickTime).toLocaleString()}，实际时间：${new Date().toLocaleString()}`, 10000, 'LOG_POP_GM');
         }
     };
     const saveStatusData = (t) => {
@@ -3337,6 +3408,14 @@ const AutoClickManage = ({ onClose, user }) => {
             }
         }
     }, [data, running, saveData]);
+    const setRunTime = () => {
+        const startTimeNum = Number(startTime);
+        const endTimeNum = Number(endTime);
+        if (startTimeNum > 23 || startTimeNum < 0 || endTimeNum > 23 || endTimeNum < 0 || startTimeNum === endTimeNum) {
+            return alert('时间必须大于等于0点，小于等于23点');
+        }
+        setData(data.map((d) => (Object.assign(Object.assign({}, d), { runTime: { startTime: startTimeNum, endTime: endTimeNum } }))));
+    };
     return (react_1.default.createElement(components_1.Modal, { width: "w-full", height: "max-h-[95%]", header: react_1.default.createElement(react_1.default.Fragment, null, "\u81EA\u52A8\u70B9\u51FB\u73B0\u5728\u6709\u7A7A\u7BA1\u7406\u9875\u9762"), footer: react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement(components_1.Button, { text: '开始执行', onClick: start, disabled: running }),
             react_1.default.createElement(components_1.Button, { title: "\u4E0D\u4F7F\u7528\u65F6\u8BF7\u505C\u6B62\u8FD0\u884C\uFF0C\u4FEE\u6539\u8BBE\u7F6E\u540E\u9700\u8981\u505C\u6B62\u91CD\u65B0\u8FD0\u884C", text: '停止自动现在有空', onClick: () => {
@@ -3352,19 +3431,28 @@ const AutoClickManage = ({ onClose, user }) => {
         } },
         react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement("span", { className: "text-red-500" },
-                "\u76EE\u524D\u672C\u9875\u9762\u4EC5\u652F\u6301\u7BA1\u7406\u4E00\u4E2A\u8D26\u53F7\u7684\u591A\u4E2A\u5E16\u5B50\uFF0C\u591A\u4E2A\u8D26\u53F7\u8BF7",
-                react_1.default.createElement("a", { className: "text-blue-500 border-b", target: "_blank", href: "https://roro4ever.github.io/2019/11/28/%E5%88%A9%E7%94%A8Chrome%E5%90%8C%E6%97%B6%E7%99%BB%E5%BD%95%E7%BD%91%E7%AB%99%E7%9A%84%E5%A4%9A%E4%B8%AA%E8%B4%A6%E5%8F%B7/%E5%88%A9%E7%94%A8chrome%E5%90%8C%E6%97%B6%E7%99%BB%E5%BD%95%E7%BD%91%E7%AB%99%E7%9A%84%E5%A4%9A%E4%B8%AA%E8%B4%A6%E5%8F%B7/", rel: "noreferrer" }, "\u591A\u5F00\u6D4F\u89C8\u5668"),
+                "\u76EE\u524D\u672C\u9875\u9762\u4EC5\u652F\u6301\u7BA1\u7406\u4E00\u4E2AJKF\u8D26\u53F7\u7684\u591A\u4E2A\u5E16\u5B50\uFF0C\u591A\u4E2A\u8D26\u53F7\u8BF7",
+                react_1.default.createElement("a", { className: "text-blue-500 border-b", target: "_blank", href: "https://iknow.fun/2023/06/23/chrome-tong-shi-deng-lu-duo-ge-zhang-hao-wang-zhan-duo-kai-jiao-cheng/", rel: "noreferrer" }, "\u591A\u5F00\u6D4F\u89C8\u5668"),
                 "\u3002"),
             react_1.default.createElement("div", { className: "flex items-end" },
                 react_1.default.createElement("div", { className: "w-64 pr-4" },
-                    react_1.default.createElement(components_1.Input, { autoComplete: "off", label: "\u8F93\u5165\u4EE4\u724C\uFF1A", type: "password", onChange: setToken, placeholder: "\u8BF7\u8F93\u5165\u4EE4\u724C", value: token })),
+                    react_1.default.createElement(components_1.Input, { autoComplete: "off", label: "\u8F93\u5165\u4EE4\u724C\uFF1A", type: "password", onChange: (e) => setToken(e.target.value), placeholder: "\u8BF7\u8F93\u5165\u4EE4\u724C", value: token })),
                 react_1.default.createElement("span", null, "\u8FD8\u6CA1\u6709\u4EE4\u724C\uFF1F"),
                 react_1.default.createElement(components_1.Button, { title: "https://jkf.iknow.fun", text: '获取令牌', onClick: () => window.open('https://jkf.iknow.fun') })),
             react_1.default.createElement("div", { className: "flex items-end" },
                 react_1.default.createElement("div", { className: "w-64" },
-                    react_1.default.createElement(components_1.Input, { label: "\u5E16\u5B50\u94FE\u63A5\uFF1A", onChange: setThreadUrl, placeholder: "\u8BF7\u8F93\u5165\u5E16\u5B50\u94FE\u63A5", value: threadUrl })),
+                    react_1.default.createElement(components_1.Input, { label: "\u5E16\u5B50\u94FE\u63A5\uFF1A", onChange: (e) => setThreadUrl(e.target.value), placeholder: "\u8BF7\u8F93\u5165\u5E16\u5B50\u94FE\u63A5", value: threadUrl })),
                 react_1.default.createElement("div", { className: "ml-4" },
                     react_1.default.createElement(components_1.Button, { text: '添加', onClick: addThread }))),
+            react_1.default.createElement("div", { className: "flex items-end justify-between w-80 mt-2" },
+                react_1.default.createElement("span", { title: "\u8BBE\u7F6E\u81EA\u52A8\u70B9\u51FB\u4EC5\u5728\u8BE5\u65F6\u95F4\u6BB5\u5185\u8FD0\u884C\uFF0C\u91CD\u65B0\u542F\u52A8\u540E\u751F\u6548" }, "\u8FD0\u884C\u65F6\u95F4\u6BB5\uFF1A"),
+                react_1.default.createElement("div", { className: "w-8" },
+                    react_1.default.createElement(components_1.Input, { type: "number", min: 0, max: 23, onChange: (e) => setStartTime(e.target.value), placeholder: "0", value: startTime })),
+                react_1.default.createElement("span", null, "\u70B9 ~ "),
+                react_1.default.createElement("div", { className: "w-8" },
+                    react_1.default.createElement(components_1.Input, { type: "number", min: 0, max: 23, onChange: (e) => setEndTime(e.target.value), placeholder: "23", value: endTime })),
+                react_1.default.createElement("span", { className: "pl-2" }, ":59\u5206"),
+                react_1.default.createElement(components_1.Button, { text: '保存', title: "\u91CD\u65B0\u542F\u52A8\u540E\u751F\u6548", onClick: setRunTime })),
             react_1.default.createElement("div", { className: "overflow-auto" }, data.length ? (react_1.default.createElement(components_1.ReactTableCard, { searchBar: false, title: '帖子管理', data: data, skipPageReset: skipPageReset, updateMyData: updateMyData, deleteData: deleteData })) : ('')))));
 };
 exports.AutoClickManage = AutoClickManage;
@@ -3430,7 +3518,7 @@ const Home = ({ user, setShowHome, counter, setCounter }) => {
                     }, checked: user.autoRePicSw })),
             react_1.default.createElement(components_1.Panel, { title: "\u6279\u5904\u7406" },
                 react_1.default.createElement(components_1.TextArea, { label: '输入回复:', placeholder: '中文分号 ；分隔每条回帖内容，可输入论坛的富文本格式', onChange: setReplyValue, value: replyValue, rows: 2 }),
-                react_1.default.createElement(components_1.Input, { label: '输入页码:', placeholder: '板块号-起始页-终止页', onChange: setPageValue, value: pageValue }),
+                react_1.default.createElement(components_1.Input, { label: '输入页码:', placeholder: '板块号-起始页-终止页', onChange: (e) => setPageValue(e.target.value), value: pageValue }),
                 react_1.default.createElement(components_1.Button, { text: '添加当前页', onClick: () => {
                         (0, lib_1.addOnePage)(user, replyValue);
                     } }),
@@ -3461,10 +3549,9 @@ const Home = ({ user, setShowHome, counter, setCounter }) => {
                     } }),
                 react_1.default.createElement(components_1.Button, { text: '现在有空', onClick: () => {
                         setShowModal(true);
-                        // autofillCaptcha(user);
                     } }),
                 react_1.default.createElement(components_1.Button, { text: '检查更新', onClick: () => {
-                        (0, lib_1.update)(user);
+                        (0, lib_1.checkUpdate)(user);
                     } })),
             react_1.default.createElement("br", null),
             react_1.default.createElement(components_1.Button, { text: 'close', onClick: setShowHome }),
@@ -3519,7 +3606,7 @@ module.exports = saveAs;
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"name":"JKForum 助手","name:en":"JKForum Helper","name:zh-TW":"JKForum 助手","name:ja":"JKForum 助手","name:ko":"JKForum 조수","namespace":"https://github.com/Eished/jkforum_helper","version":"0.8.4","description":"JKF 捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动播放图片、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片，自动识别验证码，自动现在有空，登录时跳过手机验证码","description:en":"JKF JKForum Helper: Auto-sign-in, timed sign-in, auto-thank you, auto-load original image, auto-play image, auto-pay to buy theme post, auto-complete voting task, optimize browsing experience, one-click bulk reply/thank you, one-click package to download post image，Skip mobile verification code when logging in","description:zh-TW":"JKF 捷克論壇助手：自動簽到、定時簽到、自動感謝、自動加載原圖、自動播放圖片、自動支付購買主題貼、自動完成投票任務，優化瀏覽體驗，一鍵批量回帖/感謝，一鍵打包下載帖子圖片，自動識別驗證碼，自動現在有空，登錄時跳過手機驗證碼","description:ja":"JKF チェコ語フォーラム助手：自動チェックイン、時限式チェックイン、オートサンキュー、オリジナル画像の自動読み込み、画像の自動再生、トピック投稿の自動支払い、ポールタスクの自動完了、ブラウジングエクスペリエンスの最適化、ワンクリックでの一括返信/サンキュー、ワンクリックでの投稿画像のパッケージダウンロード，ログイン時にモバイル認証コードをスキップ","description:ko":"JKF 체코 포럼 조수: 자동 로그인, 정기 로그인, 자동 감사, 원본 사진 자동로드, 테마 스티커 구매 자동 결제, 투표 작업 자동 완료, 최적화 된 브라우징 경험, 원 클릭 일괄 회신 / 감사, 원 클릭 포스트 사진의 패키지 다운로드 클릭다운로드하십시오，로그인 시 모바일 인증 코드 건너뛰기","author":"Eished","copyright":"Eished","license":"MIT","match":["*://*.jkforum.net/home*","*://*.jkforum.net/forum*","*://*.jkforum.net/type*","*://*.jkforum.net/thread*","*://*.jkforum.net/plugin*","*://*.jkforum.net/member*"],"run-at":"document-idle","supportURL":"https://github.com/Eished/jkforum_helper/issues","homepage":"https://github.com/Eished/jkforum_helper","grant":["GM_getValue","GM_setValue","GM_deleteValue","GM_info","GM_xmlhttpRequest","GM_openInTab","GM_registerMenuCommand","GM_addElement","GM_addStyle","GM_notification"],"connect":["mymypic.net","jkf.iknow.fun","cdn.jsdelivr.net","github.com","greasyfork.org","jkf.hare200.com"],"require":["https://cdn.jsdelivr.net/npm/react@18.1.0/umd/react.production.min.js","https://cdn.jsdelivr.net/npm/react-dom@18.1.0/umd/react-dom.production.min.js","https://cdn.jsdelivr.net/npm/react-table@7.8.0/dist/react-table.production.min.js","https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js","https://cdn.jsdelivr.net/npm/jszip@3.9.1/dist/jszip.min.js"],"icon":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA3RpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDYuMC1jMDAyIDExNi4xNjQ2NTUsIDIwMjEvMDEvMjYtMTU6NDE6MjAgICAgICAgICI+IDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+IDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bXBNTTpPcmlnaW5hbERvY3VtZW50SUQ9InhtcC5kaWQ6YzYwNmI3NGQtODA4Zi03YjQ3LWI4NGYtYjNlZmJiMTM4NDIwIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkM3MzFDMzYyRUE5MzExRUJCOTU4RkY3NUMxOTY5MDdGIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkM3MzFDMzYxRUE5MzExRUJCOTU4RkY3NUMxOTY5MDdGIiB4bXA6Q3JlYXRvclRvb2w9IkFkb2JlIFBob3Rvc2hvcCAyMS4yIChXaW5kb3dzKSI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjA2MWY1NjgyLTk5OTctNDU0OS04NjIzLWZhNzY0MmVjMTM5MSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpjNjA2Yjc0ZC04MDhmLTdiNDctYjg0Zi1iM2VmYmIxMzg0MjAiLz4g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"}');
+module.exports = JSON.parse('{"name":"JKForum 助手","name:en":"JKForum Helper","name:zh-TW":"JKForum 助手","name:ja":"JKForum 助手","name:ko":"JKForum 조수","namespace":"https://github.com/Eished/jkforum_helper","version":"0.8.5","description":"JKF 捷克论坛助手：自动签到、定时签到、自动感谢、自动加载原图、自动播放图片、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片，自动识别验证码，自动现在有空，自动点击置顶广告，登录时跳过绑定手机号验证码","description:en":"JKF JKForum Helper: Auto-sign-in, timed sign-in, auto-thank you, auto-load original image, auto-play image, auto-pay to buy theme post, auto-complete voting task, optimize browsing experience, one-click bulk reply/thank you, one-click package to download post image，Skip mobile verification code when logging in","description:zh-TW":"JKF 捷克論壇助手：自動簽到、定時簽到、自動感謝、自動加載原圖、自動播放圖片、自動支付購買主題貼、自動完成投票任務，優化瀏覽體驗，一鍵批量回帖/感謝，一鍵打包下載帖子圖片，自動識別驗證碼，自動現在有空，自動點擊置頂廣告，登錄時跳過綁定手機號驗證碼","description:ja":"JKF チェコ語フォーラム助手：自動チェックイン、時限式チェックイン、オートサンキュー、オリジナル画像の自動読み込み、画像の自動再生、トピック投稿の自動支払い、ポールタスクの自動完了、ブラウジングエクスペリエンスの最適化、ワンクリックでの一括返信/サンキュー、ワンクリックでの投稿画像のパッケージダウンロード，ログイン時にモバイル認証コードをスキップ","description:ko":"JKF 체코 포럼 조수: 자동 로그인, 정기 로그인, 자동 감사, 원본 사진 자동로드, 테마 스티커 구매 자동 결제, 투표 작업 자동 완료, 최적화 된 브라우징 경험, 원 클릭 일괄 회신 / 감사, 원 클릭 포스트 사진의 패키지 다운로드 클릭다운로드하십시오，로그인 시 모바일 인증 코드 건너뛰기","author":"Eished","copyright":"Eished","license":"MIT","match":["*://*.jkforum.net/home*","*://*.jkforum.net/forum*","*://*.jkforum.net/type*","*://*.jkforum.net/thread*","*://*.jkforum.net/plugin*","*://*.jkforum.net/member*"],"run-at":"document-idle","supportURL":"https://github.com/Eished/jkforum_helper/issues","homepage":"https://github.com/Eished/jkforum_helper","grant":["GM_getValue","GM_setValue","GM_deleteValue","GM_info","GM_xmlhttpRequest","GM_openInTab","GM_registerMenuCommand","GM_addElement","GM_addStyle","GM_notification"],"connect":["mymypic.net","jkf.iknow.fun","cdn.jsdelivr.net","github.com","greasyfork.org","jkf.hare200.com"],"require":["https://cdn.jsdelivr.net/npm/react@18.1.0/umd/react.production.min.js","https://cdn.jsdelivr.net/npm/react-dom@18.1.0/umd/react-dom.production.min.js","https://cdn.jsdelivr.net/npm/react-table@7.8.0/dist/react-table.production.min.js","https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js","https://cdn.jsdelivr.net/npm/jszip@3.9.1/dist/jszip.min.js"],"icon":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA3RpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDYuMC1jMDAyIDExNi4xNjQ2NTUsIDIwMjEvMDEvMjYtMTU6NDE6MjAgICAgICAgICI+IDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+IDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bXBNTTpPcmlnaW5hbERvY3VtZW50SUQ9InhtcC5kaWQ6YzYwNmI3NGQtODA4Zi03YjQ3LWI4NGYtYjNlZmJiMTM4NDIwIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkM3MzFDMzYyRUE5MzExRUJCOTU4RkY3NUMxOTY5MDdGIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkM3MzFDMzYxRUE5MzExRUJCOTU4RkY3NUMxOTY5MDdGIiB4bXA6Q3JlYXRvclRvb2w9IkFkb2JlIFBob3Rvc2hvcCAyMS4yIChXaW5kb3dzKSI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjA2MWY1NjgyLTk5OTctNDU0OS04NjIzLWZhNzY0MmVjMTM5MSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpjNjA2Yjc0ZC04MDhmLTdiNDctYjg0Zi1iM2VmYmIxMzg0MjAiLz4g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"}');
 
 /***/ })
 
