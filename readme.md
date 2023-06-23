@@ -108,7 +108,7 @@
 - 需要验证令牌，令牌免费试用，[获取令牌](https://jkf.iknow.fun/)。
 - 默认每 55 分钟点击一次，可自定义间隔。
 - 支持一个账号的多个帖子。
-- 支持多账号登录，[用 Chrome 同时登录多个账号](https://roro4ever.github.io/2019/11/28/%E5%88%A9%E7%94%A8Chrome%E5%90%8C%E6%97%B6%E7%99%BB%E5%BD%95%E7%BD%91%E7%AB%99%E7%9A%84%E5%A4%9A%E4%B8%AA%E8%B4%A6%E5%8F%B7/%E5%88%A9%E7%94%A8chrome%E5%90%8C%E6%97%B6%E7%99%BB%E5%BD%95%E7%BD%91%E7%AB%99%E7%9A%84%E5%A4%9A%E4%B8%AA%E8%B4%A6%E5%8F%B7/)。
+- 支持多账号登录，[用 Chrome 同时登录多个账号](https://iknow.fun/2023/06/23/chrome-tong-shi-deng-lu-duo-ge-zhang-hao-wang-zhan-duo-kai-jiao-cheng/)。
 
 <img src="https://raw.githubusercontent.com/Eished/jkforum_helper/main/readme.assets/image_2022-11-03_02-05-35.jpg" alt="image_2022-11-03_02-05-35" style="zoom: 67%;" />
 

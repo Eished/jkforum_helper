@@ -108,12 +108,7 @@ export default function ReactTableCard({
         accessor: headerItem,
         Cell: ({ value }: any) => {
           return (
-            <a
-              className="border-b block whitespace-nowrap overflow-hidden overflow-ellipsis mx-1"
-              title={value}
-              target="_blank"
-              href={value}
-              rel="noreferrer">
+            <a className="border-b" title={value} target="_blank" href={value} rel="noreferrer">
               {getTid(value)}
             </a>
           );
