@@ -86,6 +86,7 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
         delete: '',
         nextClickTime: 0,
         retry: 0,
+        runTime: { startTime: Number(startTime), endTime: Number(endTime) },
       },
     ]);
   };

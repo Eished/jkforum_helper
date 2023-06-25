@@ -143,7 +143,7 @@ export default function ReactTableCard({
         Header: '运行时段',
         accessor: headerItem,
         Cell: ({ value }: any) => {
-          return <span>{`${value.startTime}:00~${value.endTime}:59`}</span>;
+          return <span>{value ? value.startTime + ':00~' + value.endTime + ':59' : '24h'}</span>;
         },
       };
     } else {
