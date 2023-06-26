@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-key */
-import { GenericObject, Status } from '@/commonType';
+import { GenericObject, RunStatus, Status } from '@/commonType';
 import { getTid } from '@/utils/tools';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useGlobalFilter, usePagination, useSortBy, useTable } from 'react-table';
@@ -14,16 +14,13 @@ const EditableCell = ({
 }: any) => {
   // We need to keep and update the state of the cell normally
   const [value, setValue] = useState(initialValue);
-
   const onChange = (e: any) => {
     setValue(e.target.value);
   };
-
   // We'll only update the external data when the input is blurred
   const onBlur = () => {
     updateMyData(index, id, value);
   };
-
   // If the initialValue is changed external, sync it up with our state
   useEffect(() => {
     setValue(initialValue);
@@ -31,7 +28,7 @@ const EditableCell = ({
 
   return (
     <div>
-      <input className="w-12 mx-2" value={value} onChange={onChange} onBlur={onBlur} />
+      <input className="w-6 mx-1" value={value} onChange={onChange} onBlur={onBlur} />
       分钟/点击
     </div>
   );
@@ -46,7 +43,39 @@ const ToggleCell = ({
   const update = () => {
     updateMyData(index, id, value === Status.online ? Status.offline : Status.online);
   };
-  return <Toggle mykey={`${id}-${index}-${value}`} label={value} onClick={update} checked={value === Status.online} />;
+  return (
+    <Toggle
+      mykey={`${id}-${index}-${value}`}
+      label={value === Status.online ? '已启用' : '未启用'}
+      onClick={update}
+      checked={value === Status.online}
+    />
+  );
+};
+
+const LightCell = ({ value }: any) => {
+  const getLightColor = (value: RunStatus) => {
+    switch (true) {
+      case value === RunStatus.Running:
+        return 'bg-green-400';
+      case value === RunStatus.NotRunning:
+        return 'bg-gray-400';
+      case value === RunStatus.Error:
+        return 'bg-red-400';
+      case value === RunStatus.Waiting:
+        return 'bg-blue-400';
+
+      default:
+        break;
+    }
+  };
+  return (
+    <div
+      title="状态为‘等待中’时为未到执行时间段，状态为‘错误’时请刷新页面重新运行"
+      className={`flex items-center w-16 cursor-help`}>
+      <span className={`rounded-md px-2 py-1 font-bold text-white ${getLightColor(value)}`}>{value}</span>
+    </div>
+  );
 };
 
 const DeleteCell = ({
@@ -89,6 +118,12 @@ export default function ReactTableCard({
         Header: '启用状态',
         accessor: headerItem,
         Cell: ToggleCell,
+      };
+    } else if (headerItem === 'runStatus') {
+      return {
+        Header: '运行状态',
+        accessor: headerItem,
+        Cell: LightCell,
       };
     } else if (headerItem === 'cycle') {
       return {

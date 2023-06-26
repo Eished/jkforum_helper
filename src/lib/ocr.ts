@@ -1,4 +1,4 @@
-import { IMPORTANCE, IUser, ThreadData, XhrMethod, XhrResponseType } from '@/commonType';
+import { IMPORTANCE, IUser, RunStatus, ThreadData, XhrMethod, XhrResponseType } from '@/commonType';
 import { getTid, hoursUntilTimeRange, rdNum, turnCdata, urlSearchParams } from '@/utils/tools';
 import { MessageBox, postData } from '.';
 
@@ -8,12 +8,15 @@ import { MessageBox, postData } from '.';
 
 export const RETRY = 'retry';
 
-async function captcha(url: string, user: IUser) {
+async function captcha(thread: ThreadData, user: IUser) {
+  const tid = getTid(thread.url);
+  const url = `${user.votedUrl}id=topthreads:setstatus&tid=${tid}&handlekey=k_setstatus&infloat=1&freeon=yes&inajax=1`;
   return new Promise<string>((resolve, reject) => {
     const image = document.createElement('img') as HTMLImageElement;
     image.id = 'captcha';
-    image.src = '/captcha/code.php' + '?' + new Date().getMilliseconds();
+    image.src = 'https://www.jkforum.net/captcha/code.php' + '?' + new Date().getMilliseconds();
     image.width = 120;
+    image.crossOrigin = 'anonymous';
     document.body.append(image);
 
     image.onload = async function () {
@@ -27,34 +30,37 @@ async function captcha(url: string, user: IUser) {
         if (code.error_code === 100 || code.error_code === 111 || code.error_code === 110) {
           new MessageBox(
             code.error_msg + '：令牌错误，需要令牌请登录 jkf.iknow.fun 或发送邮件到 kished@outlook.com ',
-            10000,
+            'none',
             IMPORTANCE.LOG_POP_GM
           );
         } else if (code.error_code === 282000 || code.error_code === 18) {
-          new MessageBox('服务器内部错误：' + code.error_msg);
+          new MessageBox('服务器内部错误，正在重试... ' + code.error_msg);
           return reject(RETRY);
         } else {
-          new MessageBox(code.error_msg + ' 未处理的错误，请手动重试或联系管理员', 10000, IMPORTANCE.LOG_POP_GM);
+          new MessageBox(code.error_msg + ' 未处理的错误，请手动重试或联系管理员', 'none', IMPORTANCE.LOG_POP_GM);
         }
-        return reject(code.error_msg);
+        return reject(code);
       }
-      const result = await postData(url, urlSearchParams({ captcha_input: code }).toString())
-        .then((response) => turnCdata(response))
-        .catch((e) => {
-          console.log(e);
-          return RETRY;
-        });
+      const response = await postData(url, urlSearchParams({ captcha_input: code }).toString()).catch((e) => {
+        console.log(e);
+        return RETRY;
+      });
+      if (!response) {
+        new MessageBox(tid + '，无效的帖子ID，请检查帖子状态', 'none');
+        return reject(response);
+      }
+      const result = turnCdata(response);
       if (result === RETRY) {
-        new MessageBox('验证码发送失败，正在重试...');
+        new MessageBox(tid + '，验证码发送失败，正在重试...');
         return reject(RETRY);
       } else if (result === '更新完成！若狀態仍沒更新，請嘗試刷新頁面') {
-        new MessageBox('更新完成！自動‘現在有空’中，請不要刷新頁面！', user.freeTime);
+        new MessageBox(tid + '，更新完成！自動‘現在有空’中，請不要刷新頁面！');
         return resolve(result);
       } else if (result === 'Access denied.') {
-        new MessageBox('无此帖子的访问权限，请检查帖子状态');
+        new MessageBox(tid + '，无此帖子的访问权限，请检查帖子状态', 'none');
         return reject(result);
       } else {
-        new MessageBox('验证码错误，正在重试...');
+        new MessageBox(tid + '，验证码错误，正在重试...');
         return reject(RETRY);
       }
     };
@@ -64,7 +70,7 @@ async function captcha(url: string, user: IUser) {
       if (image.parentNode) {
         image.parentNode.removeChild(image);
       }
-      new MessageBox('验证码图片加载失败，正在重试...');
+      new MessageBox(tid + '，验证码图片加载失败，正在重试...');
       return reject(RETRY);
     };
   });
@@ -123,31 +129,31 @@ async function autofillCaptcha(
   t: ThreadData,
   user: IUser,
   setNextClickTime: (value: ThreadData, skip?: boolean) => void,
-  saveStatusData: (value: ThreadData) => void,
+  saveStatusData: (url: string, runStatus: RunStatus) => void,
   triggerNextClick: (value: ThreadData) => void
 ) {
   try {
     // 在异步请求前设置好时间，防止时间错误
     let timeInterval = 60000 * Number(t.cycle);
     let skip = false;
+    const now = new Date();
     if (t.runTime) {
       const hours = hoursUntilTimeRange(t.runTime.startTime, t.runTime.endTime);
       if (hours !== 0) {
-        const now = new Date();
-        const overMinutes = now.getMinutes() * 60000 + now.getSeconds() * 1000;
+        const overMinutes = now.getMinutes() * 60000 + now.getSeconds() * 1000 - rdNum(0, 10000);
         timeInterval = hours * 3600000 - overMinutes;
         skip = true;
       }
     }
-    const nextClickTime = new Date().getTime() + timeInterval;
+    const nextClickTime = now.getTime() + timeInterval;
     t.nextClickTime = nextClickTime;
 
     if (!skip) {
-      const url = `${user.votedUrl}id=topthreads:setstatus&tid=${getTid(
-        t.url
-      )}&handlekey=k_setstatus&infloat=1&freeon=yes&inajax=1`;
-      await captcha(url, user);
+      saveStatusData(t.url, RunStatus.Running);
+      await captcha(t, user);
       t.retry = 0;
+    } else {
+      saveStatusData(t.url, RunStatus.Waiting);
     }
     // 调用计数和存入时间
     setNextClickTime(t, skip);
@@ -157,7 +163,8 @@ async function autofillCaptcha(
   } catch (e: unknown) {
     if (typeof e === 'string') {
       if (e === RETRY) {
-        const timeInterval = 1000 + rdNum(1000, 4000);
+        const timeInterval = 1000 + rdNum(0, 5000);
+
         const nextClickTime = new Date().getTime() + timeInterval;
         t.nextClickTime = nextClickTime;
         t.retry = (t.retry ?? 0) + 1;
@@ -168,12 +175,12 @@ async function autofillCaptcha(
         }, timeInterval); // 重试频率限制
       } else {
         // 错误则改变状态
-        saveStatusData(t);
-        new MessageBox(e);
+        saveStatusData(t.url, RunStatus.Error);
+        new MessageBox(e, 'none');
       }
     } else {
-      saveStatusData(t);
-      new MessageBox(JSON.stringify(e));
+      saveStatusData(t.url, RunStatus.Error);
+      new MessageBox(JSON.stringify(e), 'none');
     }
   }
 }

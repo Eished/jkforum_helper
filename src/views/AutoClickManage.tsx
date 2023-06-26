@@ -1,7 +1,8 @@
-import { IUser, Status, ThreadData } from '@/commonType';
+import { IUser, RunStatus, Status, ThreadData } from '@/commonType';
 import { Button, Input, Modal, ReactTableCard } from '@/components';
 import { MessageBox, autofillCaptcha, getData } from '@/lib';
 import { ConcurrencyPromisePool } from '@/utils/ConcurrencyPromisePool';
+import { getTid } from '@/utils/tools';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 
 interface AutoClickManage {
@@ -10,7 +11,9 @@ interface AutoClickManage {
 }
 
 export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
-  const [data, setData] = useState<ThreadData[]>(user.freeData ? [...user.freeData] : []);
+  const [data, setData] = useState<ThreadData[]>(
+    user.freeData ? user.freeData.map((d) => ({ ...d, runStatus: RunStatus.NotRunning })) : []
+  );
   const [token, setToken] = useState(user.token);
   const [threadUrl, setThreadUrl] = useState('');
   const [skipPageReset, setSkipPageReset] = useState(false);
@@ -54,8 +57,12 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
     if (!threadUrl) {
       return alert('请输入帖子链接');
     }
-    if (data.some((t) => t.url.includes(threadUrl))) {
-      return alert('帖子已存在！');
+    const tid = getTid(threadUrl);
+    if (!tid) {
+      return alert(`帖子地址错误，未找到帖子ID：${threadUrl}`);
+    }
+    if (data.some((t) => getTid(t.url) === tid)) {
+      return alert(tid + '，帖子已存在！');
     }
     if (!threadUrl.includes('https://www.jkforum.net/thread-')) {
       return alert(`帖子地址错误：${threadUrl}`);
@@ -78,15 +85,16 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
     setData([
       ...data,
       {
-        status: Status.offline,
+        status: Status.online,
+        runStatus: RunStatus.NotRunning,
+        runTime: { startTime: Number(startTime), endTime: Number(endTime) },
         title,
         url: threadUrl,
         cycle: '55',
         times: 0,
-        delete: '',
         nextClickTime: 0,
         retry: 0,
-        runTime: { startTime: Number(startTime), endTime: Number(endTime) },
+        delete: '',
       },
     ]);
   };
@@ -130,29 +138,29 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
       // 添加任务，在此处开始闭包，递归调用
       pool.all([() => autofillCaptcha(onThread, user, setNextClickTime, saveStatusData, triggerNextClick)]);
     } else if (t.retry >= 10) {
-      saveStatusData({ ...onThread, retry: t.retry });
+      saveStatusData(onThread.url, RunStatus.Error);
       new MessageBox(
-        `帖子：${onThread.title}，连续重试次数过多：${onThread.retry}次，自动现在有空已停止运行！`,
-        10000,
+        `帖子ID：${getTid(onThread.url)}，连续重试次数过多：${onThread.retry}次，自动现在有空已停止运行！`,
+        'none',
         'LOG_POP_GM'
       );
     } else {
-      saveStatusData(onThread);
+      saveStatusData(onThread.url, RunStatus.Error);
       new MessageBox(
-        `帖子：${onThread.title}，已错过点击时间，自动现在有空已停止运行！预设点击时间：${new Date(
+        `帖子ID：${getTid(onThread.url)}，已错过点击时间，自动现在有空已停止运行！预设点击时间：${new Date(
           t.nextClickTime
         ).toLocaleString()}，实际时间：${new Date().toLocaleString()}`,
-        10000,
+        'none',
         'LOG_POP_GM'
       );
     }
   };
 
-  const saveStatusData = (t: ThreadData) => {
+  const saveStatusData = (url: string, runStatus: RunStatus) => {
     setData((old) =>
       old.map((row) => {
-        if (row.url === t.url) {
-          return { ...row, status: Status.offline };
+        if (row.url === url) {
+          return { ...row, runStatus };
         }
         return row;
       })
@@ -163,14 +171,14 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
     if (!token) {
       return alert('请输入令牌');
     }
-    const onThreads = data.filter((t) => t.status === 'online');
+    const onThreads = data.filter((t) => t.status === Status.online);
     if (!onThreads.length) {
-      return alert('请将需要执行的帖子启用状态设为 online');
+      return alert('请将需要执行的帖子‘启用状态’设为已启用');
     }
     setRunning(true);
 
     const promises = onThreads.map(
-      (t) => () => autofillCaptcha(t, user, setNextClickTime, saveStatusData, triggerNextClick)
+      (t) => () => autofillCaptcha({ ...t, retry: 0 }, user, setNextClickTime, saveStatusData, triggerNextClick)
     );
     pool.all(promises);
   };
@@ -182,7 +190,7 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
     } else {
       setSkipPageReset(false);
       saveData();
-      if (running && data.every((t) => t.status === 'offline')) {
+      if (running && data.every((t) => t.status === Status.offline)) {
         setRunning(false);
       }
     }
@@ -267,7 +275,9 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
           </div>
         </div>
         <div className="flex items-end justify-between w-80 mt-2">
-          <span title="设置自动点击仅在该时间段内运行，重新启动后生效">运行时间段：</span>
+          <span title="设置自动点击仅在该时间段内运行，重新运行后生效" className="cursor-help">
+            运行时间段：
+          </span>
           <div className="w-8">
             <Input
               type="number"
@@ -290,14 +300,25 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
             />
           </div>
           <span className="pl-2">:59分</span>
-          <Button text={'保存'} title="重新启动后生效" onClick={setRunTime} />
+          <Button text={'保存'} title="重新运行后生效" onClick={setRunTime} />
         </div>
         <div className="overflow-auto">
           {data.length ? (
             <ReactTableCard
               searchBar={false}
               title={'帖子管理'}
-              data={data}
+              data={data.map((t) => ({
+                status: t.status,
+                runStatus: t.runStatus,
+                runTime: t.runTime,
+                title: t.title,
+                url: t.url,
+                cycle: t.cycle,
+                times: t.times,
+                nextClickTime: t.nextClickTime,
+                retry: t.retry,
+                delete: '',
+              }))}
               skipPageReset={skipPageReset}
               updateMyData={updateMyData}
               deleteData={deleteData}

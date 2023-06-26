@@ -134,6 +134,7 @@ interface ThreadData {
   title: string;
   url: string;
   status: Status;
+  runStatus: RunStatus;
   cycle: string;
   times: number;
   delete: string;
@@ -150,6 +151,13 @@ enum Status {
   offline = 'offline',
 }
 
+enum RunStatus {
+  NotRunning = '未运行',
+  Waiting = '等待中',
+  Running = '运行中',
+  Error = '错误',
+}
+
 export {
   AutoPlayCounter,
   Counter,
@@ -160,6 +168,7 @@ export {
   MsgLevel,
   ReplyOrThank,
   ReplyParams,
+  RunStatus,
   Status,
   Thread,
   ThreadData,
