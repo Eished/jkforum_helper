@@ -16,7 +16,6 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
   );
   const [token, setToken] = useState(user.token);
   const [threadUrl, setThreadUrl] = useState('');
-  const [skipPageReset, setSkipPageReset] = useState(false);
   const [running, setRunning] = useState(false);
   const [startTime, setStartTime] = useState(
     user.freeData?.[0]?.runTime ? String(user.freeData[0].runTime.startTime) : '0'
@@ -25,12 +24,8 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
   const [pool] = useState(new ConcurrencyPromisePool(2));
   const isInitialMount = useRef(true);
 
-  // When our cell renderer calls updateMyData, we'll use
-  // the rowIndex, columnId and new value to update the
-  // original data
+  // When our cell renderer calls updateMyData, we'll use the rowIndex, columnId and new value to update the original data
   const updateMyData = (rowIndex: any, columnId: any, value: any) => {
-    // We also turn on the flag to not reset the page
-    setSkipPageReset(true);
     setData((old) =>
       old.map((row, index) => {
         if (index === rowIndex) {
@@ -46,7 +41,6 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
 
   const deleteData = (rowId: number) => {
     // We also turn on the flag to not reset the page
-    setSkipPageReset(true);
     setData((old) => {
       old.splice(rowId, 1);
       return [...old];
@@ -188,9 +182,8 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
     if (isInitialMount.current) {
       isInitialMount.current = false;
     } else {
-      setSkipPageReset(false);
       saveData();
-      if (running && data.every((t) => t.status === Status.offline)) {
+      if (running && data.every((t) => t.runStatus === RunStatus.NotRunning || t.runStatus === RunStatus.Error)) {
         setRunning(false);
       }
     }
@@ -319,7 +312,6 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
                 retry: t.retry,
                 delete: '',
               }))}
-              skipPageReset={skipPageReset}
               updateMyData={updateMyData}
               deleteData={deleteData}
             />

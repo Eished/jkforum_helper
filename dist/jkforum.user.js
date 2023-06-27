@@ -3316,18 +3316,13 @@ const AutoClickManage = ({ onClose, user }) => {
     const [data, setData] = (0, react_1.useState)(user.freeData ? user.freeData.map((d) => (Object.assign(Object.assign({}, d), { runStatus: commonType_1.RunStatus.NotRunning }))) : []);
     const [token, setToken] = (0, react_1.useState)(user.token);
     const [threadUrl, setThreadUrl] = (0, react_1.useState)('');
-    const [skipPageReset, setSkipPageReset] = (0, react_1.useState)(false);
     const [running, setRunning] = (0, react_1.useState)(false);
     const [startTime, setStartTime] = (0, react_1.useState)(((_b = (_a = user.freeData) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.runTime) ? String(user.freeData[0].runTime.startTime) : '0');
     const [endTime, setEndTime] = (0, react_1.useState)(((_d = (_c = user.freeData) === null || _c === void 0 ? void 0 : _c[0]) === null || _d === void 0 ? void 0 : _d.runTime) ? String(user.freeData[0].runTime.endTime) : '23');
     const [pool] = (0, react_1.useState)(new ConcurrencyPromisePool_1.ConcurrencyPromisePool(2));
     const isInitialMount = (0, react_1.useRef)(true);
-    // When our cell renderer calls updateMyData, we'll use
-    // the rowIndex, columnId and new value to update the
-    // original data
+    // When our cell renderer calls updateMyData, we'll use the rowIndex, columnId and new value to update the original data
     const updateMyData = (rowIndex, columnId, value) => {
-        // We also turn on the flag to not reset the page
-        setSkipPageReset(true);
         setData((old) => old.map((row, index) => {
             if (index === rowIndex) {
                 return Object.assign(Object.assign({}, old[rowIndex]), { [columnId]: value });
@@ -3337,7 +3332,6 @@ const AutoClickManage = ({ onClose, user }) => {
     };
     const deleteData = (rowId) => {
         // We also turn on the flag to not reset the page
-        setSkipPageReset(true);
         setData((old) => {
             old.splice(rowId, 1);
             return [...old];
@@ -3452,9 +3446,8 @@ const AutoClickManage = ({ onClose, user }) => {
             isInitialMount.current = false;
         }
         else {
-            setSkipPageReset(false);
             saveData();
-            if (running && data.every((t) => t.status === commonType_1.Status.offline)) {
+            if (running && data.every((t) => t.runStatus === commonType_1.RunStatus.NotRunning || t.runStatus === commonType_1.RunStatus.Error)) {
                 setRunning(false);
             }
         }
@@ -3515,7 +3508,7 @@ const AutoClickManage = ({ onClose, user }) => {
                     nextClickTime: t.nextClickTime,
                     retry: t.retry,
                     delete: '',
-                })), skipPageReset: skipPageReset, updateMyData: updateMyData, deleteData: deleteData })) : ('')))));
+                })), updateMyData: updateMyData, deleteData: deleteData })) : ('')))));
 };
 exports.AutoClickManage = AutoClickManage;
 

@@ -85,6 +85,15 @@ const DeleteCell = ({
   return <Button text={'删除'} onClick={() => deleteData(index)} />;
 };
 
+interface TableProps {
+  title: string;
+  data: GenericObject[];
+  updateMyData: (rowIndex: any, columnId: any, value: any) => void;
+  deleteData: (id: number) => void;
+  searchBar?: boolean;
+  skipPageReset?: boolean;
+}
+
 export default function ReactTableCard({
   title,
   data,
@@ -92,14 +101,7 @@ export default function ReactTableCard({
   deleteData,
   skipPageReset = true,
   searchBar = true,
-}: {
-  title: string;
-  data: GenericObject[];
-  updateMyData: (rowIndex: any, columnId: any, value: any) => void;
-  deleteData: (id: number) => void;
-  searchBar?: boolean;
-  skipPageReset?: boolean;
-}) {
+}: TableProps) {
   const colHeader = (headerItem: any) => {
     if (headerItem === 'title') {
       return {
