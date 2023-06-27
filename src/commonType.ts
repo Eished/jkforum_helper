@@ -120,15 +120,15 @@ interface GenericObject {
   [key: string]: any;
 }
 
-type exportType = { default: () => void } & GenericObject;
+type ExportType = { default: () => void } & GenericObject;
 
-const enum IMPORTANCE {
+const enum Importance {
   LOG_POP = 'LOG_POP',
   LOG_POP_GM = 'LOG_POP_GM',
   POP = 'POP',
 }
 
-type MsgLevel = keyof typeof IMPORTANCE;
+type MsgLevel = keyof typeof Importance;
 
 interface ThreadData {
   title: string;
@@ -158,14 +158,30 @@ enum RunStatus {
   Error = '错误',
 }
 
+type OcrResult =
+  | {
+      words_result: {
+        words: string;
+      }[];
+      words_result_num: number;
+      log_id: number;
+    }
+  | {
+      log_id: number;
+      error_msg: string;
+      error_code: number;
+    };
+
 export {
   AutoPlayCounter,
   Counter,
+  ExportType,
   ForumThreads,
   GenericObject,
-  IMPORTANCE,
   IUser,
+  Importance,
   MsgLevel,
+  OcrResult,
   ReplyOrThank,
   ReplyParams,
   RunStatus,
@@ -175,5 +191,4 @@ export {
   XhrMethod,
   XhrOptions,
   XhrResponseType,
-  exportType,
 };

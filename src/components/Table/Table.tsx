@@ -247,7 +247,7 @@ export default function ReactTableCard({
 
   return (
     <div>
-      <div className="bg-white px-2 py-4 border-b border-gray-200">
+      <div className="bg-white px-2 py-4">
         <h3 className="text-lg px-2 py-2 leading-6 font-medium text-gray-900">{memoTitle}</h3>
         {searchBar ? (
           <div className="mx-2 flex-1 relative text-gray-500 focus-within:text-gray-400">

@@ -1,4 +1,4 @@
-import { IMPORTANCE, MsgLevel } from '@/commonType';
+import { Importance, MsgLevel } from '@/commonType';
 /**
  * 消息通知类：不依赖框架
  * @example
@@ -15,7 +15,7 @@ class MessageBox {
   private _setTime: number | string;
   private _importance: MsgLevel;
   private _timer: number;
-  constructor(text?: string | null, setTime: number | 'none' = 5000, importance: MsgLevel = IMPORTANCE.LOG_POP) {
+  constructor(text?: string | null, setTime: number | 'none' = 5000, importance: MsgLevel = Importance.LOG_POP) {
     this._msg = null; // 永久显示标记，和元素地址
     this._text = text;
     this._setTime = setTime;
@@ -74,11 +74,11 @@ class MessageBox {
     MessageBox._msgBox.append(this._msg); // 显示消息
 
     switch (importance) {
-      case IMPORTANCE.LOG_POP: {
+      case Importance.LOG_POP: {
         console.log(text);
         break;
       }
-      case IMPORTANCE.LOG_POP_GM: {
+      case Importance.LOG_POP_GM: {
         console.log(text);
         GM_notification(text);
         break;
@@ -102,10 +102,10 @@ class MessageBox {
       this._msg.textContent = text;
       console.log(text);
       switch (this._importance) {
-        case IMPORTANCE.LOG_POP: {
+        case Importance.LOG_POP: {
           break;
         }
-        case IMPORTANCE.LOG_POP_GM: {
+        case Importance.LOG_POP_GM: {
           console.log(text);
           GM_notification(text);
           break;

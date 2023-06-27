@@ -1,4 +1,4 @@
-import { IMPORTANCE, IUser, RunStatus, ThreadData, XhrMethod, XhrResponseType } from '@/commonType';
+import { Importance, IUser, OcrResult, RunStatus, ThreadData, XhrMethod, XhrResponseType } from '@/commonType';
 import { getTid, hoursUntilTimeRange, rdNum, turnCdata, urlSearchParams } from '@/utils/tools';
 import { MessageBox, postData } from '.';
 
@@ -31,13 +31,13 @@ async function captcha(thread: ThreadData, user: IUser) {
           new MessageBox(
             code.error_msg + '：令牌错误，需要令牌请登录 jkf.iknow.fun 或发送邮件到 kished@outlook.com ',
             'none',
-            IMPORTANCE.LOG_POP_GM
+            Importance.LOG_POP_GM
           );
         } else if (code.error_code === 282000 || code.error_code === 18) {
           new MessageBox('服务器内部错误，正在重试... ' + code.error_msg);
           return reject(RETRY);
         } else {
-          new MessageBox(code.error_msg + ' 未处理的错误，请手动重试或联系管理员', 'none', IMPORTANCE.LOG_POP_GM);
+          new MessageBox(code.error_msg + ' 未处理的错误，请手动重试或联系管理员', 'none', Importance.LOG_POP_GM);
         }
         return reject(code);
       }
@@ -90,20 +90,6 @@ function getBase64Image(img: HTMLImageElement) {
   return dataURL;
 }
 
-type OcrResult =
-  | {
-      words_result: {
-        words: string;
-      }[];
-      words_result_num: number;
-      log_id: number;
-    }
-  | {
-      log_id: number;
-      error_msg: string;
-      error_code: number;
-    };
-
 async function readImage(base64: string, user: IUser) {
   const body = urlSearchParams({ image: base64, token: user.token }).toString();
   const response = await postData(user.ocrUrl, body, {
@@ -111,7 +97,8 @@ async function readImage(base64: string, user: IUser) {
     usermethod: XhrMethod.POST,
     contentType: XhrResponseType.FORM,
   }).catch((e) => {
-    return { error_msg: e.response?.message, error_code: 100 };
+    // 导致提示信息错误
+    return { error_msg: e.response?.message, error_code: 999 };
   });
   const ocrResults: OcrResult = response;
   if ('words_result_num' in ocrResults) {

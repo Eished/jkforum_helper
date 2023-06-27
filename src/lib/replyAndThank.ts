@@ -1,5 +1,5 @@
-import { Counter, ForumThreads, IMPORTANCE, IUser, ReplyOrThank, ReplyParams, Thread } from '@/commonType';
-import { MessageBox, getData, postDataCdata } from '@/lib';
+import { Counter, ForumThreads, Importance, IUser, ReplyOrThank, ReplyParams, Thread } from '@/commonType';
+import { getData, MessageBox, postDataCdata } from '@/lib';
 import { checkHtml, getTid, rdNum, urlSearchParams, waitFor } from '@/utils/tools';
 
 function chooceReply(user: IUser, value?: string) {
@@ -368,7 +368,7 @@ async function replyOrThk(
   }
   if (type == ReplyOrThank.THANK) {
     mesIdThk.remove(); // 移除永久消息
-    new MessageBox('全部感谢完成！', 10000, IMPORTANCE.LOG_POP_GM);
+    new MessageBox('全部感谢完成！', 10000, Importance.LOG_POP_GM);
     setCounter({
       ...counter,
       thkBtn: 0,
@@ -376,7 +376,7 @@ async function replyOrThk(
   } else if (type == ReplyOrThank.REPLY) {
     mesIdRep.remove(); // 移除永久消息
     mesIdRepContent.remove();
-    new MessageBox('全部回帖完成！', 10000, IMPORTANCE.LOG_POP_GM);
+    new MessageBox('全部回帖完成！', 10000, Importance.LOG_POP_GM);
     setCounter({
       ...counter,
       replyBtn: 0,

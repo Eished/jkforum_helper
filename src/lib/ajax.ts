@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { GenericObject, IMPORTANCE, XhrMethod, XhrOptions, XhrResponseType } from '@/commonType';
+import { GenericObject, Importance, XhrMethod, XhrOptions, XhrResponseType } from '@/commonType';
 import { turnCdata } from '@/utils/tools';
 import { MessageBox } from './';
 
@@ -27,7 +27,7 @@ function getData(
         reject(error);
       },
       ontimeout: () => {
-        new MessageBox('网络超时', 'none', IMPORTANCE.LOG_POP_GM);
+        new MessageBox('网络超时', 'none', Importance.LOG_POP_GM);
         reject('timeout');
       },
     });
@@ -64,7 +64,7 @@ function postDataCdata(
         reject(error);
       },
       ontimeout: () => {
-        new MessageBox('网络超时', 'none', IMPORTANCE.LOG_POP_GM);
+        new MessageBox('网络超时', 'none', Importance.LOG_POP_GM);
         reject('timeout');
       },
     });
@@ -115,7 +115,7 @@ function postData(
         reject(error);
       },
       ontimeout: () => {
-        new MessageBox('网络超时', 'none', IMPORTANCE.LOG_POP_GM);
+        new MessageBox('网络超时', 'none', Importance.LOG_POP_GM);
         reject('timeout');
       },
     });
