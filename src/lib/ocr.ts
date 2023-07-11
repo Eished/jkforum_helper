@@ -1,5 +1,5 @@
 import { Importance, IUser, OcrResult, RunStatus, ThreadData, XhrMethod, XhrResponseType } from '@/commonType';
-import { getTid, hoursUntilTimeRange, rdNum, turnCdata, urlSearchParams } from '@/utils/tools';
+import { getBase64Image, getTid, hoursUntilTimeRange, rdNum, turnCdata, urlSearchParams } from '@/utils/tools';
 import { MessageBox, postData } from '.';
 
 /**
@@ -20,10 +20,19 @@ async function captcha(thread: ThreadData, user: IUser) {
     document.body.append(image);
 
     image.onload = async function () {
+      const base64Img = getBase64Image(image);
+      if (!base64Img) {
+        new MessageBox('图片转码失败，正在重试...');
+        return reject(RETRY);
+      }
       //文件的Base64字符串获取验证码
-      const code = await readImage(getBase64Image(image), user);
+      const code = await readImage(base64Img, user);
+      console.log(code);
+
       if (image.parentNode) {
-        image.parentNode.removeChild(image);
+        // image.parentNode.removeChild(image);
+        // new MessageBox(tid + '，更新完成！自動‘現在有空’中，請不要刷新頁面！');
+        // return resolve('result');
       }
       if (typeof code === 'object') {
         // 令牌错误不重试，使用空格通配
@@ -37,7 +46,7 @@ async function captcha(thread: ThreadData, user: IUser) {
           new MessageBox('服务器内部错误，正在重试... ' + code.error_msg);
           return reject(RETRY);
         } else {
-          new MessageBox(code.error_msg + ' 未处理的错误，请手动重试或联系管理员', 'none', Importance.LOG_POP_GM);
+          new MessageBox(code.error_msg + '，请手动重试或联系管理员', 'none', Importance.LOG_POP_GM);
         }
         return reject(code);
       }
@@ -46,7 +55,7 @@ async function captcha(thread: ThreadData, user: IUser) {
         return RETRY;
       });
       if (!response) {
-        new MessageBox(tid + '，无效的帖子ID，请检查帖子状态', 'none');
+        new MessageBox(tid + '，无效的帖子ID，请检查帖子状态', 'none', 'LOG_POP_GM');
         return reject(response);
       }
       const result = turnCdata(response);
@@ -57,7 +66,7 @@ async function captcha(thread: ThreadData, user: IUser) {
         new MessageBox(tid + '，更新完成！自動‘現在有空’中，請不要刷新頁面！');
         return resolve(result);
       } else if (result === 'Access denied.') {
-        new MessageBox(tid + '，无此帖子的访问权限，请检查帖子状态', 'none');
+        new MessageBox(tid + '，无此帖子的访问权限，请检查帖子状态', 'none', 'LOG_POP_GM');
         return reject(result);
       } else {
         new MessageBox(tid + '，验证码错误，正在重试...');
@@ -76,20 +85,6 @@ async function captcha(thread: ThreadData, user: IUser) {
   });
 }
 
-/**
- * 图像转Base64
- */
-function getBase64Image(img: HTMLImageElement) {
-  const canvas = document.createElement('canvas');
-  canvas.width = img.width;
-  canvas.height = img.height;
-  const ctx = canvas.getContext('2d');
-  ctx && ctx.drawImage(img, 0, 0, img.width, img.height);
-  const ext = img.src.substring(img.src.lastIndexOf('.') + 1).toLowerCase();
-  const dataURL = canvas.toDataURL('image/' + ext);
-  return dataURL;
-}
-
 async function readImage(base64: string, user: IUser) {
   const body = urlSearchParams({ image: base64, token: user.token }).toString();
   const response = await postData(user.ocrUrl, body, {
@@ -97,8 +92,10 @@ async function readImage(base64: string, user: IUser) {
     usermethod: XhrMethod.POST,
     contentType: XhrResponseType.FORM,
   }).catch((e) => {
+    console.log(e);
+
     // 导致提示信息错误
-    return { error_msg: e.response?.message, error_code: 999 };
+    return { error_msg: e.response?.message ?? e.statusText, error_code: 0 };
   });
   const ocrResults: OcrResult = response;
   if ('words_result_num' in ocrResults) {
@@ -167,7 +164,7 @@ async function autofillCaptcha(
       }
     } else {
       saveStatusData(t.url, RunStatus.Error);
-      new MessageBox(JSON.stringify(e), 'none');
+      // new MessageBox(JSON.stringify(e), 'none');
     }
   }
 }
