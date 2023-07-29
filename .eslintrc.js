@@ -23,6 +23,7 @@ module.exports = {
     ecmaVersion: 'latest',
     sourceType: 'module',
   },
+  ignorePatterns: ['public'],
   rules: {
     // 自定义的一些规则
     'prettier/prettier': [

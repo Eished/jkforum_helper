@@ -3,6 +3,10 @@ import { XhrResponseType } from '@/commonType';
 
 declare global {
   const PRODUCTION: boolean;
+  const grecaptcha: any;
+  interface Window {
+    onloadCaptchaCallback: () => void;
+  }
   interface MonkeyXhrResponse {
     finalUrl: string;
     readyState: number;

@@ -817,6 +817,10 @@ select {
   height: 3rem;
 }
 
+.h-20 {
+  height: 5rem;
+}
+
 .h-screen {
   height: 100vh;
 }
@@ -881,6 +885,10 @@ select {
 
 .w-8 {
   width: 2rem;
+}
+
+.w-40 {
+  width: 10rem;
 }
 
 .w-screen {
