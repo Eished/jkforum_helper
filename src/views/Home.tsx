@@ -1,6 +1,7 @@
 import { Counter, IUser, ReplyOrThank } from '@/commonType';
-import { Button, Input, Panel, TextArea, Toggle } from '@/components';
+import { Button, Input, Modal, Panel, TextArea, Toggle } from '@/components';
 import {
+  MessageBox,
   addOnePage,
   addPageBatch,
   checkUpdate,
@@ -14,7 +15,9 @@ import {
   swThk,
   timeControl,
 } from '@/lib';
-import React, { useRef, useState } from 'react';
+import { reCaptcha } from '@/lib/reCaptcha';
+import React, { useEffect, useRef, useState } from 'react';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { AutoClickManage } from './AutoClickManage';
 
 interface HomeProps {
@@ -28,6 +31,16 @@ export const Home: React.FC<HomeProps> = ({ user, setShowHome, counter, setCount
   const [replyValue, setReplyValue] = useState('');
   const [pageValue, setPageValue] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const [showCaptcha, setShowCaptcha] = useState(false);
+  const [recapchaToken, setRecapchaToken] = useState('');
+
+  useEffect(() => {
+    GM_addValueChangeListener('CaptchaValue', async (name: string, oldValue: string, newValue: string) => {
+      if (newValue) {
+        setRecapchaToken(newValue);
+      }
+    });
+  }, []);
 
   return (
     <div
@@ -147,6 +160,14 @@ export const Home: React.FC<HomeProps> = ({ user, setShowHome, counter, setCount
             }}
           />
           <Button
+            title="服务器托管登录账号时使用"
+            text={'获取验证码'}
+            onClick={() => {
+              setShowCaptcha(true);
+              reCaptcha();
+            }}
+          />
+          <Button
             text={'检查更新'}
             onClick={() => {
               checkUpdate(user);
@@ -156,6 +177,28 @@ export const Home: React.FC<HomeProps> = ({ user, setShowHome, counter, setCount
 
         <br />
         <Button text={'close'} onClick={setShowHome} />
+        <Modal
+          isShow={showCaptcha}
+          header={<div className="flex w-80">服务器托管登录账号时使用</div>}
+          footer={
+            <div className="flex justify-evenly w-full">
+              <Button
+                text={'刷新验证码'}
+                onClick={() => {
+                  setRecapchaToken('');
+                  grecaptcha.reset();
+                }}
+              />
+              <CopyToClipboard text={recapchaToken} onCopy={() => new MessageBox('复制验证码成功')}>
+                <Button disabled={!recapchaToken} text={'复制验证码'} onClick={() => ''} />
+              </CopyToClipboard>
+            </div>
+          }
+          onClose={function () {
+            setShowCaptcha(false);
+          }}>
+          <div className="w-40 h-20" id="reCaptcha"></div>
+        </Modal>
         {showModal ? <AutoClickManage user={user} onClose={() => setShowModal(false)} /> : ''}
       </div>
     </div>

@@ -180,7 +180,6 @@ function hoursUntilTimeRange(startHour: number, endHour: number) {
  * 图像转Base64
  */
 function getBase64Image(img: HTMLImageElement) {
-  const threshold = 230;
   const canvas = document.createElement('canvas');
   canvas.width = img.width;
   canvas.height = img.height;
@@ -190,6 +189,7 @@ function getBase64Image(img: HTMLImageElement) {
   }
   ctx.drawImage(img, 0, 0, img.width, img.height);
   const imgd = ctx.getImageData(0, 0, img.width, img.height);
+  // const threshold = 250;
   // const imgData = imgd.data;
   // const len = imgData.length - 1;
   // for (let i = 0; i <= len; i += 4) {

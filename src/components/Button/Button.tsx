@@ -1,14 +1,16 @@
-import React from 'react';
+import React, { ButtonHTMLAttributes } from 'react';
 
-interface ButtonProps {
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   text: string;
   title?: string;
   onClick: () => void;
   disabled?: boolean;
 }
-export const Button: React.FC<ButtonProps> = ({ text, title = '', onClick, disabled }) => {
+
+export const Button: React.FC<ButtonProps> = ({ text, title = '', onClick, disabled, ...rest }) => {
   return (
     <button
+      {...rest}
       title={title}
       type="button"
       data-mdb-ripple="true"

@@ -3,13 +3,17 @@ import React, { FC, ReactElement, ReactNode } from 'react';
 interface ModalProps {
   header: ReactElement;
   footer: ReactElement;
+  isShow: boolean;
   children: ReactNode;
   width?: string;
   height?: string;
   onClose: () => void;
 }
 
-export const Modal: FC<ModalProps> = ({ header, footer, children, width, height, onClose }) => {
+export const Modal: FC<ModalProps> = ({ header, footer, children, width, height, isShow = false, onClose }) => {
+  if (!isShow) {
+    return <></>;
+  }
   return (
     <div className="fixed top-0 right-0 h-full w-full left-0 z-50 overflow-y-auto overflow-x-hidden items-center justify-center flex bg-gray-900 bg-opacity-50">
       <div className={`relative rounded-lg bg-white shadow dark:bg-gray-700 m-4 flex flex-col ${width} ${height}`}>

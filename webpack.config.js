@@ -172,6 +172,7 @@ module.exports = (env) => {
       react: 'React',
       'react-dom': 'ReactDOM',
       'react-table': 'ReactTable',
+      'react-copy-to-clipboard': 'CopyToClipboard',
     };
   }
 

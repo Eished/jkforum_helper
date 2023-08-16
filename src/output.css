@@ -817,10 +817,6 @@ select {
   height: 3rem;
 }
 
-.h-20 {
-  height: 5rem;
-}
-
 .h-screen {
   height: 100vh;
 }
@@ -829,6 +825,10 @@ select {
   height: -webkit-fit-content;
   height: -moz-fit-content;
   height: fit-content;
+}
+
+.h-20 {
+  height: 5rem;
 }
 
 .h-full {
@@ -887,16 +887,16 @@ select {
   width: 2rem;
 }
 
-.w-40 {
-  width: 10rem;
-}
-
 .w-screen {
   width: 100vw;
 }
 
 .w-72 {
   width: 18rem;
+}
+
+.w-40 {
+  width: 10rem;
 }
 
 .w-6 {
@@ -1007,6 +1007,10 @@ select {
 
 .justify-between {
   justify-content: space-between;
+}
+
+.justify-evenly {
+  justify-content: space-evenly;
 }
 
 .space-y-2 > :not([hidden]) ~ :not([hidden]) {

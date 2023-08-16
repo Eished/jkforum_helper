@@ -1,7 +1,6 @@
 import { IUser, RunStatus, Status, ThreadData } from '@/commonType';
 import { Button, Input, Modal, ReactTableCard } from '@/components';
-import { MessageBox, autofillCaptcha, getData, postData } from '@/lib';
-import { reCaptcha } from '@/lib/reCaptcha';
+import { MessageBox, autofillCaptcha, getData } from '@/lib';
 import { ConcurrencyPromisePool } from '@/utils/ConcurrencyPromisePool';
 import { getTid } from '@/utils/tools';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
@@ -24,7 +23,6 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
   const [endTime, setEndTime] = useState(user.freeData?.[0]?.runTime ? String(user.freeData[0].runTime.endTime) : '23');
   const [pool] = useState(new ConcurrencyPromisePool(1));
   const isInitialMount = useRef(true);
-  const [showCaptcha, setShowCaptcha] = useState(false);
 
   // When our cell renderer calls updateMyData, we'll use the rowIndex, columnId and new value to update the original data
   const updateMyData = (rowIndex: any, columnId: any, value: any) => {
@@ -200,25 +198,9 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
     setData(data.map((d) => ({ ...d, runTime: { startTime: startTimeNum, endTime: endTimeNum } })));
   };
 
-  GM_addValueChangeListener(
-    'CaptchaValue',
-    async (name: string, oldValue: string, newValue: string, remote: boolean) => {
-      if (newValue) {
-        await postData(
-          'https://jkf.iknow.fun/api/uploadCaptcha',
-          JSON.stringify({
-            token: user.token,
-            captcha: newValue,
-          })
-        );
-        setShowCaptcha(false);
-        new MessageBox('验证码上传成功');
-      }
-    }
-  );
-
   return (
     <Modal
+      isShow={true}
       width="w-full"
       height="max-h-[95%]"
       header={<>自动点击现在有空管理页面</>}
@@ -234,14 +216,6 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
             }}
           />
           <Button title="停止运行自动现在有空后可关闭" text={'关闭页面'} onClick={onClose} disabled={running} />
-          <Button
-            title="服务器托管时登录账号时使用"
-            text={'输入验证码'}
-            onClick={() => {
-              setShowCaptcha(true);
-              reCaptcha();
-            }}
-          />
         </>
       }
       onClose={() => {
@@ -347,25 +321,6 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
           )}
         </div>
       </>
-      {showCaptcha ? (
-        <Modal
-          header={<div className="flex w-80">上传验证码</div>}
-          footer={
-            <Button
-              text={'刷新验证码'}
-              onClick={() => {
-                grecaptcha.reset();
-              }}
-            />
-          }
-          onClose={function () {
-            setShowCaptcha(false);
-          }}>
-          <div className="w-40 h-20" id="reCaptcha"></div>
-        </Modal>
-      ) : (
-        ''
-      )}
     </Modal>
   );
 };

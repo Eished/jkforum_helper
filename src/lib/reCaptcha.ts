@@ -6,8 +6,10 @@ export const reCaptcha = () => {
     grecaptcha.render('reCaptcha', {
       sitekey: '6LfxHOIUAAAAAJ-E2oORT8_zgG3Ia0QM1sg9Pe2s',
       callback: onCaptchaChange,
+      hl: 'zh-TW',
     });
   };
+
   const script = document.createElement('script');
   script.src = 'https://www.google.com/recaptcha/api.js?onload=onloadCaptchaCallback&render=explicit';
   script.async = true;
