@@ -27,27 +27,12 @@ async function captcha(thread: ThreadData, user: IUser) {
       }
       //文件的Base64字符串获取验证码
       const code = await readImage(base64Img, user);
-      console.log(code);
-
       if (image.parentNode) {
-        // image.parentNode.removeChild(image);
-        // new MessageBox(tid + '，更新完成！自動‘現在有空’中，請不要刷新頁面！');
-        // return resolve('result');
+        image.parentNode.removeChild(image);
       }
       if (typeof code === 'object') {
-        // 令牌错误不重试，使用空格通配
-        if (code.error_code === 100 || code.error_code === 111 || code.error_code === 110) {
-          new MessageBox(
-            code.error_msg + '：令牌错误，需要令牌请登录 jkf.iknow.fun 或发送邮件到 kished@outlook.com ',
-            'none',
-            Importance.LOG_POP_GM
-          );
-        } else if (code.error_code === 282000 || code.error_code === 18) {
-          new MessageBox('服务器内部错误，正在重试... ' + code.error_msg);
-          return reject(RETRY);
-        } else {
-          new MessageBox(code.error_msg + '，请手动重试或联系管理员', 'none', Importance.LOG_POP_GM);
-        }
+        // 令牌错误不重试
+        new MessageBox(code.error_msg + '，请手动重试或联系管理员', 'none', Importance.LOG_POP_GM);
         return reject(code);
       }
       const response = await postData(url, urlSearchParams({ captcha_input: code }).toString()).catch((e) => {
@@ -92,18 +77,20 @@ async function readImage(base64: string, user: IUser) {
     usermethod: XhrMethod.POST,
     contentType: XhrResponseType.FORM,
   }).catch((e) => {
-    console.log(e);
-
     // 导致提示信息错误
-    return { error_msg: e.response?.message ?? e.statusText, error_code: 0 };
+    return { error_msg: e.response?.message ? e.response.message : e.statusText, error_code: 0 };
   });
   const ocrResults: OcrResult = response;
-  if ('words_result_num' in ocrResults) {
-    if (ocrResults.words_result_num === 1 && ocrResults.words_result[0].words.length === 4) {
-      return ocrResults.words_result[0].words;
+  if ('words_result' in ocrResults) {
+    const words = ocrResults.words_result[0].words.replace(/g/gi, '6');
+    if (words.length < 4) {
+      return String(rdNum(0, 10)) + words;
+    } else if (words.length > 4) {
+      return words.slice(1, 5);
+    } else {
+      return words;
     }
-  }
-  if ('error_msg' in ocrResults) {
+  } else if ('error_msg' in ocrResults) {
     return ocrResults;
   }
   return String(rdNum(1000, 10000));
@@ -160,11 +147,9 @@ async function autofillCaptcha(
       } else {
         // 错误则改变状态
         saveStatusData(t.url, RunStatus.Error);
-        new MessageBox(e, 'none');
       }
     } else {
       saveStatusData(t.url, RunStatus.Error);
-      // new MessageBox(JSON.stringify(e), 'none');
     }
   }
 }

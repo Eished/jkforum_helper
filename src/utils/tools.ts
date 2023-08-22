@@ -190,27 +190,30 @@ function getBase64Image(img: HTMLImageElement) {
   ctx.drawImage(img, 0, 0, img.width, img.height);
   const imgd = ctx.getImageData(0, 0, img.width, img.height);
   // const threshold = 250;
-  // const imgData = imgd.data;
-  // const len = imgData.length - 1;
-  // for (let i = 0; i <= len; i += 4) {
-  //   const R = imgData[i];
-  //   const G = imgData[i + 1];
-  //   const B = imgData[i + 2];
-  //   // const Alpha = imgData[i + 3];
-  //   const avg = (R + G + B) / 3;
-  //   if (avg > threshold) {
-  //     imgData[i] = 255;
-  //     imgData[i + 1] = 255;
-  //     imgData[i + 2] = 255;
-  //   } else {
-  //     imgData[i] = 0;
-  //     imgData[i + 1] = 0;
-  //     imgData[i + 2] = 0;
-  //   }
-  // }
+  const imgData = imgd.data;
+  const len = imgData.length - 1;
+  for (let i = 0; i <= len; i += 4) {
+    const R = imgData[i];
+    const G = imgData[i + 1];
+    const B = imgData[i + 2];
+    // const Alpha = imgData[i + 3];
+    const avg = (R + G + B) / 3;
+    // if (avg > threshold) {
+    //   imgData[i] = 255;
+    //   imgData[i + 1] = 255;
+    //   imgData[i + 2] = 255;
+    // } else {
+    //   imgData[i] = 0;
+    //   imgData[i + 1] = 0;
+    //   imgData[i + 2] = 0;
+    // }
+    imgData[i] = avg;
+    imgData[i + 1] = avg;
+    imgData[i + 2] = avg;
+  }
   ctx.putImageData(imgd, 0, 0);
-  const ext = img.src.substring(img.src.lastIndexOf('.') + 1).toLowerCase();
-  const dataURL = canvas.toDataURL('image/' + ext);
+  // const ext = img.src.substring(img.src.lastIndexOf('.') + 1).toLowerCase();
+  const dataURL = canvas.toDataURL('image/jpeg');
   return dataURL;
 }
 
