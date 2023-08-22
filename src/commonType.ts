@@ -25,6 +25,7 @@ interface IUser {
   autoPaySw: boolean;
   autoThkSw: boolean;
   autoRePicSw: boolean;
+  autoDailyTask: boolean;
   differ: number;
   interval: number;
   thkDiffer: number;

@@ -38,6 +38,18 @@ function swThk(user: IUser) {
   }
 }
 
+function swDailyTask(user: IUser) {
+  if (user.autoDailyTask) {
+    user.autoDailyTask = false;
+    GM_setValue(user.username, user);
+    new MessageBox('已关闭定时每日任务，刷新页面后生效');
+  } else {
+    user.autoDailyTask = true;
+    GM_setValue(user.username, user);
+    new MessageBox('已开启定时每日任务，刷新页面后生效');
+  }
+}
+
 async function checkUpdate(user: IUser) {
   const msg = new MessageBox('正在检查更新...', 'none');
   const data = await getData(user.greasyforkUrl);
@@ -50,4 +62,4 @@ async function checkUpdate(user: IUser) {
   msg.remove();
 }
 
-export { checkUpdate, swPay, swRePic, swThk };
+export { checkUpdate, swDailyTask, swPay, swRePic, swThk };

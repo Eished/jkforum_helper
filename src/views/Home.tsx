@@ -10,6 +10,7 @@ import {
   replyOrThk,
   resetReplyData,
   setFastReply,
+  swDailyTask,
   swPay,
   swRePic,
   swThk,
@@ -75,6 +76,14 @@ export const Home: React.FC<HomeProps> = ({ user, setShowHome, counter, setCount
               swRePic(user);
             }}
             checked={user.autoRePicSw}
+          />
+          <Toggle
+            title={'在不刷新网页的情况下，定时检测是否需要执行每日任务'}
+            label={'定时每日任务'}
+            onClick={() => {
+              swDailyTask(user);
+            }}
+            checked={user.autoDailyTask}
           />
         </Panel>
 

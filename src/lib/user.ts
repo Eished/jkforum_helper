@@ -21,6 +21,7 @@ class User implements IUser {
   autoPaySw = true; // 自动支付开关
   autoThkSw = true; // 自动感谢开关
   autoRePicSw = true; // 自动加载原图开关
+  autoDailyTask = false; // 定时每日任务开关
   differ = 10000; // 回帖随机间隔时间ms
   interval = 20000; // 回帖基础间隔时间ms
   thkDiffer = 1000; // 批量感谢间隔时间ms
@@ -93,4 +94,4 @@ const creatUser = async (username: string, formhash: string) => {
   return user;
 };
 
-export { User, getUserName, getUserFromName, getFormhash, creatUser };
+export { User, creatUser, getFormhash, getUserFromName, getUserName };

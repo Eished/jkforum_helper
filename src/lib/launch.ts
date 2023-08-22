@@ -1,5 +1,5 @@
 import { AutoPlayCounter, IUser } from '@/commonType';
-import { NowTime } from '@/utils/tools';
+import { NowTime, waitFor } from '@/utils/tools';
 import { addPlayEvent, autoPay, autoThk, autoVoted, loadOriginImage, sign } from './';
 
 // 启动
@@ -44,8 +44,12 @@ async function launch(user: IUser) {
     const now = new NowTime();
     if (user.today != now.day) {
       user.today = now.day;
-      sign(user); // 签到
-      await autoVoted(user);
+      await Promise.all([sign(user), autoVoted(user)]);
+    }
+
+    // 异步启动定时每日任务
+    if (user.autoDailyTask) {
+      autoDailyTasks(user);
     }
   } catch (e) {
     GM_setValue(user.username, user); //保存当天日// today 初始化
@@ -53,4 +57,10 @@ async function launch(user: IUser) {
   }
 }
 
-export { launch };
+const autoDailyTasks = async (user: IUser) => {
+  await waitFor(86400000);
+  await Promise.all([sign(user), autoVoted(user)]);
+  await autoDailyTasks(user);
+};
+
+export { autoDailyTasks, launch };

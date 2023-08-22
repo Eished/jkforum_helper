@@ -5,9 +5,10 @@ interface ToggleProps {
   onClick: (selected: boolean) => void;
   checked: boolean;
   mykey?: string;
+  title?: string;
 }
 
-export const Toggle: React.FC<ToggleProps> = ({ label, checked, mykey = '-', onClick }) => {
+export const Toggle: React.FC<ToggleProps> = ({ label, checked, title, mykey = '-', onClick }) => {
   const [selected, setSelected] = useState(checked);
   useEffect(() => {
     setSelected(checked);
@@ -17,6 +18,7 @@ export const Toggle: React.FC<ToggleProps> = ({ label, checked, mykey = '-', onC
     <>
       <label
         key={label + mykey}
+        title={title}
         htmlFor={'toggle-' + mykey + label}
         className="mx-1 my-1 flex items-center cursor-pointer relative">
         <input
@@ -25,11 +27,10 @@ export const Toggle: React.FC<ToggleProps> = ({ label, checked, mykey = '-', onC
           className="sr-only"
           checked={selected}
           onClick={() => {
-            onClick(!selected);
             setSelected(!selected);
           }}
-          onChange={() => {
-            return;
+          onChange={(e) => {
+            onClick(e.target.checked);
           }}
         />
         <div className="toggle-bg bg-gray-300 border-2 border-gray-200 h-4 w-7 rounded-full"></div>
