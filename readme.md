@@ -39,6 +39,10 @@
 
 ![图片_36](https://cdn.jsdelivr.net/gh/eished/jkforum_helper/readme.assets/%E5%9B%BE%E7%89%87_36.jpg)
 
+#### 定时每日任务
+
+- 在不刷新网页的情况下，自动定时检测是否需要执行每日任务
+
 ### 批处理
 
 #### 添加当前页
@@ -112,6 +116,10 @@
 
 <img src="https://raw.githubusercontent.com/Eished/jkforum_helper/main/readme.assets/image_2022-11-03_02-05-35.jpg" alt="image_2022-11-03_02-05-35" style="zoom: 67%;" />
 
+#### 获取验证码
+
+- 服务器托管登录账号时使用，通过谷歌验证后，复制验证码到托管网站登录页中进行登录。
+
 ## TODO：
 
 ### 202105：
@@ -145,8 +153,8 @@
   - [x] 增加按下后禁用，防止重复点击；
 - [x] 分模块打包，减小发布大小
 - [x] Github Actions 自动构建发布
-- [ ] 集中状态管理 useContext or Redux
-- [ ] 代码分为模块与插件动态加载，形成通用型油猴脚本开发平台
+- [ ] ~~集中状态管理 useContext or Redux~~
+- [ ] ~~代码分为模块与插件动态加载，形成通用型油猴脚本开发平台~~
 
 ### 202210：
 
