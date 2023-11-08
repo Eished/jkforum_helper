@@ -15,12 +15,7 @@
   "copyright": "Eished",
   "license": "MIT",
   "match": [
-    "*://*.jkforum.net/home*",
-    "*://*.jkforum.net/forum*",
-    "*://*.jkforum.net/type*",
-    "*://*.jkforum.net/thread*",
-    "*://*.jkforum.net/plugin*",
-    "*://*.jkforum.net/member*"
+    "*://*.jkforum.net/*"
   ],
   "run-at": "document-idle",
   "supportURL": "https://github.com/Eished/jkforum_helper/issues",
