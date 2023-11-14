@@ -58,7 +58,7 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
     if (data.some((t) => getTid(t.url) === tid)) {
       return alert(tid + '，帖子已存在！');
     }
-    if (!threadUrl.includes('https://www.jkforum.net/thread-')) {
+    if (!threadUrl.includes('thread')) {
       return alert(`帖子地址错误：${threadUrl}`);
     }
     const docu = await getData(threadUrl);
