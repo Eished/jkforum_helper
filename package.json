@@ -68,7 +68,7 @@
   "dependencies": {
     "file-saver": "^2.0.5",
     "hacktimer": "^1.1.3",
-    "jszip": "^3.9.1",
+    "jszip": "3.9.1",
     "react": "^18.1.0",
     "react-copy-to-clipboard": "^5.1.0",
     "react-dom": "^18.1.0",
