@@ -3436,9 +3436,9 @@ json5@^2.1.2, json5@^2.2.1:
     array-includes "^3.1.4"
     object.assign "^4.1.2"
 
-jszip@^3.9.1:
+jszip@3.9.1:
   version "3.9.1"
-  resolved "https://registry.npmjs.org/jszip/-/jszip-3.9.1.tgz#784e87f328450d1e8151003a9c67733e2b901051"
+  resolved "https://registry.yarnpkg.com/jszip/-/jszip-3.9.1.tgz#784e87f328450d1e8151003a9c67733e2b901051"
   integrity sha512-H9A60xPqJ1CuC4Ka6qxzXZeU8aNmgOeP5IFqwJbQQwtu2EUYxota3LdsiZWplF7Wgd9tkAd0mdu36nceSaPuYw==
   dependencies:
     lie "~3.3.0"
