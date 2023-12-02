@@ -12,7 +12,7 @@
 
 ## 使用说明：
 
-![image-20231202224159287](./readme.assets/image-20231202224159287.png)
+<img src="./readme.assets/image-20231202224159287.png" alt="image-20231202224159287" style="zoom: 67%;" />
 
 1. 登录 JKForum 后脚本开始运行。
 2. 鼠标点击任意 JKForum 页面左侧黄色 F 按钮，即可看到控制面板。
