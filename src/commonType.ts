@@ -49,7 +49,17 @@ interface IUser {
   userReplyMessage: string[];
   fastReply: string[];
   replyThreads: ForumThreads[];
+  posts?: PostData[];
 }
+
+export type PostData = {
+  postTime: number;
+  postUrl: string;
+  subject: string;
+  message: string;
+  typeid: string;
+  allownoticeauthor: number;
+};
 
 type Counter = {
   signBtn: number;

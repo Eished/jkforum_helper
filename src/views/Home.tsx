@@ -160,7 +160,7 @@ export const Home: React.FC<HomeProps> = ({ user, setShowHome, counter, setCount
           <Button
             text={'自动发文'}
             onClick={() => {
-              autoPost();
+              autoPost(user);
             }}
           />
           <Button
