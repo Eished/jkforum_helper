@@ -12,7 +12,7 @@
 
 ## 使用说明：
 
-![20220419013050](https://cdn.jsdelivr.net/gh/eished/jkforum_helper@0.7.0/readme.assets/20220419013050.png)
+![image-20231202224159287](./readme.assets/image-20231202224159287.png)
 
 1. 登录 JKForum 后脚本开始运行。
 2. 鼠标点击任意 JKForum 页面左侧黄色 F 按钮，即可看到控制面板。
@@ -110,11 +110,11 @@
 
 - 自动我有空，自动点击现在有空按钮。
 - 需要验证令牌，令牌免费试用，[获取令牌](https://jkf.iknow.fun/)。
-- 默认每 55 分钟点击一次，可自定义间隔。
+- 默认每 55 分钟点击一次，可自定义间隔，和自定义运行时间段。
 - 支持一个账号的多个帖子。
 - 支持多账号登录，[用 Chrome 同时登录多个账号](https://iknow.fun/2023/06/23/chrome-tong-shi-deng-lu-duo-ge-zhang-hao-wang-zhan-duo-kai-jiao-cheng/)。
 
-<img src="https://raw.githubusercontent.com/Eished/jkforum_helper/main/readme.assets/image_2022-11-03_02-05-35.jpg" alt="image_2022-11-03_02-05-35" style="zoom: 67%;" />
+![2023-12-02 222709](./readme.assets/2023-12-02%20222709.jpg)
 
 #### 获取验证码
 
@@ -184,8 +184,8 @@
 
 ### 202312
 
-- [ ] 移除深色模式
-- [ ] 自动发帖
+- [x] 移除深色模式
+- [x] 增加任意板块自动发文，支持设置间隔时间
 
 ## 参数自定义
 

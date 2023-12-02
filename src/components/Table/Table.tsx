@@ -330,7 +330,7 @@ export default function ReactTableCard({
             {page.map((row) => {
               prepareRow(row);
               return (
-                <tr {...row.getRowProps()} className="hover:bg-gray-200 bg-white dark:bg-gray-800">
+                <tr {...row.getRowProps()} className="hover:bg-gray-200 bg-white">
                   {row.cells.map((cell) => {
                     return (
                       <td

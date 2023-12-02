@@ -18,10 +18,10 @@ export const Modal: FC<ModalProps> = ({ header, footer, children, width, height,
     <div className="fixed top-0 right-0 h-full w-full left-0 z-50 overflow-y-auto overflow-x-hidden items-center justify-center flex bg-gray-900 bg-opacity-50">
       <div className={`relative rounded-lg bg-white shadow m-4 flex flex-col ${width} ${height}`}>
         <div className="flex items-start justify-between rounded-t  border-gray-300 border-solid border-0 border-b p-5">
-          <h3 className="text-xl font-medium text-gray-900 dark:text-white">{header}</h3>
+          <h3 className="text-xl font-medium text-gray-900 ">{header}</h3>
           <button
             aria-label="Close"
-            className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:text-white"
+            className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 "
             type="button"
             onClick={onClose}>
             <svg
