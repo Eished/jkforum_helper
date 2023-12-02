@@ -48,1876 +48,22 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 214:
+/***/ 529:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 // Imports
-var ___CSS_LOADER_API_NO_SOURCEMAP_IMPORT___ = __webpack_require__(650);
-var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(196);
+var ___CSS_LOADER_API_NO_SOURCEMAP_IMPORT___ = __webpack_require__(81);
+var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(645);
 var ___CSS_LOADER_EXPORT___ = ___CSS_LOADER_API_IMPORT___(___CSS_LOADER_API_NO_SOURCEMAP_IMPORT___);
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, `/*
-! tailwindcss v3.3.5 | MIT License | https://tailwindcss.com
-*/
-
-/*
-1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)
-2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)
-*/
-
-*,
-::before,
-::after {
-  box-sizing: border-box;
-  /* 1 */
-  border-width: 0;
-  /* 2 */
-  border-style: solid;
-  /* 2 */
-  border-color: #e5e7eb;
-  /* 2 */
-}
-
-::before,
-::after {
-  --tw-content: '';
-}
-
-/*
-1. Use a consistent sensible line-height in all browsers.
-2. Prevent adjustments of font size after orientation changes in iOS.
-3. Use a more readable tab size.
-4. Use the user's configured \`sans\` font-family by default.
-5. Use the user's configured \`sans\` font-feature-settings by default.
-6. Use the user's configured \`sans\` font-variation-settings by default.
-*/
-
-html {
-  line-height: 1.5;
-  /* 1 */
-  -webkit-text-size-adjust: 100%;
-  /* 2 */
-  -moz-tab-size: 4;
-  /* 3 */
-  -o-tab-size: 4;
-     tab-size: 4;
-  /* 3 */
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  /* 4 */
-  font-feature-settings: normal;
-  /* 5 */
-  font-variation-settings: normal;
-  /* 6 */
-}
-
-/*
-1. Remove the margin in all browsers.
-2. Inherit line-height from \`html\` so users can set them as a class directly on the \`html\` element.
-*/
-
-body {
-  margin: 0;
-  /* 1 */
-  line-height: inherit;
-  /* 2 */
-}
-
-/*
-1. Add the correct height in Firefox.
-2. Correct the inheritance of border color in Firefox. (https://bugzilla.mozilla.org/show_bug.cgi?id=190655)
-3. Ensure horizontal rules are visible by default.
-*/
-
-hr {
-  height: 0;
-  /* 1 */
-  color: inherit;
-  /* 2 */
-  border-top-width: 1px;
-  /* 3 */
-}
-
-/*
-Add the correct text decoration in Chrome, Edge, and Safari.
-*/
-
-abbr:where([title]) {
-  -webkit-text-decoration: underline dotted;
-          text-decoration: underline dotted;
-}
-
-/*
-Remove the default font size and weight for headings.
-*/
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-size: inherit;
-  font-weight: inherit;
-}
-
-/*
-Reset links to optimize for opt-in styling instead of opt-out.
-*/
-
-a {
-  color: inherit;
-  text-decoration: inherit;
-}
-
-/*
-Add the correct font weight in Edge and Safari.
-*/
-
-b,
-strong {
-  font-weight: bolder;
-}
-
-/*
-1. Use the user's configured \`mono\` font family by default.
-2. Correct the odd \`em\` font sizing in all browsers.
-*/
-
-code,
-kbd,
-samp,
-pre {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  /* 1 */
-  font-size: 1em;
-  /* 2 */
-}
-
-/*
-Add the correct font size in all browsers.
-*/
-
-small {
-  font-size: 80%;
-}
-
-/*
-Prevent \`sub\` and \`sup\` elements from affecting the line height in all browsers.
-*/
-
-sub,
-sup {
-  font-size: 75%;
-  line-height: 0;
-  position: relative;
-  vertical-align: baseline;
-}
-
-sub {
-  bottom: -0.25em;
-}
-
-sup {
-  top: -0.5em;
-}
-
-/*
-1. Remove text indentation from table contents in Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=999088, https://bugs.webkit.org/show_bug.cgi?id=201297)
-2. Correct table border color inheritance in all Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=935729, https://bugs.webkit.org/show_bug.cgi?id=195016)
-3. Remove gaps between table borders by default.
-*/
-
-table {
-  text-indent: 0;
-  /* 1 */
-  border-color: inherit;
-  /* 2 */
-  border-collapse: collapse;
-  /* 3 */
-}
-
-/*
-1. Change the font styles in all browsers.
-2. Remove the margin in Firefox and Safari.
-3. Remove default padding in all browsers.
-*/
-
-button,
-input,
-optgroup,
-select,
-textarea {
-  font-family: inherit;
-  /* 1 */
-  font-feature-settings: inherit;
-  /* 1 */
-  font-variation-settings: inherit;
-  /* 1 */
-  font-size: 100%;
-  /* 1 */
-  font-weight: inherit;
-  /* 1 */
-  line-height: inherit;
-  /* 1 */
-  color: inherit;
-  /* 1 */
-  margin: 0;
-  /* 2 */
-  padding: 0;
-  /* 3 */
-}
-
-/*
-Remove the inheritance of text transform in Edge and Firefox.
-*/
-
-button,
-select {
-  text-transform: none;
-}
-
-/*
-1. Correct the inability to style clickable types in iOS and Safari.
-2. Remove default button styles.
-*/
-
-button,
-[type='button'],
-[type='reset'],
-[type='submit'] {
-  -webkit-appearance: button;
-  /* 1 */
-  background-color: transparent;
-  /* 2 */
-  background-image: none;
-  /* 2 */
-}
-
-/*
-Use the modern Firefox focus style for all focusable elements.
-*/
-
-:-moz-focusring {
-  outline: auto;
-}
-
-/*
-Remove the additional \`:invalid\` styles in Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737)
-*/
-
-:-moz-ui-invalid {
-  box-shadow: none;
-}
-
-/*
-Add the correct vertical alignment in Chrome and Firefox.
-*/
-
-progress {
-  vertical-align: baseline;
-}
-
-/*
-Correct the cursor style of increment and decrement buttons in Safari.
-*/
-
-::-webkit-inner-spin-button,
-::-webkit-outer-spin-button {
-  height: auto;
-}
-
-/*
-1. Correct the odd appearance in Chrome and Safari.
-2. Correct the outline style in Safari.
-*/
-
-[type='search'] {
-  -webkit-appearance: textfield;
-  /* 1 */
-  outline-offset: -2px;
-  /* 2 */
-}
-
-/*
-Remove the inner padding in Chrome and Safari on macOS.
-*/
-
-::-webkit-search-decoration {
-  -webkit-appearance: none;
-}
-
-/*
-1. Correct the inability to style clickable types in iOS and Safari.
-2. Change font properties to \`inherit\` in Safari.
-*/
-
-::-webkit-file-upload-button {
-  -webkit-appearance: button;
-  /* 1 */
-  font: inherit;
-  /* 2 */
-}
-
-/*
-Add the correct display in Chrome and Safari.
-*/
-
-summary {
-  display: list-item;
-}
-
-/*
-Removes the default spacing and border for appropriate elements.
-*/
-
-blockquote,
-dl,
-dd,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-hr,
-figure,
-p,
-pre {
-  margin: 0;
-}
-
-fieldset {
-  margin: 0;
-  padding: 0;
-}
-
-legend {
-  padding: 0;
-}
-
-ol,
-ul,
-menu {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-/*
-Reset default styling for dialogs.
-*/
-
-dialog {
-  padding: 0;
-}
-
-/*
-Prevent resizing textareas horizontally by default.
-*/
-
-textarea {
-  resize: vertical;
-}
-
-/*
-1. Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)
-2. Set the default placeholder color to the user's configured gray 400 color.
-*/
-
-input::-moz-placeholder, textarea::-moz-placeholder {
-  opacity: 1;
-  /* 1 */
-  color: #9ca3af;
-  /* 2 */
-}
-
-input::placeholder,
-textarea::placeholder {
-  opacity: 1;
-  /* 1 */
-  color: #9ca3af;
-  /* 2 */
-}
-
-/*
-Set the default cursor for buttons.
-*/
-
-button,
-[role="button"] {
-  cursor: pointer;
-}
-
-/*
-Make sure disabled buttons don't get the pointer cursor.
-*/
-
-:disabled {
-  cursor: default;
-}
-
-/*
-1. Make replaced elements \`display: block\` by default. (https://github.com/mozdevs/cssremedy/issues/14)
-2. Add \`vertical-align: middle\` to align replaced elements more sensibly by default. (https://github.com/jensimmons/cssremedy/issues/14#issuecomment-634934210)
-   This can trigger a poorly considered lint error in some tools but is included by design.
-*/
-
-img,
-svg,
-video,
-canvas,
-audio,
-iframe,
-embed,
-object {
-  display: block;
-  /* 1 */
-  vertical-align: middle;
-  /* 2 */
-}
-
-/*
-Constrain images and videos to the parent width and preserve their intrinsic aspect ratio. (https://github.com/mozdevs/cssremedy/issues/14)
-*/
-
-img,
-video {
-  max-width: 100%;
-  height: auto;
-}
-
-/* Make elements with the HTML hidden attribute stay hidden by default */
-
-[hidden] {
-  display: none;
-}
-
-[type='text'],input:where(:not([type])),[type='email'],[type='url'],[type='password'],[type='number'],[type='date'],[type='datetime-local'],[type='month'],[type='search'],[type='tel'],[type='time'],[type='week'],[multiple],textarea,select {
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
-  background-color: #fff;
-  border-color: #6b7280;
-  border-width: 1px;
-  border-radius: 0px;
-  padding-top: 0.5rem;
-  padding-right: 0.75rem;
-  padding-bottom: 0.5rem;
-  padding-left: 0.75rem;
-  font-size: 1rem;
-  line-height: 1.5rem;
-  --tw-shadow: 0 0 #0000;
-}
-
-[type='text']:focus, input:where(:not([type])):focus, [type='email']:focus, [type='url']:focus, [type='password']:focus, [type='number']:focus, [type='date']:focus, [type='datetime-local']:focus, [type='month']:focus, [type='search']:focus, [type='tel']:focus, [type='time']:focus, [type='week']:focus, [multiple]:focus, textarea:focus, select:focus {
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-  --tw-ring-inset: var(--tw-empty,/*!*/ /*!*/);
-  --tw-ring-offset-width: 0px;
-  --tw-ring-offset-color: #fff;
-  --tw-ring-color: #2563eb;
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-  border-color: #2563eb;
-}
-
-input::-moz-placeholder, textarea::-moz-placeholder {
-  color: #6b7280;
-  opacity: 1;
-}
-
-input::placeholder,textarea::placeholder {
-  color: #6b7280;
-  opacity: 1;
-}
-
-::-webkit-datetime-edit-fields-wrapper {
-  padding: 0;
-}
-
-::-webkit-date-and-time-value {
-  min-height: 1.5em;
-  text-align: inherit;
-}
-
-::-webkit-datetime-edit {
-  display: inline-flex;
-}
-
-::-webkit-datetime-edit,::-webkit-datetime-edit-year-field,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute-field,::-webkit-datetime-edit-second-field,::-webkit-datetime-edit-millisecond-field,::-webkit-datetime-edit-meridiem-field {
-  padding-top: 0;
-  padding-bottom: 0;
-}
-
-select {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-  background-position: right 0.5rem center;
-  background-repeat: no-repeat;
-  background-size: 1.5em 1.5em;
-  padding-right: 2.5rem;
-  -webkit-print-color-adjust: exact;
-          print-color-adjust: exact;
-}
-
-[multiple],[size]:where(select:not([size="1"])) {
-  background-image: initial;
-  background-position: initial;
-  background-repeat: unset;
-  background-size: initial;
-  padding-right: 0.75rem;
-  -webkit-print-color-adjust: unset;
-          print-color-adjust: unset;
-}
-
-[type='checkbox'],[type='radio'] {
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
-  padding: 0;
-  -webkit-print-color-adjust: exact;
-          print-color-adjust: exact;
-  display: inline-block;
-  vertical-align: middle;
-  background-origin: border-box;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-          user-select: none;
-  flex-shrink: 0;
-  height: 1rem;
-  width: 1rem;
-  color: #2563eb;
-  background-color: #fff;
-  border-color: #6b7280;
-  border-width: 1px;
-  --tw-shadow: 0 0 #0000;
-}
-
-[type='checkbox'] {
-  border-radius: 0px;
-}
-
-[type='radio'] {
-  border-radius: 100%;
-}
-
-[type='checkbox']:focus,[type='radio']:focus {
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-  --tw-ring-inset: var(--tw-empty,/*!*/ /*!*/);
-  --tw-ring-offset-width: 2px;
-  --tw-ring-offset-color: #fff;
-  --tw-ring-color: #2563eb;
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-}
-
-[type='checkbox']:checked,[type='radio']:checked {
-  border-color: transparent;
-  background-color: currentColor;
-  background-size: 100% 100%;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-[type='checkbox']:checked {
-  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
-}
-
-@media (forced-colors: active)  {
-  [type='checkbox']:checked {
-    -webkit-appearance: auto;
-       -moz-appearance: auto;
-            appearance: auto;
-  }
-}
-
-[type='radio']:checked {
-  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='8' cy='8' r='3'/%3e%3c/svg%3e");
-}
-
-@media (forced-colors: active)  {
-  [type='radio']:checked {
-    -webkit-appearance: auto;
-       -moz-appearance: auto;
-            appearance: auto;
-  }
-}
-
-[type='checkbox']:checked:hover,[type='checkbox']:checked:focus,[type='radio']:checked:hover,[type='radio']:checked:focus {
-  border-color: transparent;
-  background-color: currentColor;
-}
-
-[type='checkbox']:indeterminate {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 16 16'%3e%3cpath stroke='white' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 8h8'/%3e%3c/svg%3e");
-  border-color: transparent;
-  background-color: currentColor;
-  background-size: 100% 100%;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-@media (forced-colors: active)  {
-  [type='checkbox']:indeterminate {
-    -webkit-appearance: auto;
-       -moz-appearance: auto;
-            appearance: auto;
-  }
-}
-
-[type='checkbox']:indeterminate:hover,[type='checkbox']:indeterminate:focus {
-  border-color: transparent;
-  background-color: currentColor;
-}
-
-[type='file'] {
-  background: unset;
-  border-color: inherit;
-  border-width: 0;
-  border-radius: 0;
-  padding: 0;
-  font-size: unset;
-  line-height: inherit;
-}
-
-[type='file']:focus {
-  outline: 1px solid ButtonText;
-  outline: 1px auto -webkit-focus-ring-color;
-}
-
-*, ::before, ::after {
-  --tw-border-spacing-x: 0;
-  --tw-border-spacing-y: 0;
-  --tw-translate-x: 0;
-  --tw-translate-y: 0;
-  --tw-rotate: 0;
-  --tw-skew-x: 0;
-  --tw-skew-y: 0;
-  --tw-scale-x: 1;
-  --tw-scale-y: 1;
-  --tw-pan-x:  ;
-  --tw-pan-y:  ;
-  --tw-pinch-zoom:  ;
-  --tw-scroll-snap-strictness: proximity;
-  --tw-gradient-from-position:  ;
-  --tw-gradient-via-position:  ;
-  --tw-gradient-to-position:  ;
-  --tw-ordinal:  ;
-  --tw-slashed-zero:  ;
-  --tw-numeric-figure:  ;
-  --tw-numeric-spacing:  ;
-  --tw-numeric-fraction:  ;
-  --tw-ring-inset:  ;
-  --tw-ring-offset-width: 0px;
-  --tw-ring-offset-color: #fff;
-  --tw-ring-color: rgb(59 130 246 / 0.5);
-  --tw-ring-offset-shadow: 0 0 #0000;
-  --tw-ring-shadow: 0 0 #0000;
-  --tw-shadow: 0 0 #0000;
-  --tw-shadow-colored: 0 0 #0000;
-  --tw-blur:  ;
-  --tw-brightness:  ;
-  --tw-contrast:  ;
-  --tw-grayscale:  ;
-  --tw-hue-rotate:  ;
-  --tw-invert:  ;
-  --tw-saturate:  ;
-  --tw-sepia:  ;
-  --tw-drop-shadow:  ;
-  --tw-backdrop-blur:  ;
-  --tw-backdrop-brightness:  ;
-  --tw-backdrop-contrast:  ;
-  --tw-backdrop-grayscale:  ;
-  --tw-backdrop-hue-rotate:  ;
-  --tw-backdrop-invert:  ;
-  --tw-backdrop-opacity:  ;
-  --tw-backdrop-saturate:  ;
-  --tw-backdrop-sepia:  ;
-}
-
-::backdrop {
-  --tw-border-spacing-x: 0;
-  --tw-border-spacing-y: 0;
-  --tw-translate-x: 0;
-  --tw-translate-y: 0;
-  --tw-rotate: 0;
-  --tw-skew-x: 0;
-  --tw-skew-y: 0;
-  --tw-scale-x: 1;
-  --tw-scale-y: 1;
-  --tw-pan-x:  ;
-  --tw-pan-y:  ;
-  --tw-pinch-zoom:  ;
-  --tw-scroll-snap-strictness: proximity;
-  --tw-gradient-from-position:  ;
-  --tw-gradient-via-position:  ;
-  --tw-gradient-to-position:  ;
-  --tw-ordinal:  ;
-  --tw-slashed-zero:  ;
-  --tw-numeric-figure:  ;
-  --tw-numeric-spacing:  ;
-  --tw-numeric-fraction:  ;
-  --tw-ring-inset:  ;
-  --tw-ring-offset-width: 0px;
-  --tw-ring-offset-color: #fff;
-  --tw-ring-color: rgb(59 130 246 / 0.5);
-  --tw-ring-offset-shadow: 0 0 #0000;
-  --tw-ring-shadow: 0 0 #0000;
-  --tw-shadow: 0 0 #0000;
-  --tw-shadow-colored: 0 0 #0000;
-  --tw-blur:  ;
-  --tw-brightness:  ;
-  --tw-contrast:  ;
-  --tw-grayscale:  ;
-  --tw-hue-rotate:  ;
-  --tw-invert:  ;
-  --tw-saturate:  ;
-  --tw-sepia:  ;
-  --tw-drop-shadow:  ;
-  --tw-backdrop-blur:  ;
-  --tw-backdrop-brightness:  ;
-  --tw-backdrop-contrast:  ;
-  --tw-backdrop-grayscale:  ;
-  --tw-backdrop-hue-rotate:  ;
-  --tw-backdrop-invert:  ;
-  --tw-backdrop-opacity:  ;
-  --tw-backdrop-saturate:  ;
-  --tw-backdrop-sepia:  ;
-}
-
-.container {
-  width: 100%;
-}
-
-@media (min-width: 640px) {
-  .container {
-    max-width: 640px;
-  }
-}
-
-@media (min-width: 768px) {
-  .container {
-    max-width: 768px;
-  }
-}
-
-@media (min-width: 1024px) {
-  .container {
-    max-width: 1024px;
-  }
-}
-
-@media (min-width: 1280px) {
-  .container {
-    max-width: 1280px;
-  }
-}
-
-@media (min-width: 1536px) {
-  .container {
-    max-width: 1536px;
-  }
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
-}
-
-.pointer-events-none {
-  pointer-events: none;
-}
-
-.pointer-events-auto {
-  pointer-events: auto;
-}
-
-.static {
-  position: static;
-}
-
-.fixed {
-  position: fixed;
-}
-
-.absolute {
-  position: absolute;
-}
-
-.relative {
-  position: relative;
-}
-
-.inset-0 {
-  inset: 0px;
-}
-
-.inset-y-0 {
-  top: 0px;
-  bottom: 0px;
-}
-
-.-left-8 {
-  left: -2rem;
-}
-
-.left-0 {
-  left: 0px;
-}
-
-.right-0 {
-  right: 0px;
-}
-
-.top-0 {
-  top: 0px;
-}
-
-.top-1\\/2 {
-  top: 50%;
-}
-
-.z-50 {
-  z-index: 50;
-}
-
-.-m-2 {
-  margin: -0.5rem;
-}
-
-.m-1 {
-  margin: 0.25rem;
-}
-
-.m-2 {
-  margin: 0.5rem;
-}
-
-.m-4 {
-  margin: 1rem;
-}
-
-.-my-6 {
-  margin-top: -1.5rem;
-  margin-bottom: -1.5rem;
-}
-
-.mx-1 {
-  margin-left: 0.25rem;
-  margin-right: 0.25rem;
-}
-
-.mx-2 {
-  margin-left: 0.5rem;
-  margin-right: 0.5rem;
-}
-
-.my-1 {
-  margin-top: 0.25rem;
-  margin-bottom: 0.25rem;
-}
-
-.mb-4 {
-  margin-bottom: 1rem;
-}
-
-.ml-1 {
-  margin-left: 0.25rem;
-}
-
-.ml-3 {
-  margin-left: 0.75rem;
-}
-
-.ml-4 {
-  margin-left: 1rem;
-}
-
-.ml-auto {
-  margin-left: auto;
-}
-
-.mt-0 {
-  margin-top: 0px;
-}
-
-.mt-0\\.5 {
-  margin-top: 0.125rem;
-}
-
-.mt-1 {
-  margin-top: 0.25rem;
-}
-
-.mt-2 {
-  margin-top: 0.5rem;
-}
-
-.mt-6 {
-  margin-top: 1.5rem;
-}
-
-.mt-8 {
-  margin-top: 2rem;
-}
-
-.block {
-  display: block;
-}
-
-.inline-block {
-  display: inline-block;
-}
-
-.flex {
-  display: flex;
-}
-
-.inline-flex {
-  display: inline-flex;
-}
-
-.table {
-  display: table;
-}
-
-.flow-root {
-  display: flow-root;
-}
-
-.hidden {
-  display: none;
-}
-
-.h-12 {
-  height: 3rem;
-}
-
-.h-20 {
-  height: 5rem;
-}
-
-.h-24 {
-  height: 6rem;
-}
-
-.h-3 {
-  height: 0.75rem;
-}
-
-.h-4 {
-  height: 1rem;
-}
-
-.h-5 {
-  height: 1.25rem;
-}
-
-.h-6 {
-  height: 1.5rem;
-}
-
-.h-7 {
-  height: 1.75rem;
-}
-
-.h-8 {
-  height: 2rem;
-}
-
-.h-fit {
-  height: -moz-fit-content;
-  height: fit-content;
-}
-
-.h-full {
-  height: 100%;
-}
-
-.h-screen {
-  height: 100vh;
-}
-
-.max-h-\\[95\\%\\] {
-  max-height: 95%;
-}
-
-.w-12 {
-  width: 3rem;
-}
-
-.w-16 {
-  width: 4rem;
-}
-
-.w-24 {
-  width: 6rem;
-}
-
-.w-3 {
-  width: 0.75rem;
-}
-
-.w-4 {
-  width: 1rem;
-}
-
-.w-40 {
-  width: 10rem;
-}
-
-.w-5 {
-  width: 1.25rem;
-}
-
-.w-6 {
-  width: 1.5rem;
-}
-
-.w-64 {
-  width: 16rem;
-}
-
-.w-7 {
-  width: 1.75rem;
-}
-
-.w-72 {
-  width: 18rem;
-}
-
-.w-8 {
-  width: 2rem;
-}
-
-.w-80 {
-  width: 20rem;
-}
-
-.w-full {
-  width: 100%;
-}
-
-.w-screen {
-  width: 100vw;
-}
-
-.min-w-full {
-  min-width: 100%;
-}
-
-.max-w-\\[150px\\] {
-  max-width: 150px;
-}
-
-.max-w-full {
-  max-width: 100%;
-}
-
-.max-w-md {
-  max-width: 28rem;
-}
-
-.flex-1 {
-  flex: 1 1 0%;
-}
-
-.flex-shrink-0 {
-  flex-shrink: 0;
-}
-
-.table-auto {
-  table-layout: auto;
-}
-
-.translate-x-0 {
-  --tw-translate-x: 0px;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-
-.translate-x-full {
-  --tw-translate-x: 100%;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-
-.transform {
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-
-.cursor-help {
-  cursor: help;
-}
-
-.cursor-not-allowed {
-  cursor: not-allowed;
-}
-
-.cursor-pointer {
-  cursor: pointer;
-}
-
-.flex-col {
-  flex-direction: column;
-}
-
-.flex-wrap {
-  flex-wrap: wrap;
-}
-
-.items-start {
-  align-items: flex-start;
-}
-
-.items-end {
-  align-items: flex-end;
-}
-
-.items-center {
-  align-items: center;
-}
-
-.justify-center {
-  justify-content: center;
-}
-
-.justify-between {
-  justify-content: space-between;
-}
-
-.justify-evenly {
-  justify-content: space-evenly;
-}
-
-.space-y-2 > :not([hidden]) ~ :not([hidden]) {
-  --tw-space-y-reverse: 0;
-  margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
-  margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));
-}
-
-.divide-y > :not([hidden]) ~ :not([hidden]) {
-  --tw-divide-y-reverse: 0;
-  border-top-width: calc(1px * calc(1 - var(--tw-divide-y-reverse)));
-  border-bottom-width: calc(1px * var(--tw-divide-y-reverse));
-}
-
-.divide-gray-100 > :not([hidden]) ~ :not([hidden]) {
-  --tw-divide-opacity: 1;
-  border-color: rgb(243 244 246 / var(--tw-divide-opacity));
-}
-
-.divide-gray-200 > :not([hidden]) ~ :not([hidden]) {
-  --tw-divide-opacity: 1;
-  border-color: rgb(229 231 235 / var(--tw-divide-opacity));
-}
-
-.overflow-auto {
-  overflow: auto;
-}
-
-.overflow-hidden {
-  overflow: hidden;
-}
-
-.overflow-y-auto {
-  overflow-y: auto;
-}
-
-.overflow-x-hidden {
-  overflow-x: hidden;
-}
-
-.overflow-y-scroll {
-  overflow-y: scroll;
-}
-
-.overflow-ellipsis {
-  text-overflow: ellipsis;
-}
-
-.text-ellipsis {
-  text-overflow: ellipsis;
-}
-
-.whitespace-nowrap {
-  white-space: nowrap;
-}
-
-.rounded {
-  border-radius: 0.25rem;
-}
-
-.rounded-full {
-  border-radius: 9999px;
-}
-
-.rounded-lg {
-  border-radius: 0.5rem;
-}
-
-.rounded-md {
-  border-radius: 0.375rem;
-}
-
-.rounded-b {
-  border-bottom-right-radius: 0.25rem;
-  border-bottom-left-radius: 0.25rem;
-}
-
-.rounded-t {
-  border-top-left-radius: 0.25rem;
-  border-top-right-radius: 0.25rem;
-}
-
-.border {
-  border-width: 1px;
-}
-
-.border-0 {
-  border-width: 0px;
-}
-
-.border-2 {
-  border-width: 2px;
-}
-
-.border-b {
-  border-bottom-width: 1px;
-}
-
-.border-b-2 {
-  border-bottom-width: 2px;
-}
-
-.border-t {
-  border-top-width: 1px;
-}
-
-.border-solid {
-  border-style: solid;
-}
-
-.border-gray-200 {
-  --tw-border-opacity: 1;
-  border-color: rgb(229 231 235 / var(--tw-border-opacity));
-}
-
-.border-gray-300 {
-  --tw-border-opacity: 1;
-  border-color: rgb(209 213 219 / var(--tw-border-opacity));
-}
-
-.border-gray-400 {
-  --tw-border-opacity: 1;
-  border-color: rgb(156 163 175 / var(--tw-border-opacity));
-}
-
-.border-transparent {
-  border-color: transparent;
-}
-
-.bg-blue-200 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(191 219 254 / var(--tw-bg-opacity));
-}
-
-.bg-blue-400 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(96 165 250 / var(--tw-bg-opacity));
-}
-
-.bg-gray-100 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(243 244 246 / var(--tw-bg-opacity));
-}
-
-.bg-gray-200 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(229 231 235 / var(--tw-bg-opacity));
-}
-
-.bg-gray-300 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(209 213 219 / var(--tw-bg-opacity));
-}
-
-.bg-gray-400 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(156 163 175 / var(--tw-bg-opacity));
-}
-
-.bg-gray-50 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(249 250 251 / var(--tw-bg-opacity));
-}
-
-.bg-gray-500 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(107 114 128 / var(--tw-bg-opacity));
-}
-
-.bg-gray-900 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(17 24 39 / var(--tw-bg-opacity));
-}
-
-.bg-green-400 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(74 222 128 / var(--tw-bg-opacity));
-}
-
-.bg-indigo-400 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(129 140 248 / var(--tw-bg-opacity));
-}
-
-.bg-indigo-600 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(79 70 229 / var(--tw-bg-opacity));
-}
-
-.bg-red-400 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(248 113 113 / var(--tw-bg-opacity));
-}
-
-.bg-transparent {
-  background-color: transparent;
-}
-
-.bg-white {
-  --tw-bg-opacity: 1;
-  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
-}
-
-.bg-opacity-50 {
-  --tw-bg-opacity: 0.5;
-}
-
-.bg-opacity-75 {
-  --tw-bg-opacity: 0.75;
-}
-
-.bg-cover {
-  background-size: cover;
-}
-
-.bg-center {
-  background-position: center;
-}
-
-.object-cover {
-  -o-object-fit: cover;
-     object-fit: cover;
-}
-
-.object-center {
-  -o-object-position: center;
-     object-position: center;
-}
-
-.p-0 {
-  padding: 0px;
-}
-
-.p-1 {
-  padding: 0.25rem;
-}
-
-.p-1\\.5 {
-  padding: 0.375rem;
-}
-
-.p-2 {
-  padding: 0.5rem;
-}
-
-.p-3 {
-  padding: 0.75rem;
-}
-
-.p-5 {
-  padding: 1.25rem;
-}
-
-.p-6 {
-  padding: 1.5rem;
-}
-
-.px-2 {
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
-}
-
-.px-3 {
-  padding-left: 0.75rem;
-  padding-right: 0.75rem;
-}
-
-.px-4 {
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-
-.px-6 {
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-}
-
-.py-1 {
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
-}
-
-.py-2 {
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-}
-
-.py-3 {
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
-}
-
-.py-4 {
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-}
-
-.py-6 {
-  padding-top: 1.5rem;
-  padding-bottom: 1.5rem;
-}
-
-.pl-1 {
-  padding-left: 0.25rem;
-}
-
-.pl-10 {
-  padding-left: 2.5rem;
-}
-
-.pl-2 {
-  padding-left: 0.5rem;
-}
-
-.pl-5 {
-  padding-left: 1.25rem;
-}
-
-.pr-4 {
-  padding-right: 1rem;
-}
-
-.text-left {
-  text-align: left;
-}
-
-.text-center {
-  text-align: center;
-}
-
-.text-base {
-  font-size: 1rem;
-  line-height: 1.5rem;
-}
-
-.text-lg {
-  font-size: 1.125rem;
-  line-height: 1.75rem;
-}
-
-.text-sm {
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-}
-
-.text-xl {
-  font-size: 1.25rem;
-  line-height: 1.75rem;
-}
-
-.text-xs {
-  font-size: 0.75rem;
-  line-height: 1rem;
-}
-
-.font-bold {
-  font-weight: 700;
-}
-
-.font-medium {
-  font-weight: 500;
-}
-
-.font-normal {
-  font-weight: 400;
-}
-
-.uppercase {
-  text-transform: uppercase;
-}
-
-.leading-6 {
-  line-height: 1.5rem;
-}
-
-.leading-tight {
-  line-height: 1.25;
-}
-
-.tracking-wider {
-  letter-spacing: 0.05em;
-}
-
-.text-blue-500 {
-  --tw-text-opacity: 1;
-  color: rgb(59 130 246 / var(--tw-text-opacity));
-}
-
-.text-blue-600 {
-  --tw-text-opacity: 1;
-  color: rgb(37 99 235 / var(--tw-text-opacity));
-}
-
-.text-gray-400 {
-  --tw-text-opacity: 1;
-  color: rgb(156 163 175 / var(--tw-text-opacity));
-}
-
-.text-gray-500 {
-  --tw-text-opacity: 1;
-  color: rgb(107 114 128 / var(--tw-text-opacity));
-}
-
-.text-gray-700 {
-  --tw-text-opacity: 1;
-  color: rgb(55 65 81 / var(--tw-text-opacity));
-}
-
-.text-gray-800 {
-  --tw-text-opacity: 1;
-  color: rgb(31 41 55 / var(--tw-text-opacity));
-}
-
-.text-gray-900 {
-  --tw-text-opacity: 1;
-  color: rgb(17 24 39 / var(--tw-text-opacity));
-}
-
-.text-indigo-600 {
-  --tw-text-opacity: 1;
-  color: rgb(79 70 229 / var(--tw-text-opacity));
-}
-
-.text-red-500 {
-  --tw-text-opacity: 1;
-  color: rgb(239 68 68 / var(--tw-text-opacity));
-}
-
-.text-white {
-  --tw-text-opacity: 1;
-  color: rgb(255 255 255 / var(--tw-text-opacity));
-}
-
-.opacity-0 {
-  opacity: 0;
-}
-
-.opacity-100 {
-  opacity: 1;
-}
-
-.shadow {
-  --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-  --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
-.shadow-md {
-  --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
-.shadow-sm {
-  --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
-.shadow-xl {
-  --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-  --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
-.filter {
-  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
-}
-
-.transition {
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-backdrop-filter;
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-backdrop-filter;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
-}
-
-.transition-opacity {
-  transition-property: opacity;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
-}
-
-.delay-150 {
-  transition-delay: 150ms;
-}
-
-.duration-150 {
-  transition-duration: 150ms;
-}
-
-.duration-300 {
-  transition-duration: 300ms;
-}
-
-.duration-500 {
-  transition-duration: 500ms;
-}
-
-.duration-75 {
-  transition-duration: 75ms;
-}
-
-.ease-in-out {
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-#jkforum-helper .toggle-bg:after {
-  content: '';
-  position: absolute;
-  top: 0.125rem;
-  left: 0.125rem;
-  height: 0.75rem;
-  width: 0.75rem;
-  border-radius: 9999px;
-  border-width: 1px;
-  --tw-border-opacity: 1;
-  border-color: rgb(209 213 219 / var(--tw-border-opacity));
-  --tw-bg-opacity: 1;
-  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
-  --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-backdrop-filter;
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-backdrop-filter;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
-}
-
-#jkforum-helper input:checked + .toggle-bg:after {
-  transform: translateX(100%);
-  --tw-border-opacity: 1;
-  border-color: rgb(255 255 255 / var(--tw-border-opacity));
-}
-
-#jkforum-helper input:checked + .toggle-bg {
-  --tw-border-opacity: 1;
-  border-color: rgb(37 99 235 / var(--tw-border-opacity));
-  --tw-bg-opacity: 1;
-  background-color: rgb(37 99 235 / var(--tw-bg-opacity));
-}
-
-.border-b {
-  border-bottom: 1px solid lightgray;
-}
-
-/* 增加 visited 样式，图片模式已阅的帖子变灰色 */
-
-.xw0 a:visited {
-  color: grey;
-}
-
-#jkforum-helper button {
-  border: unset;
-}
-
-.focus-within\\:text-gray-400:focus-within {
-  --tw-text-opacity: 1;
-  color: rgb(156 163 175 / var(--tw-text-opacity));
-}
-
-.hover\\:translate-x-9:hover {
-  --tw-translate-x: 2.25rem;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-
-.hover\\:rotate-\\[360deg\\]:hover {
-  --tw-rotate: 360deg;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-
-.hover\\:scale-110:hover {
-  --tw-scale-x: 1.1;
-  --tw-scale-y: 1.1;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-
-.hover\\:border-gray-200:hover {
-  --tw-border-opacity: 1;
-  border-color: rgb(229 231 235 / var(--tw-border-opacity));
-}
-
-.hover\\:bg-gray-100:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(243 244 246 / var(--tw-bg-opacity));
-}
-
-.hover\\:bg-gray-200:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(229 231 235 / var(--tw-bg-opacity));
-}
-
-.hover\\:bg-indigo-700:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(67 56 202 / var(--tw-bg-opacity));
-}
-
-.hover\\:text-gray-500:hover {
-  --tw-text-opacity: 1;
-  color: rgb(107 114 128 / var(--tw-text-opacity));
-}
-
-.hover\\:text-gray-900:hover {
-  --tw-text-opacity: 1;
-  color: rgb(17 24 39 / var(--tw-text-opacity));
-}
-
-.hover\\:text-indigo-500:hover {
-  --tw-text-opacity: 1;
-  color: rgb(99 102 241 / var(--tw-text-opacity));
-}
-
-.hover\\:shadow-lg:hover {
-  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
-.focus\\:border-blue-500:focus {
-  --tw-border-opacity: 1;
-  border-color: rgb(59 130 246 / var(--tw-border-opacity));
-}
-
-.focus\\:border-gray-100:focus {
-  --tw-border-opacity: 1;
-  border-color: rgb(243 244 246 / var(--tw-border-opacity));
-}
-
-.focus\\:bg-indigo-700:focus {
-  --tw-bg-opacity: 1;
-  background-color: rgb(67 56 202 / var(--tw-bg-opacity));
-}
-
-.focus\\:shadow-lg:focus {
-  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
-.focus\\:outline-none:focus {
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-}
-
-.focus\\:ring-0:focus {
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(0px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
-}
-
-.focus\\:ring-2:focus {
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
-}
-
-.focus\\:ring-blue-500:focus {
-  --tw-ring-opacity: 1;
-  --tw-ring-color: rgb(59 130 246 / var(--tw-ring-opacity));
-}
-
-.focus\\:ring-indigo-500:focus {
-  --tw-ring-opacity: 1;
-  --tw-ring-color: rgb(99 102 241 / var(--tw-ring-opacity));
-}
-
-.focus\\:ring-offset-2:focus {
-  --tw-ring-offset-width: 2px;
-}
-
-.active\\:bg-indigo-800:active {
-  --tw-bg-opacity: 1;
-  background-color: rgb(55 48 163 / var(--tw-bg-opacity));
-}
-
-.active\\:shadow-lg:active {
-  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
-.disabled\\:opacity-25:disabled {
-  opacity: 0.25;
-}
-
-.group:hover .group-hover\\:text-gray-900 {
-  --tw-text-opacity: 1;
-  color: rgb(17 24 39 / var(--tw-text-opacity));
-}
-
-@media (min-width: 640px) {
-  .sm\\:px-6 {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-  }
-
-  .sm\\:text-sm {
-    font-size: 0.875rem;
-    line-height: 1.25rem;
-  }
-
-  .sm\\:text-xs {
-    font-size: 0.75rem;
-    line-height: 1rem;
-  }
-
-  .sm\\:leading-5 {
-    line-height: 1.25rem;
-  }
-
-  .sm\\:duration-700 {
-    transition-duration: 700ms;
-  }
-}
-`, ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "/*\n! tailwindcss v3.0.24 | MIT License | https://tailwindcss.com\n*/\n\n/*\n1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)\n2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)\n*/\n\n*,\n::before,\n::after {\n  box-sizing: border-box;\n  /* 1 */\n  border-width: 0;\n  /* 2 */\n  border-style: solid;\n  /* 2 */\n  border-color: #e5e7eb;\n  /* 2 */\n}\n\n::before,\n::after {\n  --tw-content: '';\n}\n\n/*\n1. Use a consistent sensible line-height in all browsers.\n2. Prevent adjustments of font size after orientation changes in iOS.\n3. Use a more readable tab size.\n4. Use the user's configured `sans` font-family by default.\n*/\n\nhtml {\n  line-height: 1.5;\n  /* 1 */\n  -webkit-text-size-adjust: 100%;\n  /* 2 */\n  -moz-tab-size: 4;\n  /* 3 */\n  -o-tab-size: 4;\n     tab-size: 4;\n  /* 3 */\n  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n  /* 4 */\n}\n\n/*\n1. Remove the margin in all browsers.\n2. Inherit line-height from `html` so users can set them as a class directly on the `html` element.\n*/\n\nbody {\n  margin: 0;\n  /* 1 */\n  line-height: inherit;\n  /* 2 */\n}\n\n/*\n1. Add the correct height in Firefox.\n2. Correct the inheritance of border color in Firefox. (https://bugzilla.mozilla.org/show_bug.cgi?id=190655)\n3. Ensure horizontal rules are visible by default.\n*/\n\nhr {\n  height: 0;\n  /* 1 */\n  color: inherit;\n  /* 2 */\n  border-top-width: 1px;\n  /* 3 */\n}\n\n/*\nAdd the correct text decoration in Chrome, Edge, and Safari.\n*/\n\nabbr:where([title]) {\n  -webkit-text-decoration: underline dotted;\n          text-decoration: underline dotted;\n}\n\n/*\nRemove the default font size and weight for headings.\n*/\n\nh1,\nh2,\nh3,\nh4,\nh5,\nh6 {\n  font-size: inherit;\n  font-weight: inherit;\n}\n\n/*\nReset links to optimize for opt-in styling instead of opt-out.\n*/\n\na {\n  color: inherit;\n  text-decoration: inherit;\n}\n\n/*\nAdd the correct font weight in Edge and Safari.\n*/\n\nb,\nstrong {\n  font-weight: bolder;\n}\n\n/*\n1. Use the user's configured `mono` font family by default.\n2. Correct the odd `em` font sizing in all browsers.\n*/\n\ncode,\nkbd,\nsamp,\npre {\n  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace;\n  /* 1 */\n  font-size: 1em;\n  /* 2 */\n}\n\n/*\nAdd the correct font size in all browsers.\n*/\n\nsmall {\n  font-size: 80%;\n}\n\n/*\nPrevent `sub` and `sup` elements from affecting the line height in all browsers.\n*/\n\nsub,\nsup {\n  font-size: 75%;\n  line-height: 0;\n  position: relative;\n  vertical-align: baseline;\n}\n\nsub {\n  bottom: -0.25em;\n}\n\nsup {\n  top: -0.5em;\n}\n\n/*\n1. Remove text indentation from table contents in Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=999088, https://bugs.webkit.org/show_bug.cgi?id=201297)\n2. Correct table border color inheritance in all Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=935729, https://bugs.webkit.org/show_bug.cgi?id=195016)\n3. Remove gaps between table borders by default.\n*/\n\ntable {\n  text-indent: 0;\n  /* 1 */\n  border-color: inherit;\n  /* 2 */\n  border-collapse: collapse;\n  /* 3 */\n}\n\n/*\n1. Change the font styles in all browsers.\n2. Remove the margin in Firefox and Safari.\n3. Remove default padding in all browsers.\n*/\n\nbutton,\ninput,\noptgroup,\nselect,\ntextarea {\n  font-family: inherit;\n  /* 1 */\n  font-size: 100%;\n  /* 1 */\n  line-height: inherit;\n  /* 1 */\n  color: inherit;\n  /* 1 */\n  margin: 0;\n  /* 2 */\n  padding: 0;\n  /* 3 */\n}\n\n/*\nRemove the inheritance of text transform in Edge and Firefox.\n*/\n\nbutton,\nselect {\n  text-transform: none;\n}\n\n/*\n1. Correct the inability to style clickable types in iOS and Safari.\n2. Remove default button styles.\n*/\n\nbutton,\n[type='button'],\n[type='reset'],\n[type='submit'] {\n  -webkit-appearance: button;\n  /* 1 */\n  background-color: transparent;\n  /* 2 */\n  background-image: none;\n  /* 2 */\n}\n\n/*\nUse the modern Firefox focus style for all focusable elements.\n*/\n\n:-moz-focusring {\n  outline: auto;\n}\n\n/*\nRemove the additional `:invalid` styles in Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737)\n*/\n\n:-moz-ui-invalid {\n  box-shadow: none;\n}\n\n/*\nAdd the correct vertical alignment in Chrome and Firefox.\n*/\n\nprogress {\n  vertical-align: baseline;\n}\n\n/*\nCorrect the cursor style of increment and decrement buttons in Safari.\n*/\n\n::-webkit-inner-spin-button,\n::-webkit-outer-spin-button {\n  height: auto;\n}\n\n/*\n1. Correct the odd appearance in Chrome and Safari.\n2. Correct the outline style in Safari.\n*/\n\n[type='search'] {\n  -webkit-appearance: textfield;\n  /* 1 */\n  outline-offset: -2px;\n  /* 2 */\n}\n\n/*\nRemove the inner padding in Chrome and Safari on macOS.\n*/\n\n::-webkit-search-decoration {\n  -webkit-appearance: none;\n}\n\n/*\n1. Correct the inability to style clickable types in iOS and Safari.\n2. Change font properties to `inherit` in Safari.\n*/\n\n::-webkit-file-upload-button {\n  -webkit-appearance: button;\n  /* 1 */\n  font: inherit;\n  /* 2 */\n}\n\n/*\nAdd the correct display in Chrome and Safari.\n*/\n\nsummary {\n  display: list-item;\n}\n\n/*\nRemoves the default spacing and border for appropriate elements.\n*/\n\nblockquote,\ndl,\ndd,\nh1,\nh2,\nh3,\nh4,\nh5,\nh6,\nhr,\nfigure,\np,\npre {\n  margin: 0;\n}\n\nfieldset {\n  margin: 0;\n  padding: 0;\n}\n\nlegend {\n  padding: 0;\n}\n\nol,\nul,\nmenu {\n  list-style: none;\n  margin: 0;\n  padding: 0;\n}\n\n/*\nPrevent resizing textareas horizontally by default.\n*/\n\ntextarea {\n  resize: vertical;\n}\n\n/*\n1. Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)\n2. Set the default placeholder color to the user's configured gray 400 color.\n*/\n\ninput::-moz-placeholder, textarea::-moz-placeholder {\n  opacity: 1;\n  /* 1 */\n  color: #9ca3af;\n  /* 2 */\n}\n\ninput:-ms-input-placeholder, textarea:-ms-input-placeholder {\n  opacity: 1;\n  /* 1 */\n  color: #9ca3af;\n  /* 2 */\n}\n\ninput::placeholder,\ntextarea::placeholder {\n  opacity: 1;\n  /* 1 */\n  color: #9ca3af;\n  /* 2 */\n}\n\n/*\nSet the default cursor for buttons.\n*/\n\nbutton,\n[role=\"button\"] {\n  cursor: pointer;\n}\n\n/*\nMake sure disabled buttons don't get the pointer cursor.\n*/\n\n:disabled {\n  cursor: default;\n}\n\n/*\n1. Make replaced elements `display: block` by default. (https://github.com/mozdevs/cssremedy/issues/14)\n2. Add `vertical-align: middle` to align replaced elements more sensibly by default. (https://github.com/jensimmons/cssremedy/issues/14#issuecomment-634934210)\n   This can trigger a poorly considered lint error in some tools but is included by design.\n*/\n\nimg,\nsvg,\nvideo,\ncanvas,\naudio,\niframe,\nembed,\nobject {\n  display: block;\n  /* 1 */\n  vertical-align: middle;\n  /* 2 */\n}\n\n/*\nConstrain images and videos to the parent width and preserve their intrinsic aspect ratio. (https://github.com/mozdevs/cssremedy/issues/14)\n*/\n\nimg,\nvideo {\n  max-width: 100%;\n  height: auto;\n}\n\n/*\nEnsure the default browser behavior of the `hidden` attribute.\n*/\n\n[hidden] {\n  display: none;\n}\n\n[type='text'],[type='email'],[type='url'],[type='password'],[type='number'],[type='date'],[type='datetime-local'],[type='month'],[type='search'],[type='tel'],[type='time'],[type='week'],[multiple],textarea,select {\n  -webkit-appearance: none;\n     -moz-appearance: none;\n          appearance: none;\n  background-color: #fff;\n  border-color: #6b7280;\n  border-width: 1px;\n  border-radius: 0px;\n  padding-top: 0.5rem;\n  padding-right: 0.75rem;\n  padding-bottom: 0.5rem;\n  padding-left: 0.75rem;\n  font-size: 1rem;\n  line-height: 1.5rem;\n  --tw-shadow: 0 0 #0000;\n}\n\n[type='text']:focus, [type='email']:focus, [type='url']:focus, [type='password']:focus, [type='number']:focus, [type='date']:focus, [type='datetime-local']:focus, [type='month']:focus, [type='search']:focus, [type='tel']:focus, [type='time']:focus, [type='week']:focus, [multiple]:focus, textarea:focus, select:focus {\n  outline: 2px solid transparent;\n  outline-offset: 2px;\n  --tw-ring-inset: var(--tw-empty,/*!*/ /*!*/);\n  --tw-ring-offset-width: 0px;\n  --tw-ring-offset-color: #fff;\n  --tw-ring-color: #2563eb;\n  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);\n  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);\n  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);\n  border-color: #2563eb;\n}\n\ninput::-moz-placeholder, textarea::-moz-placeholder {\n  color: #6b7280;\n  opacity: 1;\n}\n\ninput:-ms-input-placeholder, textarea:-ms-input-placeholder {\n  color: #6b7280;\n  opacity: 1;\n}\n\ninput::placeholder,textarea::placeholder {\n  color: #6b7280;\n  opacity: 1;\n}\n\n::-webkit-datetime-edit-fields-wrapper {\n  padding: 0;\n}\n\n::-webkit-date-and-time-value {\n  min-height: 1.5em;\n}\n\n::-webkit-datetime-edit,::-webkit-datetime-edit-year-field,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute-field,::-webkit-datetime-edit-second-field,::-webkit-datetime-edit-millisecond-field,::-webkit-datetime-edit-meridiem-field {\n  padding-top: 0;\n  padding-bottom: 0;\n}\n\nselect {\n  background-image: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e\");\n  background-position: right 0.5rem center;\n  background-repeat: no-repeat;\n  background-size: 1.5em 1.5em;\n  padding-right: 2.5rem;\n  print-color-adjust: exact;\n}\n\n[multiple] {\n  background-image: initial;\n  background-position: initial;\n  background-repeat: unset;\n  background-size: initial;\n  padding-right: 0.75rem;\n  print-color-adjust: unset;\n}\n\n[type='checkbox'],[type='radio'] {\n  -webkit-appearance: none;\n     -moz-appearance: none;\n          appearance: none;\n  padding: 0;\n  print-color-adjust: exact;\n  display: inline-block;\n  vertical-align: middle;\n  background-origin: border-box;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n  flex-shrink: 0;\n  height: 1rem;\n  width: 1rem;\n  color: #2563eb;\n  background-color: #fff;\n  border-color: #6b7280;\n  border-width: 1px;\n  --tw-shadow: 0 0 #0000;\n}\n\n[type='checkbox'] {\n  border-radius: 0px;\n}\n\n[type='radio'] {\n  border-radius: 100%;\n}\n\n[type='checkbox']:focus,[type='radio']:focus {\n  outline: 2px solid transparent;\n  outline-offset: 2px;\n  --tw-ring-inset: var(--tw-empty,/*!*/ /*!*/);\n  --tw-ring-offset-width: 2px;\n  --tw-ring-offset-color: #fff;\n  --tw-ring-color: #2563eb;\n  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);\n  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);\n  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);\n}\n\n[type='checkbox']:checked,[type='radio']:checked {\n  border-color: transparent;\n  background-color: currentColor;\n  background-size: 100% 100%;\n  background-position: center;\n  background-repeat: no-repeat;\n}\n\n[type='checkbox']:checked {\n  background-image: url(\"data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e\");\n}\n\n[type='radio']:checked {\n  background-image: url(\"data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='8' cy='8' r='3'/%3e%3c/svg%3e\");\n}\n\n[type='checkbox']:checked:hover,[type='checkbox']:checked:focus,[type='radio']:checked:hover,[type='radio']:checked:focus {\n  border-color: transparent;\n  background-color: currentColor;\n}\n\n[type='checkbox']:indeterminate {\n  background-image: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 16 16'%3e%3cpath stroke='white' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 8h8'/%3e%3c/svg%3e\");\n  border-color: transparent;\n  background-color: currentColor;\n  background-size: 100% 100%;\n  background-position: center;\n  background-repeat: no-repeat;\n}\n\n[type='checkbox']:indeterminate:hover,[type='checkbox']:indeterminate:focus {\n  border-color: transparent;\n  background-color: currentColor;\n}\n\n[type='file'] {\n  background: unset;\n  border-color: inherit;\n  border-width: 0;\n  border-radius: 0;\n  padding: 0;\n  font-size: unset;\n  line-height: inherit;\n}\n\n[type='file']:focus {\n  outline: 1px solid ButtonText;\n  outline: 1px auto -webkit-focus-ring-color;\n}\n\n*, ::before, ::after {\n  --tw-translate-x: 0;\n  --tw-translate-y: 0;\n  --tw-rotate: 0;\n  --tw-skew-x: 0;\n  --tw-skew-y: 0;\n  --tw-scale-x: 1;\n  --tw-scale-y: 1;\n  --tw-pan-x:  ;\n  --tw-pan-y:  ;\n  --tw-pinch-zoom:  ;\n  --tw-scroll-snap-strictness: proximity;\n  --tw-ordinal:  ;\n  --tw-slashed-zero:  ;\n  --tw-numeric-figure:  ;\n  --tw-numeric-spacing:  ;\n  --tw-numeric-fraction:  ;\n  --tw-ring-inset:  ;\n  --tw-ring-offset-width: 0px;\n  --tw-ring-offset-color: #fff;\n  --tw-ring-color: rgb(59 130 246 / 0.5);\n  --tw-ring-offset-shadow: 0 0 #0000;\n  --tw-ring-shadow: 0 0 #0000;\n  --tw-shadow: 0 0 #0000;\n  --tw-shadow-colored: 0 0 #0000;\n  --tw-blur:  ;\n  --tw-brightness:  ;\n  --tw-contrast:  ;\n  --tw-grayscale:  ;\n  --tw-hue-rotate:  ;\n  --tw-invert:  ;\n  --tw-saturate:  ;\n  --tw-sepia:  ;\n  --tw-drop-shadow:  ;\n  --tw-backdrop-blur:  ;\n  --tw-backdrop-brightness:  ;\n  --tw-backdrop-contrast:  ;\n  --tw-backdrop-grayscale:  ;\n  --tw-backdrop-hue-rotate:  ;\n  --tw-backdrop-invert:  ;\n  --tw-backdrop-opacity:  ;\n  --tw-backdrop-saturate:  ;\n  --tw-backdrop-sepia:  ;\n}\n\n.sr-only {\n  position: absolute;\n  width: 1px;\n  height: 1px;\n  padding: 0;\n  margin: -1px;\n  overflow: hidden;\n  clip: rect(0, 0, 0, 0);\n  white-space: nowrap;\n  border-width: 0;\n}\n\n.pointer-events-none {\n  pointer-events: none;\n}\n\n.pointer-events-auto {\n  pointer-events: auto;\n}\n\n.static {\n  position: static;\n}\n\n.fixed {\n  position: fixed;\n}\n\n.absolute {\n  position: absolute;\n}\n\n.relative {\n  position: relative;\n}\n\n.inset-0 {\n  top: 0px;\n  right: 0px;\n  bottom: 0px;\n  left: 0px;\n}\n\n.inset-y-0 {\n  top: 0px;\n  bottom: 0px;\n}\n\n.-left-8 {\n  left: -2rem;\n}\n\n.top-1\\/2 {\n  top: 50%;\n}\n\n.top-0 {\n  top: 0px;\n}\n\n.right-0 {\n  right: 0px;\n}\n\n.left-0 {\n  left: 0px;\n}\n\n.z-50 {\n  z-index: 50;\n}\n\n.m-2 {\n  margin: 0.5rem;\n}\n\n.-m-2 {\n  margin: -0.5rem;\n}\n\n.m-1 {\n  margin: 0.25rem;\n}\n\n.m-4 {\n  margin: 1rem;\n}\n\n.mx-1 {\n  margin-left: 0.25rem;\n  margin-right: 0.25rem;\n}\n\n.my-1 {\n  margin-top: 0.25rem;\n  margin-bottom: 0.25rem;\n}\n\n.-my-6 {\n  margin-top: -1.5rem;\n  margin-bottom: -1.5rem;\n}\n\n.mx-2 {\n  margin-left: 0.5rem;\n  margin-right: 0.5rem;\n}\n\n.ml-4 {\n  margin-left: 1rem;\n}\n\n.mt-2 {\n  margin-top: 0.5rem;\n}\n\n.ml-3 {\n  margin-left: 0.75rem;\n}\n\n.mt-8 {\n  margin-top: 2rem;\n}\n\n.mt-1 {\n  margin-top: 0.25rem;\n}\n\n.mt-0\\.5 {\n  margin-top: 0.125rem;\n}\n\n.mt-0 {\n  margin-top: 0px;\n}\n\n.mt-6 {\n  margin-top: 1.5rem;\n}\n\n.ml-auto {\n  margin-left: auto;\n}\n\n.mb-4 {\n  margin-bottom: 1rem;\n}\n\n.ml-1 {\n  margin-left: 0.25rem;\n}\n\n.block {\n  display: block;\n}\n\n.inline-block {\n  display: inline-block;\n}\n\n.flex {\n  display: flex;\n}\n\n.inline-flex {\n  display: inline-flex;\n}\n\n.table {\n  display: table;\n}\n\n.flow-root {\n  display: flow-root;\n}\n\n.h-12 {\n  height: 3rem;\n}\n\n.h-screen {\n  height: 100vh;\n}\n\n.h-fit {\n  height: -webkit-fit-content;\n  height: -moz-fit-content;\n  height: fit-content;\n}\n\n.h-20 {\n  height: 5rem;\n}\n\n.h-full {\n  height: 100%;\n}\n\n.h-7 {\n  height: 1.75rem;\n}\n\n.h-6 {\n  height: 1.5rem;\n}\n\n.h-24 {\n  height: 6rem;\n}\n\n.h-5 {\n  height: 1.25rem;\n}\n\n.h-3 {\n  height: 0.75rem;\n}\n\n.h-4 {\n  height: 1rem;\n}\n\n.h-8 {\n  height: 2rem;\n}\n\n.max-h-\\[95\\%\\] {\n  max-height: 95%;\n}\n\n.w-12 {\n  width: 3rem;\n}\n\n.w-full {\n  width: 100%;\n}\n\n.w-64 {\n  width: 16rem;\n}\n\n.w-80 {\n  width: 20rem;\n}\n\n.w-8 {\n  width: 2rem;\n}\n\n.w-screen {\n  width: 100vw;\n}\n\n.w-72 {\n  width: 18rem;\n}\n\n.w-40 {\n  width: 10rem;\n}\n\n.w-6 {\n  width: 1.5rem;\n}\n\n.w-24 {\n  width: 6rem;\n}\n\n.w-5 {\n  width: 1.25rem;\n}\n\n.w-3 {\n  width: 0.75rem;\n}\n\n.w-16 {\n  width: 4rem;\n}\n\n.w-4 {\n  width: 1rem;\n}\n\n.w-7 {\n  width: 1.75rem;\n}\n\n.min-w-full {\n  min-width: 100%;\n}\n\n.max-w-full {\n  max-width: 100%;\n}\n\n.max-w-md {\n  max-width: 28rem;\n}\n\n.max-w-\\[150px\\] {\n  max-width: 150px;\n}\n\n.flex-1 {\n  flex: 1 1 0%;\n}\n\n.flex-shrink-0 {\n  flex-shrink: 0;\n}\n\n.table-auto {\n  table-layout: auto;\n}\n\n.translate-x-full {\n  --tw-translate-x: 100%;\n  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n}\n\n.translate-x-0 {\n  --tw-translate-x: 0px;\n  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n}\n\n.transform {\n  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n}\n\n.cursor-help {\n  cursor: help;\n}\n\n.cursor-not-allowed {\n  cursor: not-allowed;\n}\n\n.cursor-pointer {\n  cursor: pointer;\n}\n\n.flex-col {\n  flex-direction: column;\n}\n\n.flex-wrap {\n  flex-wrap: wrap;\n}\n\n.items-start {\n  align-items: flex-start;\n}\n\n.items-end {\n  align-items: flex-end;\n}\n\n.items-center {\n  align-items: center;\n}\n\n.justify-center {\n  justify-content: center;\n}\n\n.justify-between {\n  justify-content: space-between;\n}\n\n.justify-evenly {\n  justify-content: space-evenly;\n}\n\n.space-y-2 > :not([hidden]) ~ :not([hidden]) {\n  --tw-space-y-reverse: 0;\n  margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));\n  margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));\n}\n\n.divide-y > :not([hidden]) ~ :not([hidden]) {\n  --tw-divide-y-reverse: 0;\n  border-top-width: calc(1px * calc(1 - var(--tw-divide-y-reverse)));\n  border-bottom-width: calc(1px * var(--tw-divide-y-reverse));\n}\n\n.divide-gray-200 > :not([hidden]) ~ :not([hidden]) {\n  --tw-divide-opacity: 1;\n  border-color: rgb(229 231 235 / var(--tw-divide-opacity));\n}\n\n.divide-gray-100 > :not([hidden]) ~ :not([hidden]) {\n  --tw-divide-opacity: 1;\n  border-color: rgb(243 244 246 / var(--tw-divide-opacity));\n}\n\n.overflow-auto {\n  overflow: auto;\n}\n\n.overflow-hidden {\n  overflow: hidden;\n}\n\n.overflow-y-auto {\n  overflow-y: auto;\n}\n\n.overflow-x-hidden {\n  overflow-x: hidden;\n}\n\n.overflow-y-scroll {\n  overflow-y: scroll;\n}\n\n.overflow-ellipsis {\n  text-overflow: ellipsis;\n}\n\n.text-ellipsis {\n  text-overflow: ellipsis;\n}\n\n.whitespace-nowrap {\n  white-space: nowrap;\n}\n\n.rounded-md {\n  border-radius: 0.375rem;\n}\n\n.rounded {\n  border-radius: 0.25rem;\n}\n\n.rounded-lg {\n  border-radius: 0.5rem;\n}\n\n.rounded-full {\n  border-radius: 9999px;\n}\n\n.rounded-t {\n  border-top-left-radius: 0.25rem;\n  border-top-right-radius: 0.25rem;\n}\n\n.rounded-b {\n  border-bottom-right-radius: 0.25rem;\n  border-bottom-left-radius: 0.25rem;\n}\n\n.border {\n  border-width: 1px;\n}\n\n.border-0 {\n  border-width: 0px;\n}\n\n.border-2 {\n  border-width: 2px;\n}\n\n.border-b {\n  border-bottom-width: 1px;\n}\n\n.border-t {\n  border-top-width: 1px;\n}\n\n.border-b-2 {\n  border-bottom-width: 2px;\n}\n\n.border-solid {\n  border-style: solid;\n}\n\n.border-gray-200 {\n  --tw-border-opacity: 1;\n  border-color: rgb(229 231 235 / var(--tw-border-opacity));\n}\n\n.border-transparent {\n  border-color: transparent;\n}\n\n.border-gray-300 {\n  --tw-border-opacity: 1;\n  border-color: rgb(209 213 219 / var(--tw-border-opacity));\n}\n\n.border-gray-400 {\n  --tw-border-opacity: 1;\n  border-color: rgb(156 163 175 / var(--tw-border-opacity));\n}\n\n.bg-transparent {\n  background-color: transparent;\n}\n\n.bg-gray-50 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(249 250 251 / var(--tw-bg-opacity));\n}\n\n.bg-indigo-400 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(129 140 248 / var(--tw-bg-opacity));\n}\n\n.bg-indigo-600 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(79 70 229 / var(--tw-bg-opacity));\n}\n\n.bg-gray-500 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(107 114 128 / var(--tw-bg-opacity));\n}\n\n.bg-white {\n  --tw-bg-opacity: 1;\n  background-color: rgb(255 255 255 / var(--tw-bg-opacity));\n}\n\n.bg-gray-900 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(17 24 39 / var(--tw-bg-opacity));\n}\n\n.bg-gray-200 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(229 231 235 / var(--tw-bg-opacity));\n}\n\n.bg-blue-200 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(191 219 254 / var(--tw-bg-opacity));\n}\n\n.bg-green-400 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(74 222 128 / var(--tw-bg-opacity));\n}\n\n.bg-gray-400 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(156 163 175 / var(--tw-bg-opacity));\n}\n\n.bg-red-400 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(248 113 113 / var(--tw-bg-opacity));\n}\n\n.bg-blue-400 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(96 165 250 / var(--tw-bg-opacity));\n}\n\n.bg-gray-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(243 244 246 / var(--tw-bg-opacity));\n}\n\n.bg-gray-300 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(209 213 219 / var(--tw-bg-opacity));\n}\n\n.bg-opacity-75 {\n  --tw-bg-opacity: 0.75;\n}\n\n.bg-opacity-50 {\n  --tw-bg-opacity: 0.5;\n}\n\n.bg-cover {\n  background-size: cover;\n}\n\n.bg-center {\n  background-position: center;\n}\n\n.object-cover {\n  -o-object-fit: cover;\n     object-fit: cover;\n}\n\n.object-center {\n  -o-object-position: center;\n     object-position: center;\n}\n\n.p-2 {\n  padding: 0.5rem;\n}\n\n.p-5 {\n  padding: 1.25rem;\n}\n\n.p-1\\.5 {\n  padding: 0.375rem;\n}\n\n.p-1 {\n  padding: 0.25rem;\n}\n\n.p-6 {\n  padding: 1.5rem;\n}\n\n.p-3 {\n  padding: 0.75rem;\n}\n\n.p-0 {\n  padding: 0px;\n}\n\n.px-2 {\n  padding-left: 0.5rem;\n  padding-right: 0.5rem;\n}\n\n.py-1 {\n  padding-top: 0.25rem;\n  padding-bottom: 0.25rem;\n}\n\n.py-6 {\n  padding-top: 1.5rem;\n  padding-bottom: 1.5rem;\n}\n\n.px-4 {\n  padding-left: 1rem;\n  padding-right: 1rem;\n}\n\n.px-6 {\n  padding-left: 1.5rem;\n  padding-right: 1.5rem;\n}\n\n.py-3 {\n  padding-top: 0.75rem;\n  padding-bottom: 0.75rem;\n}\n\n.py-4 {\n  padding-top: 1rem;\n  padding-bottom: 1rem;\n}\n\n.px-3 {\n  padding-left: 0.75rem;\n  padding-right: 0.75rem;\n}\n\n.py-2 {\n  padding-top: 0.5rem;\n  padding-bottom: 0.5rem;\n}\n\n.pr-4 {\n  padding-right: 1rem;\n}\n\n.pl-2 {\n  padding-left: 0.5rem;\n}\n\n.pl-10 {\n  padding-left: 2.5rem;\n}\n\n.pl-1 {\n  padding-left: 0.25rem;\n}\n\n.pl-5 {\n  padding-left: 1.25rem;\n}\n\n.text-left {\n  text-align: left;\n}\n\n.text-center {\n  text-align: center;\n}\n\n.text-sm {\n  font-size: 0.875rem;\n  line-height: 1.25rem;\n}\n\n.text-xs {\n  font-size: 0.75rem;\n  line-height: 1rem;\n}\n\n.text-lg {\n  font-size: 1.125rem;\n  line-height: 1.75rem;\n}\n\n.text-base {\n  font-size: 1rem;\n  line-height: 1.5rem;\n}\n\n.text-xl {\n  font-size: 1.25rem;\n  line-height: 1.75rem;\n}\n\n.font-bold {\n  font-weight: 700;\n}\n\n.font-medium {\n  font-weight: 500;\n}\n\n.font-normal {\n  font-weight: 400;\n}\n\n.uppercase {\n  text-transform: uppercase;\n}\n\n.leading-tight {\n  line-height: 1.25;\n}\n\n.leading-6 {\n  line-height: 1.5rem;\n}\n\n.tracking-wider {\n  letter-spacing: 0.05em;\n}\n\n.text-white {\n  --tw-text-opacity: 1;\n  color: rgb(255 255 255 / var(--tw-text-opacity));\n}\n\n.text-red-500 {\n  --tw-text-opacity: 1;\n  color: rgb(239 68 68 / var(--tw-text-opacity));\n}\n\n.text-blue-500 {\n  --tw-text-opacity: 1;\n  color: rgb(59 130 246 / var(--tw-text-opacity));\n}\n\n.text-gray-900 {\n  --tw-text-opacity: 1;\n  color: rgb(17 24 39 / var(--tw-text-opacity));\n}\n\n.text-gray-400 {\n  --tw-text-opacity: 1;\n  color: rgb(156 163 175 / var(--tw-text-opacity));\n}\n\n.text-gray-500 {\n  --tw-text-opacity: 1;\n  color: rgb(107 114 128 / var(--tw-text-opacity));\n}\n\n.text-indigo-600 {\n  --tw-text-opacity: 1;\n  color: rgb(79 70 229 / var(--tw-text-opacity));\n}\n\n.text-gray-800 {\n  --tw-text-opacity: 1;\n  color: rgb(31 41 55 / var(--tw-text-opacity));\n}\n\n.text-blue-600 {\n  --tw-text-opacity: 1;\n  color: rgb(37 99 235 / var(--tw-text-opacity));\n}\n\n.text-gray-700 {\n  --tw-text-opacity: 1;\n  color: rgb(55 65 81 / var(--tw-text-opacity));\n}\n\n.opacity-0 {\n  opacity: 0;\n}\n\n.opacity-100 {\n  opacity: 1;\n}\n\n.shadow-md {\n  --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);\n  --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\n\n.shadow-xl {\n  --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);\n  --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\n\n.shadow-sm {\n  --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);\n  --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\n\n.shadow {\n  --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);\n  --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\n\n.filter {\n  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);\n}\n\n.transition {\n  transition-property: color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;\n  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;\n  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n\n.transition-opacity {\n  transition-property: opacity;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n\n.delay-150 {\n  transition-delay: 150ms;\n}\n\n.duration-300 {\n  transition-duration: 300ms;\n}\n\n.duration-150 {\n  transition-duration: 150ms;\n}\n\n.duration-500 {\n  transition-duration: 500ms;\n}\n\n.duration-75 {\n  transition-duration: 75ms;\n}\n\n.ease-in-out {\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n}\n\n#jkforum-helper .toggle-bg:after {\n  content: '';\n  position: absolute;\n  top: 0.125rem;\n  left: 0.125rem;\n  height: 0.75rem;\n  width: 0.75rem;\n  border-radius: 9999px;\n  border-width: 1px;\n  --tw-border-opacity: 1;\n  border-color: rgb(209 213 219 / var(--tw-border-opacity));\n  --tw-bg-opacity: 1;\n  background-color: rgb(255 255 255 / var(--tw-bg-opacity));\n  --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);\n  --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n  transition-property: color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;\n  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;\n  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n\n#jkforum-helper input:checked + .toggle-bg:after {\n  transform: translateX(100%);\n  --tw-border-opacity: 1;\n  border-color: rgb(255 255 255 / var(--tw-border-opacity));\n}\n\n#jkforum-helper input:checked + .toggle-bg {\n  --tw-border-opacity: 1;\n  border-color: rgb(37 99 235 / var(--tw-border-opacity));\n  --tw-bg-opacity: 1;\n  background-color: rgb(37 99 235 / var(--tw-bg-opacity));\n}\n\n.border-b {\n  border-bottom: 1px solid lightgray;\n}\n\n/* 增加 visited 样式，图片模式已阅的帖子变灰色 */\n\n.xw0 a:visited {\n  color: grey;\n}\n\n#jkforum-helper button {\n  border: unset;\n}\n\n.focus-within\\:text-gray-400:focus-within {\n  --tw-text-opacity: 1;\n  color: rgb(156 163 175 / var(--tw-text-opacity));\n}\n\n.hover\\:translate-x-9:hover {\n  --tw-translate-x: 2.25rem;\n  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n}\n\n.hover\\:rotate-\\[360deg\\]:hover {\n  --tw-rotate: 360deg;\n  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n}\n\n.hover\\:scale-110:hover {\n  --tw-scale-x: 1.1;\n  --tw-scale-y: 1.1;\n  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n}\n\n.hover\\:border-gray-200:hover {\n  --tw-border-opacity: 1;\n  border-color: rgb(229 231 235 / var(--tw-border-opacity));\n}\n\n.hover\\:bg-indigo-700:hover {\n  --tw-bg-opacity: 1;\n  background-color: rgb(67 56 202 / var(--tw-bg-opacity));\n}\n\n.hover\\:bg-gray-200:hover {\n  --tw-bg-opacity: 1;\n  background-color: rgb(229 231 235 / var(--tw-bg-opacity));\n}\n\n.hover\\:bg-gray-100:hover {\n  --tw-bg-opacity: 1;\n  background-color: rgb(243 244 246 / var(--tw-bg-opacity));\n}\n\n.hover\\:text-gray-500:hover {\n  --tw-text-opacity: 1;\n  color: rgb(107 114 128 / var(--tw-text-opacity));\n}\n\n.hover\\:text-indigo-500:hover {\n  --tw-text-opacity: 1;\n  color: rgb(99 102 241 / var(--tw-text-opacity));\n}\n\n.hover\\:text-gray-900:hover {\n  --tw-text-opacity: 1;\n  color: rgb(17 24 39 / var(--tw-text-opacity));\n}\n\n.hover\\:shadow-lg:hover {\n  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);\n  --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\n\n.focus\\:border-blue-500:focus {\n  --tw-border-opacity: 1;\n  border-color: rgb(59 130 246 / var(--tw-border-opacity));\n}\n\n.focus\\:border-gray-100:focus {\n  --tw-border-opacity: 1;\n  border-color: rgb(243 244 246 / var(--tw-border-opacity));\n}\n\n.focus\\:bg-indigo-700:focus {\n  --tw-bg-opacity: 1;\n  background-color: rgb(67 56 202 / var(--tw-bg-opacity));\n}\n\n.focus\\:shadow-lg:focus {\n  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);\n  --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\n\n.focus\\:outline-none:focus {\n  outline: 2px solid transparent;\n  outline-offset: 2px;\n}\n\n.focus\\:ring-2:focus {\n  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);\n  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);\n  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);\n}\n\n.focus\\:ring-0:focus {\n  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);\n  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(0px + var(--tw-ring-offset-width)) var(--tw-ring-color);\n  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);\n}\n\n.focus\\:ring-indigo-500:focus {\n  --tw-ring-opacity: 1;\n  --tw-ring-color: rgb(99 102 241 / var(--tw-ring-opacity));\n}\n\n.focus\\:ring-blue-500:focus {\n  --tw-ring-opacity: 1;\n  --tw-ring-color: rgb(59 130 246 / var(--tw-ring-opacity));\n}\n\n.focus\\:ring-offset-2:focus {\n  --tw-ring-offset-width: 2px;\n}\n\n.active\\:bg-indigo-800:active {\n  --tw-bg-opacity: 1;\n  background-color: rgb(55 48 163 / var(--tw-bg-opacity));\n}\n\n.active\\:shadow-lg:active {\n  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);\n  --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\n\n.disabled\\:opacity-25:disabled {\n  opacity: 0.25;\n}\n\n.group:hover .group-hover\\:text-gray-900 {\n  --tw-text-opacity: 1;\n  color: rgb(17 24 39 / var(--tw-text-opacity));\n}\n\n@media (min-width: 640px) {\n  .sm\\:px-6 {\n    padding-left: 1.5rem;\n    padding-right: 1.5rem;\n  }\n\n  .sm\\:text-xs {\n    font-size: 0.75rem;\n    line-height: 1rem;\n  }\n\n  .sm\\:text-sm {\n    font-size: 0.875rem;\n    line-height: 1.25rem;\n  }\n\n  .sm\\:leading-5 {\n    line-height: 1.25rem;\n  }\n\n  .sm\\:duration-700 {\n    transition-duration: 700ms;\n  }\n}\n", ""]);
 // Exports
 module.exports = ___CSS_LOADER_EXPORT___;
 
 
 /***/ }),
 
-/***/ 196:
+/***/ 645:
 /***/ ((module) => {
 
 "use strict";
@@ -1928,55 +74,68 @@ module.exports = ___CSS_LOADER_EXPORT___;
   Author Tobias Koppers @sokra
 */
 module.exports = function (cssWithMappingToString) {
-  var list = [];
+  var list = []; // return the list of modules as css string
 
-  // return the list of modules as css string
   list.toString = function toString() {
     return this.map(function (item) {
       var content = "";
       var needLayer = typeof item[5] !== "undefined";
+
       if (item[4]) {
         content += "@supports (".concat(item[4], ") {");
       }
+
       if (item[2]) {
         content += "@media ".concat(item[2], " {");
       }
+
       if (needLayer) {
         content += "@layer".concat(item[5].length > 0 ? " ".concat(item[5]) : "", " {");
       }
+
       content += cssWithMappingToString(item);
+
       if (needLayer) {
         content += "}";
       }
+
       if (item[2]) {
         content += "}";
       }
+
       if (item[4]) {
         content += "}";
       }
+
       return content;
     }).join("");
-  };
+  }; // import a list of modules into the list
 
-  // import a list of modules into the list
+
   list.i = function i(modules, media, dedupe, supports, layer) {
     if (typeof modules === "string") {
       modules = [[null, modules, undefined]];
     }
+
     var alreadyImportedModules = {};
+
     if (dedupe) {
       for (var k = 0; k < this.length; k++) {
         var id = this[k][0];
+
         if (id != null) {
           alreadyImportedModules[id] = true;
         }
       }
     }
+
     for (var _k = 0; _k < modules.length; _k++) {
       var item = [].concat(modules[_k]);
+
       if (dedupe && alreadyImportedModules[item[0]]) {
         continue;
       }
+
       if (typeof layer !== "undefined") {
         if (typeof item[5] === "undefined") {
           item[5] = layer;
@@ -1985,6 +144,7 @@ module.exports = function (cssWithMappingToString) {
           item[5] = layer;
         }
       }
+
       if (media) {
         if (!item[2]) {
           item[2] = media;
@@ -1993,6 +153,7 @@ module.exports = function (cssWithMappingToString) {
           item[2] = media;
         }
       }
+
       if (supports) {
         if (!item[4]) {
           item[4] = "".concat(supports);
@@ -2001,15 +162,17 @@ module.exports = function (cssWithMappingToString) {
           item[4] = supports;
         }
       }
+
       list.push(item);
     }
   };
+
   return list;
 };
 
 /***/ }),
 
-/***/ 650:
+/***/ 81:
 /***/ ((module) => {
 
 "use strict";
@@ -2021,7 +184,7 @@ module.exports = function (i) {
 
 /***/ }),
 
-/***/ 38:
+/***/ 466:
 /***/ (() => {
 
 (function (workerScript) {
@@ -2175,7 +338,7 @@ onmessage = function (event) {\
 
 /***/ }),
 
-/***/ 478:
+/***/ 745:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -2190,11 +353,11 @@ if (true) {
 
 /***/ }),
 
-/***/ 67:
+/***/ 600:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 
-        var result = __webpack_require__(214);
+        var result = __webpack_require__(529);
 
         if (result && result.__esModule) {
             result = result.default;
@@ -2209,7 +372,7 @@ if (true) {
 
 /***/ }),
 
-/***/ 809:
+/***/ 632:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -2238,10 +401,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const lib_1 = __webpack_require__(251);
-const Home_1 = __webpack_require__(797);
-const react_1 = __importStar(__webpack_require__(363));
-const commonMeta = __webpack_require__(633);
+const lib_1 = __webpack_require__(915);
+const Home_1 = __webpack_require__(818);
+const react_1 = __importStar(__webpack_require__(995));
+const commonMeta = __webpack_require__(419);
 const App = ({ username, formhash }) => {
     const [user, setUser] = (0, react_1.useState)();
     const [showHome, setShowHome] = (0, react_1.useState)(false);
@@ -2275,7 +438,7 @@ exports["default"] = App;
 
 /***/ }),
 
-/***/ 987:
+/***/ 321:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -2313,39 +476,6 @@ exports.RunStatus = RunStatus;
 
 /***/ }),
 
-/***/ 696:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
-    return t;
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.Button = void 0;
-const react_1 = __importDefault(__webpack_require__(363));
-const Button = (_a) => {
-    var { text, title = '', onClick, disabled } = _a, rest = __rest(_a, ["text", "title", "onClick", "disabled"]);
-    return (react_1.default.createElement("button", Object.assign({}, rest, { title: title, type: "button", "data-mdb-ripple": "true", "data-mdb-ripple-color": "light", disabled: disabled, className: `mx-1 my-1 px-2 py-1 text-xs font-medium text-center text-white inline-block leading-tight uppercase rounded shadow-md ${disabled
-            ? ' cursor-not-allowed bg-indigo-400 '
-            : 'bg-indigo-600 hover:bg-indigo-700 hover:shadow-lg focus:bg-indigo-700 focus:shadow-lg active:bg-indigo-800 active:shadow-lg transition duration-150 ease-in-out  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'}`, onClick: onClick }), text));
-};
-exports.Button = Button;
-
-
-/***/ }),
-
 /***/ 237:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
@@ -2366,8 +496,41 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Button = void 0;
+const react_1 = __importDefault(__webpack_require__(995));
+const Button = (_a) => {
+    var { text, title = '', onClick, disabled } = _a, rest = __rest(_a, ["text", "title", "onClick", "disabled"]);
+    return (react_1.default.createElement("button", Object.assign({}, rest, { title: title, type: "button", "data-mdb-ripple": "true", "data-mdb-ripple-color": "light", disabled: disabled, className: `mx-1 my-1 px-2 py-1 text-xs font-medium text-center text-white inline-block leading-tight uppercase rounded shadow-md ${disabled
+            ? ' cursor-not-allowed bg-indigo-400 '
+            : 'bg-indigo-600 hover:bg-indigo-700 hover:shadow-lg focus:bg-indigo-700 focus:shadow-lg active:bg-indigo-800 active:shadow-lg transition duration-150 ease-in-out  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'}`, onClick: onClick }), text));
+};
+exports.Button = Button;
+
+
+/***/ }),
+
+/***/ 84:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Input = void 0;
-const react_1 = __importDefault(__webpack_require__(363));
+const react_1 = __importDefault(__webpack_require__(995));
 const Input = (_a) => {
     var { label, placeholder, autoComplete, value, type = 'text' } = _a, args = __rest(_a, ["label", "placeholder", "autoComplete", "value", "type"]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
@@ -2379,7 +542,7 @@ exports.Input = Input;
 
 /***/ }),
 
-/***/ 7:
+/***/ 653:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -2389,7 +552,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Modal = void 0;
-const react_1 = __importDefault(__webpack_require__(363));
+const react_1 = __importDefault(__webpack_require__(995));
 const Modal = ({ header, footer, children, width, height, isShow = false, onClose }) => {
     if (!isShow) {
         return react_1.default.createElement(react_1.default.Fragment, null);
@@ -2409,7 +572,7 @@ exports.Modal = Modal;
 
 /***/ }),
 
-/***/ 799:
+/***/ 414:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -2419,7 +582,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Panel = void 0;
-const react_1 = __importDefault(__webpack_require__(363));
+const react_1 = __importDefault(__webpack_require__(995));
 const Panel = ({ title, children }) => {
     return (react_1.default.createElement("div", { className: "border-b py-1" },
         react_1.default.createElement("p", { className: "text-center font-bold" }, title),
@@ -2430,7 +593,7 @@ exports.Panel = Panel;
 
 /***/ }),
 
-/***/ 431:
+/***/ 420:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -2460,12 +623,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 /* eslint-disable react/jsx-key */
-const commonType_1 = __webpack_require__(987);
-const tools_1 = __webpack_require__(0);
-const react_1 = __importStar(__webpack_require__(363));
+const commonType_1 = __webpack_require__(321);
+const tools_1 = __webpack_require__(633);
+const react_1 = __importStar(__webpack_require__(995));
 const react_table_1 = __webpack_require__(282);
-const Button_1 = __webpack_require__(696);
-const Toggle_1 = __webpack_require__(828);
+const Button_1 = __webpack_require__(237);
+const Toggle_1 = __webpack_require__(219);
 const EditableCell = ({ value: initialValue, row: { index }, column: { id }, updateMyData, // This is a custom function that we supplied to our table instance
  }) => {
     // We need to keep and update the state of the cell normally
@@ -2695,7 +858,7 @@ exports["default"] = ReactTableCard;
 
 /***/ }),
 
-/***/ 360:
+/***/ 815:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -2705,7 +868,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.TextArea = void 0;
-const react_1 = __importDefault(__webpack_require__(363));
+const react_1 = __importDefault(__webpack_require__(995));
 const TextArea = ({ label, placeholder, onChange, value, rows = 3, cols }) => {
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement("label", { htmlFor: 'textarea' + label, className: "block m-1 text-xs font-medium text-gray-900 " }, label),
@@ -2718,7 +881,7 @@ exports.TextArea = TextArea;
 
 /***/ }),
 
-/***/ 828:
+/***/ 219:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -2748,7 +911,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Toggle = void 0;
-const react_1 = __importStar(__webpack_require__(363));
+const react_1 = __importStar(__webpack_require__(995));
 const Toggle = ({ label, checked, title, mykey = '-', onClick }) => {
     const [selected, setSelected] = (0, react_1.useState)(checked);
     (0, react_1.useEffect)(() => {
@@ -2769,7 +932,7 @@ exports.Toggle = Toggle;
 
 /***/ }),
 
-/***/ 644:
+/***/ 740:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -2779,25 +942,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Toggle = exports.TextArea = exports.ReactTableCard = exports.Panel = exports.Modal = exports.Input = exports.Button = void 0;
-var Button_1 = __webpack_require__(696);
+var Button_1 = __webpack_require__(237);
 Object.defineProperty(exports, "Button", ({ enumerable: true, get: function () { return Button_1.Button; } }));
-var Input_1 = __webpack_require__(237);
+var Input_1 = __webpack_require__(84);
 Object.defineProperty(exports, "Input", ({ enumerable: true, get: function () { return Input_1.Input; } }));
-var Modal_1 = __webpack_require__(7);
+var Modal_1 = __webpack_require__(653);
 Object.defineProperty(exports, "Modal", ({ enumerable: true, get: function () { return Modal_1.Modal; } }));
-var Panel_1 = __webpack_require__(799);
+var Panel_1 = __webpack_require__(414);
 Object.defineProperty(exports, "Panel", ({ enumerable: true, get: function () { return Panel_1.Panel; } }));
-var Table_1 = __webpack_require__(431);
+var Table_1 = __webpack_require__(420);
 Object.defineProperty(exports, "ReactTableCard", ({ enumerable: true, get: function () { return __importDefault(Table_1).default; } }));
-var TextArea_1 = __webpack_require__(360);
+var TextArea_1 = __webpack_require__(815);
 Object.defineProperty(exports, "TextArea", ({ enumerable: true, get: function () { return TextArea_1.TextArea; } }));
-var Toggle_1 = __webpack_require__(828);
+var Toggle_1 = __webpack_require__(219);
 Object.defineProperty(exports, "Toggle", ({ enumerable: true, get: function () { return Toggle_1.Toggle; } }));
 
 
 /***/ }),
 
-/***/ 5:
+/***/ 629:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -2829,17 +992,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const app_1 = __importDefault(__webpack_require__(809));
-const lib_1 = __webpack_require__(251);
-__webpack_require__(38); // 定时器不会因为窗口隐藏而降频
-const react_1 = __importDefault(__webpack_require__(363));
-const client_1 = __webpack_require__(478);
+const app_1 = __importDefault(__webpack_require__(632));
+const lib_1 = __webpack_require__(915);
+__webpack_require__(466); // 定时器不会因为窗口隐藏而降频
+const react_1 = __importDefault(__webpack_require__(995));
+const client_1 = __webpack_require__(745);
 const start = () => {
     (0, lib_1.skipPhoneValidate)();
     const username = (0, lib_1.getUserName)();
     const formhash = (0, lib_1.getFormhash)();
     if (username && formhash) {
-        Promise.resolve().then(() => __importStar(__webpack_require__(647)));
+        Promise.resolve().then(() => __importStar(__webpack_require__(19)));
         // 初始化消息盒子
         lib_1.MessageBox.generate();
         // 添加根元素
@@ -2858,17 +1021,17 @@ else {}
 
 /***/ }),
 
-/***/ 609:
+/***/ 516:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.postDataCdata = exports.postData = exports.getData = void 0;
-const tools_1 = __webpack_require__(0);
-const _1 = __webpack_require__(251);
+const tools_1 = __webpack_require__(633);
+const _1 = __webpack_require__(915);
 // GM_xmlhttpRequest GET异步通用模块
-function getData(url, type = "document" /* XhrResponseType.DOCUMENT */, usermethod = "GET" /* XhrMethod.GET */) {
+function getData(url, type = "document" /* DOCUMENT */, usermethod = "GET" /* GET */) {
     return new Promise((resolve, reject) => {
         GM_xmlhttpRequest({
             method: usermethod,
@@ -2888,14 +1051,14 @@ function getData(url, type = "document" /* XhrResponseType.DOCUMENT */, usermeth
                 reject(error);
             },
             ontimeout: () => {
-                new _1.MessageBox('网络超时', 'none', "LOG_POP_GM" /* Importance.LOG_POP_GM */);
+                new _1.MessageBox('网络超时', 'none', "LOG_POP_GM" /* LOG_POP_GM */);
                 reject('timeout');
             },
         });
     });
 }
 exports.getData = getData;
-function postDataCdata(url, postData, responseType = "document" /* XhrResponseType.DOCUMENT */, usermethod = "POST" /* XhrMethod.POST */, contentType = "application/x-www-form-urlencoded" /* XhrResponseType.FORM */) {
+function postDataCdata(url, postData, responseType = "document" /* DOCUMENT */, usermethod = "POST" /* POST */, contentType = "application/x-www-form-urlencoded" /* FORM */) {
     return new Promise((resolve, reject) => {
         GM_xmlhttpRequest({
             method: usermethod,
@@ -2920,7 +1083,7 @@ function postDataCdata(url, postData, responseType = "document" /* XhrResponseTy
                 reject(error);
             },
             ontimeout: () => {
-                new _1.MessageBox('网络超时', 'none', "LOG_POP_GM" /* Importance.LOG_POP_GM */);
+                new _1.MessageBox('网络超时', 'none', "LOG_POP_GM" /* LOG_POP_GM */);
                 reject('timeout');
             },
         });
@@ -2928,10 +1091,10 @@ function postDataCdata(url, postData, responseType = "document" /* XhrResponseTy
 }
 exports.postDataCdata = postDataCdata;
 // 正常的post
-function postData(url, data, { responseType = "document" /* XhrResponseType.DOCUMENT */, usermethod = "POST" /* XhrMethod.POST */, contentType = "application/x-www-form-urlencoded" /* XhrResponseType.FORM */, authorization, cookie, } = {
-    responseType: "document" /* XhrResponseType.DOCUMENT */,
-    usermethod: "POST" /* XhrMethod.POST */,
-    contentType: "application/x-www-form-urlencoded" /* XhrResponseType.FORM */,
+function postData(url, data, { responseType = "document" /* DOCUMENT */, usermethod = "POST" /* POST */, contentType = "application/x-www-form-urlencoded" /* FORM */, authorization, cookie, } = {
+    responseType: "document" /* DOCUMENT */,
+    usermethod: "POST" /* POST */,
+    contentType: "application/x-www-form-urlencoded" /* FORM */,
 }) {
     const headers = {
         'content-type': contentType,
@@ -2962,7 +1125,7 @@ function postData(url, data, { responseType = "document" /* XhrResponseType.DOCU
                 reject(error);
             },
             ontimeout: () => {
-                new _1.MessageBox('网络超时', 'none', "LOG_POP_GM" /* Importance.LOG_POP_GM */);
+                new _1.MessageBox('网络超时', 'none', "LOG_POP_GM" /* LOG_POP_GM */);
                 reject('timeout');
             },
         });
@@ -2973,7 +1136,7 @@ exports.postData = postData;
 
 /***/ }),
 
-/***/ 693:
+/***/ 342:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -2989,9 +1152,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.autoPost = void 0;
-const tools_1 = __webpack_require__(0);
-const ajax_1 = __webpack_require__(609);
-const message_1 = __webpack_require__(382);
+const tools_1 = __webpack_require__(633);
+const ajax_1 = __webpack_require__(516);
+const message_1 = __webpack_require__(244);
 const autoPost = (user) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     if ((_a = user.posts) === null || _a === void 0 ? void 0 : _a.length) {
@@ -3053,9 +1216,9 @@ const newThread = (post, formhash) => __awaiter(void 0, void 0, void 0, function
     }).toString();
     try {
         const res = yield (0, ajax_1.postData)(post.postUrl, data, {
-            responseType: "document" /* XhrResponseType.DOCUMENT */,
-            usermethod: "POST" /* XhrMethod.POST */,
-            contentType: "application/x-www-form-urlencoded" /* XhrResponseType.FORM */,
+            responseType: "document" /* DOCUMENT */,
+            usermethod: "POST" /* POST */,
+            contentType: "application/x-www-form-urlencoded" /* FORM */,
         });
         const msg = (_c = res === null || res === void 0 ? void 0 : res.querySelector('#messagetext p')) === null || _c === void 0 ? void 0 : _c.textContent;
         if (msg) {
@@ -3076,7 +1239,7 @@ const newThread = (post, formhash) => __awaiter(void 0, void 0, void 0, function
 
 /***/ }),
 
-/***/ 744:
+/***/ 134:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -3086,10 +1249,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.noDisplayPic = exports.downloadImgs = void 0;
-const ConcurrencyPromisePool_1 = __webpack_require__(934);
+const ConcurrencyPromisePool_1 = __webpack_require__(287);
 const file_saver_1 = __webpack_require__(581);
 const jszip_1 = __importDefault(__webpack_require__(583));
-const _1 = __webpack_require__(251);
+const _1 = __webpack_require__(915);
 function downloadImgs(user, counter, setCounter) {
     var _a;
     // 防重复点击
@@ -3165,7 +1328,7 @@ function batchDownload(imgsUrls, imgsTitles, folderName, user, counter, setCount
         const promise = () => {
             const file_name = imgsTitles[index]; // 获取文件名
             mesIdH.update(`正在下载：第 ${index + 1} / ${imgsUrls.length} 张，文件名：${file_name}`);
-            return (0, _1.getData)(item, "blob" /* XhrResponseType.BLOB */)
+            return (0, _1.getData)(item, "blob" /* BLOB */)
                 .then((blob) => {
                 const data = blob;
                 // 下载文件, 并存成ArrayBuffer对象
@@ -3265,7 +1428,7 @@ exports.noDisplayPic = noDisplayPic;
 
 /***/ }),
 
-/***/ 49:
+/***/ 662:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -3281,8 +1444,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.setFastReply = void 0;
-const tools_1 = __webpack_require__(0);
-const _1 = __webpack_require__(251);
+const tools_1 = __webpack_require__(633);
+const _1 = __webpack_require__(915);
 function setFastReply(user) {
     return __awaiter(this, void 0, void 0, function* () {
         // 设置快速回复
@@ -3322,7 +1485,7 @@ exports.setFastReply = setFastReply;
 
 /***/ }),
 
-/***/ 387:
+/***/ 825:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -3338,7 +1501,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.skipPhoneValidate = void 0;
-const _1 = __webpack_require__(251);
+const _1 = __webpack_require__(915);
 const AccessTokenUrl = 'https://jkf.hare200.com/gapi/pan.general.member.MemberServiceV2/AccessToken';
 const SigninUrl = 'https://www.jkforum.net/api/pan/sso_signin.php';
 const genButton = (text, foo) => {
@@ -3365,18 +1528,18 @@ const hackLogin = () => {
             if (isAuthMethod) {
                 const authBase64 = args[0];
                 const response = yield (0, _1.postData)(AccessTokenUrl, authBase64, {
-                    contentType: "application/grpc-web-text" /* XhrResponseType.GRCP */,
-                    responseType: "application/grpc-web-text" /* XhrResponseType.GRCP */,
-                    usermethod: "POST" /* XhrMethod.POST */,
+                    contentType: "application/grpc-web-text" /* GRCP */,
+                    responseType: "application/grpc-web-text" /* GRCP */,
+                    usermethod: "POST" /* POST */,
                 });
                 const reg = /[ey].*�/;
                 const results = response.match(reg);
                 if (results) {
                     const jwt = results[0].replace(/�/, '');
                     yield (0, _1.postData)(SigninUrl, undefined, {
-                        contentType: "application/grpc-web-text" /* XhrResponseType.GRCP */,
+                        contentType: "application/grpc-web-text" /* GRCP */,
                         authorization: 'Bearer ' + jwt,
-                        responseType: "application/grpc-web-text" /* XhrResponseType.GRCP */,
+                        responseType: "application/grpc-web-text" /* GRCP */,
                     });
                     window.location.reload();
                 }
@@ -3399,71 +1562,71 @@ const hackLogin = () => {
 
 /***/ }),
 
-/***/ 251:
+/***/ 915:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.setTimeoutWorker = exports.setIntervalWorker = exports.autoVoted = exports.getUserName = exports.getUserFromName = exports.getFormhash = exports.creatUser = exports.User = exports.autoThk = exports.timeControl = exports.sign = exports.resetReplyData = exports.replyOrThk = exports.addPageBatch = exports.addOnePage = exports.autoPlay = exports.addPlayEvent = exports.autoPay = exports.loadOriginImage = exports.autofillCaptcha = exports.MessageBox = exports.swThk = exports.swRePic = exports.swPay = exports.swDailyTask = exports.checkUpdate = exports.launch = exports.autoDailyTasks = exports.skipPhoneValidate = exports.setFastReply = exports.noDisplayPic = exports.downloadImgs = exports.postDataCdata = exports.postData = exports.getData = void 0;
-var ajax_1 = __webpack_require__(609);
+var ajax_1 = __webpack_require__(516);
 Object.defineProperty(exports, "getData", ({ enumerable: true, get: function () { return ajax_1.getData; } }));
 Object.defineProperty(exports, "postData", ({ enumerable: true, get: function () { return ajax_1.postData; } }));
 Object.defineProperty(exports, "postDataCdata", ({ enumerable: true, get: function () { return ajax_1.postDataCdata; } }));
-var downloadPicture_1 = __webpack_require__(744);
+var downloadPicture_1 = __webpack_require__(134);
 Object.defineProperty(exports, "downloadImgs", ({ enumerable: true, get: function () { return downloadPicture_1.downloadImgs; } }));
 Object.defineProperty(exports, "noDisplayPic", ({ enumerable: true, get: function () { return downloadPicture_1.noDisplayPic; } }));
-var fastReply_1 = __webpack_require__(49);
+var fastReply_1 = __webpack_require__(662);
 Object.defineProperty(exports, "setFastReply", ({ enumerable: true, get: function () { return fastReply_1.setFastReply; } }));
-var hackLogin_1 = __webpack_require__(387);
+var hackLogin_1 = __webpack_require__(825);
 Object.defineProperty(exports, "skipPhoneValidate", ({ enumerable: true, get: function () { return hackLogin_1.skipPhoneValidate; } }));
-var launch_1 = __webpack_require__(595);
+var launch_1 = __webpack_require__(450);
 Object.defineProperty(exports, "autoDailyTasks", ({ enumerable: true, get: function () { return launch_1.autoDailyTasks; } }));
 Object.defineProperty(exports, "launch", ({ enumerable: true, get: function () { return launch_1.launch; } }));
-var menuCommand_1 = __webpack_require__(996);
+var menuCommand_1 = __webpack_require__(817);
 Object.defineProperty(exports, "checkUpdate", ({ enumerable: true, get: function () { return menuCommand_1.checkUpdate; } }));
 Object.defineProperty(exports, "swDailyTask", ({ enumerable: true, get: function () { return menuCommand_1.swDailyTask; } }));
 Object.defineProperty(exports, "swPay", ({ enumerable: true, get: function () { return menuCommand_1.swPay; } }));
 Object.defineProperty(exports, "swRePic", ({ enumerable: true, get: function () { return menuCommand_1.swRePic; } }));
 Object.defineProperty(exports, "swThk", ({ enumerable: true, get: function () { return menuCommand_1.swThk; } }));
-var message_1 = __webpack_require__(382);
+var message_1 = __webpack_require__(244);
 Object.defineProperty(exports, "MessageBox", ({ enumerable: true, get: function () { return message_1.MessageBox; } }));
-var ocr_1 = __webpack_require__(457);
+var ocr_1 = __webpack_require__(2);
 Object.defineProperty(exports, "autofillCaptcha", ({ enumerable: true, get: function () { return ocr_1.autofillCaptcha; } }));
-var originImage_1 = __webpack_require__(834);
+var originImage_1 = __webpack_require__(87);
 Object.defineProperty(exports, "loadOriginImage", ({ enumerable: true, get: function () { return originImage_1.loadOriginImage; } }));
-var pay_1 = __webpack_require__(175);
+var pay_1 = __webpack_require__(363);
 Object.defineProperty(exports, "autoPay", ({ enumerable: true, get: function () { return pay_1.autoPay; } }));
-var play_1 = __webpack_require__(842);
+var play_1 = __webpack_require__(687);
 Object.defineProperty(exports, "addPlayEvent", ({ enumerable: true, get: function () { return play_1.addPlayEvent; } }));
 Object.defineProperty(exports, "autoPlay", ({ enumerable: true, get: function () { return play_1.autoPlay; } }));
-var replyAndThank_1 = __webpack_require__(764);
+var replyAndThank_1 = __webpack_require__(872);
 Object.defineProperty(exports, "addOnePage", ({ enumerable: true, get: function () { return replyAndThank_1.addOnePage; } }));
 Object.defineProperty(exports, "addPageBatch", ({ enumerable: true, get: function () { return replyAndThank_1.addPageBatch; } }));
 Object.defineProperty(exports, "replyOrThk", ({ enumerable: true, get: function () { return replyAndThank_1.replyOrThk; } }));
-var resetReplyData_1 = __webpack_require__(41);
+var resetReplyData_1 = __webpack_require__(821);
 Object.defineProperty(exports, "resetReplyData", ({ enumerable: true, get: function () { return resetReplyData_1.resetReplyData; } }));
-var sign_1 = __webpack_require__(55);
+var sign_1 = __webpack_require__(943);
 Object.defineProperty(exports, "sign", ({ enumerable: true, get: function () { return sign_1.sign; } }));
 Object.defineProperty(exports, "timeControl", ({ enumerable: true, get: function () { return sign_1.timeControl; } }));
-var thank_1 = __webpack_require__(670);
+var thank_1 = __webpack_require__(226);
 Object.defineProperty(exports, "autoThk", ({ enumerable: true, get: function () { return thank_1.autoThk; } }));
-var user_1 = __webpack_require__(578);
+var user_1 = __webpack_require__(506);
 Object.defineProperty(exports, "User", ({ enumerable: true, get: function () { return user_1.User; } }));
 Object.defineProperty(exports, "creatUser", ({ enumerable: true, get: function () { return user_1.creatUser; } }));
 Object.defineProperty(exports, "getFormhash", ({ enumerable: true, get: function () { return user_1.getFormhash; } }));
 Object.defineProperty(exports, "getUserFromName", ({ enumerable: true, get: function () { return user_1.getUserFromName; } }));
 Object.defineProperty(exports, "getUserName", ({ enumerable: true, get: function () { return user_1.getUserName; } }));
-var vote_1 = __webpack_require__(738);
+var vote_1 = __webpack_require__(608);
 Object.defineProperty(exports, "autoVoted", ({ enumerable: true, get: function () { return vote_1.autoVoted; } }));
-var webWorker_1 = __webpack_require__(711);
+var webWorker_1 = __webpack_require__(67);
 Object.defineProperty(exports, "setIntervalWorker", ({ enumerable: true, get: function () { return webWorker_1.setIntervalWorker; } }));
 Object.defineProperty(exports, "setTimeoutWorker", ({ enumerable: true, get: function () { return webWorker_1.setTimeoutWorker; } }));
 
 
 /***/ }),
 
-/***/ 595:
+/***/ 450:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -3479,8 +1642,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.launch = exports.autoDailyTasks = void 0;
-const tools_1 = __webpack_require__(0);
-const _1 = __webpack_require__(251);
+const tools_1 = __webpack_require__(633);
+const _1 = __webpack_require__(915);
 // 启动
 function launch(user) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -3547,7 +1710,7 @@ exports.autoDailyTasks = autoDailyTasks;
 
 /***/ }),
 
-/***/ 996:
+/***/ 817:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -3563,8 +1726,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.swThk = exports.swRePic = exports.swPay = exports.swDailyTask = exports.checkUpdate = void 0;
-const tools_1 = __webpack_require__(0);
-const _1 = __webpack_require__(251);
+const tools_1 = __webpack_require__(633);
+const _1 = __webpack_require__(915);
 function swRePic(user) {
     if (user.autoRePicSw) {
         user.autoRePicSw = false;
@@ -3636,7 +1799,7 @@ exports.checkUpdate = checkUpdate;
 
 /***/ }),
 
-/***/ 382:
+/***/ 244:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -3653,7 +1816,7 @@ exports.MessageBox = void 0;
  * 4.importance：LOG_POP：log+自定义弹窗；LOG_POP_GM：log+自定义弹窗+GM系统提示；POP：自定义弹窗；
  */
 class MessageBox {
-    constructor(text, setTime = 5000, importance = "LOG_POP" /* Importance.LOG_POP */) {
+    constructor(text, setTime = 5000, importance = "LOG_POP" /* LOG_POP */) {
         this._msg = null; // 永久显示标记，和元素地址
         this._text = text;
         this._setTime = setTime;
@@ -3705,11 +1868,11 @@ class MessageBox {
         this._msg.textContent = text;
         MessageBox._msgBox.append(this._msg); // 显示消息
         switch (importance) {
-            case "LOG_POP" /* Importance.LOG_POP */: {
+            case "LOG_POP" /* LOG_POP */: {
                 console.log(text);
                 break;
             }
-            case "LOG_POP_GM" /* Importance.LOG_POP_GM */: {
+            case "LOG_POP_GM" /* LOG_POP_GM */: {
                 console.log(text);
                 GM_notification(text);
                 break;
@@ -3730,10 +1893,10 @@ class MessageBox {
             this._msg.textContent = text;
             console.log(text);
             switch (this._importance) {
-                case "LOG_POP" /* Importance.LOG_POP */: {
+                case "LOG_POP" /* LOG_POP */: {
                     break;
                 }
-                case "LOG_POP_GM" /* Importance.LOG_POP_GM */: {
+                case "LOG_POP_GM" /* LOG_POP_GM */: {
                     console.log(text);
                     GM_notification(text);
                     break;
@@ -3771,7 +1934,7 @@ exports.MessageBox = MessageBox;
 
 /***/ }),
 
-/***/ 457:
+/***/ 2:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -3787,9 +1950,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.autofillCaptcha = exports.RETRY = void 0;
-const commonType_1 = __webpack_require__(987);
-const tools_1 = __webpack_require__(0);
-const _1 = __webpack_require__(251);
+const commonType_1 = __webpack_require__(321);
+const tools_1 = __webpack_require__(633);
+const _1 = __webpack_require__(915);
 /**
  * OCR
  */
@@ -3819,7 +1982,7 @@ function captcha(thread, user) {
                     }
                     if (typeof code === 'object') {
                         // 令牌错误不重试
-                        new _1.MessageBox(code.error_msg + '，请手动重试或联系管理员', 'none', "LOG_POP_GM" /* Importance.LOG_POP_GM */);
+                        new _1.MessageBox(code.error_msg + '，请手动重试或联系管理员', 'none', "LOG_POP_GM" /* LOG_POP_GM */);
                         return reject(code);
                     }
                     const response = yield (0, _1.postData)(url, (0, tools_1.urlSearchParams)({ captcha_input: code }).toString()).catch((e) => {
@@ -3864,9 +2027,9 @@ function readImage(base64, user) {
     return __awaiter(this, void 0, void 0, function* () {
         const body = (0, tools_1.urlSearchParams)({ image: base64, token: user.token }).toString();
         const response = yield (0, _1.postData)(user.ocrUrl, body, {
-            responseType: "json" /* XhrResponseType.JSON */,
-            usermethod: "POST" /* XhrMethod.POST */,
-            contentType: "application/x-www-form-urlencoded" /* XhrResponseType.FORM */,
+            responseType: "json" /* JSON */,
+            usermethod: "POST" /* POST */,
+            contentType: "application/x-www-form-urlencoded" /* FORM */,
         }).catch((e) => {
             var _a;
             // 导致提示信息错误
@@ -3952,7 +2115,7 @@ exports.autofillCaptcha = autofillCaptcha;
 
 /***/ }),
 
-/***/ 834:
+/***/ 87:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -3968,7 +2131,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.loadOriginImage = void 0;
-const _1 = __webpack_require__(251);
+const _1 = __webpack_require__(915);
 // 加载原图，自动播放
 function loadOriginImage() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -4007,7 +2170,7 @@ exports.loadOriginImage = loadOriginImage;
 
 /***/ }),
 
-/***/ 175:
+/***/ 363:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -4023,8 +2186,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.autoPay = void 0;
-const tools_1 = __webpack_require__(0);
-const _1 = __webpack_require__(251);
+const tools_1 = __webpack_require__(633);
+const _1 = __webpack_require__(915);
 // 自动支付
 function autoPay(user) {
     var _a;
@@ -4051,7 +2214,7 @@ exports.autoPay = autoPay;
 
 /***/ }),
 
-/***/ 842:
+/***/ 687:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -4067,8 +2230,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.addPlayEvent = exports.autoPlay = void 0;
-const tools_1 = __webpack_require__(0);
-const _1 = __webpack_require__(251);
+const tools_1 = __webpack_require__(633);
+const _1 = __webpack_require__(915);
 const addPlayEvent = (counter, user) => {
     const zoomimgs = document.querySelectorAll(`img[zoomfile]`); //获取图片列表
     if (zoomimgs) {
@@ -4195,7 +2358,7 @@ function addAutoPlay(counter, user) {
 
 /***/ }),
 
-/***/ 122:
+/***/ 960:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -4224,7 +2387,7 @@ exports.reCaptcha = reCaptcha;
 
 /***/ }),
 
-/***/ 764:
+/***/ 872:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -4240,8 +2403,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.replyOrThk = exports.addPageBatch = exports.addOnePage = void 0;
-const lib_1 = __webpack_require__(251);
-const tools_1 = __webpack_require__(0);
+const lib_1 = __webpack_require__(915);
+const tools_1 = __webpack_require__(633);
 function chooceReply(user, value) {
     if (value) {
         let replyLen = 0; // 统计长度，用于在 user.userReplyMessage 中定位下标
@@ -4436,7 +2599,7 @@ function setThreadsTask(user, htmlData, fid, replyLen) {
     newFid(); // 启动
 }
 // 回帖\感谢函数
-function replyOrThk(counter, user, type = "reply" /* ReplyOrThank.REPLY */, setCounter) {
+function replyOrThk(counter, user, type = "reply" /* REPLY */, setCounter) {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         let fidIndex = 0; // 当前回帖版块序号
@@ -4449,7 +2612,7 @@ function replyOrThk(counter, user, type = "reply" /* ReplyOrThank.REPLY */, setC
             new lib_1.MessageBox('任务列表为空，请先添加任务！');
             return;
         }
-        else if (type == "reply" /* ReplyOrThank.REPLY */) {
+        else if (type == "reply" /* REPLY */) {
             setCounter(Object.assign(Object.assign({}, counter), { replyBtn: 1 }));
             mesIdRep.show('开始回帖...', 'none');
             mesIdRepContent.show('...', 'none');
@@ -4458,18 +2621,18 @@ function replyOrThk(counter, user, type = "reply" /* ReplyOrThank.REPLY */, setC
             setCounter(Object.assign(Object.assign({}, counter), { thkBtn: 1 })); // 防止重复点击
             mesIdThk.show('开始感谢...', 'none');
         }
-        while ((type == "reply" /* ReplyOrThank.REPLY */ && fidIndex < user.replyThreads.length) ||
-            (type == "thk" /* ReplyOrThank.THANK */ && thkFidIndex < user.replyThreads.length)) {
+        while ((type == "reply" /* REPLY */ && fidIndex < user.replyThreads.length) ||
+            (type == "thk" /* THANK */ && thkFidIndex < user.replyThreads.length)) {
             // 分别处理感谢和回帖
-            const elementForum = user.replyThreads[type == "reply" /* ReplyOrThank.REPLY */ ? fidIndex : thkFidIndex];
+            const elementForum = user.replyThreads[type == "reply" /* REPLY */ ? fidIndex : thkFidIndex];
             const fid = elementForum.fid;
             let fidRepIndex = elementForum.fidRepIndex; // 上次回复位置
             let fidThkIndex = elementForum.fidThkIndex; // 上次感谢位置
-            while ((elementForum.fidthreads.length > fidRepIndex && type == "reply" /* ReplyOrThank.REPLY */) ||
-                (elementForum.fidthreads.length > fidThkIndex && type == "thk" /* ReplyOrThank.THANK */)) {
+            while ((elementForum.fidthreads.length > fidRepIndex && type == "reply" /* REPLY */) ||
+                (elementForum.fidthreads.length > fidThkIndex && type == "thk" /* THANK */)) {
                 // 分别处理感谢和回帖
                 switch (type) {
-                    case "reply" /* ReplyOrThank.REPLY */: {
+                    case "reply" /* REPLY */: {
                         mesIdRep.update(fid +
                             '-版块，当前位置：' +
                             fidRepIndex +
@@ -4542,7 +2705,7 @@ function replyOrThk(counter, user, type = "reply" /* ReplyOrThank.REPLY */, setC
                         yield (0, tools_1.waitFor)(randomTime); // 等待指定时间
                         break;
                     }
-                    case "thk" /* ReplyOrThank.THANK */: {
+                    case "thk" /* THANK */: {
                         const elementThr = elementForum.fidthreads[fidThkIndex];
                         const thkParamsData = (0, tools_1.urlSearchParams)({
                             formhash: user.formhash,
@@ -4577,23 +2740,23 @@ function replyOrThk(counter, user, type = "reply" /* ReplyOrThank.REPLY */, setC
                         break;
                 }
             }
-            if (type == "thk" /* ReplyOrThank.THANK */) {
+            if (type == "thk" /* THANK */) {
                 thkFidIndex++; // 翻页
             }
-            else if (type == "reply" /* ReplyOrThank.REPLY */) {
+            else if (type == "reply" /* REPLY */) {
                 fidIndex++; // 翻页
             }
             GM_setValue(user.username, user);
         }
-        if (type == "thk" /* ReplyOrThank.THANK */) {
+        if (type == "thk" /* THANK */) {
             mesIdThk.remove(); // 移除永久消息
-            new lib_1.MessageBox('全部感谢完成！', 10000, "LOG_POP_GM" /* Importance.LOG_POP_GM */);
+            new lib_1.MessageBox('全部感谢完成！', 10000, "LOG_POP_GM" /* LOG_POP_GM */);
             setCounter(Object.assign(Object.assign({}, counter), { thkBtn: 0 }));
         }
-        else if (type == "reply" /* ReplyOrThank.REPLY */) {
+        else if (type == "reply" /* REPLY */) {
             mesIdRep.remove(); // 移除永久消息
             mesIdRepContent.remove();
-            new lib_1.MessageBox('全部回帖完成！', 10000, "LOG_POP_GM" /* Importance.LOG_POP_GM */);
+            new lib_1.MessageBox('全部回帖完成！', 10000, "LOG_POP_GM" /* LOG_POP_GM */);
             setCounter(Object.assign(Object.assign({}, counter), { replyBtn: 0 }));
         }
     });
@@ -4603,14 +2766,14 @@ exports.replyOrThk = replyOrThk;
 
 /***/ }),
 
-/***/ 41:
+/***/ 821:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.resetReplyData = void 0;
-const message_1 = __webpack_require__(382);
+const message_1 = __webpack_require__(244);
 const resetReplyData = (user) => {
     user.replyThreads = [];
     user.fastReply = [];
@@ -4623,7 +2786,7 @@ exports.resetReplyData = resetReplyData;
 
 /***/ }),
 
-/***/ 55:
+/***/ 943:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -4639,8 +2802,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.timeControl = exports.sign = void 0;
-const tools_1 = __webpack_require__(0);
-const _1 = __webpack_require__(251);
+const tools_1 = __webpack_require__(633);
+const _1 = __webpack_require__(915);
 // 定时签到
 function timeControl(counter, setCounter, user) {
     const signtime = user.signtime; // 设定签到时间
@@ -4705,7 +2868,7 @@ exports.sign = sign;
 
 /***/ }),
 
-/***/ 670:
+/***/ 226:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -4721,8 +2884,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.autoThk = void 0;
-const tools_1 = __webpack_require__(0);
-const _1 = __webpack_require__(251);
+const tools_1 = __webpack_require__(633);
+const _1 = __webpack_require__(915);
 // 自动感谢
 function autoThk(user) {
     var _a;
@@ -4759,7 +2922,7 @@ exports.autoThk = autoThk;
 
 /***/ }),
 
-/***/ 578:
+/***/ 506:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -4775,9 +2938,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getUserName = exports.getUserFromName = exports.getFormhash = exports.creatUser = exports.User = void 0;
-const commonType_1 = __webpack_require__(987);
-const tools_1 = __webpack_require__(0);
-const _1 = __webpack_require__(251);
+const commonType_1 = __webpack_require__(321);
+const tools_1 = __webpack_require__(633);
+const _1 = __webpack_require__(915);
 class User {
     constructor(username, formhash) {
         this.version = GM_info.script.version;
@@ -4872,7 +3035,7 @@ exports.creatUser = creatUser;
 
 /***/ }),
 
-/***/ 738:
+/***/ 608:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -4888,8 +3051,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.autoVoted = void 0;
-const tools_1 = __webpack_require__(0);
-const _1 = __webpack_require__(251);
+const tools_1 = __webpack_require__(633);
+const _1 = __webpack_require__(915);
 function autoVoted(user) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
@@ -4951,7 +3114,7 @@ exports.autoVoted = autoVoted;
 
 /***/ }),
 
-/***/ 711:
+/***/ 67:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -4983,7 +3146,7 @@ exports.setTimeoutWorker = setTimeoutWorker;
 
 /***/ }),
 
-/***/ 934:
+/***/ 287:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -5045,13 +3208,13 @@ exports.ConcurrencyPromisePool = ConcurrencyPromisePool;
 
 /***/ }),
 
-/***/ 647:
+/***/ 19:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const tailwindStyles = __webpack_require__(67);
+const tailwindStyles = __webpack_require__(600);
 // 导出的是 GM_addStyle 的值
 // delete css conflicts
 exports["default"] = GM_addStyle(tailwindStyles
@@ -5065,14 +3228,14 @@ exports["default"] = GM_addStyle(tailwindStyles
 
 /***/ }),
 
-/***/ 0:
+/***/ 633:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.waitFor = exports.urlSearchParams = exports.updateUserUrl = exports.turnUrl = exports.turnCdata = exports.replaceHtml = exports.rdNum = exports.preciseSetTimeout = exports.preciseSetInterval = exports.mergeObjValue = exports.isSameObjKey = exports.hoursUntilTimeRange = exports.getVersionNum = exports.getUuiD = exports.getTid = exports.getBase64Image = exports.checkHtml = exports.NowTime = void 0;
-const lib_1 = __webpack_require__(251);
+const lib_1 = __webpack_require__(915);
 // POST返回 xml数据类型转换成 字符串或html 模块
 function turnCdata(xmlRepo) {
     var _a;
@@ -5300,7 +3463,7 @@ exports.getBase64Image = getBase64Image;
 
 /***/ }),
 
-/***/ 948:
+/***/ 699:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -5339,12 +3502,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AutoClickManage = void 0;
-const commonType_1 = __webpack_require__(987);
-const components_1 = __webpack_require__(644);
-const lib_1 = __webpack_require__(251);
-const ConcurrencyPromisePool_1 = __webpack_require__(934);
-const tools_1 = __webpack_require__(0);
-const react_1 = __importStar(__webpack_require__(363));
+const commonType_1 = __webpack_require__(321);
+const components_1 = __webpack_require__(740);
+const lib_1 = __webpack_require__(915);
+const ConcurrencyPromisePool_1 = __webpack_require__(287);
+const tools_1 = __webpack_require__(633);
+const react_1 = __importStar(__webpack_require__(995));
 const AutoClickManage = ({ onClose, user }) => {
     var _a, _b, _c, _d;
     const [data, setData] = (0, react_1.useState)(user.freeData ? user.freeData.map((d) => (Object.assign(Object.assign({}, d), { runStatus: commonType_1.RunStatus.NotRunning }))) : []);
@@ -5549,7 +3712,7 @@ exports.AutoClickManage = AutoClickManage;
 
 /***/ }),
 
-/***/ 797:
+/***/ 818:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -5588,13 +3751,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Home = void 0;
-const components_1 = __webpack_require__(644);
-const lib_1 = __webpack_require__(251);
-const autoPost_1 = __webpack_require__(693);
-const reCaptcha_1 = __webpack_require__(122);
-const react_1 = __importStar(__webpack_require__(363));
+const components_1 = __webpack_require__(740);
+const lib_1 = __webpack_require__(915);
+const autoPost_1 = __webpack_require__(342);
+const reCaptcha_1 = __webpack_require__(960);
+const react_1 = __importStar(__webpack_require__(995));
 const react_copy_to_clipboard_1 = __webpack_require__(950);
-const AutoClickManage_1 = __webpack_require__(948);
+const AutoClickManage_1 = __webpack_require__(699);
 const Home = ({ user, setShowHome, counter, setCounter }) => {
     const mask = (0, react_1.useRef)(null);
     const [replyValue, setReplyValue] = (0, react_1.useState)('');
@@ -5645,10 +3808,10 @@ const Home = ({ user, setShowHome, counter, setCounter }) => {
                         (0, lib_1.resetReplyData)(user);
                     } }),
                 react_1.default.createElement(components_1.Button, { text: '一键回帖', disabled: !!counter.replyBtn, onClick: () => {
-                        (0, lib_1.replyOrThk)(counter, user, "reply" /* ReplyOrThank.REPLY */, setCounter);
+                        (0, lib_1.replyOrThk)(counter, user, "reply" /* REPLY */, setCounter);
                     } }),
                 react_1.default.createElement(components_1.Button, { text: '一键感谢', disabled: !!counter.thkBtn, onClick: () => {
-                        (0, lib_1.replyOrThk)(counter, user, "thk" /* ReplyOrThank.THANK */, setCounter);
+                        (0, lib_1.replyOrThk)(counter, user, "thk" /* THANK */, setCounter);
                     } })),
             react_1.default.createElement(components_1.Panel, { title: "\u9AD8\u7EA7\u529F\u80FD" },
                 react_1.default.createElement(components_1.Button, { text: '定时签到', disabled: !!counter.signBtn, onClick: () => {
@@ -5708,7 +3871,7 @@ module.exports = JSZip;
 
 /***/ }),
 
-/***/ 363:
+/***/ 995:
 /***/ ((module) => {
 
 "use strict";
@@ -5740,7 +3903,7 @@ module.exports = saveAs;
 
 /***/ }),
 
-/***/ 633:
+/***/ 419:
 /***/ ((module) => {
 
 "use strict";
@@ -5779,7 +3942,7 @@ module.exports = JSON.parse('{"name":"JKForum 助手","name:en":"JKForum Helper"
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __webpack_require__(5);
+/******/ 	var __webpack_exports__ = __webpack_require__(629);
 /******/ 	
 /******/ })()
 ;
