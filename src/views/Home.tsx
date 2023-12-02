@@ -16,6 +16,7 @@ import {
   swThk,
   timeControl,
 } from '@/lib';
+import { autoPost } from '@/lib/autoPost';
 import { reCaptcha } from '@/lib/reCaptcha';
 import React, { useEffect, useRef, useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
@@ -157,15 +158,21 @@ export const Home: React.FC<HomeProps> = ({ user, setShowHome, counter, setCount
             }}
           />
           <Button
-            text={'屏蔽图片'}
+            text={'自动发文'}
             onClick={() => {
-              noDisplayPic();
+              autoPost();
             }}
           />
           <Button
             text={'现在有空'}
             onClick={() => {
               setShowModal(true);
+            }}
+          />
+          <Button
+            text={'屏蔽图片'}
+            onClick={() => {
+              noDisplayPic();
             }}
           />
           <Button

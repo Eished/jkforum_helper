@@ -16,12 +16,12 @@ export const Modal: FC<ModalProps> = ({ header, footer, children, width, height,
   }
   return (
     <div className="fixed top-0 right-0 h-full w-full left-0 z-50 overflow-y-auto overflow-x-hidden items-center justify-center flex bg-gray-900 bg-opacity-50">
-      <div className={`relative rounded-lg bg-white shadow dark:bg-gray-700 m-4 flex flex-col ${width} ${height}`}>
-        <div className="flex items-start justify-between rounded-t dark:border-gray-600  border-gray-300 border-solid border-0 border-b p-5">
+      <div className={`relative rounded-lg bg-white shadow m-4 flex flex-col ${width} ${height}`}>
+        <div className="flex items-start justify-between rounded-t  border-gray-300 border-solid border-0 border-b p-5">
           <h3 className="text-xl font-medium text-gray-900 dark:text-white">{header}</h3>
           <button
             aria-label="Close"
-            className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white"
+            className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:text-white"
             type="button"
             onClick={onClose}>
             <svg
@@ -39,9 +39,7 @@ export const Modal: FC<ModalProps> = ({ header, footer, children, width, height,
           </button>
         </div>
         <div className="p-6 h-full overflow-auto">{children}</div>
-        <div className="flex items-center rounded-b p-6 dark:border-gray-600 border-gray-300 border-solid border-0 border-t">
-          {footer}
-        </div>
+        <div className="flex items-center rounded-b p-6 border-gray-300 border-solid border-0 border-t">{footer}</div>
       </div>
     </div>
   );

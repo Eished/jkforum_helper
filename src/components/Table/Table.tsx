@@ -280,7 +280,7 @@ export default function ReactTableCard({
           ''
         )}
         <table {...getTableProps()} className="mb-4 min-w-full divide-y divide-gray-100 table-auto">
-          <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
+          <thead className="bg-gray-50 text-xs uppercase text-gray-700 ">
             {headerGroups.map((headerGroup) => (
               <tr {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map((column) => (
@@ -326,21 +326,16 @@ export default function ReactTableCard({
               </tr>
             ))}
           </thead>
-          <tbody
-            className="w-full divide-y text-left text-sm text-gray-500 dark:text-gray-400"
-            role="table"
-            {...getTableBodyProps()}>
+          <tbody className="w-full divide-y text-left text-sm text-gray-500 " role="table" {...getTableBodyProps()}>
             {page.map((row) => {
               prepareRow(row);
               return (
-                <tr
-                  {...row.getRowProps()}
-                  className="hover:bg-gray-200 dark:hover:bg-gray-600 bg-white dark:border-gray-700 dark:bg-gray-800">
+                <tr {...row.getRowProps()} className="hover:bg-gray-200 bg-white dark:bg-gray-800">
                   {row.cells.map((cell) => {
                     return (
                       <td
                         {...cell.getCellProps()}
-                        className="text-xs p-0 h-8 whitespace-nowrap font-medium text-gray-900 dark:text-white max-w-[150px] overflow-hidden text-ellipsis">
+                        className="text-xs p-0 h-8 whitespace-nowrap font-medium text-gray-900 max-w-[150px] overflow-hidden text-ellipsis">
                         {cell.render('Cell')}
                       </td>
                     );
