@@ -31,9 +31,19 @@ async function captcha(thread: ThreadData, user: IUser) {
         image.parentNode.removeChild(image);
       }
       if (typeof code === 'object') {
-        // 令牌错误不重试
-        new MessageBox(code.error_msg + '，请手动重试或联系管理员', 'none', Importance.LOG_POP_GM);
-        return reject(code);
+        if (code.error_msg === '服务器内部错误') {
+          // 服务器错误自动重试，resolve不受10次重试次数显示
+          new MessageBox(
+            `服务器内部错误，将在 ${thread.cycle} 分钟后自动重试，多次重试未恢复请联系管理员`,
+            60000 * Number(thread.cycle),
+            Importance.LOG_POP_GM
+          );
+          return resolve(code.error_msg);
+        } else {
+          // 令牌错误不重试
+          new MessageBox('运行错误，请手动重试或联系管理员：' + code.error_msg, 'none', Importance.LOG_POP_GM);
+          return reject(code);
+        }
       }
       const response = await postData(url, urlSearchParams({ captcha_input: code }).toString()).catch((e) => {
         console.log(e);
