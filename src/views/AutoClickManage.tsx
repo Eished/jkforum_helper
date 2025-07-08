@@ -125,10 +125,10 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
       return;
     }
 
-    // 点击时间校验，防止点击时间错乱
+    // 点击时间校验，防止点击时间错乱，用于解决从休眠状态唤醒时重复调用
     const diff = Math.abs(t.nextClickTime - new Date().getTime());
-    // 时间精度过高，误差等于网络超时时间，设置误差60秒
-    if (diff < 60000 && t.retry < 10) {
+    // 时间精度过高，误差等于网络超时时间+浏览器时间误差，设置误差600秒
+    if (diff < 600000 && t.retry < 10) {
       // 添加任务，在此处开始闭包，递归调用
       pool.all([() => autofillCaptcha(onThread, user, setNextClickTime, saveStatusData, triggerNextClick)]);
     } else if (t.retry >= 10) {
@@ -139,13 +139,16 @@ export const AutoClickManage: FC<AutoClickManage> = ({ onClose, user }) => {
         'LOG_POP_GM'
       );
     } else {
-      saveStatusData(onThread.url, RunStatus.Error);
+      // 重置点击时间到下一个周期
+      onThread.nextClickTime = new Date().getTime() + 60000 * Number(onThread.cycle);
+
+      // 添加任务，在此处开始闭包，递归调用
+      pool.all([() => autofillCaptcha(onThread, user, setNextClickTime, saveStatusData, triggerNextClick)]);
+
       new MessageBox(
-        `帖子ID：${getTid(onThread.url)}，已错过点击时间，自动现在有空已停止运行！预设点击时间：${new Date(
+        `帖子ID：${getTid(onThread.url)}，已错过点击时间，重置点击时间到下一个点击周期！预设点击时间：${new Date(
           t.nextClickTime
-        ).toLocaleString()}，实际时间：${new Date().toLocaleString()}`,
-        'none',
-        'LOG_POP_GM'
+        ).toLocaleString()}，实际时间：${new Date().toLocaleString()}`
       );
     }
   };

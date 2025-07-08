@@ -121,7 +121,8 @@ async function autofillCaptcha(
     if (t.runTime) {
       const hours = hoursUntilTimeRange(t.runTime.startTime, t.runTime.endTime);
       if (hours !== 0) {
-        const overMinutes = now.getMinutes() * 60000 + now.getSeconds() * 1000 - rdNum(0, 10000);
+        // 不在运行时间内时，随机数增加到120秒（2分钟）内，减少并发启动时造成的错误重试
+        const overMinutes = now.getMinutes() * 60000 + now.getSeconds() * 1000 - rdNum(0, 120000);
         timeInterval = hours * 3600000 - overMinutes;
         skip = true;
       }
