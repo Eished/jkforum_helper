@@ -30,9 +30,38 @@ async function captcha(thread: ThreadData, user: IUser) {
       if (image.parentNode) {
         image.parentNode.removeChild(image);
       }
-      if (typeof code === 'object') {
-        if (code.error_msg === '服务器内部错误') {
-          // 服务器错误自动重试，resolve不受10次重试次数显示
+
+      if (typeof code === 'string') {
+        const response = await postData(url, urlSearchParams({ captcha_input: code }).toString()).catch((e) => {
+          console.log(e);
+          return RETRY;
+        });
+        if (!response) {
+          new MessageBox(tid + '，无效的帖子ID，请检查帖子状态', 'none', 'LOG_POP_GM');
+          return reject(response);
+        }
+        const result = turnCdata(response);
+        if (result === RETRY) {
+          new MessageBox(tid + '，验证码发送失败，正在重试...');
+          return reject(RETRY);
+        } else if (result === '更新完成！若狀態仍沒更新，請嘗試刷新頁面') {
+          new MessageBox(tid + '，更新完成！自動‘現在有空’中，請不要刷新頁面！');
+          return resolve(result);
+        } else if (result === 'Access denied.') {
+          new MessageBox(tid + '，无此帖子的访问权限，请检查帖子状态', 'none', 'LOG_POP_GM');
+          return reject(result);
+        } else {
+          new MessageBox(tid + '，验证码错误，正在重试...');
+          return reject(RETRY);
+        }
+      } else {
+        if (code.error_msg === RETRY) {
+          new MessageBox('识别失败，正在重试...');
+          return reject(RETRY);
+        } else if (code.type === 'token_error') {
+          new MessageBox('令牌错误，请检查设置：' + code.error_msg, 'none', Importance.LOG_POP_GM);
+          return reject(code);
+        } else if (code.type === 'server_error') {
           new MessageBox(
             `服务器内部错误，将在 ${thread.cycle} 分钟后自动重试，多次重试未恢复请联系管理员`,
             60000 * Number(thread.cycle),
@@ -40,32 +69,10 @@ async function captcha(thread: ThreadData, user: IUser) {
           );
           return resolve(code.error_msg);
         } else {
-          // 令牌错误不重试
-          new MessageBox('运行错误，请手动重试或联系管理员：' + code.error_msg, 'none', Importance.LOG_POP_GM);
-          return reject(code);
+          // 其他错误情况
+          new MessageBox('运行错误，正在重试：' + code.error_msg);
+          return reject(RETRY);
         }
-      }
-      const response = await postData(url, urlSearchParams({ captcha_input: code }).toString()).catch((e) => {
-        console.log(e);
-        return RETRY;
-      });
-      if (!response) {
-        new MessageBox(tid + '，无效的帖子ID，请检查帖子状态', 'none', 'LOG_POP_GM');
-        return reject(response);
-      }
-      const result = turnCdata(response);
-      if (result === RETRY) {
-        new MessageBox(tid + '，验证码发送失败，正在重试...');
-        return reject(RETRY);
-      } else if (result === '更新完成！若狀態仍沒更新，請嘗試刷新頁面') {
-        new MessageBox(tid + '，更新完成！自動‘現在有空’中，請不要刷新頁面！');
-        return resolve(result);
-      } else if (result === 'Access denied.') {
-        new MessageBox(tid + '，无此帖子的访问权限，请检查帖子状态', 'none', 'LOG_POP_GM');
-        return reject(result);
-      } else {
-        new MessageBox(tid + '，验证码错误，正在重试...');
-        return reject(RETRY);
       }
     };
 
@@ -86,11 +93,20 @@ async function readImage(base64: string, user: IUser) {
     responseType: XhrResponseType.JSON,
     usermethod: XhrMethod.POST,
     contentType: XhrResponseType.FORM,
-  }).catch((e) => {
-    // 导致提示信息错误
-    return { error_msg: e.response?.message ? e.response.message : e.statusText, error_code: 0 };
+  }).catch((e: any) => {
+    if (e === 'timeout' || e?.message?.includes('network')) {
+      return { error_msg: RETRY };
+    }
+    // 其他未知错误也返回为重试
+    return {
+      error_msg: e?.message || '未知错误',
+      type: 'unknown_error',
+    };
   });
+
   const ocrResults: OcrResult = response;
+
+  // 成功识别验证码的情况
   if ('words_result' in ocrResults) {
     const words = ocrResults.words_result[0].words.replace(/g/gi, '6');
     if (words.length < 4) {
@@ -100,9 +116,31 @@ async function readImage(base64: string, user: IUser) {
     } else {
       return words;
     }
-  } else if ('error_msg' in ocrResults) {
-    return ocrResults;
   }
+
+  // 处理错误情况
+  if ('error_msg' in ocrResults) {
+    // 令牌相关错误
+    if (ocrResults.error_msg.includes('令牌') || ocrResults.error_msg.includes('Not Found:')) {
+      return {
+        error_msg: ocrResults.error_msg,
+        type: 'token_error', // 添加错误类型标记
+      };
+    }
+
+    // 服务器内部错误
+    if (ocrResults.error_msg === '服务器内部错误') {
+      return {
+        error_msg: ocrResults.error_msg,
+        type: 'server_error',
+      };
+    }
+
+    // 其他错误返回 RETRY
+    return { error_msg: RETRY };
+  }
+
+  // 兜底返回随机数
   return String(rdNum(1000, 10000));
 }
 
