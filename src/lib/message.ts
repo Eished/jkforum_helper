@@ -72,14 +72,15 @@ class MessageBox {
     this._msg = document.createElement('div');
     this._msg.textContent = text;
     MessageBox._msgBox.append(this._msg); // 显示消息
+    const time = new Date().toISOString();
 
     switch (importance) {
       case Importance.LOG_POP: {
-        console.log(text);
+        console.log(`${time}: ${text}`);
         break;
       }
       case Importance.LOG_POP_GM: {
-        console.log(text);
+        console.log(`${time}: ${text}`);
         GM_notification(text);
         break;
       }
@@ -99,14 +100,15 @@ class MessageBox {
 
   update(text: string) {
     if (isNaN(Number(this._setTime)) && this._msg) {
+      const time = new Date().toISOString();
       this._msg.textContent = text;
-      console.log(text);
+      console.log(`${time}: ${text}`);
       switch (this._importance) {
         case Importance.LOG_POP: {
           break;
         }
         case Importance.LOG_POP_GM: {
-          console.log(text);
+          console.log(`${time}: ${text}`);
           GM_notification(text);
           break;
         }
