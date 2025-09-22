@@ -27,7 +27,7 @@ function getData(
         reject(error);
       },
       ontimeout: () => {
-        new MessageBox('网络超时', 'none', Importance.LOG_POP_GM);
+        new MessageBox('网络超时', 5000, Importance.LOG_POP_GM);
         reject('timeout');
       },
     });
@@ -50,7 +50,7 @@ function postDataCdata(
       },
       data: postData,
       responseType: responseType,
-      timeout: 1 * 60 * 1000,
+      timeout: 5 * 60 * 1000,
       onload: function (response) {
         if (response.status >= 200 && response.status < 400) {
           resolve(turnCdata(response.response));
@@ -64,7 +64,7 @@ function postDataCdata(
         reject(error);
       },
       ontimeout: () => {
-        new MessageBox('网络超时', 'none', Importance.LOG_POP_GM);
+        new MessageBox('网络超时', 5000, Importance.LOG_POP_GM);
         reject('timeout');
       },
     });
@@ -103,7 +103,7 @@ function postData(
       headers,
       data,
       responseType: responseType,
-      timeout: 1 * 60 * 1000,
+      timeout: 5 * 60 * 1000,
       onload: function (response) {
         if (response.status >= 200 && response.status < 400) {
           resolve(response.response);
@@ -115,7 +115,7 @@ function postData(
         reject(error);
       },
       ontimeout: () => {
-        new MessageBox('网络超时', 'none', Importance.LOG_POP_GM);
+        new MessageBox('网络超时', 5000, Importance.LOG_POP_GM);
         reject('timeout');
       },
     });

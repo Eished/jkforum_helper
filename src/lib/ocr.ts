@@ -97,9 +97,22 @@ async function readImage(base64: string, user: IUser) {
     if (e === 'timeout' || e?.message?.includes('network')) {
       return { error_msg: RETRY };
     }
-    // 其他未知错误也返回为重试
+    // 其他未知错误也返回为重试，解析错误消息
+    let msg;
+    if (e.response) {
+      msg = JSON.parse(e.response);
+      if (msg && msg.message) {
+        msg = msg.message;
+      } else {
+        msg = e.statusText;
+      }
+    } else if (e.statusText) {
+      msg = e.statusText;
+    } else {
+      msg = '未知错误';
+    }
     return {
-      error_msg: e?.message || '未知错误',
+      error_msg: msg,
       type: 'unknown_error',
     };
   });
