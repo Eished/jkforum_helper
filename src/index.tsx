@@ -1,13 +1,13 @@
 import App from '@/app';
-import { getFormhash, getUserName, MessageBox } from '@/lib';
+import { MessageBox } from '@/lib';
 import 'hacktimer'; // 定时器不会因为窗口隐藏而降频
 import React from 'react';
 import { createRoot } from 'react-dom/client';
+import { getUserUidFromJwt } from './lib/auth';
 
 const start = () => {
-  const username = getUserName();
-  const formhash = getFormhash();
-  if (username && formhash) {
+  const uid = getUserUidFromJwt();
+  if (uid) {
     import('@/utils/loadStyle');
     // 初始化消息盒子
     MessageBox.generate();
@@ -16,7 +16,9 @@ const start = () => {
     rootDiv.id = 'jkforum-helper';
     document.body.prepend(rootDiv);
     const root = createRoot(rootDiv); // createRoot(container!) if you use TypeScript
-    root.render(<App username={username} formhash={formhash} />);
+    root.render(<App uid={uid} />);
+  } else {
+    throw new Error('未登錄，請先登錄');
   }
 };
 

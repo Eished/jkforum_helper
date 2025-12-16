@@ -3,11 +3,13 @@ import { isSameObjKey, mergeObjValue, updateUserUrl } from '@/utils/tools';
 import { MessageBox, setFastReply } from './';
 
 class User implements IUser {
+  uid: string;
   username: string;
   formhash: string;
-  constructor(username: string, formhash: string) {
-    this.username = username;
-    this.formhash = formhash;
+  constructor(uid: string) {
+    this.username = 'username';
+    this.formhash = 'formhash';
+    this.uid = uid;
   }
 
   version = GM_info.script.version;
@@ -47,8 +49,93 @@ class User implements IUser {
   replyThreads = []; // 回帖任务数据
 }
 
-const getUserName = () => {
-  return document.querySelector('.avatar_info a')?.innerHTML;
+const getUserName = (): string | null => {
+  const root = (document.querySelector('[data-logged-in="true"]') as Element) || document.body;
+  if (!root) return null;
+
+  const isLikelyUsername = (s?: string) => {
+    if (!s) return false;
+    const t = s.trim();
+    if (t.length < 2 || t.length > 64) return false;
+    return /^[\p{L}\p{N}_\-.]{2,64}$/u.test(t);
+  };
+
+  // 1) explicit link to personalize page (existing, but prefer textContent)
+  const personalize = root.querySelector('[href="/setting/personalize"]');
+  if (personalize) {
+    const txt = (personalize.textContent || '').trim();
+    if (isLikelyUsername(txt)) return txt;
+    // sometimes username is in a sibling span
+    const sib = personalize
+      .closest('[data-logged-in="true"]')
+      ?.querySelector('span.text-3.font-600, span.font-600, span.text-3');
+    const s2 = sib ? (sib.textContent || '').trim() : '';
+    if (isLikelyUsername(s2)) return s2;
+  }
+
+  // 2) try class-based candidates near login root
+  const classCandidates = root.querySelectorAll(
+    'span[class*="user"], span[class*="name"], span[class*="font-600"], span[class*="font-semibold"], a[class*="user"]'
+  );
+  for (const el of Array.from(classCandidates)) {
+    const t = (el.textContent || '').trim();
+    if (isLikelyUsername(t)) return t;
+  }
+
+  // 3) avatar nearby text
+  const avatar = root.querySelector('img[alt="Avatar"], img[src*="/avatar/"], img[class*="avatar"]');
+  if (avatar) {
+    const container = avatar.closest('[data-logged-in="true"]') || avatar.parentElement;
+    if (container) {
+      const anchors = container.querySelectorAll('a, span, div');
+      for (const a of Array.from(anchors)) {
+        const t = (a.textContent || '').trim();
+        if (isLikelyUsername(t)) return t;
+      }
+    }
+  }
+
+  // 4) fallback: first visible short text node that looks like a username
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+  let node: Node | null = null;
+  while ((node = walker.nextNode())) {
+    const txt = (node.nodeValue || '').trim();
+    if (!txt) continue;
+    if (txt.includes(' ')) continue;
+    if (!isLikelyUsername(txt)) continue;
+    const parent = node.parentElement;
+    if (!parent) continue;
+    const style = window.getComputedStyle(parent);
+    const visible =
+      parent.getClientRects().length > 0 &&
+      style.display !== 'none' &&
+      style.visibility !== 'hidden' &&
+      parent.offsetParent !== null;
+    if (visible) return txt;
+  }
+
+  return null;
+};
+
+// Watch username changes in SPA environments. Returns a disposer to stop observing.
+const watchUserName = (onChange: (name: string | null) => void) => {
+  let last: string | null = null;
+  const check = () => {
+    const u = getUserName();
+    if (u !== last) {
+      last = u;
+      try {
+        onChange(u);
+      } catch (e) {
+        // ignore callback errors
+      }
+    }
+  };
+  check();
+  const root = document.querySelector('[data-logged-in="true"]') || document.body;
+  const mo = new MutationObserver(() => check());
+  mo.observe(root as Node, { childList: true, subtree: true, characterData: true });
+  return () => mo.disconnect();
 };
 
 const getUserFromName = (): IUser | null => {
@@ -62,14 +149,14 @@ const getFormhash = () => {
   );
 };
 
-const creatUser = async (username: string, formhash: string) => {
-  let user = GM_getValue<IUser>(username);
-  const userMod = new User(username, formhash);
+const creatUser = async (uid: string) => {
+  let user = GM_getValue<IUser>(uid);
+  const userMod = new User(uid);
   if (!user) {
     // 空则写入，或版本变动写入
     user = userMod;
-    user = await setFastReply(user); // 设置快速回复
-    GM_setValue(username, user);
+    // user = await setFastReply(user); // 设置快速回复
+    GM_setValue(uid, user);
     new MessageBox('添加用户成功！');
   } else if (user.version !== GM_info.script.version) {
     const compa = isSameObjKey(userMod, user); // 比较key
@@ -83,15 +170,11 @@ const creatUser = async (username: string, formhash: string) => {
       new MessageBox('数据更新成功！');
     }
     user = await setFastReply(user); // 设置快速回复
-    GM_setValue(username, user);
+    GM_setValue(uid, user);
     new MessageBox('版本更新成功！请阅读使用说明。');
   }
-  if (user.formhash !== formhash) {
-    // formhash 变动存储
-    user.formhash = formhash;
-    GM_setValue(username, user);
-  }
+
   return user;
 };
 
-export { User, creatUser, getFormhash, getUserFromName, getUserName };
+export { User, creatUser, getFormhash, getUserFromName, getUserName, watchUserName };

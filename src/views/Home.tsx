@@ -54,7 +54,7 @@ export const Home: React.FC<HomeProps> = ({ user, setShowHome, counter, setCount
         }
       }}>
       <div className="h-fit w-72 p-2 m-2 bg-gray-50 shadow-md rounded-md flex flex-col border">
-        <h3 className="text-sm text-center font-bold border-b">JKForum Helper</h3>
+        <h3 className="text-sm text-center font-bold border-b text-black">JKForum Helper</h3>
 
         <Panel title="通用设置">
           <Toggle

@@ -12,6 +12,7 @@ export enum Mood {
   shuai = 'shuai', // 衰,
 }
 interface IUser {
+  uid: string;
   username: string;
   formhash: string;
   version: string;

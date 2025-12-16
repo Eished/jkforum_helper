@@ -1,10 +1,10 @@
 import { Counter, IUser } from '@/commonType';
-import { MessageBox, creatUser, launch } from '@/lib';
+import { MessageBox, creatUser } from '@/lib';
 import { Home } from '@/views/Home';
 import React, { useEffect, useState } from 'react';
 const commonMeta = require('@/common.meta.json');
 
-const App: React.FC<{ username: string; formhash: string }> = ({ username, formhash }) => {
+const App: React.FC<{ uid: string }> = ({ uid }) => {
   const [user, setUser] = useState<IUser>();
   const [showHome, setShowHome] = useState(false);
   const [counter, setCounter] = useState<Counter>({
@@ -16,12 +16,12 @@ const App: React.FC<{ username: string; formhash: string }> = ({ username, formh
 
   useEffect(() => {
     if (!user) {
-      creatUser(username, formhash).then((user) => {
-        launch(user); // 启动自动签到、投票、加载原图等
+      creatUser(uid).then((user) => {
+        // launch(user); // 启动自动签到、投票、加载原图等
         setUser(user);
       });
     }
-  }, [username, formhash, user]);
+  }, [uid, user]);
 
   return (
     <div className="fixed z-50">
