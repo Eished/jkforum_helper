@@ -2,6 +2,8 @@
 
 ## 自动签到、自动感谢、自动加载原图、自动播放图片、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片，自动识别验证码，自动'现在有空'，自动发文
 
+## 為適配新版捷克論壇，該脚本已遷移至瀏覽器擴展項目中，新功能將在瀏覽器擴展版中更新，[前往瀏覽器擴展版](https://github.com/Eished/jkforum_helper_extension)
+
 ![JKFicon64oval2](https://cdn.jsdelivr.net/gh/eished/jkforum_helper/readme.assets/JKFicon64oval2.png)
 
 安装地址：[`https://greasyfork.org/zh-CN/scripts/427246-jkforum-helper`](https://greasyfork.org/zh-CN/scripts/427246-jkforum-helper)
@@ -208,10 +210,8 @@
   - [x] 修复客户端提示超时时未自动重试
   - [x] 所有未知错误改为自动重试
   - [x] 修复无法解析服务端响应的错误信息
-- [x] 全局请求超时改为5分钟，请求报错信息改为显示5秒
+- [x] 全局请求超时改为 5 分钟，请求报错信息改为显示 5 秒
 - [x] 日志输出加上时间戳
-
-
 
 ## 参数自定义
 
