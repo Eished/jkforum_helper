@@ -2,7 +2,7 @@
 
 ## 自动签到、自动感谢、自动加载原图、自动播放图片、自动支付购买主题贴、自动完成投票任务，优化浏览体验，一键批量回帖/感谢，一键打包下载帖子图片，自动识别验证码，自动'现在有空'，自动发文
 
-## 為適配新版捷克論壇，該脚本已遷移至瀏覽器擴展項目中，新功能將在瀏覽器擴展版中更新，[前往瀏覽器擴展版](https://github.com/Eished/jkforum_helper_extension)
+## 注意：為適配新版捷克論壇，該脚本已遷移至 [JKForum助手瀏覽器擴展](https://github.com/Eished/jkforum_helper_extension) 項目中，新功能將在瀏覽器擴展版中更新，[下載瀏覽器擴展版]([https://github.com/Eished/jkforum_helper_extension](https://github.com/Eished/jkforum_helper_extension/releases))
 
 ![JKFicon64oval2](https://cdn.jsdelivr.net/gh/eished/jkforum_helper/readme.assets/JKFicon64oval2.png)
 
